@@ -1,0 +1,19 @@
+﻿.flex-container {
+    display: flex;                  /* Makes the container a flex container */
+    justify-content: flex-start;    /* Aligns items horizontally from left to right */
+    background: #3f3f3f;
+    color: whitesmoke;
+    padding: 20px;
+    border-radius: 5px;
+    width: 95%;
+}
+
+.entryName-container {
+    font-weight: bold;
+    text-align: left;               /* Text linksbündig */
+    flex-grow: 1;                   /* EntryName nimmt den verfügbaren Platz */
+}
+
+.counter-container {
+    width: auto;                    /* Der Counter nimmt nur so viel Platz wie nötig */
+}

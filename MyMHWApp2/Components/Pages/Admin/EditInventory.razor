@@ -1,0 +1,118 @@
+﻿@page "/admin/inventory"
+@rendermode InteractiveServer
+@using MyMHWApp2.Components.Models
+@using MyMHWApp2.Data.Services
+@inject EntryService entryService
+
+<h3>Entry List</h3>
+
+<!-- Display a list of entries -->
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Count</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var entry in entries)
+        {
+            <tr>
+                <td>@entry.Name</td>
+                <td>@entry.Count</td>
+                <td>
+                    <button class="btn btn-primary" @onclick="() => EditEntry(entry.Id)">Edit</button>
+                    <button class="btn btn-danger" @onclick="() => DeleteEntry(entry.Id)">Delete</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<!-- Add or Edit Entry Form -->
+<h3>@(isEdit ? "Edit" : "Add") Entry</h3>
+
+<p>Entry Name</p>
+
+<input placeholder="Entry Name" @bind="inputName" />
+
+<p>You typed: @inputName</p>
+
+<br />
+
+<label>Count</label>
+<input type="number" @bind="_inputCount" />
+
+<br />
+
+<button @onclick="AddEntryAsync">Add</button>
+
+@code {
+    private List<Entry> entries = [];
+    private bool isEdit = false;
+
+    private string? inputName;
+
+    private int _inputCount = 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadEntriesAsync();
+    }
+
+    public async Task AddEntryAsync()
+    {
+        if (!string.IsNullOrEmpty(inputName))
+        {
+            var newEntry = new Entry { Id = 0, CategoryId = 0, Name = inputName, Count = _inputCount };
+            await entryService.AddEntryAsync(newEntry);
+            await LoadEntriesAsync();
+            ResetForm();
+        }
+    }
+
+    // Load entries from the service
+    private async Task LoadEntriesAsync()
+    {
+        entries = await entryService.GetEntriesAsync();
+    }
+
+    // Edit entry
+    private async Task EditEntry(int id)
+    {
+        // Edit the local list
+        var entryToEdit = entries.FirstOrDefault(e => e.Id == id);
+
+        if (entryToEdit != null)
+        {
+            inputName = entryToEdit.Name;
+            _inputCount = entryToEdit.Count;
+            isEdit = true;
+        }
+
+        // Edit the backend List
+        var entryList = await entryService.GetEntriesAsync();
+        entryToEdit = entryList.FirstOrDefault(e => e.Id == id);
+
+        if (entryToEdit != null)
+        {
+            inputName = entryToEdit.Name;
+            _inputCount = entryToEdit.Count;
+            isEdit = true;
+        }
+    }
+
+    // Delete entry
+    private async Task DeleteEntry(int id)
+    {
+        await entryService.DeleteEntryAsync(id);
+        await LoadEntriesAsync();
+    }
+
+    private void ResetForm()
+    {
+        inputName = string.Empty;
+        _inputCount = 0;
+        isEdit = false;
+    }
+}
