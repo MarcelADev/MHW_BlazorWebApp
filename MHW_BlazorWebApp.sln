@@ -11,6 +11,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyMHWApp3", "MyMHWApp3\MyMH
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyMHWApp4", "MyMHWApp4\MyMHWApp4.csproj", "{DB5B779B-0984-4234-8DF8-D886FE960133}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MHWApp.Api", "MHWApp.Api\MHWApp.Api.csproj", "{F2CE7E64-68E5-4F32-A206-F27E946C845F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MHWApp.Library", "MHWApp.Library\MHWApp.Library.csproj", "{6D386AAB-284B-475B-867A-8AD5E7830739}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +37,14 @@ Global
 		{DB5B779B-0984-4234-8DF8-D886FE960133}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DB5B779B-0984-4234-8DF8-D886FE960133}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DB5B779B-0984-4234-8DF8-D886FE960133}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F2CE7E64-68E5-4F32-A206-F27E946C845F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F2CE7E64-68E5-4F32-A206-F27E946C845F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F2CE7E64-68E5-4F32-A206-F27E946C845F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F2CE7E64-68E5-4F32-A206-F27E946C845F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6D386AAB-284B-475B-867A-8AD5E7830739}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6D386AAB-284B-475B-867A-8AD5E7830739}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6D386AAB-284B-475B-867A-8AD5E7830739}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6D386AAB-284B-475B-867A-8AD5E7830739}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
