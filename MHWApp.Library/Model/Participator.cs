@@ -20,8 +20,8 @@ namespace MHWApp.Library.Model
         public List<Armor> Armors { get; set; } = [];
 
 
-        public List<ParticipatorInventoryEntry> ParticipatorInventoryEntries { get; set; } = [];
-        public List<ParticipatorInventoryWeapon> ParticipatorInventoryWeapons{ get; set; } = [];
-        public List<ParticipatorInventoryArmor> ParticipatorInventoryArmors{ get; set; } = [];
+        public List<ParticipatorInventoryEntry> ParticipatorEntries { get; set; } = [];
+        public List<ParticipatorInventoryWeapon> ParticipatorWeapons { get; set; } = [];
+        public List<ParticipatorArmor> ParticipatorArmors { get; set; } = [];
     }
 }

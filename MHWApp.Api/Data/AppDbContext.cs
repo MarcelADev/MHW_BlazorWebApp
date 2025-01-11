@@ -12,7 +12,7 @@ namespace MHWApp.Api.Data
 
         DbSet<ParticipatorInventoryEntry> ParticipatorInventoryEntries { get; set; }
         DbSet<ParticipatorInventoryWeapon> ParticipatorInventoryWeapons { get; set; }
-        DbSet<ParticipatorInventoryArmor> ParticipatorInventoryArmors { get; set; }
+        DbSet<ParticipatorArmor> ParticipatorInventoryArmors { get; set; }
 
         DbSet<Category> Categories { get; set; }
         DbSet<InventoryEntryCategory> InventoryEntryCategories { get; set; }
@@ -59,15 +59,20 @@ namespace MHWApp.Api.Data
             modelBuilder.Entity<Participator>()
                 .HasMany(o => o.Armors)
                 .WithMany()
-                .UsingEntity<ParticipatorInventoryArmor>(
-                "ParticipatorInventoryArmor",
-                    (l => l.HasOne<Participator>()
-                        .WithMany(e => e.ParticipatorInventoryArmors)
-                        .HasForeignKey(e => e.ParticipatorId)),
-                     (r => r
-                         .HasOne<Armor>()
-                         .WithMany(e => e.ParticipatorArmorEntries)
-                         .HasForeignKey(e => e.ArmorId))
+                .UsingEntity<ParticipatorArmor>(
+                    "ParticipatorInventoryArmor",
+                    l => l
+                        .HasOne(e => e.Armor)
+                        .WithMany(e => e.ParticipatorArmors)
+                        .HasForeignKey(e => e.ArmorId),
+                    r => r
+                        .HasOne(e => e.Participator)
+                        .WithMany(e => e.ParticipatorArmors)
+                        .HasForeignKey(e => e.ParticipatorId),
+                    j =>
+                    {
+                        j.Property(o => o.Count).HasDefaultValue(1);
+                    }
                 );
 
 

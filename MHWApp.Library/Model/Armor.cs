@@ -12,6 +12,7 @@
 
         public string Name { get; set; }
 
-        public List<ParticipatorArmorEntry> ParticipatorArmorEntries { get; set; } = [];
+        public List<Participator> Participators { get; set; } = [];
+        public List<ParticipatorArmor> ParticipatorArmors { get; set; } = [];
     }
 }
