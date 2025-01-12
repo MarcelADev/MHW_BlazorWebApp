@@ -191,6 +191,12 @@ namespace MHWApp.Api.Data
                 .HasForeignKey(o => o.ArmorCategoryId);
 
             modelBuilder.Entity<Armor>()
+                .HasOne(o => o.GameExtension)
+                .WithMany()
+                .HasForeignKey(o => o.GameExtensionId);
+
+            // Many to Many Relationship of Armor and Participator
+            modelBuilder.Entity<Armor>()
                 .HasMany(o => o.Participators)
                 .WithMany(o => o.Armors)
                 .UsingEntity<ParticipatorArmor>(
@@ -205,6 +211,7 @@ namespace MHWApp.Api.Data
                         .HasForeignKey(i => i.ArmorId)
                 );
 
+            // Many to Many Relationship of Armor and InventoryEntry
             modelBuilder.Entity<Armor>()
                 .HasMany(o => o.InventoryEntries)
                 .WithMany(o => o.Armors)
@@ -219,11 +226,6 @@ namespace MHWApp.Api.Data
                         .WithMany(w => w.ArmorCraftingIngredients)
                         .HasForeignKey(w => w.ArmorId)
                 );
-
-            modelBuilder.Entity<Armor>()
-                .HasOne(o => o.GameExtension)
-                .WithMany()
-                .HasForeignKey(o => o.GameExtensionId);
             #endregion
 
             #region Weapon
