@@ -5,10 +5,10 @@
         public int Id { get; set; }
 
         public int ParticipatorId { get; set; }
-        public Participator Participator { get; set; } = null!;
+        public required Participator Participator { get; set; }
 
         public int ArmorId { get; set; }
-        public Armor Armor { get; set; } = null!;
+        public required Armor Armor { get; set; }
 
         public int Count { get; set; }
     }

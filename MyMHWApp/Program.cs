@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using MyMHWApp.Components;
 using MyMHWApp.Data;
-using System;
 
 var builder = WebApplication.CreateBuilder(args);
 

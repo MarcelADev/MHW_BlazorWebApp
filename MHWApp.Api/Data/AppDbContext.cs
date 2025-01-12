@@ -2,34 +2,33 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Hosting;
 
 namespace MHWApp.Api.Data
 {
     public class AppDbContext(DbContextOptions<AppDbContext> options)
         : IdentityDbContext<Player, IdentityRole<int>, int>(options)
     {
-        DbSet<Player> Players { get; set; }
-        DbSet<Session> Sessions { get; set; }
-        DbSet<Participator> Participators { get; set; }
+        public required DbSet<Player> Players { get; set; }
+        public required DbSet<Session> Sessions { get; set; }
+        public required DbSet<Participator> Participators { get; set; }
 
-        DbSet<ParticipatorInventoryEntry> ParticipatorInventoryEntries { get; set; }
-        DbSet<ParticipatorWeapon> ParticipatorWeapons { get; set; }
-        DbSet<ParticipatorArmor> ParticipatorArmors { get; set; }
+        public required DbSet<ParticipatorInventoryEntry> ParticipatorInventoryEntries { get; set; }
+        public required DbSet<ParticipatorWeapon> ParticipatorWeapons { get; set; }
+        public required DbSet<ParticipatorArmor> ParticipatorArmors { get; set; }
 
-        DbSet<Category> Categories { get; set; }
-        DbSet<InventoryEntryCategory> InventoryEntryCategories { get; set; }
-        DbSet<WeaponCategory> WeaponCategories { get; set; }
-        DbSet<ArmorCategory> ArmorCategories { get; set; }
+        public required DbSet<Category> Categories { get; set; }
+        public required DbSet<InventoryEntryCategory> InventoryEntryCategories { get; set; }
+        public required DbSet<WeaponCategory> WeaponCategories { get; set; }
+        public required DbSet<ArmorCategory> ArmorCategories { get; set; }
 
-        DbSet<InventoryEntry> InventoryEntries { get; set; }
-        DbSet<Weapon> Weapons { get; set; }
-        DbSet<Armor> Armors { get; set; }
+        public required DbSet<InventoryEntry> InventoryEntries { get; set; }
+        public required DbSet<Weapon> Weapons { get; set; }
+        public required DbSet<Armor> Armors { get; set; }
 
-        DbSet<WeaponType> WeaponTypes { get; set; }
+        public required DbSet<WeaponType> WeaponTypes { get; set; }
 
-        DbSet<WeaponCraftingIngredient> WeaponCraftingIngredients { get; set; }
-        DbSet<ArmorCraftingIngredient> ArmorCraftingIngredients { get; set; }
+        public required DbSet<WeaponCraftingIngredient> WeaponCraftingIngredients { get; set; }
+        public required DbSet<ArmorCraftingIngredient> ArmorCraftingIngredients { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

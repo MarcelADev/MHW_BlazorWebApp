@@ -1,5 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using MyMHWApp2.Components.Models;
+﻿using MyMHWApp2.Components.Models;
 
 namespace MyMHWApp2.Data.Services
 {
@@ -57,13 +56,13 @@ namespace MyMHWApp2.Data.Services
 
             if (entryToUpdate != null)
             {
-                if(entryToUpdate.Name != entry.Name) 
+                if (entryToUpdate.Name != entry.Name)
                     entryToUpdate.Name = entry.Name;
 
-                if (entryToUpdate.CategoryId != entry.CategoryId) 
+                if (entryToUpdate.CategoryId != entry.CategoryId)
                     entryToUpdate.CategoryId = entry.CategoryId;
 
-                if (entryToUpdate.Count != entry.Count) 
+                if (entryToUpdate.Count != entry.Count)
                     entryToUpdate.Count = entry.Count;
             }
         }

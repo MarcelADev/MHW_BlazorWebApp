@@ -1,13 +1,11 @@
-﻿using System.ComponentModel.DataAnnotations;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
+using System.ComponentModel.DataAnnotations;
 
 namespace MHWApp.Library.Model
 {
-    public class Player : IdentityUser
+    public class Player : IdentityUser<int>
     {
-        public int Id { get; set; }
-
         [Required]
-        public string Name { get; set; }
+        public string? Name { get; set; }
     }
 }
