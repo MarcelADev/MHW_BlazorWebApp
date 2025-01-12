@@ -49,7 +49,7 @@ namespace MHWApp.Api.Data
             // Many to Many Relationship of Participator and InventoryEntry
             modelBuilder.Entity<Participator>()
                 .HasMany(o => o.InventoryEntries)
-                .WithMany()
+                .WithMany(o => o.Participators)
                 .UsingEntity<ParticipatorInventoryEntry>(
                     "ParticipatorInventoryEntry",
                     l => l
@@ -189,6 +189,36 @@ namespace MHWApp.Api.Data
                 .HasOne(o => o.ArmorCategory)
                 .WithMany()
                 .HasForeignKey(o => o.ArmorCategoryId);
+
+            modelBuilder.Entity<Armor>()
+                .HasMany(o => o.Participators)
+                .WithMany(o => o.Armors)
+                .UsingEntity<ParticipatorArmor>(
+                    "ParticipatorArmor",
+                    r => r
+                        .HasOne(p => p.Participator)
+                        .WithMany(p => p.ParticipatorArmors)
+                        .HasForeignKey(p => p.ParticipatorId),
+                     l => l
+                        .HasOne(i => i.Armor)
+                        .WithMany(p => p.ParticipatorArmors)
+                        .HasForeignKey(i => i.ArmorId)
+                );
+
+            modelBuilder.Entity<Armor>()
+                .HasMany(o => o.InventoryEntries)
+                .WithMany(o => o.Armors)
+                .UsingEntity<ArmorCraftingIngredient>(
+                    "ArmorCraftingIngredient",
+                    l => l
+                        .HasOne(i => i.InventoryEntry)
+                        .WithMany(a => a.ArmorCraftingIngredients)
+                        .HasForeignKey(i => i.InventoryEntryId),
+                    r => r
+                        .HasOne(w => w.Armor)
+                        .WithMany(w => w.ArmorCraftingIngredients)
+                        .HasForeignKey(w => w.ArmorId)
+                );
 
             modelBuilder.Entity<Armor>()
                 .HasOne(o => o.GameExtension)
