@@ -3,8 +3,6 @@ using MHWApp.Library.Model;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Reflection.Emit;
-using System.Runtime.ConstrainedExecution;
 using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -19,33 +17,33 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite(connectionString));
 
-    // establish cookie authentication
+// establish cookie authentication
 builder.Services.AddAuthentication(IdentityConstants.ApplicationScheme).AddIdentityCookies();
 
-    // Configure app cookie
-    //
-    // The default values, which are appropriate for hosting the Backend and
-    // BlazorWasmAuth apps on the same domain, are Lax and SameAsRequest. 
-    // For more information on these settings, see:
-    // https://learn.microsoft.com/aspnet/core/blazor/security/webassembly/standalone-with-identity#cross-domain-hosting-same-site-configuration
-    /*
-    builder.Services.ConfigureApplicationCookie(options =>
-    {
-        options.Cookie.SameSite = SameSiteMode.Lax;
-        options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
-    });
-    */
+// Configure app cookie
+//
+// The default values, which are appropriate for hosting the Backend and
+// BlazorWasmAuth apps on the same domain, are Lax and SameAsRequest. 
+// For more information on these settings, see:
+// https://learn.microsoft.com/aspnet/core/blazor/security/webassembly/standalone-with-identity#cross-domain-hosting-same-site-configuration
+/*
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.Cookie.SameSite = SameSiteMode.Lax;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+});
+*/
 
-    // configure authorization
+// configure authorization
 builder.Services.AddAuthorizationBuilder();
 
-    // add identity and opt-in to endpoints
+// add identity and opt-in to endpoints
 builder.Services.AddIdentityCore<Player>()
-    .AddRoles<IdentityRole>()
+    .AddRoles<IdentityRole<int>>()
     .AddEntityFrameworkStores<AppDbContext>()
     .AddApiEndpoints();
 
-    // add a CORS policy for the client
+// add a CORS policy for the client
 builder.Services.AddCors(
     options => options.AddPolicy(
         "wasm",
@@ -55,11 +53,11 @@ builder.Services.AddCors(
             .AllowAnyHeader()
             .AllowCredentials()));
 
-    // add services to the container
+// add services to the container
 builder.Services.AddEndpointsApiExplorer();
 
-    // add NSwag services
-//builder.Services.AddOpenApiDocument();
+// add NSwag services
+builder.Services.AddOpenApiDocument();
 
 // -- CUSTOM CODE ENDS HERE
 
@@ -69,6 +67,8 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    app.UseOpenApi();
+    app.UseSwaggerUi();
 }
 
 // create routes for the identity endpoints

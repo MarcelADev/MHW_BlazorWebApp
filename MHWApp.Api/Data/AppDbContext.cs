@@ -1,11 +1,13 @@
 ﻿using MHWApp.Library.Model;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
 
 namespace MHWApp.Api.Data
 {
-    public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDbContext<Player>(options)
+    public class AppDbContext(DbContextOptions<AppDbContext> options)
+        : IdentityDbContext<Player, IdentityRole<int>, int>(options)
     {
         DbSet<Player> Players { get; set; }
         DbSet<Session> Sessions { get; set; }
