@@ -138,7 +138,7 @@ namespace MHWApp.Api.Data
             // Many to Many Relationship of InventoryEntry and Participator
             modelBuilder.Entity<InventoryEntry>()
                 .HasMany(o => o.Participators)
-                .WithMany()
+                .WithMany(i => i.InventoryEntries)
                 .UsingEntity<ParticipatorInventoryEntry>(
                     "ParticipatorInventoryEntry",
                     l => l
