@@ -11,8 +11,8 @@ namespace MHWApp.Api.Data
         DbSet<Participator> Participators { get; set; }
 
         DbSet<ParticipatorInventoryEntry> ParticipatorInventoryEntries { get; set; }
-        DbSet<ParticipatorInventoryWeapon> ParticipatorInventoryWeapons { get; set; }
-        DbSet<ParticipatorArmor> ParticipatorInventoryArmors { get; set; }
+        DbSet<ParticipatorWeapon> ParticipatorWeapons { get; set; }
+        DbSet<ParticipatorArmor> ParticipatorArmors { get; set; }
 
         DbSet<Category> Categories { get; set; }
         DbSet<InventoryEntryCategory> InventoryEntryCategories { get; set; }
@@ -23,7 +23,6 @@ namespace MHWApp.Api.Data
         DbSet<Weapon> Weapons { get; set; }
         DbSet<Armor> Armors { get; set; }
 
-        DbSet<WeaponBranch> WeaponBranches { get; set; }
         DbSet<WeaponType> WeaponTypes { get; set; }
 
         DbSet<WeaponCraftingIngredient> WeaponCraftingIngredients { get; set; }
@@ -47,20 +46,52 @@ namespace MHWApp.Api.Data
                 .WithMany()
                 .HasForeignKey(o => o.WeaponTypeId);
 
-            // LISTS HERE
+            // Many to Many Relationship of Participator and InventoryEntry
             modelBuilder.Entity<Participator>()
                 .HasMany(o => o.InventoryEntries)
                 .WithMany()
-                .UsingEntity<ParticipatorInventoryEntry>();
+                .UsingEntity<ParticipatorInventoryEntry>(
+                    "ParticipatorInventoryEntry",
+                    l => l
+                        .HasOne(i => i.InventoryEntry)
+                        .WithMany(p => p.ParticipatorInventoryEntries)
+                        .HasForeignKey(i => i.InventoryEntryId),
+                    r => r
+                        .HasOne(p => p.Participator)
+                        .WithMany(p => p.ParticipatorInventoryEntries)
+                        .HasForeignKey(p => p.ParticipatorId),
+                    j =>
+                    {
+                        j.Property(o => o.Count).HasDefaultValue(1);
+                    }
+                );
+
+            // Many to Many Relationship of Participator and Weapon
             modelBuilder.Entity<Participator>()
                 .HasMany(o => o.Weapons)
                 .WithMany()
-                .UsingEntity<ParticipatorInventoryWeapon>();
+                .UsingEntity<ParticipatorWeapon>(
+                    "ParticipatorWeapon",
+                    l => l
+                        .HasOne(w => w.Weapon)
+                        .WithMany(p => p.ParticipatorWeapons)
+                        .HasForeignKey(w => w.WeaponId),
+                    r => r
+                        .HasOne(p => p.Participator)
+                        .WithMany(p => p.ParticipatorWeapons)
+                        .HasForeignKey(p => p.ParticipatorId),
+                    j =>
+                    {
+                        j.Property(o => o.Count).HasDefaultValue(1);
+                    }
+                );
+
+            // Many to Many Relationship of Participator and Armor
             modelBuilder.Entity<Participator>()
                 .HasMany(o => o.Armors)
                 .WithMany()
                 .UsingEntity<ParticipatorArmor>(
-                    "ParticipatorInventoryArmor",
+                    "ParticipatorArmor",
                     l => l
                         .HasOne(e => e.Armor)
                         .WithMany(e => e.ParticipatorArmors)
@@ -74,8 +105,6 @@ namespace MHWApp.Api.Data
                         j.Property(o => o.Count).HasDefaultValue(1);
                     }
                 );
-
-
             #endregion
 
             #region Inventory Entry Catagory & Weapon Category & Armor Catagory
@@ -102,16 +131,85 @@ namespace MHWApp.Api.Data
                 .HasForeignKey(o => o.InventoryCategoryId);
 
             modelBuilder.Entity<InventoryEntry>()
-                .HasOne(o => o.InventoryCategory)
+                .HasOne(o => o.GameExtension)
                 .WithMany()
-                .HasForeignKey(o => o.InventoryCategoryId);
+                .HasForeignKey(o => o.GameExtensionId);
             #endregion
 
-            #region Weapon Branch & Weapon
-            modelBuilder.Entity<InventoryEntry>()
-                .HasOne(o => o.InventoryCategory)
+            #region Armor
+            modelBuilder.Entity<Armor>()
+                .HasOne(o => o.ArmorCategory)
                 .WithMany()
-                .HasForeignKey(o => o.InventoryCategoryId);
+                .HasForeignKey(o => o.ArmorCategoryId);
+
+            modelBuilder.Entity<Armor>()
+                .HasOne(o => o.GameExtension)
+                .WithMany()
+                .HasForeignKey(o => o.GameExtensionId);
+            #endregion
+
+            #region Weapon
+            modelBuilder.Entity<Weapon>()
+                .HasOne(o => o.WeaponCategory)
+                .WithMany()
+                .HasForeignKey(o => o.WeaponCategoryId);
+
+            modelBuilder.Entity<Weapon>()
+                .HasOne(o => o.WeaponType)
+                .WithMany()
+                .HasForeignKey(o => o.WeaponTypeId);
+
+            modelBuilder.Entity<Weapon>()
+                .HasOne(o => o.GameExtension)
+                .WithMany()
+                .HasForeignKey(o => o.GameExtensionId);
+
+            modelBuilder.Entity<Weapon>()
+                .HasOne(o => o.Predecessor)
+                .WithMany()
+                .HasForeignKey(o => o.PredecessorId);
+            #endregion
+
+            #region Ingredients
+            // Many to Many Relationship of Weapon and InventoryEntry
+            modelBuilder.Entity<Weapon>()
+                .HasMany(o => o.InventoryEntries)
+                .WithMany()
+                .UsingEntity<WeaponCraftingIngredient>(
+                    "WeaponCraftingIngredient",
+                    l => l
+                        .HasOne(i => i.InventoryEntry)
+                        .WithMany(w => w.WeaponCraftingIngredients)
+                        .HasForeignKey(i => i.InventoryEntryId),
+                    r => r
+                        .HasOne(w => w.Weapon)
+                        .WithMany(w => w.WeaponCraftingIngredients)
+                        .HasForeignKey(w => w.WeaponId),
+                    j =>    // j steht für join entity
+                    {
+                        j.Property(q => q.Quantity).HasDefaultValue(1);
+                    }
+                );
+
+            // Many to Many Relationship of Armor and InventoryEntry
+            modelBuilder.Entity<Armor>()
+                .HasMany(o => o.InventoryEntries)
+                .WithMany()
+                .UsingEntity<ArmorCraftingIngredient>(
+                    "ArmorCraftingIngredient",
+                    l => l
+                        .HasOne(i => i.InventoryEntry)
+                        .WithMany(a => a.ArmorCraftingIngredients)
+                        .HasForeignKey(i => i.InventoryEntryId),
+                    r => r
+                        .HasOne(w => w.Armor)
+                        .WithMany(w => w.ArmorCraftingIngredients)
+                        .HasForeignKey(w => w.ArmorId),
+                    j =>    // j steht für join entity
+                    {
+                        j.Property(q => q.Quantity).HasDefaultValue(1);
+                    }
+                );
             #endregion
 
             base.OnModelCreating(modelBuilder);

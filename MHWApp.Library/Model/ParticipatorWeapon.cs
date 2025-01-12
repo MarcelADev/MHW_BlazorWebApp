@@ -1,6 +1,6 @@
 ﻿namespace MHWApp.Library.Model
 {
-    public class ParticipatorInventoryWeapon
+    public class ParticipatorWeapon
     {
         public int Id { get; set; }
 

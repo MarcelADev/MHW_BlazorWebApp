@@ -16,12 +16,12 @@ namespace MHWApp.Library.Model
         public WeaponType WeaponType { get; set; }
 
         public List<InventoryEntry> InventoryEntries { get; set; } = [];
+        public List<ParticipatorInventoryEntry> ParticipatorInventoryEntries { get; set; } = [];
+
         public List<Weapon> Weapons { get; set; } = [];
+        public List<ParticipatorWeapon> ParticipatorWeapons { get; set; } = [];
+
         public List<Armor> Armors { get; set; } = [];
-
-
-        public List<ParticipatorInventoryEntry> ParticipatorEntries { get; set; } = [];
-        public List<ParticipatorInventoryWeapon> ParticipatorWeapons { get; set; } = [];
-        public List<ParticipatorArmor> ParticipatorArmors { get; set; } = [];
+        public List<ParticipatorArmor> ParticipatorArmors{ get; set; } = [];
     }
 }

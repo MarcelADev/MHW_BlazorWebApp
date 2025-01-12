@@ -1,4 +1,6 @@
-﻿namespace MHWApp.Library.Model
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace MHWApp.Library.Model
 {
     public class InventoryEntryCategory
     {
@@ -6,5 +8,8 @@
 
         public int CategoryId { get; set; }
         public Category Category { get; set; }
+
+        [Required]
+        public int Order { get; set; }
     }
 }
