@@ -1,18 +1,28 @@
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using MyMHWApp4;
+using MyMHWApp4.Identity;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
+
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
-builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
+// register the cookie handler
+builder.Services.AddTransient<CookieHandler>();
 
-builder.Services.AddOidcAuthentication(options =>
-{
-    // Configure your authentication provider options here.
-    // For more information, see https://aka.ms/blazor-standalone-auth
-    builder.Configuration.Bind("Local", options.ProviderOptions);
-});
+// set up authorization
+builder.Services.AddAuthorizationCore();
+
+// register the custom state provider
+builder.Services.AddScoped<AuthenticationStateProvider, CookieAuthenticationStateProvider>();
+
+// register the account management interface
+builder.Services.AddScoped(
+    sp => (IAccountManagement)sp.GetRequiredService<AuthenticationStateProvider>());
+
+// set base address for default host
+builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 
 await builder.Build().RunAsync();
