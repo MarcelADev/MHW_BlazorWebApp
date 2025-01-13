@@ -23,6 +23,13 @@ builder.Services.AddScoped(
     sp => (IAccountManagement)sp.GetRequiredService<AuthenticationStateProvider>());
 
 // set base address for default host
-builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
+builder.Services.AddScoped(sp =>
+    new HttpClient { BaseAddress = new Uri(builder.Configuration["FrontendUrl"] ?? "https://localhost:5002") });
+
+// configure client for auth interactions
+builder.Services.AddHttpClient(
+    "Auth",
+    opt => opt.BaseAddress = new Uri(builder.Configuration["BackendUrl"] ?? "https://localhost:5001"))
+    .AddHttpMessageHandler<CookieHandler>();
 
 await builder.Build().RunAsync();
