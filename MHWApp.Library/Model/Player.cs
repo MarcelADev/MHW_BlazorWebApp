@@ -5,7 +5,6 @@ namespace MHWApp.Library.Model
 {
     public class Player : IdentityUser<int>
     {
-        [Required]
-        public string? Name { get; set; }
+        
     }
 }
