@@ -4,37 +4,40 @@
 
 <PageTitle>Login</PageTitle>
 
-<h1>Login</h1>
-
 <AuthorizeView>
     <Authorized>
-        @* <div class="alert alert-success">You're logged in as @context.User.Identity?.Name.</div> *@
         <LoginRedirect></LoginRedirect>
     </Authorized>
     <NotAuthorized>
-        @if (errors)
-        {
-            @foreach (var error in errorList)
+        <div class="mainContainer">
+
+            <h1>Login</h1>
+
+            @if (errors)
             {
-                <div class="alert alert-danger">@error</div>
+                @foreach (var error in errorList)
+                {
+                    <div class="alert alert-danger">@error</div>
+                }
             }
-        }
-        <div class="flex-outer">
+
             <div>
-                <label for="email">
-                    Email:
-                </label>
+                <label for="email">Email:</label>
+                <br />
                 <input required id="email" name="emailInput" placeholder="Enter your email address" type="email" @bind-value="email" />
             </div>
+
             <div>
-                <label for="password">
-                    Password:
-                </label>
+                <label for="password">Password:</label>
+                <br />
                 <input required id="password" name="passwordInput" placeholder="Enter your password" type="password" @bind-value="password" />
             </div>
-            <div>
-                <button class="btn btn-primary" @onclick="DoLoginAsync">Login</button>
-            </div>
+
+            <br/>
+            
+            <button class="loginButton" @onclick="DoLoginAsync">Login</button>
+
+            <a href="">🠔 Return</a>
         </div>
     </NotAuthorized>
 </AuthorizeView>
