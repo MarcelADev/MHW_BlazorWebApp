@@ -135,6 +135,25 @@ app.MapPost("/data-processing-2", ([FromBody] FormModel model) =>
     Results.Text($"{model.Message.Length} characters"))
         .RequireAuthorization(policy => policy.RequireRole("Manager"));
 
+#region SELFMADE ENDPOINTS
+
+app.MapGet("/getSessions", async (int playerId, AppDbContext dbContext) =>
+    {
+        var participators = await dbContext.Participators.Where(p => p.PlayerId == playerId).ToListAsync();
+        var allSessions = await dbContext.Sessions.ToListAsync();
+        var sessionIds = new HashSet<int>();
+
+        foreach (Participator p in participators)
+        {
+            sessionIds.Add(p.SessionId);
+        }
+
+        return Results.Ok(allSessions.Where(s => sessionIds.Contains(s.Id)));
+    } 
+);
+
+#endregion
+
 var summaries = new[]
 {
     "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
