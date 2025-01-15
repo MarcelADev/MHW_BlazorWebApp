@@ -268,6 +268,12 @@ namespace MHWApp.Api.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<int>("DayCount")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("MaxDays")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("TEXT");

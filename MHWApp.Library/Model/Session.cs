@@ -11,5 +11,11 @@ namespace MHWApp.Library.Model
 
         [Required]
         public required string Date { get; set; }
+
+        [Required]
+        public required int MaxDays { get; set; }
+
+        [Required]
+        public required int DayCount { get; set; }
     }
 }
