@@ -137,18 +137,28 @@ app.MapPost("/data-processing-2", ([FromBody] FormModel model) =>
 
 #region SELFMADE ENDPOINTS
 
-app.MapGet("/getSessions", async (int playerId, AppDbContext dbContext) =>
+app.MapGet("/sessions", async (AppDbContext dbContext, ClaimsPrincipal user) =>
     {
+        var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);  // Standard claim for user ID in most scenarios.
+        if (userIdClaim == null)
+        {
+            return Results.Unauthorized();
+        }
+
+        var playerId = int.Parse(userIdClaim.Value);
         var participators = await dbContext.Participators.Where(p => p.PlayerId == playerId).ToListAsync();
-        var allSessions = await dbContext.Sessions.ToListAsync();
         var sessionIds = new HashSet<int>();
+
+        var identity = (ClaimsIdentity)user.Identity;
 
         foreach (Participator p in participators)
         {
             sessionIds.Add(p.SessionId);
         }
 
-        return Results.Ok(allSessions.Where(s => sessionIds.Contains(s.Id)));
+        var playerSessions = await dbContext.Sessions.Where(s => sessionIds.Contains(s.Id)).ToListAsync();
+
+        return Results.Ok(playerSessions);
     } 
 );
 

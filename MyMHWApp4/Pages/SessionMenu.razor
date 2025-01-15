@@ -1,0 +1,32 @@
+﻿@page "/session"
+@using MHWApp.Library.Model
+@using MyMHWApp4.Provider
+@inject SessionProvider sessionProvider
+
+<h3>Sessions</h3>
+
+<p>Fancy Session here</p>
+
+@foreach(Session session in list)
+{
+	<p>@session.Name</p>
+}
+
+@code {
+	List<Session> list = [];
+
+	protected async override Task OnInitializedAsync()
+	{
+		list = await sessionProvider.GetSessionAsync();
+
+		list.Add(new Session{
+			Id = 0,
+			Name = "Meine Test Session",
+			MaxDays = 60,
+			DayCount = 0,
+			Date = "01-01-2020"
+		});
+
+		await base.OnInitializedAsync();
+	}
+}

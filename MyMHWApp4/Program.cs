@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using MyMHWApp4;
 using MyMHWApp4.Identity;
+using MyMHWApp4.Provider;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
@@ -34,7 +35,7 @@ builder.Services.AddHttpClient(
 
 #region SELFMADE SERVICES
 
-
+builder.Services.AddScoped<SessionProvider>();
 
 #endregion
 
