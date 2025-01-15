@@ -3,17 +3,22 @@
 @inject IAccountManagement Acct
 
 <PageTitle>Logout</PageTitle>
+<main class="mainContainer">
 
 <h1>Logout</h1>
 
-<AuthorizeView @ref="authView">
-    <Authorized>
-        <div class="alert alert-info">Logging you out...</div>
-    </Authorized>
-    <NotAuthorized>
-        <div class="alert alert-success">You're logged out. <a href="/login">Log in.</a></div>
-    </NotAuthorized>
-</AuthorizeView>
+    <AuthorizeView @ref="authView">
+        <Authorized>
+            <div class="alert alert-info">Logging you out...</div>
+        </Authorized>
+        <NotAuthorized>
+            <div class="alert alert-success">You're logged out. <a href="/login">Log in.</a></div>
+            <p>You will be automatically redirected to the Start Menu. If not click <a href="">here</a></p>
+            <StartMenuRedirect></StartMenuRedirect>
+        </NotAuthorized>
+    </AuthorizeView>
+
+</main>
 
 @code {
     private AuthorizeView? authView;

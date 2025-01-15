@@ -1,0 +1,14 @@
+﻿@inject NavigationManager NavigationManager
+@code {
+	protected override void OnInitialized()
+	{
+		base.OnInitialized();
+		DelayedRedirect();
+	}
+
+	private async Task DelayedRedirect()
+	{
+		await Task.Delay(5000);
+		NavigationManager.NavigateTo("/");
+	}
+}
