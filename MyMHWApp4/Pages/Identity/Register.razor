@@ -4,6 +4,9 @@
 
 <PageTitle>Register</PageTitle>
 
+<header class="whitespace">
+
+</header>
 <main class="mainContainer">
     <AuthorizeView>
         <Authorized>
@@ -40,10 +43,12 @@
 
                 if (errors)
                 {
-                    foreach (var error in errorList)
-                    {
-                        <div class="customAlert">@error</div>
-                    }
+                    <div class="errorContainer">
+                        @foreach (var error in errorList)
+                        {
+                            <div class="customAlert">@error</div>
+                        }
+                    </div>
                 }
             }
         </NotAuthorized>

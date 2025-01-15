@@ -1,86 +1,66 @@
-﻿/* Ensure no margin or padding around the body and html elements */
-html, body {
-    margin: 0;
-    padding: 0;
-    height: 100%; /* Ensure the body takes the full height of the viewport */
-    width: 100%; /* Ensure the body takes the full width of the viewport */
-}
-
-/* Reset default styling for all elements */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-h1 {
+﻿h1 {
     font-weight: 700;
     font-size: 2.5rem;
-    color: white;
+    color: #6457A6;
 }
 
 label {
     text-decoration: none;
-    color: white;
+    color: #6457A6;
     margin-bottom: 5px;
 }
 
 input {
-    border: 2px solid white;
+    border-color: #6457A6;
     padding: 5px;
-    color: white;
-    background-color: #6457A6;
 }
 
 a {
     margin-top: 10px;
-    color: #fff;
+    color: #7D7ABC;
     text-decoration: none;
     padding: 5px 10px;
     border-radius: 5px;
     font-weight: 300;
-    border: 2px solid #6457A6;
+    border: 2px solid #fff;
 }
 
-a:hover {
-    color: whitesmoke;
-    border-color: #fff;
-}
+    a:hover {
+        color: #7D7ABCcd;
+        border-color: #6457A6;
+    }
 
 .mainContainer {
+    margin-inline: auto;
     display: flex;
     gap: 0.5rem;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
     align-content: space-evenly;
     flex-direction: column;
-    height: stretch;
-    width: stretch;
-    background-color: #6457A6;
+    height: 80vh;
+}
+
+.whitespace {
+    height: 10vh;
+}
+
+.errorContainer {
+    align-items: flex-start;
+    color: red;
 }
 
 .registerButton {
-    margin-top: 5px;
     padding-inline: 20px;
     padding-top: 8px;
     padding-bottom: 8px;
-    background: whitesmoke;
-    color: #6457A6;
+    background: #6457A6;
     border-radius: 8px;
-    border: 2px solid #6457A6;
-    font-weight: 300;
+    color: white;
 }
 
     .registerButton:hover {
-        color: white;
-        background: #7D7ABC;
+        background: hsl(250, 31%, 50%, 0.9);
+        color: whitesmoke;
+        width: auto;
     }
-
-.customAlert {
-    padding: 5px;
-    background: #f7c8c1;
-    font-size: 0.8rem;
-    width: 80vw;
-    border-radius: 5px;
-    margin-bottom: -5px;
-}

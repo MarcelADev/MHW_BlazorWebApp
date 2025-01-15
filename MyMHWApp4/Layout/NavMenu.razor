@@ -20,23 +20,36 @@
                     </NavLink>
                 </div>
             </NotAuthorized>
-        </AuthorizeView>
+            <Authorized>
 
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="counter">
-                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Counter
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="weather">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Weather
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="logout">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Logout
-            </NavLink>
-        </div>
+                @if(sessionIsPicked){
+
+                    <div class="nav-item px-3">
+                        <NavLink class="nav-link" href="counter">
+                            <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Counter
+                        </NavLink>
+                    </div>
+
+                    <div class="nav-item px-3">
+                        <NavLink class="nav-link" href="weather">
+                            <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Weather
+                        </NavLink>
+                    </div>                    
+                }
+                else{
+                    <div class="nav-item px-3">
+                        <p class="userName"><b>@context.User.Identity?.Name</b></p>
+                    </div>
+                }
+
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="logout">
+                        <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Logout
+                    </NavLink>
+                </div>
+
+            </Authorized>
+        </AuthorizeView>
     </nav>
 </div>
 
@@ -45,6 +58,8 @@
     private string? CurrentUrl { get; set; }
 
     private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+    private bool sessionIsPicked = false;
 
     private void ToggleNavMenu()
     {
@@ -64,10 +79,14 @@
         {
             "/" => "Home",
             "/counter" => "Counter",
+            "/session" => "Menu",
             "/weather" => "Weather",
             "/playlists" => "Playlists",
             _ => "Unknown",
         };
+
+        if (CurrentUrl == "Menu") { sessionIsPicked = false; }
+        else { sessionIsPicked = true; }
 
         StateHasChanged();  // Trigger a re-render
     }

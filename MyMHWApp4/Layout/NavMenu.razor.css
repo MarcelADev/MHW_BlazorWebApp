@@ -81,3 +81,8 @@
         overflow-y: auto;
     }
 }
+
+.userName {
+    margin-left: 12px;
+    color: darkorange;
+}

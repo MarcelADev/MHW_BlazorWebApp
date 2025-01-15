@@ -1,6 +1,13 @@
 ﻿@page "/"
+@using MyMHWApp4.Pages.Identity
 
 <PageTitle>Home</PageTitle>
+
+<AuthorizeView>
+	<Authorized>
+		<LoginRedirect></LoginRedirect>
+	</Authorized>
+</AuthorizeView>
 
 <main class="mainContainer">
 
