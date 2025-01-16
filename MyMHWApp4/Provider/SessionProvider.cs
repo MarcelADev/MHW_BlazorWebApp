@@ -19,5 +19,18 @@ namespace MyMHWApp4.Provider
                 return new List<Session>();
             }
         }
+
+        public async Task<bool> CreateSessionAsync(Session newSession)
+        {
+            try
+            {
+                var response = await _httpClient.PostAsJsonAsync("sessions", newSession);
+                return response.IsSuccessStatusCode;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
     }
 }

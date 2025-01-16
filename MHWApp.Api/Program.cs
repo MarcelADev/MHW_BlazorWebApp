@@ -155,6 +155,14 @@ app.MapGet("/sessions", async (AppDbContext dbContext, ClaimsPrincipal user) =>
     } 
 );
 
+app.MapPost("/sessions", async(Session newSession, AppDbContext dbContext, ClaimsPrincipal user) => 
+    { 
+        await dbContext.Sessions.AddAsync(newSession);
+        await dbContext.SaveChangesAsync();
+        return Results.Created($"/newSession/{newSession.Id}", newSession);
+    }
+);
+
 #endregion
 
 var summaries = new[]
