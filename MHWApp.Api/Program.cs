@@ -146,17 +146,10 @@ app.MapGet("/sessions", async (AppDbContext dbContext, ClaimsPrincipal user) =>
         }
 
         var playerId = int.Parse(userIdClaim.Value);
-        var participators = await dbContext.Participators.Where(p => p.PlayerId == playerId).ToListAsync();
-        var sessionIds = new HashSet<int>();
-
-        var identity = (ClaimsIdentity)user.Identity;
-
-        foreach (Participator p in participators)
-        {
-            sessionIds.Add(p.SessionId);
-        }
-
-        var playerSessions = await dbContext.Sessions.Where(s => sessionIds.Contains(s.Id)).ToListAsync();
+        var playerSessions = await dbContext.Sessions
+            .Where(s =>
+                dbContext.Participators.Any(p => p.PlayerId == playerId && p.SessionId == s.Id))
+            .ToListAsync();
 
         return Results.Ok(playerSessions);
     } 
