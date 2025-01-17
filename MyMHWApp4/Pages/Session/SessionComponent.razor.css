@@ -1,0 +1,49 @@
+﻿.sessionBox {
+    width: 90%;
+    max-width: 400px;
+    /*background-color: #4158D0;
+    background-image: linear-gradient(43deg, #4158D0 0%, #C850C0 46%, #FFCC70 100%);
+    background-image: linear-gradient(43deg, #501790 0%, #793AC0 100%);*/
+
+    background: #6457A6;
+    padding: 10px;
+    border-radius: 8px;
+    height: auto;
+    margin-bottom: 0.5rem;
+}
+
+.propertyRow {
+    display: flex;
+    margin-bottom: 5px;
+    height: 2rem;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.propertyBox {
+    align-items: center;
+    padding: 0.2rem;
+    padding-inline: 0.4rem;
+    height: fit-content;
+    border-radius: 8px;
+    font-weight: 400;
+
+    background: white;
+}
+
+.left {
+    /*background-color: #FBAB7E;
+    background-image: linear-gradient(62deg, #FBAB7E 0%, #F7CE68 100%);*/
+}
+
+.right {
+    /*background-color: #FFFB7D;
+    background-image: linear-gradient(45deg, #FFFB7D 0%, #85FFBD 100%);*/
+}
+
+p {
+    color: #6457A6;
+    margin-bottom: 0;
+    font-weight: 600;
+    font-size: 0.9rem;
+}

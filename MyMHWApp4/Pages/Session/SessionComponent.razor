@@ -1,0 +1,33 @@
+﻿@using MHWApp.Library.Model
+@inject NavigationManager NavigationManager
+
+<button class="sessionBox" @onclick="OnClick">
+	<div class="propertyRow">
+
+		<div class="propertyBox left">
+			<p>@Session.Name</p>
+		</div>
+
+	</div>
+	<div class="propertyRow">
+
+		<div class="propertyBox left">
+			<p>Days: @Session.DayCount/@Session.MaxDays</p>
+		</div>
+
+		<div class="propertyBox right">
+			<p>@Session.Date</p>
+		</div>
+
+	</div>
+</button>
+
+@code {
+	[Parameter]
+	public required Session Session { get; set; }
+
+	private void OnClick() 
+	{ 
+		NavigationManager.NavigateTo("/inventory");
+	}
+}

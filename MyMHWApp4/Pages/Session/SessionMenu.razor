@@ -3,23 +3,25 @@
 @using MyMHWApp4.Provider
 @inject SessionProvider sessionProvider
 
-<h3>Sessions</h3>
+<main class="mainContainer">
 
-<p>Fancy Session here</p>
+<h2>Sessions</h2>
 
-@foreach(Session session in list)
+@foreach(Session session in sessions)
 {
-	<p>@session.Name</p>
+	<SessionComponent Session="session"></SessionComponent>
 }
 
+</main>
+
 @code {
-	List<Session> list = [];
+	List<Session> sessions = [];
 
 	protected async override Task OnInitializedAsync()
 	{
-		list = await sessionProvider.GetSessionAsync();
+		sessions = await sessionProvider.GetSessionAsync();
 
-		list.Add(new Session{
+		sessions.Add(new Session{
 			Id = 0,
 			Name = "Meine Test Session",
 			MaxDays = 60,

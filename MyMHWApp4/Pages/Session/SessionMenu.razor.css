@@ -1,0 +1,12 @@
+﻿h2 {
+    margin-top: 1rem;
+    margin-bottom: 2rem;
+}
+
+.mainContainer {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    height: 100vh;
+    flex-direction: column;
+}
