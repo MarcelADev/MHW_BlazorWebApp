@@ -19,7 +19,7 @@
 
 	protected async override Task OnInitializedAsync()
 	{
-		sessions = await sessionProvider.GetSessionAsync();
+		sessions = await sessionProvider.GetSessionsAsync();
 
 		sessions.Add(new Session{
 			Id = 0,

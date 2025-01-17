@@ -8,7 +8,7 @@ namespace MyMHWApp4.Provider
     {
         private readonly HttpClient _httpClient = httpClientFactory.CreateClient("Auth");
 
-        public async Task<List<Session>> GetSessionAsync()
+        public async Task<List<Session>> GetSessionsAsync()
         {
             try
             {

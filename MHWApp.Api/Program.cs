@@ -135,7 +135,7 @@ app.MapPost("/data-processing-2", ([FromBody] FormModel model) =>
     Results.Text($"{model.Message.Length} characters"))
         .RequireAuthorization(policy => policy.RequireRole("Manager"));
 
-#region SELFMADE ENDPOINTS
+#region Endpoint: Session
 
 app.MapGet("/sessions", async (AppDbContext dbContext, ClaimsPrincipal user) =>
     {
@@ -155,13 +155,53 @@ app.MapGet("/sessions", async (AppDbContext dbContext, ClaimsPrincipal user) =>
     } 
 );
 
-app.MapPost("/sessions", async(Session newSession, AppDbContext dbContext, ClaimsPrincipal user) => 
-    { 
+app.MapPost("/sessions", async (Session newSession, AppDbContext dbContext, ClaimsPrincipal user) =>
+    {
         await dbContext.Sessions.AddAsync(newSession);
         await dbContext.SaveChangesAsync();
         return Results.Created($"/newSession/{newSession.Id}", newSession);
     }
 );
+#endregion
+
+#region Endpoint: Participator Inventory Entry
+
+//app.MapGet("/participator/inventoryEntry", async (int sessionId, AppDbContext dbContext, ClaimsPrincipal user) => 
+//    {
+//        var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
+
+//        if (userIdClaim == null) return Results.Unauthorized();
+
+//        var playerId = int.Parse(userIdClaim.Value);
+
+//        var session = await dbContext.Sessions
+//        .FirstOrDefaultAsync(s => s.Id == sessionId && dbContext.Participators.Any(p => p.PlayerId == playerId && p.SessionId == sessionId));
+
+//        if (session == null) return Results.Unauthorized();
+
+//        //TODO
+//    }
+//);
+
+#endregion
+
+#region Endpoint: Inventory Entry
+
+app.MapGet("inventoryEntry", async (AppDbContext dbContext) =>
+    {
+        var inventoryEntries = await dbContext.InventoryEntries.ToListAsync();
+
+        return Results.Ok(inventoryEntries); ;
+    }
+).RequireAuthorization(policy => policy.RequireRole("Manager", "Admin"));
+
+app.MapPost("inventoryEntry", async (InventoryEntry newInventoryEntry, AppDbContext dbContext) =>
+    {
+        await dbContext.InventoryEntries.AddAsync(newInventoryEntry);
+        await dbContext.SaveChangesAsync();
+        return Results.Created($"/newSession/{newInventoryEntry.Id}", newInventoryEntry);
+    }
+).RequireAuthorization(policy => policy.RequireRole("Manager", "Admin"));
 
 #endregion
 
