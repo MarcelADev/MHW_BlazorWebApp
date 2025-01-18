@@ -10,3 +10,18 @@
     height: 100vh;
     flex-direction: column;
 }
+
+.addSessionButton {
+    padding-inline: 20px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    background: #6457A6;
+    border-radius: 8px;
+    color: white;
+    margin-top: 2rem;
+}
+
+    .addSessionButton:hover {
+        background: hsl(250, 31%, 50%, 0.9);
+        color: whitesmoke;
+    }

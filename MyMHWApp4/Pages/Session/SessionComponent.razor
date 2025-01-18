@@ -2,24 +2,40 @@
 @inject NavigationManager NavigationManager
 
 <button class="sessionBox" @onclick="OnClick">
-	<div class="propertyRow">
+	
+	<div class="upperRow">
 
-		<div class="propertyBox left">
+		<div class="propertyBox">
+			<label>Name:</label>
 			<p>@Session.Name</p>
 		</div>
 
 	</div>
-	<div class="propertyRow">
 
-		<div class="propertyBox left">
-			<p>Days: @Session.DayCount/@Session.MaxDays</p>
+	<div class="lowerRow">
+
+		<div class="propertyBox">
+			<label>Weapon:</label>
+			<p>Insektengleve</p>
 		</div>
 
-		<div class="propertyBox right">
-			<p>@Session.Date</p>
+		<div class="daysDateContainer">
+
+			<div class="propertyBox">
+				<label>Days:</label>
+				<p>@Session.DayCount/@Session.MaxDays</p>
+			</div>
+
+			<div class="propertyBox">
+				<label>Date:</label>
+				<p>@Session.MaxDays</p>
+			</div>
+
 		</div>
+		
 
 	</div>
+
 </button>
 
 @code {

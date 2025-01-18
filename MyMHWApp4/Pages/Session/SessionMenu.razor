@@ -12,6 +12,8 @@
 	<SessionComponent Session="session"></SessionComponent>
 }
 
+	<button class="addSessionButton"><b>&#x002B</b> New Session</button>
+
 </main>
 
 @code {
@@ -20,14 +22,6 @@
 	protected async override Task OnInitializedAsync()
 	{
 		sessions = await sessionProvider.GetSessionsAsync();
-
-		sessions.Add(new Session{
-			Id = 0,
-			Name = "Meine Test Session",
-			MaxDays = 60,
-			DayCount = 0,
-			Date = "01-01-2020"
-		});
 
 		await base.OnInitializedAsync();
 	}
