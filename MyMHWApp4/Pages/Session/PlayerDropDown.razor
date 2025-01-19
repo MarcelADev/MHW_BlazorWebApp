@@ -1,0 +1,40 @@
+﻿@using MHWApp.Library.Model
+@using Microsoft.AspNetCore.Components
+@using MyMHWApp4.Provider
+@inject PlayerProvider playerProvider
+
+<!-- Button, um das Dropdown anzuzeigen/verstecken -->
+<button @onclick="ToggleDropdown">Wähle eine Option</button>
+
+<!-- Dropdown-Liste -->
+@if (isDropdownOpen && players != null)
+{
+    <ul class="dropdown-list">
+        @foreach(Player player in players){
+            <PlayerDropDownComponent Player="player"></PlayerDropDownComponent>
+        }
+    </ul>
+}
+
+@code {
+    private bool isDropdownOpen = false;
+    List<Player>? players;
+
+    protected override async Task OnInitializedAsync()
+    {
+        players = await playerProvider.GetPlayersAsync();
+        await base.OnInitializedAsync();
+    }
+
+    // Toggle-Funktion für das Dropdown
+    private void ToggleDropdown()
+    {
+        isDropdownOpen = !isDropdownOpen;
+    }
+
+    // Methode zum Auswählen einer Option
+    private void SelectOption()
+    {
+        isDropdownOpen = false;  // Dropdown nach Auswahl schließen
+    }
+}

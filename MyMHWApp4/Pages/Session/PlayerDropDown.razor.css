@@ -1,0 +1,20 @@
+﻿/* Dropdown-Stile */
+.dropdown-list {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    border: 1px solid #ccc;
+    width: 200px;
+    background-color: white;
+    position: absolute;
+    z-index: 1000;
+}
+
+    .dropdown-list li {
+        padding: 8px;
+        cursor: pointer;
+    }
+
+        .dropdown-list li:hover {
+            background-color: #f0f0f0;
+        }
