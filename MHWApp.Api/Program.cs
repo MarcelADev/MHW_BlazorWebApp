@@ -164,7 +164,27 @@ app.MapPost("/sessions", async (Session newSession, AppDbContext dbContext, Clai
 );
 #endregion
 
-#region Participator
+#region Endpoint: Player
+
+app.MapGet("/players", async (AppDbContext dbContext, ClaimsPrincipal user) =>
+{
+    var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
+    if (userIdClaim == null)
+    {
+        return Results.Unauthorized();
+    }
+
+    var playerId = int.Parse(userIdClaim.Value);
+
+    var players = await dbContext.Players.Where(p => p.Id != playerId).ToListAsync();
+
+    return Results.Ok(players);
+}
+);
+
+#endregion
+
+#region Endpoint: Participator
 
 app.MapGet("/participators/{sessionId}", async (AppDbContext dbContext, ClaimsPrincipal user, int sessionId) =>
 {

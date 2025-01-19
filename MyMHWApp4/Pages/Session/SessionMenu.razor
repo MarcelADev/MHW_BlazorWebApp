@@ -13,7 +13,12 @@
 	<SessionComponent Session="session"></SessionComponent>
 }
 
-<button class="addSessionButton" @onclick="NavigateToCreateSession"><b>&#x002B</b> New Session</button>
+<button class="addSessionButton" @onclick="NavigateToCreateSession">
+	<div class="buttonContainer">
+		<p class="plus">&#x002B</p>
+		New Session
+	</div>
+</button>
 
 </main>
 

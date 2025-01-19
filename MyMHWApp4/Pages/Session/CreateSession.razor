@@ -2,6 +2,7 @@
 @using MHWApp.Library.Model
 @using MyMHWApp4.Provider
 @inject SessionProvider sessionProvider
+@inject PlayerProvider playerProvider
 
 <main class="mainContainer">
 
@@ -19,14 +20,26 @@
         <input placeholder="60" type="number" @bind-value="sessionMaxDays" />
     </div>
 
+    @if(players == null){
+        <p>Loading ...</p>
+    }
+    else if(!players.Any()){
+        <p>List is empty</p>
+    }
+    else {
+
+    }
+
 </main>
 
 @code {
     private string sessionName = "";
     private int sessionMaxDays = -1;
+    List<Player> players;
 
     protected async override Task OnInitializedAsync()
-	{
-		await base.OnInitializedAsync();
+    {
+        players = await playerProvider.GetPlayersAsync();
+        await base.OnInitializedAsync();
 	}
 }
