@@ -2,6 +2,7 @@
 @using MHWApp.Library.Model
 @using MyMHWApp4.Provider
 @inject SessionProvider sessionProvider
+@inject NavigationManager navigationManager
 
 <main class="mainContainer">
 
@@ -12,7 +13,7 @@
 	<SessionComponent Session="session"></SessionComponent>
 }
 
-	<button class="addSessionButton"><b>&#x002B</b> New Session</button>
+<button class="addSessionButton" @onclick="NavigateToCreateSession"><b>&#x002B</b> New Session</button>
 
 </main>
 
@@ -24,5 +25,9 @@
 		sessions = await sessionProvider.GetSessionsAsync();
 
 		await base.OnInitializedAsync();
+	}
+
+	private void NavigateToCreateSession(){
+		navigationManager.NavigateTo("/session/create");
 	}
 }

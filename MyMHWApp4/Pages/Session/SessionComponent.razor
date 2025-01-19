@@ -1,39 +1,35 @@
 ﻿@using MHWApp.Library.Model
-@inject NavigationManager NavigationManager
+@using MyMHWApp4.Provider
+@inject NavigationManager navigationManager
+@inject ParticipatorProvider participatorProvider
 
-<button class="sessionBox" @onclick="OnClick">
-	
-	<div class="upperRow">
+<button class="sessionCard" @onclick="NavigateToInventory">
 
-		<div class="propertyBox">
-			<label>Name:</label>
-			<p>@Session.Name</p>
-		</div>
-
+	<div class="imageContainer">
+		<img src="Images/CardPicture.jpg" alt="Image not available" />
 	</div>
 
-	<div class="lowerRow">
+	<h4>@Session.Name</h4>
 
-		<div class="propertyBox">
+	<div class="propertyContainer">
+		<div class="labelContainer">
 			<label>Weapon:</label>
-			<p>Insektengleve</p>
 		</div>
+		<p>@participator.WeaponType</p>
+	</div>
 
-		<div class="daysDateContainer">
-
-			<div class="propertyBox">
-				<label>Days:</label>
-				<p>@Session.DayCount/@Session.MaxDays</p>
-			</div>
-
-			<div class="propertyBox">
-				<label>Date:</label>
-				<p>@Session.MaxDays</p>
-			</div>
-
+	<div class="propertyContainer">
+		<div class="labelContainer">
+			<label>Days:</label>
 		</div>
-		
+		<p>@Session.DayCount/@Session.MaxDays</p>
+	</div>
 
+	<div class="propertyContainer">
+		<div class="labelContainer">
+			<label>Date:</label>
+		</div>
+		<p>@Session.Date</p>
 	</div>
 
 </button>
@@ -41,9 +37,21 @@
 @code {
 	[Parameter]
 	public required Session Session { get; set; }
+	Participator? participator = new Participator
+	{
+		Id = -1,
+		PlayerId = -1,
+		WeaponTypeId = 2
+	};
 
-	private void OnClick() 
+	protected override async Task OnInitializedAsync()
+	{
+		await participatorProvider.GetParticipatorAsync(Session.Id);
+		base.OnInitializedAsync();
+	}
+
+	private void NavigateToInventory() 
 	{ 
-		NavigationManager.NavigateTo("/inventory");
+		navigationManager.NavigateTo("/inventory");
 	}
 }

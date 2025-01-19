@@ -5,13 +5,13 @@
         public int Id { get; set; }
 
         public int PlayerId { get; set; }
-        public required Player Player { get; set; }
+        public Player Player { get; set; }
 
         public int SessionId { get; set; }
-        public required Session Session { get; set; }
+        public Session Session { get; set; }
 
         public int WeaponTypeId { get; set; }
-        public required WeaponType WeaponType { get; set; }
+        public WeaponType WeaponType { get; set; }
 
         public List<InventoryEntry> InventoryEntries { get; set; } = [];
         public List<ParticipatorInventoryEntry> ParticipatorInventoryEntries { get; set; } = [];

@@ -164,6 +164,26 @@ app.MapPost("/sessions", async (Session newSession, AppDbContext dbContext, Clai
 );
 #endregion
 
+#region Participator
+
+app.MapGet("/participators/{sessionId}", async (AppDbContext dbContext, ClaimsPrincipal user, int sessionId) =>
+{
+    var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
+    if (userIdClaim == null)
+    {
+        return Results.Unauthorized();
+    }
+
+    var playerId = int.Parse(userIdClaim.Value);
+
+    var participator = await dbContext.Participators.FirstOrDefaultAsync(p => p.PlayerId == playerId && p.SessionId == sessionId);
+
+    return Results.Ok(participator);
+}
+);
+
+#endregion
+
 #region Endpoint: Participator Inventory Entry
 
 //app.MapGet("/participator/inventoryEntry", async (int sessionId, AppDbContext dbContext, ClaimsPrincipal user) => 

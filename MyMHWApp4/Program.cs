@@ -36,6 +36,7 @@ builder.Services.AddHttpClient(
 #region SELFMADE SERVICES
 
 builder.Services.AddScoped<SessionProvider>();
+builder.Services.AddScoped<ParticipatorProvider>();
 builder.Services.AddScoped<InventoryEntryProvider>();
 
 #endregion

@@ -1,0 +1,32 @@
+﻿@page "/session/create"
+@using MHWApp.Library.Model
+@using MyMHWApp4.Provider
+@inject SessionProvider sessionProvider
+
+<main class="mainContainer">
+
+    <h2>Create new Session</h2>
+
+    <div>
+        <label>Name:</label>
+        <br />
+        <input placeholder="Session Name" type="text" @bind-value="sessionName" />
+    </div>
+
+    <div>
+        <label>Maximum Days::</label>
+        <br />
+        <input placeholder="60" type="number" @bind-value="sessionMaxDays" />
+    </div>
+
+</main>
+
+@code {
+    private string sessionName = "";
+    private int sessionMaxDays = -1;
+
+    protected async override Task OnInitializedAsync()
+	{
+		await base.OnInitializedAsync();
+	}
+}
