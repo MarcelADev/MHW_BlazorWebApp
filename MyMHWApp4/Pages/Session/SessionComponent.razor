@@ -15,7 +15,12 @@
 		<div class="labelContainer">
 			<label>Weapon:</label>
 		</div>
-		<p>@participator.WeaponType</p>
+		@if(participator == null){
+			<p>Loading</p>
+		}
+		else {
+			<p>@participator.WeaponType.Name</p>
+		}
 	</div>
 
 	<div class="propertyContainer">
@@ -37,17 +42,12 @@
 @code {
 	[Parameter]
 	public required Session Session { get; set; }
-	Participator? participator = new Participator
-	{
-		Id = -1,
-		PlayerId = -1,
-		WeaponTypeId = 2
-	};
+	Participator? participator;
 
 	protected override async Task OnInitializedAsync()
 	{
-		await participatorProvider.GetParticipatorAsync(Session.Id);
-		base.OnInitializedAsync();
+		participator = await participatorProvider.GetParticipatorAsync(Session.Id);
+		await base.OnInitializedAsync();
 	}
 
 	private void NavigateToInventory() 

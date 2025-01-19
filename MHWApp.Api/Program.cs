@@ -176,7 +176,7 @@ app.MapGet("/participators/{sessionId}", async (AppDbContext dbContext, ClaimsPr
 
     var playerId = int.Parse(userIdClaim.Value);
 
-    var participator = await dbContext.Participators.FirstOrDefaultAsync(p => p.PlayerId == playerId && p.SessionId == sessionId);
+    var participator = await dbContext.Participators.Include(p => p.WeaponType).FirstOrDefaultAsync(p => p.PlayerId == playerId && p.SessionId == sessionId);
 
     return Results.Ok(participator);
 }
