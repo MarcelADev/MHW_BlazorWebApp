@@ -1,0 +1,8 @@
+﻿@using MHWApp.Library.Model
+
+<li>@Player.UserName</li>
+
+@code {
+	[Parameter]
+	public required Player Player { get; set; }
+}
