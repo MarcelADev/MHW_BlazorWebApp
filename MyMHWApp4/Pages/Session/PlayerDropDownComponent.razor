@@ -1,8 +1,37 @@
 ﻿@using MHWApp.Library.Model
 
-<li>@Player.UserName</li>
+<li class="componentContainer">
+	@Player.UserName
+
+	<input id="checkbox" class="checkbox" type="checkbox" @onclick="ToggleSelection" />
+	
+</li>
 
 @code {
+	private bool isSelected = false;
+
 	[Parameter]
 	public required Player Player { get; set; }
+
+	[Parameter]
+	public required Action<Player> AddPlayer { get; set; }
+
+	[Parameter]
+	public required Action<Player> RemovePlayer { get; set; }
+
+	private void ToggleSelection()
+	{
+		isSelected = !isSelected;
+
+		if(isSelected){
+			AddPlayer(Player);
+		}
+		else {
+			RemovePlayer(Player);
+		}
+	}
+
+	private string GetButtonClass(){
+		return isSelected ? "selected" : "unselected";
+	}
 }

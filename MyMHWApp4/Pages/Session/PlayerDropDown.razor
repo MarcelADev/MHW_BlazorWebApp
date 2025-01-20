@@ -4,24 +4,38 @@
 @inject PlayerProvider playerProvider
 
 <!-- Button, um das Dropdown anzuzeigen/verstecken -->
-<button @onclick="ToggleDropdown">Wähle eine Option</button>
+<button class="dropDownButton" type="button" @onclick="ToggleDropdown">
+    <div class="dropdown"></div>
+    Wähle die Teilnehmer
+</button>
 
 <!-- Dropdown-Liste -->
 @if (isDropdownOpen && players != null)
 {
     <ul class="dropdown-list">
         @foreach(Player player in players){
-            <PlayerDropDownComponent Player="player"></PlayerDropDownComponent>
+            <PlayerDropDownComponent 
+            Player="player" 
+            AddPlayer="SelectPlayer" 
+            RemovePlayer="RemoveSelectedPlayer">
+            </PlayerDropDownComponent>
         }
     </ul>
+}
+@foreach (Player player in selectedPlayers)
+{
+    <p>@player.UserName</p>
 }
 
 @code {
     private bool isDropdownOpen = false;
     List<Player>? players;
+    List<Player> selectedPlayers = [];
 
     protected override async Task OnInitializedAsync()
     {
+        //selectedPlayers.Add(context.User.Identity);
+
         players = await playerProvider.GetPlayersAsync();
         await base.OnInitializedAsync();
     }
@@ -32,9 +46,21 @@
         isDropdownOpen = !isDropdownOpen;
     }
 
-    // Methode zum Auswählen einer Option
-    private void SelectOption()
+    public void SelectPlayer(Player player) 
     {
-        isDropdownOpen = false;  // Dropdown nach Auswahl schließen
+        if (selectedPlayers.Contains(player)) return;
+
+        selectedPlayers.Add(player);
+
+        StateHasChanged();
+    }
+
+    public void RemoveSelectedPlayer(Player player)
+    {
+        if (!selectedPlayers.Contains(player)) return;
+
+        selectedPlayers.Remove(player);
+
+        StateHasChanged();
     }
 }
