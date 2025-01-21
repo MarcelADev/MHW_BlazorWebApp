@@ -1,10 +1,11 @@
 ﻿@using MHWApp.Library.Model
 
-<li class="componentContainer">
-	@Player.UserName
-
-	<input id="checkbox" class="checkbox" type="checkbox" checked="@IsSelected" @onclick="ToggleSelection" />
-
+<li>
+	<label class="componentContainer">
+		@Player.UserName
+	
+		<input id="checkbox" class="checkbox" type="checkbox" checked="@IsSelected" @onclick="ToggleSelection" />
+	</label>
 </li>
 
 @code {

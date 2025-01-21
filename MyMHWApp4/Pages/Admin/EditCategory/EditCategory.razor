@@ -1,15 +1,12 @@
 ﻿@page "/edit/categories"
 @using MHWApp.Library.Model
+@using MyMHWApp4.Pages.Admin.GeneralComponents
 @using Provider
 @inject CategoryProvider categoryProvider
 
 <h3>Edit Categories</h3>
 
-<div class="propertyContainer">
-	<label>Name:</label>
-	<br />
-	<input placeholder="Category Name" type="text" @bind-value="name" />
-</div>
+<InputComponentText NameChanged="HandleNameChanged"></InputComponentText>
 
 @if(categories == null){
 	<p>Loading ...</p>
@@ -23,6 +20,8 @@ else{
 	}
 }
 
+<p>@name</p>
+
 @code {
 	List<Category>? categories;
 	private string name = "";
@@ -31,5 +30,11 @@ else{
 	{
 		categories = await categoryProvider.GetCategoriesAsync();
 		await base.OnInitializedAsync();
+	}
+
+	private void HandleNameChanged(string newName)
+	{
+		name = newName;
+		StateHasChanged();
 	}
 }

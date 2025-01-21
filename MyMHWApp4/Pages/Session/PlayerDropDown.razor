@@ -14,7 +14,7 @@
 {
     <ul class="dropdown-list">
         @foreach(Player player in players){
-            
+
             <PlayerDropDownComponent 
                 IsSelected="selectedPlayers.Contains(player)"
                 Player="player"
@@ -24,6 +24,11 @@
         }
     </ul>
 }
+
+<AuthorizeView>
+    <p>@context.User.Identity?.Name</p>
+</AuthorizeView>
+
 @foreach (Player player in selectedPlayers)
 {
     <p>@player.UserName</p>
@@ -36,8 +41,6 @@
 
     protected override async Task OnInitializedAsync()
     {
-        //selectedPlayers.Add(context.User.Identity);
-
         players = await playerProvider.GetPlayersAsync();
         await base.OnInitializedAsync();
     }
