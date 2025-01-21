@@ -3,12 +3,13 @@
 <li class="componentContainer">
 	@Player.UserName
 
-	<input id="checkbox" class="checkbox" type="checkbox" @onclick="ToggleSelection" />
-	
+	<input id="checkbox" class="checkbox" type="checkbox" checked="@IsSelected" @onclick="ToggleSelection" />
+
 </li>
 
 @code {
-	private bool isSelected = false;
+	[Parameter]
+	public required bool IsSelected { get; set; }
 
 	[Parameter]
 	public required Player Player { get; set; }
@@ -21,9 +22,9 @@
 
 	private void ToggleSelection()
 	{
-		isSelected = !isSelected;
+		IsSelected = !IsSelected;
 
-		if(isSelected){
+		if(IsSelected){
 			AddPlayer(Player);
 		}
 		else {
@@ -32,6 +33,6 @@
 	}
 
 	private string GetButtonClass(){
-		return isSelected ? "selected" : "unselected";
+		return IsSelected ? "selected" : "unselected";
 	}
 }
