@@ -1,0 +1,39 @@
+﻿@page "/edit/inventoryentries"
+@using MHWApp.Library.Model
+@using Provider;
+@inject InventoryEntryProvider inventoryEntryProvider
+
+<main>
+	<h3>Edit Inventory Entries</h3>
+
+	<div class="propertyContainer">
+		<label>Name:</label>
+		<br />
+		<input placeholder="Inventory Entry Name" type="text" @bind-value="name" />
+	</div>
+
+	@if (inventoryEntries == null) {
+		<p>Loading...</p>
+	}
+	else if (!inventoryEntries.Any()) {
+		<p>List is empty</p>
+	}
+	else {
+		@foreach (InventoryEntry entry in inventoryEntries) {
+			<EditInventoryEntryComponent InventoryEntry="entry"></EditInventoryEntryComponent>
+		}
+	}
+</main>
+
+
+@code {
+	private string name = "";
+	List<InventoryEntry>? inventoryEntries;
+
+	protected async override Task OnInitializedAsync()
+	{
+		inventoryEntries = await inventoryEntryProvider.GetInventoryEntriesAsync();
+
+		await base.OnInitializedAsync();
+	}
+}

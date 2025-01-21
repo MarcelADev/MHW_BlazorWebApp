@@ -1,0 +1,35 @@
+﻿@page "/edit/categories"
+@using MHWApp.Library.Model
+@using Provider
+@inject CategoryProvider categoryProvider
+
+<h3>Edit Categories</h3>
+
+<div class="propertyContainer">
+	<label>Name:</label>
+	<br />
+	<input placeholder="Category Name" type="text" @bind-value="name" />
+</div>
+
+@if(categories == null){
+	<p>Loading ...</p>
+}
+else if(!categories.Any()){
+	<p>List is empty</p>
+}
+else{
+	@foreach(Category category in categories){
+		<EditCategoryComponent Category="category"></EditCategoryComponent>
+	}
+}
+
+@code {
+	List<Category>? categories;
+	private string name = "";
+
+	protected override async Task OnInitializedAsync()
+	{
+		categories = await categoryProvider.GetCategoriesAsync();
+		await base.OnInitializedAsync();
+	}
+}

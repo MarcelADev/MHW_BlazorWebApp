@@ -1,0 +1,9 @@
+﻿@using MHWApp.Library.Model
+<div>
+	<p>@Category.Name</p>
+</div>
+
+@code {
+	[Parameter]
+	public required Category Category { get; set; }
+}

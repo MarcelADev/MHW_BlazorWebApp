@@ -225,6 +225,25 @@ app.MapGet("/participators/{sessionId}", async (AppDbContext dbContext, ClaimsPr
 
 #endregion
 
+#region Endpoint: Category
+
+app.MapGet("/categories", async (AppDbContext dbContext, ClaimsPrincipal user) =>
+{
+    var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
+    if (userIdClaim == null)
+    {
+        return Results.Unauthorized();
+    }
+
+    var playerId = int.Parse(userIdClaim.Value);
+
+    var categories = await dbContext.Categories.ToListAsync();
+
+    return Results.Ok(categories);
+});
+
+#endregion
+
 #region Endpoint: Inventory Entry
 
 app.MapGet("inventoryEntry", async (AppDbContext dbContext) =>

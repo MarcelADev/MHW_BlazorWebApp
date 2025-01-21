@@ -1,5 +1,4 @@
-﻿/* Dropdown-Stile */
-.dropdown-list {
+﻿.dropdown-list {
     list-style-type: none;
     margin: 0;
     padding: 0;
@@ -35,7 +34,7 @@
         height: 0;
         border-left: 5px solid transparent;
         border-right: 5px solid transparent;
-        border-top: 5px solid black; /* Dies ist der Pfeil */
+        border-top: 5px solid black;
     }
 
 .dropDownButton {

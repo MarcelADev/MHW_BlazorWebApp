@@ -39,6 +39,7 @@ builder.Services.AddScoped<SessionProvider>();
 builder.Services.AddScoped<PlayerProvider>();
 builder.Services.AddScoped<ParticipatorProvider>();
 builder.Services.AddScoped<InventoryEntryProvider>();
+builder.Services.AddScoped<CategoryProvider>();
 
 #endregion
 
