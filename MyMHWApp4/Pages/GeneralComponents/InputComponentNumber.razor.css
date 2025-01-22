@@ -1,0 +1,10 @@
+﻿input {
+    width: 100%;
+    padding: var(--input-padding);
+}
+
+.propertyContainer {
+    margin-bottom: 10px;
+    width: var(--standard-width);
+    max-width: var(--standard-max-width);
+}

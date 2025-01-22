@@ -112,3 +112,35 @@ code {
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
     text-align: start;
 }
+
+/* ## GLOBAL VARIABLES ## */
+:root {
+    --primary-color: black;
+    --secondary-color: white;
+
+    --standard-width: 100%;
+    --standard-max-width: 400px;
+
+    --input-padding: 5px;
+    --standard-padding: 5px;
+}
+
+/* ## GLOBAL STYLES ## */
+h2 {
+    font-size: 2rem;
+    margin-top: 1rem;
+    margin-bottom: 2rem;
+}
+
+label, p, input, button {
+    font-size: 1.3rem;
+}
+
+/* ## GLOBAL CLASSESS ## */
+
+.mainContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: var(--standard-width);
+}

@@ -1,9 +1,13 @@
 ﻿.componentContainer {
-    display:flex;
+    display: flex;
     justify-content: space-between;
-    padding: 5px;
+    padding: var(--standard-padding);
     align-items: center;
+    cursor: pointer;
 }
+    .componentContainer:hover {
+        background-color: #f0f0f0;
+    }
 
 .checkbox {
     margin-right: 5px;

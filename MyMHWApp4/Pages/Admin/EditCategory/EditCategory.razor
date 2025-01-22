@@ -1,12 +1,12 @@
 ﻿@page "/edit/categories"
 @using MHWApp.Library.Model
-@using MyMHWApp4.Pages.Admin.GeneralComponents
+@using MyMHWApp4.Pages.GeneralComponents
 @using Provider
 @inject CategoryProvider categoryProvider
 
 <h3>Edit Categories</h3>
 
-<InputComponentText NameChanged="HandleNameChanged"></InputComponentText>
+<InputComponentText LabelText="Name:" PropertyChanged="HandleNameChanged"></InputComponentText>
 
 @if(categories == null){
 	<p>Loading ...</p>

@@ -1,0 +1,23 @@
+﻿<div class="propertyContainer">
+	<label for="PropertyInput">@LabelText</label>
+	<br />
+	<input name="PropertyInput" placeholder="@PlaceHolder" type="text" @bind-value="input" @oninput="OnPropertyChanged" />
+</div>
+
+@code {
+	private string input = "";
+
+	[Parameter]
+	public required string LabelText { get; set; }
+
+	[Parameter]
+	public string? PlaceHolder { get; set; }
+
+	[Parameter]
+	public required EventCallback<string> PropertyChanged { get; set; }
+
+	private async Task OnPropertyChanged()
+	{
+		await PropertyChanged.InvokeAsync(input);
+	}
+}

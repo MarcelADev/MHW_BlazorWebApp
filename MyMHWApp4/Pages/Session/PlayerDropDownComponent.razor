@@ -3,7 +3,6 @@
 <li>
 	<label class="componentContainer">
 		@Player.UserName
-	
 		<input id="checkbox" class="checkbox" type="checkbox" checked="@IsSelected" @onclick="ToggleSelection" />
 	</label>
 </li>
@@ -16,10 +15,10 @@
 	public required Player Player { get; set; }
 
 	[Parameter]
-	public required Action<Player> AddPlayer { get; set; }
+	public required Func<Player, Task> AddPlayer { get; set; }
 
 	[Parameter]
-	public required Action<Player> RemovePlayer { get; set; }
+	public required Func<Player, Task> RemovePlayer { get; set; }
 
 	private void ToggleSelection()
 	{

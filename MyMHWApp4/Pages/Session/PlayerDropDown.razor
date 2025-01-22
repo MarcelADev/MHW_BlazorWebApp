@@ -3,13 +3,11 @@
 @using MyMHWApp4.Provider
 @inject PlayerProvider playerProvider
 
-<!-- Button, um das Dropdown anzuzeigen/verstecken -->
-<button class="dropDownButton" type="button" @onclick="ToggleDropdown">
-    <div class="dropdown"></div>
+<button class="dropDown-button" type="button" @onclick="ToggleDropdown">
     Wähle die Teilnehmer
+    <span class="material-symbols-outlined"><img src="~/Images/arrowDown.png" /></span>
 </button>
 
-<!-- Dropdown-Liste -->
 @if (isDropdownOpen && players != null)
 {
     <ul class="dropdown-list">
@@ -25,19 +23,14 @@
     </ul>
 }
 
-<AuthorizeView>
-    <p>@context.User.Identity?.Name</p>
-</AuthorizeView>
-
-@foreach (Player player in selectedPlayers)
-{
-    <p>@player.UserName</p>
-}
-
 @code {
     private bool isDropdownOpen = false;
     List<Player>? players;
+
     List<Player> selectedPlayers = [];
+
+    [Parameter]
+    public required EventCallback<List<Player>> SelectedPlayersChanged { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -45,27 +38,26 @@
         await base.OnInitializedAsync();
     }
 
-    // Toggle-Funktion für das Dropdown
+    private async Task OnSelectedPlayersChanged(){
+        await SelectedPlayersChanged.InvokeAsync(selectedPlayers);
+    }
+
     private void ToggleDropdown()
     {
         isDropdownOpen = !isDropdownOpen;
     }
 
-    public void SelectPlayer(Player player) 
+    public async Task SelectPlayer(Player player)
     {
         if (selectedPlayers.Contains(player)) return;
-
         selectedPlayers.Add(player);
-
-        StateHasChanged();
+        await OnSelectedPlayersChanged();
     }
 
-    public void RemoveSelectedPlayer(Player player)
+    public async Task RemoveSelectedPlayer(Player player)
     {
         if (!selectedPlayers.Contains(player)) return;
-
         selectedPlayers.Remove(player);
-
-        StateHasChanged();
+        await OnSelectedPlayersChanged();
     }
 }

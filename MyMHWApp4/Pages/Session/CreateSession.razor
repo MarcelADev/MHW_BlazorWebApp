@@ -1,5 +1,6 @@
 ﻿@page "/session/create"
 @using MHWApp.Library.Model
+@using MyMHWApp4.Pages.GeneralComponents
 @using MyMHWApp4.Provider
 @inject SessionProvider sessionProvider
 
@@ -7,22 +8,38 @@
 
     <h2>Create new Session</h2>
 
-    <div class="propertyContainer">
-        <label>Name:</label>
-        <br />
-        <input placeholder="Session Name" type="text" @bind-value="sessionName" />
-    </div>
+    <InputComponentText LabelText="Name:" PlaceHolder="Session Name" PropertyChanged="HandleNameChanged"></InputComponentText>
 
-    <div class="propertyContainer">
-        <label>Maximum Days::</label>
-        <br />
-        <input placeholder="60" type="number" @bind-value="sessionMaxDays" />
-    </div>
+    <InputComponentNumber LabelText="Max Days:" Input="25" PropertyChanged="HandleMaxDaysChanged"></InputComponentNumber>
 
-    <PlayerDropDown></PlayerDropDown>
+    <PlayerDropDown SelectedPlayersChanged="HandleSelectedPlayersChanged"></PlayerDropDown>
+
+    <AuthorizeView>
+        <p>@context.User.Identity?.Name</p>
+    </AuthorizeView>
+
+    @foreach(Player player in selectedPlayers){
+        <ParticipatorComponent Player="player"></ParticipatorComponent>
+    }
+
 </main>
 
 @code {
     private string sessionName = "";
     private int sessionMaxDays = -1;
+    private List<Player> selectedPlayers = [];
+
+    private void HandleNameChanged(string newName)
+    {
+        sessionName = newName;
+    }
+
+    private void HandleMaxDaysChanged(int newMaxDays){
+        sessionMaxDays = newMaxDays;
+    }
+
+    private void HandleSelectedPlayersChanged(List<Player> newSelectedPlayers){
+        selectedPlayers = newSelectedPlayers;
+        StateHasChanged();
+    }
 }
