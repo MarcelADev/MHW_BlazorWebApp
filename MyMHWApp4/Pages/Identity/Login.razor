@@ -1,5 +1,6 @@
 ﻿@page "/login"
 @using MyMHWApp4.Identity
+@using MyMHWApp4.Pages.GeneralComponents
 @inject IAccountManagement Acct
 
 <PageTitle>Login</PageTitle>
@@ -9,44 +10,67 @@
         <LoginRedirect></LoginRedirect>
     </Authorized>
     <NotAuthorized>
-        <div class="mainContainer">
 
-            <h1>Login</h1>
+        <div class="theme-purple">
 
-            @if (errors)
-            {
-                @foreach (var error in errorList)
-                {
-                    <div class="alert alert-danger">@error</div>
-                }
-            }
+            <header class="container-center header">
 
-            <div>
-                <label for="email">Email:</label>
-                <br />
-                <input required id="email" name="emailInput" placeholder="Enter your email address" type="email" @bind-value="email" />
-            </div>
+                <h2>Login</h2
 
-            <div>
-                <label for="password">Password:</label>
-                <br />
-                <input required id="password" name="passwordInput" placeholder="Enter your password" type="password" @bind-value="password" />
-            </div>
+            </header>
 
-            <br/>
-            
-            <button class="loginButton" @onclick="DoLoginAsync">Login</button>
+            <main class="container-top main">
 
-            <a href="">🠔 Return</a>
+                <div class="container-center inner-top">
+
+                    @if (errors)
+                    {
+                        @foreach (var error in errorList)
+                        {
+                            <div class="alert alert-danger">@error</div>
+                        }
+                    }
+
+                </div>
+
+                <div class="container-top inner-bot">
+
+                    <div class="container-property-identity">
+                        <label for="email">Email:</label>
+                        <br />
+                        <input required id="email" name="emailInput" placeholder="Enter your email address" type="email" @bind-value="email" />
+                    </div>
+
+                    <div class="container-property-identity">
+                        <label for="password">Password:</label>
+                        <br />
+                        <input required id="password" name="passwordInput" placeholder="Enter your password" type="password" @bind-value="password" />
+                    </div>
+
+                    <br/>
+
+                    <button class="button-login" @onclick="DoLoginAsync">Login</button>
+
+                    <a class="link-return" href="">🠔 Return</a>
+
+                </div>
+
+            </main>
         </div>
     </NotAuthorized>
 </AuthorizeView>
 
 @code {
+
+
+
     private bool success, errors;
     private string email = string.Empty;
     private string password = string.Empty;
     private string[] errorList = [];
+
+    private void HandleEmailChanged(string newEmail) { email = newEmail; StateHasChanged(); }
+    private void HandlePasswordChanged(string newPassword) { password = newPassword; StateHasChanged(); }
 
     public async Task DoLoginAsync()
     {

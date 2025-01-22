@@ -1,1 +1,18 @@
-﻿
+﻿h2 {
+    font-size: 2.6rem;
+    font-weight: 200;
+}
+
+.participator-list {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    border: 1px solid #ccc;
+    width: var(--standard-width);
+    max-width: var(--standard-max-width);
+}
+
+.container-h3 {
+    margin-top: 2rem;
+    margin-bottom: 0.5rem;
+}

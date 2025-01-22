@@ -3,10 +3,12 @@
     align-items: center;
     border: 1px solid black;
     margin-top: 5px;
+    margin-bottom: 0;
     justify-content: space-between;
     width: var(--standard-width);
     max-width: var(--standard-max-width);
     padding: var(--standard-padding);
+    padding-inline: 10px;
 }
 
 .dropdown-list {
@@ -16,9 +18,4 @@
     border: 1px solid #ccc;
     width: var(--standard-width);
     max-width: var(--standard-max-width);
-    background-color: var(--secondary-color);
-}
-
-.material-symbols-outlined {
-    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24
 }

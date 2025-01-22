@@ -1,37 +1,23 @@
-﻿h2 {
-    margin-top: 1rem;
-    margin-bottom: 2rem;
-}
-
-p {
+﻿p {
     margin: 0;
 }
 
-.mainContainer {
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    height: 100%;
-    flex-direction: column;
-}
-
-.addSessionButton {
+.button-addsession {
     padding-inline: 20px;
     padding-top: 8px;
     padding-bottom: 8px;
-    background: #6457A6;
+    background: var(--primary-color);
     border-radius: 5px;
     border: 0px;
-    color: white;
+    color: var(--secondary-color);
     margin-top: 2rem;
 }
-
-    .addSessionButton:hover {
-        background: hsl(250, 31%, 50%, 0.9);
-        color: whitesmoke;
+    .button-addsession:hover {
+        opacity: 0.9;
+        color: var(--secondary-color-dark);
     }
 
-.buttonContainer {
+.container-button {
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -42,4 +28,9 @@ p {
     margin-top: -8px;
     margin-bottom: -8px;
     font-size: 1.8rem;
+    color: var(--secondary-color);
 }
+
+    .plus:hover {
+        color: var(--secondary-color-dark);
+    }

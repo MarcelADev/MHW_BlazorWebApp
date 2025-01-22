@@ -4,21 +4,27 @@
 @inject SessionProvider sessionProvider
 @inject NavigationManager navigationManager
 
-<main class="mainContainer">
+<header class="container-center header">
 
-<h2>Sessions</h2>
+	<h2>Sessions</h2>
 
-@foreach(Session session in sessions)
-{
-	<SessionComponent Session="session"></SessionComponent>
-}
+</header>
 
-<button class="addSessionButton" @onclick="NavigateToCreateSession">
-	<div class="buttonContainer">
-		<p class="plus">&#x002B</p>
-		New Session
-	</div>
-</button>
+<main class="container-top main">
+
+	@foreach(Session session in sessions)
+	{
+		<SessionComponent Session="session"></SessionComponent>
+	}
+
+	<button class="button-addsession theme-purple" @onclick="NavigateToCreateSession">
+
+		<div class="container-button">
+			<p class="plus">&#x002B</p>
+			New Session
+		</div>
+
+	</button>
 
 </main>
 

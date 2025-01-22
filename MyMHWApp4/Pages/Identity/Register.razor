@@ -4,56 +4,62 @@
 
 <PageTitle>Register</PageTitle>
 
-<header class="whitespace">
+<div class="theme-purple">
 
-</header>
-<main class="mainContainer">
-    <AuthorizeView>
-        <Authorized>
-            <div class="alert alert-success">You're already logged in as @context.User.Identity?.Name.</div>
-        </Authorized>
-        <NotAuthorized>
-            <h1>Register</h1>
+    <header class="container-center header">
+        <h2>Register</h2>
+    </header>
 
-            @if (success)
-            {
+    <main class="container-top main">
+        <AuthorizeView>
+            <Authorized>
                 <LoginRedirect></LoginRedirect>
-            }
-            else
-            {
-                <div>
-                    <label for="email">Email:</label>
-                    <br />
-                    <input autofocus autocomplete="on" required id="email" name="emailInput" placeholder="Enter your email address" type="email" @bind-value="email" />
-                </div>
-                <div>
-                    <label for="password">Password:</label>
-                    <br />
-                    <input required id="password" name="passwordInput" placeholder="Enter your password" type="password" @bind-value="password" /><br />
-                </div>
-                <div>
-                    <label for="confirmPassword">Retype password:</label>
-                    <br />
-                    <input required id="confirmPassword" name="confirmPasswordInput" placeholder="Re-enter your password" type="password" @bind-value="confirmPassword" />
-                </div>
-                    
-                <button class="registerButton" @onclick="DoRegisterAsync">Register</button>
-
-                <a href="">🠔 Return</a>
-
-                if (errors)
+            </Authorized>
+            <NotAuthorized>
+            
+                @if (success)
                 {
-                    <div class="errorContainer">
-                        @foreach (var error in errorList)
+                    <LoginRedirect></LoginRedirect>
+                }
+                else
+                {
+                    <div class="container-property-identity">
+                        <label for="email">Email:</label>
+                        <br />
+                        <input autofocus autocomplete="on" required id="email" name="emailInput" placeholder="Enter email" type="email" @bind-value="email" />
+                    </div>
+
+                    <div class="container-property-identity">
+                        <label for="password">Password:</label>
+                        <br />
+                        <input required id="password" name="passwordInput" placeholder="Enter password" type="password" @bind-value="password" /><br />
+                    </div>
+
+                    <div class="container-property-identity">
+                        <label for="confirmPassword">Retype password:</label>
+                        <br />
+                        <input required id="confirmPassword" name="confirmPasswordInput" placeholder="Confirm password" type="password" @bind-value="confirmPassword" />
+                    </div>
+                    
+                    <button class="registerButton" @onclick="DoRegisterAsync">Register</button>
+
+                    <a class="link-return" href="">🠔 Return</a>
+
+                    <div class="container-top container-inner">
+                        @if (errors)
                         {
-                            <div class="customAlert">@error</div>
+                            @foreach (var error in errorList)
+                            {
+                                <div class="alert alert-danger custom-override">@error</div>
+                            }
                         }
                     </div>
                 }
-            }
-        </NotAuthorized>
-    </AuthorizeView>
-</main>
+            </NotAuthorized>
+        </AuthorizeView>
+    </main>
+
+</div>
 
 @code {
     private bool success, errors;

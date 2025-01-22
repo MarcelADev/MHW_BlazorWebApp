@@ -4,9 +4,11 @@
 @using MyMHWApp4.Provider
 @inject SessionProvider sessionProvider
 
-<main class="mainContainer">
-
+<header class="container-center header">
     <h2>Create new Session</h2>
+</header>
+
+<main class="container-top main">    
 
     <InputComponentText LabelText="Name:" PlaceHolder="Session Name" PropertyChanged="HandleNameChanged"></InputComponentText>
 
@@ -14,13 +16,18 @@
 
     <PlayerDropDown SelectedPlayersChanged="HandleSelectedPlayersChanged"></PlayerDropDown>
 
-    <AuthorizeView>
-        <p>@context.User.Identity?.Name</p>
-    </AuthorizeView>
+    <div class="container-h3"><h3>Participators</h3></div>
 
-    @foreach(Player player in selectedPlayers){
-        <ParticipatorComponent Player="player"></ParticipatorComponent>
-    }
+    <ul class="participator-list">
+
+        <AuthorizeView>
+            <ParticipatorComponent PlayerName="@(context.User.Identity?.Name)"></ParticipatorComponent>
+        </AuthorizeView>
+
+        @foreach(Player player in selectedPlayers){
+            <ParticipatorComponent PlayerName="player.UserName"></ParticipatorComponent>
+        }
+    </ul>
 
 </main>
 

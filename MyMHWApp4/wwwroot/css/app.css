@@ -1,5 +1,8 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+
 html, body {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-family: 'Roboto', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    color: var(--primary-color);
 }
 
 h1:focus {
@@ -115,36 +118,65 @@ code {
 
 /* ## GLOBAL VARIABLES ## */
 :root {
+    /*  %% COLORS %% */
     --primary-color: black;
     --secondary-color: white;
-
-    --standard-width: 100%;
+    --secondary-color-dark: pink;
+    --primary-color-alternative: gray;
+    /*  %% WIDTH & HEIGHT %% */
+    --full-width: 100%;
+    --standard-width: 90%;
     --standard-max-width: 400px;
-    --standard-height: 100%;
-
+    --standard-height: 100vh;
+    /*  %% PADDING %% */
     --input-padding: 5px;
     --standard-padding: 5px;
+    /*  %% FONT %% */
+    --thin: 100;
+    --standard-font-size: 1.3rem;
 }
 
 /* ## GLOBAL STYLES ## */
+h1 {
+    font-weight: var(--thin);
+    font-size: 4rem;
+    color: var(--primary-color);
+}
+
 h2 {
+    font-weight: var(--thin);
+    font-size: 3.5rem;
+    color: var(--primary-color);
+}
+
+h3 {
+    font-weight: var(--thin);
     font-size: 2rem;
-    margin-top: 1rem;
-    margin-bottom: 2rem;
+    color: var(--primary-color);
 }
 
-label, p, input, button, a {
-    font-size: 1.3rem;
+label, p, button, a {
+    font-size: var(--standard-font-size);
+    color: var(--primary-color);
 }
 
-/* ## GLOBAL CLASSESS ## */
+input {
+    width: 100%;
+    padding: var(--input-padding);
+    border: 1px solid var(--primary-color);
+    font-size: var(--standard-font-size);
+}
+
+/* ## CONTAINERS ## */
+
+.container-main {
+    height: 100vh;
+}
 
 .container-top {
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: var(--standard-width);
-    height: var(--standard-height)
 }
 
 .container-center {
@@ -152,6 +184,36 @@ label, p, input, button, a {
     flex-direction: column;
     align-items: center;
     justify-content: center;
+}
+
+.header {
+    height: 15vh;
+}
+
+.main {
+    height: 85vh;
+    gap: 0.5rem;
+}
+
+.footer {
+    height: 20vh;
+}
+
+.container-h3 {
     width: var(--standard-width);
-    height: var(--standard-height)
+    max-width: var(--standard-max-width);
+}
+
+.container-property-identity {
+    margin-bottom: 10px;
+    width: var(--standard-width);
+    max-width: var(--standard-max-width);
+    color: var(--primary-color);
+}
+
+/* ## THEMES ## */
+
+.theme-purple {
+    --primary-color: #6457A6;
+    --primary-color-alternative: #7D7ABC;
 }

@@ -19,5 +19,6 @@
 	private async Task OnPropertyChanged()
 	{
 		await PropertyChanged.InvokeAsync(input);
+		StateHasChanged();
 	}
 }

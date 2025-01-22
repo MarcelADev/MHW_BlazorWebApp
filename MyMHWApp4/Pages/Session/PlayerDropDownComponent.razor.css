@@ -1,11 +1,19 @@
-﻿.componentContainer {
+﻿input {
+    width: 15px;
+    height: 15px;
+    margin: 0;
+}
+
+.container-component {
     display: flex;
+    flex-direction: row;
     justify-content: space-between;
     padding: var(--standard-padding);
     align-items: center;
     cursor: pointer;
+    width: var(--full-width);
 }
-    .componentContainer:hover {
+    .container-component:hover {
         background-color: #f0f0f0;
     }
 

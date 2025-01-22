@@ -3,40 +3,50 @@
 @inject NavigationManager navigationManager
 @inject ParticipatorProvider participatorProvider
 
-<button class="sessionCard" @onclick="NavigateToInventory">
+<button class="card-session" @onclick="NavigateToInventory">
 
-	<div class="imageContainer">
+	<div class="container-image">
+
 		<img src="Images/CardPicture.jpg" alt="Image not available" />
+
 	</div>
 
-	<h4>@Session.Name</h4>
+	<div class="container-data">
 
-	<div class="propertyContainer">
-		<div class="labelContainer">
-			<label>Weapon:</label>
+		<h4>@Session.Name</h4>
+
+		<div class="container-property">
+
+			<div class="container-label">
+				<label>Weapon:</label>
+			</div>
+
+			@if (participator == null)
+			{
+				<p>Loading ...</p>
+			}
+			else
+			{
+				<p>@participator.WeaponType.Name</p>
+			}
 		</div>
-		@if(participator == null){
-			<p>Loading</p>
-		}
-		else {
-			<p>@participator.WeaponType.Name</p>
-		}
-	</div>
 
-	<div class="propertyContainer">
-		<div class="labelContainer">
-			<label>Days:</label>
+		<div class="container-property">
+
+			<div class="container-label">
+				<label>Days:</label>
+			</div>
+			<p>@Session.DayCount/@Session.MaxDays</p>
+
 		</div>
-		<p>@Session.DayCount/@Session.MaxDays</p>
-	</div>
 
-	<div class="propertyContainer">
-		<div class="labelContainer">
-			<label>Date:</label>
+		<div class="container-property">
+			<div class="container-label">
+				<label>Date:</label>
+			</div>
+			<p>@Session.Date</p>
 		</div>
-		<p>@Session.Date</p>
 	</div>
-
 </button>
 
 @code {
