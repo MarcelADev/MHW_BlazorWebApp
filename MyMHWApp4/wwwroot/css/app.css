@@ -120,6 +120,7 @@ code {
 
     --standard-width: 100%;
     --standard-max-width: 400px;
+    --standard-height: 100%;
 
     --input-padding: 5px;
     --standard-padding: 5px;
@@ -132,15 +133,25 @@ h2 {
     margin-bottom: 2rem;
 }
 
-label, p, input, button {
+label, p, input, button, a {
     font-size: 1.3rem;
 }
 
 /* ## GLOBAL CLASSESS ## */
 
-.mainContainer {
+.container-top {
     display: flex;
     flex-direction: column;
     align-items: center;
     width: var(--standard-width);
+    height: var(--standard-height)
+}
+
+.container-center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: var(--standard-width);
+    height: var(--standard-height)
 }
