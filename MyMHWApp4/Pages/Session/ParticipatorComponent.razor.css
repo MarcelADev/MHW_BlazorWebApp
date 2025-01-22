@@ -1,7 +1,7 @@
 ﻿.container-participator {
     display: flex;
     width: var(--standard-width);
-    max-width: var(--standard-max-width;
+    max-width: var(--standard-max-width);
     padding: var(--standard-padding);
     border: 1px solid black;
     margin-top: -1px;
