@@ -1,0 +1,29 @@
+﻿.dropdown-container {
+    position: relative;
+    display: inline-block;
+    height: 100%;
+    width: 100%;
+}
+
+.dropdown-button {
+    background-color: transparent;
+    border: 0;
+    height: 100%;
+    width: 100%;
+    color: var(--primary-color);
+    position: relative;
+    margin: 0;
+}
+
+.dropdown-list {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    border: 2px solid #000;
+    width: var(--standard-width);
+    max-width: var(--standard-max-width);
+    position: absolute;
+    top: 100%;
+    right: 0;
+    z-index: 1;
+}

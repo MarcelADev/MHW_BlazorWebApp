@@ -1,0 +1,10 @@
+﻿.container-button {
+	display: flex;
+	justify-content: inherit;
+	align-items: inherit;
+	width: 100%;
+	height: 100%;
+	background-color: var(--secondary-color);
+	border: 0px;
+	cursor: pointer;
+}

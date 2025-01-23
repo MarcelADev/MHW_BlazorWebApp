@@ -1,7 +1,12 @@
 ﻿@using MHWApp.Library.Model
-@typeparam T where T : IModel
+
+<li>
+	<button class="container-button">
+		<p>@ValuePair.Value</p>
+	</button>
+</li>
 
 @code {
 	[Parameter]
-	public required T Item { get; set; }
+	public required ValuePair ValuePair { get; set; }
 }

@@ -1,13 +1,30 @@
 ﻿@using MHWApp.Library.Model
-@typeparam T where T : IModel
 
-<ul>
-	@foreach (var item in List){
-		<DropDownComponent Item="item"></DropDownComponent>
+<div class="dropdown-container">
+
+	<button class="dropdown-button" @onclick="ToggleDropdown">
+		Weapon
+	</button>
+
+	@if (isDropdownOpen)
+	{
+		<ul class="dropdown-list">
+			@foreach (ValuePair vP in ValurPairList)
+			{
+				<DropDownComponent valuePair="vP"></DropDownComponent>
+			}
+		</ul>
 	}
-</ul>
+</div>
 
 @code {
+	private bool isDropdownOpen = false;
+
 	[Parameter]
-	public List<T> List { get; set; }
+	public required List<ValuePair> ValurPairList { get; set; }
+
+	private void ToggleDropdown()
+	{
+		isDropdownOpen = !isDropdownOpen;
+	}
 }

@@ -235,8 +235,6 @@ app.MapGet("/categories", async (AppDbContext dbContext, ClaimsPrincipal user) =
         return Results.Unauthorized();
     }
 
-    var playerId = int.Parse(userIdClaim.Value);
-
     var categories = await dbContext.Categories.ToListAsync();
 
     return Results.Ok(categories);
@@ -261,6 +259,23 @@ app.MapPost("inventoryEntry", async (InventoryEntry newInventoryEntry, AppDbCont
         return Results.Created($"/newSession/{newInventoryEntry.Id}", newInventoryEntry);
     }
 ).RequireAuthorization(policy => policy.RequireRole("Manager", "Admin"));
+
+#endregion
+
+#region Endpoint: Weapon
+
+app.MapGet("/weapontypes", async (AppDbContext dbContext, ClaimsPrincipal user) =>
+{
+    var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
+    if (userIdClaim == null)
+    {
+        return Results.Unauthorized();
+    }
+
+    var weaponTypes = await dbContext.WeaponTypes.ToListAsync();
+
+    return Results.Ok(weaponTypes);
+}).RequireAuthorization();
 
 #endregion
 
