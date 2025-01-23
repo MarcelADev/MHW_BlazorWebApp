@@ -1,6 +1,6 @@
 ﻿namespace MHWApp.Library.Model
 {
-    public class Participator
+    public class Participator : IModel
     {
         public int Id { get; set; }
 

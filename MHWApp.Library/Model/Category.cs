@@ -2,7 +2,7 @@
 
 namespace MHWApp.Library.Model
 {
-    public class Category
+    public class Category : IModel
     {
         public int Id { get; set; }
 

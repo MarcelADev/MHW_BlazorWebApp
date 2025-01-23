@@ -2,7 +2,7 @@
 
 namespace MHWApp.Library.Model
 {
-    public class WeaponCategory
+    public class WeaponCategory : IModel
     {
         public int Id { get; set; }
 

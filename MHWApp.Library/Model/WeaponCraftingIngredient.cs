@@ -2,7 +2,7 @@
 
 namespace MHWApp.Library.Model
 {
-    public class WeaponCraftingIngredient
+    public class WeaponCraftingIngredient : IModel
     {
         public int Id { get; set; }
 

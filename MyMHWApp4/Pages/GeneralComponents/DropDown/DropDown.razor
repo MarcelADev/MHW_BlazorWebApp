@@ -1,0 +1,13 @@
+﻿@using MHWApp.Library.Model
+@typeparam T where T : IModel
+
+<ul>
+	@foreach (var item in List){
+		<DropDownComponent Item="item"></DropDownComponent>
+	}
+</ul>
+
+@code {
+	[Parameter]
+	public List<T> List { get; set; }
+}

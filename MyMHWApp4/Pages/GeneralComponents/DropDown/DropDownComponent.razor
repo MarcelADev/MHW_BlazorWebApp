@@ -1,0 +1,7 @@
+﻿@using MHWApp.Library.Model
+@typeparam T where T : IModel
+
+@code {
+	[Parameter]
+	public required T Item { get; set; }
+}

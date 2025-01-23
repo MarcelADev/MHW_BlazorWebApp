@@ -2,7 +2,7 @@
 
 namespace MHWApp.Library.Model
 {
-    public class InventoryEntryCategory
+    public class InventoryEntryCategory : IModel
     {
         public int Id { get; set; }
 

@@ -2,7 +2,7 @@
 
 namespace MHWApp.Library.Model
 {
-    public class Session
+    public class Session : IModel
     {
         public int Id { get; set; }
 

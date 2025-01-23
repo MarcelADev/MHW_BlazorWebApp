@@ -2,7 +2,7 @@
 
 namespace MHWApp.Library.Model
 {
-    public class GameExtension
+    public class GameExtension : IModel
     {
         public int Id { get; set; }
 
