@@ -21,13 +21,23 @@
     <ul class="participator-list">
 
         <AuthorizeView>
-            <ParticipatorComponent PlayerName="@(context.User.Identity?.Name)"></ParticipatorComponent>
+            <ParticipatorComponent 
+            PlayerName="@(context.User.Identity?.Name)" 
+            PlayerId="-1"
+            ChosenWeaponTypeChanged="HandleChosenWeaponTypeChanged">
+            </ParticipatorComponent>
         </AuthorizeView>
 
         @foreach(Player player in selectedPlayers){
-            <ParticipatorComponent PlayerName="player.UserName"></ParticipatorComponent>
+            <ParticipatorComponent 
+            PlayerName="player.UserName" 
+            PlayerId="player.Id"
+            ChosenWeaponTypeChanged="HandleChosenWeaponTypeChanged">
+            </ParticipatorComponent>
         }
     </ul>
+
+    <button class="button button-confirm theme-dark" @onclick="OnConfirmButtonClicked">Confirm</button>
 
 </main>
 
@@ -35,6 +45,7 @@
     private string sessionName = "";
     private int sessionMaxDays = -1;
     private List<Player> selectedPlayers = [];
+    private Dictionary<int, int> chosenWeaponTypes = [];
 
     private void HandleNameChanged(string newName)
     {
@@ -48,5 +59,14 @@
     private void HandleSelectedPlayersChanged(List<Player> newSelectedPlayers){
         selectedPlayers = newSelectedPlayers;
         StateHasChanged();
+    }
+
+    private void HandleChosenWeaponTypeChanged(int[] id) {
+
+        chosenWeaponTypes.Add(id[0], id[1]);        // id[0] -> player id | id[1] -> weapontype id
+    }
+
+    private void OnConfirmButtonClicked(){
+        //TO DO
     }
 }

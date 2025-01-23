@@ -26,6 +26,9 @@
 	[Parameter]
 	public required ValuePair ChosenValuePair { get; set; }
 
+	[Parameter]
+	public required EventCallback<ValuePair> ChosenValuePairChanged { get; set; }
+
 	private void ToggleDropdown()
 	{
 		isDropdownOpen = !isDropdownOpen;
@@ -35,5 +38,11 @@
 	{
 		ChosenValuePair = valuePair;
 		isDropdownOpen = false;
+		OnChosenValuePairChanged();
+	}
+
+	private void OnChosenValuePairChanged()
+	{
+		ChosenValuePairChanged.InvokeAsync(ChosenValuePair);
 	}
 }

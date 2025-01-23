@@ -8,7 +8,11 @@
 	<p>@PlayerName</p>
 
 	<div class="container-participator-dropdown">
-		<DropDown ValuePairList="weaponTypeValuePairs" ChosenValuePair="chosenValuePair"></DropDown>
+		<DropDown 
+		ValuePairList="weaponTypeValuePairs" 
+		ChosenValuePair="chosenValuePair"
+		ChosenValuePairChanged="HandleChosenValuePairChanged">
+		</DropDown>
 	</div>
 </div>
 
@@ -20,6 +24,12 @@
 	[Parameter]
 	public required string PlayerName { get; set; }
 
+	[Parameter]
+	public required int PlayerId { get; set; }
+
+	[Parameter]
+	public required EventCallback<int[]> ChosenWeaponTypeChanged { get; set; }
+
 	protected override async Task OnInitializedAsync()
 	{
 		weaponTypes = await weaponProvider.GetWeaponTypesAsync();
@@ -30,6 +40,18 @@
 
 		chosenValuePair = weaponTypeValuePairs[0];
 
+		OnChosenWeaponTypeChanged(new int[] { PlayerId, chosenValuePair.Id });
+
 		await base.OnInitializedAsync();
+	}
+
+	public void HandleChosenValuePairChanged(ValuePair valuePair)
+	{
+		chosenValuePair = valuePair;
+		OnChosenWeaponTypeChanged(new int[] { PlayerId, chosenValuePair.Id });
+	}
+
+	private void OnChosenWeaponTypeChanged(int[] id){
+		ChosenWeaponTypeChanged.InvokeAsync(id);
 	}
 }

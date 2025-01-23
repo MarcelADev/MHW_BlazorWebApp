@@ -3,19 +3,8 @@
 }
 
 .button-addsession {
-    padding-inline: 20px;
-    padding-top: 8px;
-    padding-bottom: 8px;
-    background: var(--primary-color);
-    border-radius: 5px;
-    border: 0px;
-    color: var(--secondary-color);
     margin-top: 2rem;
 }
-    .button-addsession:hover {
-        opacity: 0.9;
-        color: var(--secondary-color-dark);
-    }
 
 .container-button {
     display: flex;

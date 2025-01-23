@@ -25,20 +25,6 @@
     width: var(--full-width);
 }
 
-.button-login {
-    padding-inline: 20px;
-    padding-top: 8px;
-    padding-bottom: 8px;
-    background: var(--primary-color);
-    border-radius: 8px;
-    color: white;
-}
-
-    .button-login:hover {
-        background: hsl(250, 31%, 50%, 0.9);
-        color: whitesmoke;
-    }
-
 .link-return {
     margin-top: 10px;
     color: var(--primary-color-alternative);

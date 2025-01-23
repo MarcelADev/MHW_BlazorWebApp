@@ -14,22 +14,10 @@
     margin-bottom: 5px;
 }
 
-.registerButton {
-    padding-inline: 20px;
-    padding-top: 8px;
-    padding-bottom: 8px;
+.button-register {
     margin-top: 10px;
     margin-bottom: 10px;
-    background: #6457A6;
-    border-radius: 8px;
-    color: white;
 }
-
-    .registerButton:hover {
-        background: hsl(250, 31%, 50%, 0.9);
-        color: whitesmoke;
-        width: auto;
-    }
 
 .link-return {
     color: var(--primary-color-alternative);
