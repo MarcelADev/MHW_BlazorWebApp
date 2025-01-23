@@ -1,6 +1,7 @@
 using FastEndpoints;
 using NSwag;
 using System.Text.Json;
+using WebhookCICD.Api.Endpoints;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,6 +29,7 @@ builder.Services.AddSingleton(new JsonSerializerOptions
     PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower,
     WriteIndented = true
 });
+builder.Services.AddScoped<MHWAppRequestHandler>();
 
 var app = builder.Build();
 

@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MHWApp.Library", "MHWApp.Li
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebhookCICD.Api", "WebhookCICD.Api\WebhookCICD.Api.csproj", "{BFC2256D-5D99-4F1F-9B3F-6FF6620AE65B}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{89E5BD54-D00D-4D77-BB12-F8BDF57E7E70}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

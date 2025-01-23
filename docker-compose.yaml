@@ -1,0 +1,12 @@
+services:
+    mhwapp:
+        image: gitea.vuquangphuc.dev/abbas/mhwapp-api:latest
+        container_name: mhwapp-api
+        restart: unless-stopped
+        networks:
+            - caddy
+
+networks:
+    mhwapp:
+    caddy:
+        external: true
