@@ -4,15 +4,18 @@
 @inject WeaponProvider weaponProvider
 
 <div class="container-participator">
-	<div class="container-participator-name">
-		<p>@PlayerName</p>
+
+	<p>@PlayerName</p>
+
+	<div class="container-participator-dropdown">
+		<DropDown ValuePairList="weaponTypeValuePairs" ChosenValuePair="chosenValuePair"></DropDown>
 	</div>
-	<DropDown ValurPairList="weaponTypeValuePairs"></DropDown>
 </div>
 
 @code {
 	private List<WeaponType> weaponTypes = [];
 	private List<ValuePair> weaponTypeValuePairs = [];
+	private ValuePair? chosenValuePair = new ValuePair { Id = -1, Value = "Loading ..." };
 
 	[Parameter]
 	public required string PlayerName { get; set; }
@@ -24,6 +27,8 @@
 		foreach(WeaponType wP in weaponTypes){
 			weaponTypeValuePairs.Add(new ValuePair { Id = wP.Id, Value = wP.Name });
 		}
+
+		chosenValuePair = weaponTypeValuePairs[0];
 
 		await base.OnInitializedAsync();
 	}

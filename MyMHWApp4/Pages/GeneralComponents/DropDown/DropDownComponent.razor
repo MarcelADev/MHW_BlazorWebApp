@@ -1,12 +1,19 @@
 ﻿@using MHWApp.Library.Model
 
 <li>
-	<button class="container-button">
-		<p>@ValuePair.Value</p>
+	<button class="container-button" @onclick="OnClicked">
+		@ValuePair.Value
 	</button>
 </li>
 
 @code {
 	[Parameter]
 	public required ValuePair ValuePair { get; set; }
+
+	[Parameter]
+	public required EventCallback<ValuePair> Clicked { get; set; }
+
+	private void OnClicked(){
+		Clicked.InvokeAsync(ValuePair);
+	}
 }

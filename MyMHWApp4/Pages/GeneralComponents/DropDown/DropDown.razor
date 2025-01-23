@@ -3,15 +3,15 @@
 <div class="dropdown-container">
 
 	<button class="dropdown-button" @onclick="ToggleDropdown">
-		Weapon
+		@ChosenValuePair.Value
 	</button>
 
 	@if (isDropdownOpen)
 	{
 		<ul class="dropdown-list">
-			@foreach (ValuePair vP in ValurPairList)
+			@foreach (ValuePair vP in ValuePairList)
 			{
-				<DropDownComponent valuePair="vP"></DropDownComponent>
+				<DropDownComponent ValuePair="vP" Clicked="HandleClicked"></DropDownComponent>
 			}
 		</ul>
 	}
@@ -21,10 +21,19 @@
 	private bool isDropdownOpen = false;
 
 	[Parameter]
-	public required List<ValuePair> ValurPairList { get; set; }
+	public required List<ValuePair> ValuePairList { get; set; }
+
+	[Parameter]
+	public required ValuePair ChosenValuePair { get; set; }
 
 	private void ToggleDropdown()
 	{
 		isDropdownOpen = !isDropdownOpen;
+	}
+
+	public void HandleClicked(ValuePair valuePair)
+	{
+		ChosenValuePair = valuePair;
+		isDropdownOpen = false;
 	}
 }

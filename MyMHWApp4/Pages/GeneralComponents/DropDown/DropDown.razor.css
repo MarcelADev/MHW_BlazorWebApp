@@ -19,7 +19,7 @@
     list-style-type: none;
     margin: 0;
     padding: 0;
-    border: 2px solid #000;
+    border: 1px solid black;
     width: var(--standard-width);
     max-width: var(--standard-max-width);
     position: absolute;
