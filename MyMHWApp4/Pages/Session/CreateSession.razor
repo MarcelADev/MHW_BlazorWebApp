@@ -3,12 +3,14 @@
 @using MyMHWApp4.Pages.GeneralComponents
 @using MyMHWApp4.Provider
 @inject SessionProvider sessionProvider
+@inject ParticipatorProvider participatorProvider
+@inject NavigationManager navigationManager
 
 <header class="container-center header">
     <h2>Create new Session</h2>
 </header>
 
-<main class="container-top main">    
+<main class="container-top">    
 
     <InputComponentText LabelText="Name:" PlaceHolder="Session Name" PropertyChanged="HandleNameChanged"></InputComponentText>
 
@@ -30,7 +32,7 @@
 
         @foreach(Player player in selectedPlayers){
             <ParticipatorComponent 
-            PlayerName="player.UserName" 
+            PlayerName="@player.UserName" 
             PlayerId="player.Id"
             ChosenWeaponTypeChanged="HandleChosenWeaponTypeChanged">
             </ParticipatorComponent>
@@ -41,11 +43,13 @@
 
 </main>
 
+<footer class="footer"></footer>
+
 @code {
     private string sessionName = "";
     private int sessionMaxDays = -1;
     private List<Player> selectedPlayers = [];
-    private Dictionary<int, int> chosenWeaponTypes = [];
+    private Dictionary<int, int> inputData = [];    // key: player id | value: weapontype id
 
     private void HandleNameChanged(string newName)
     {
@@ -63,10 +67,41 @@
 
     private void HandleChosenWeaponTypeChanged(int[] id) {
 
-        chosenWeaponTypes.Add(id[0], id[1]);        // id[0] -> player id | id[1] -> weapontype id
+        inputData.Add(id[0], id[1]);        // id[0] -> player id | id[1] -> weapontype id
     }
 
-    private void OnConfirmButtonClicked(){
-        //TO DO
+    private async Task OnConfirmButtonClicked()
+    {
+        Session newSession = new Session 
+        { 
+            Id = 0, 
+            Name = sessionName, 
+            DayCount = 1, 
+            MaxDays = sessionMaxDays, 
+            Date =  GetDate()
+        };
+
+        var createdSession = await sessionProvider.CreateSessionAsync(newSession);
+
+        foreach(var data in inputData)
+        {
+			bool isSelf = data.Key == -1;
+
+			Participator participator = new Participator
+            { 
+                Id = 0, 
+                PlayerId = data.Key, 
+                SessionId = createdSession.Id, 
+                WeaponTypeId = data.Value 
+            };
+
+            await participatorProvider.CreateParticipatorAsync(participator, isSelf);
+        }
+
+        navigationManager.NavigateTo("/session");
+    }
+
+    private string GetDate(){
+		return DateTime.Now.ToString("dd.MM.yyyy");
     }
 }

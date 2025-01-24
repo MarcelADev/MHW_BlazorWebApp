@@ -202,6 +202,26 @@ app.MapGet("/participators/{sessionId}", async (AppDbContext dbContext, ClaimsPr
 }
 );
 
+app.MapPost("/participators", async (AppDbContext dbContext, ClaimsPrincipal user, Participator participator, bool isSelf) =>
+{
+    var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
+    if (userIdClaim == null)
+    {
+        return Results.Unauthorized();
+    }
+
+    if (isSelf)
+    {
+        var playerId = int.Parse(userIdClaim.Value);
+        participator.Id = playerId;
+    }
+    
+    await dbContext.Participators.AddAsync(participator);
+    await dbContext.SaveChangesAsync();
+    return Results.Created($"/participators/{participator.Id}", participator);
+}
+).RequireAuthorization();
+
 #endregion
 
 #region Endpoint: Participator Inventory Entry

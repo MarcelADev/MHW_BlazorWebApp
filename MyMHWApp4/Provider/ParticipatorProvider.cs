@@ -20,11 +20,11 @@ namespace MyMHWApp4.Provider
             }
         }
 
-        public async Task<bool> CreateParticipatorAsync(Participator newParticipator)
+        public async Task<bool> CreateParticipatorAsync(Participator newParticipator, bool isSelf)
         {
             try
             {
-                var response = await _httpClient.PostAsJsonAsync("participators", newParticipator);
+                var response = await _httpClient.PostAsJsonAsync($"participators?isSelf={isSelf}", newParticipator);
                 return response.IsSuccessStatusCode;
             }
             catch (Exception ex)
