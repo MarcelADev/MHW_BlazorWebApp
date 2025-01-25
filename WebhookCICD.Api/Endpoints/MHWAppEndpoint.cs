@@ -1,6 +1,6 @@
-﻿using Ductus.FluentDocker.Builders;
+﻿using Ductus.FluentDocker.Commands;
+using Ductus.FluentDocker.Services;
 using System.Globalization;
-using System.Resources;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
@@ -9,6 +9,11 @@ using static FastEndpoints.Ep;
 
 namespace WebhookCICD.Api.Endpoints;
 
+/// <summary>
+/// Webhook Api endpoint for redeplying the MHWApp.
+/// </summary>
+/// <param name="logger">DI logger.</param>
+/// <param name="handler">DI request handler.</param>
 public class MHWAppEndpoint(
     ILogger<MHWAppEndpoint> logger,
     MHWAppRequestHandler handler
@@ -43,13 +48,22 @@ public class MHWAppEndpoint(
     }
 }
 
+/// <summary>
+/// Request handler for MHWApp endpoint.
+/// </summary>
+/// <param name="configuration">DI API configuration.</param>
+/// <param name="jsonOptions">DI json serialization options.</param>
+/// <param name="logger">DI logger.</param>
 public class MHWAppRequestHandler(
         IConfiguration configuration,
         JsonSerializerOptions jsonOptions,
         ILogger<MHWAppRequestHandler> logger
     )
 {
-    public required RawWebhookEvent Request { get; set; }
+    /// <summary>
+    /// Request to handle.
+    /// </summary>
+    private RawWebhookEvent? Request { get; set; }
 
     private readonly IConfiguration _configuration = configuration;
     private readonly JsonSerializerOptions _jsonOptions = jsonOptions;
@@ -60,6 +74,7 @@ public class MHWAppRequestHandler(
     {
         get
         {
+            if (null == Request) throw new WebhookBodyException();
             WebhookEvent? webhookEvent = JsonSerializer.Deserialize<WebhookEvent>(Request.Content, _jsonOptions);
             if (null == webhookEvent) throw new WebhookBodyException();
 
@@ -67,6 +82,11 @@ public class MHWAppRequestHandler(
         }
     }
 
+    /// <summary>
+    /// Set the request to handle.
+    /// </summary>
+    /// <param name="request">Request to handle.</param>
+    /// <returns><see cref="MHWAppRequestHandler">MHWAppRequestHandler</see></returns>
     public MHWAppRequestHandler ForRequest(MHWAppRequest request)
     {
         Request = request;
@@ -74,8 +94,15 @@ public class MHWAppRequestHandler(
         return this;
     }
 
+    /// <summary>
+    /// Verify the request signature.
+    /// </summary>
+    /// <returns><see cref="MHWAppRequestHandler">MHWAppRequestHandler</see></returns>
+    /// <exception cref="WebhookBodyException"></exception>
+    /// <exception cref="WebhookSignatureVerificationException"></exception>
     public MHWAppRequestHandler VerifyRequest()
     {
+        if (null == Request) throw new WebhookBodyException();
         if (Request.Signature.Length == 0 || Secret.Length == 0) throw new WebhookSignatureVerificationException();
 
         var keyBytes = Encoding.UTF8.GetBytes(Secret);
@@ -92,34 +119,50 @@ public class MHWAppRequestHandler(
         return this;
     }
 
+    /// <summary>
+    /// Verify the request type by examining the event type and status.
+    /// </summary>
+    /// <returns><see cref="MHWAppRequestHandler">MHWAppRequestHandler</see></returns>
+    /// <exception cref="WebhookBodyException"></exception>
+    /// <exception cref="WebhookTypeVerificationException"></exception>
     public MHWAppRequestHandler VerifyWebhookType()
     {
+        if (null == Request) throw new WebhookBodyException();
+
         var isCorrectEvent = Request.GitHubEvent == "workflow_run";
-        var isCompleted = WebhookEvent.WorkflowRun.Status == "completed";
-        var isSuccess = WebhookEvent.WorkflowRun.Conclusion == "success";
+        var isCompleted = WebhookEvent.WorkflowRun?.Status == "completed";
+        var isSuccess = WebhookEvent.WorkflowRun?.Conclusion == "success";
 
         if (!isCorrectEvent || !isCompleted || !isSuccess) throw new WebhookTypeVerificationException();
 
         return this;
     }
 
+    /// <summary>
+    /// Deploy the MHWApp.
+    /// </summary>
+    /// <returns><see cref="MHWAppRequestHandler">MHWAppRequestHandler</see></returns>
     public MHWAppRequestHandler DeployMHWApp()
     {
         _logger.LogInformation("Deploying app");
 
-        var filePath = Path.Combine(AppContext.BaseDirectory, "docker-compose.yml");
+        var hosts = new Hosts().Discover();
+        var docker = hosts.FirstOrDefault(x => x.IsNative) ?? hosts.FirstOrDefault(x => x.Name == "default");
 
-        using (var svc = new Builder()
-            .UseContainer()
-            .UseCompose()
-            .AssumeComposeVersion(Ductus.FluentDocker.Model.Compose.ComposeVersion.V2)
-            .FromFile(filePath)
-            .AlwaysPull()
-            .ForceRecreate()
-            .Build())
+        var filePath = Path.Combine(AppContext.BaseDirectory, "Resources/docker-compose.yaml");
+
+        docker?.Host.ComposeDown(
+            composeFile: filePath,
+            certificates: docker.Certificates,
+            removeVolumes: true,
+            removeOrphanContainers: true
+        );
+
+        docker?.Host.ComposeUpCommand(new Compose.ComposeUpCommandArgs
         {
-            svc.Start();
-        }
+            ComposeFiles = [filePath],
+            Certificates = docker.Certificates,
+        });
 
         return this;
     }
