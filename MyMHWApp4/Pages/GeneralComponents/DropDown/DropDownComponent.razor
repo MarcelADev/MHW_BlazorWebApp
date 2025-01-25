@@ -2,18 +2,18 @@
 
 <li>
 	<button class="container-button" @onclick="OnClicked">
-		@ValuePair.Value
+		@IdAndValue.Value
 	</button>
 </li>
 
 @code {
 	[Parameter]
-	public required ValuePair ValuePair { get; set; }
+	public required IdAndValue IdAndValue { get; set; }
 
 	[Parameter]
-	public required EventCallback<ValuePair> Clicked { get; set; }
+	public required EventCallback<IdAndValue> Clicked { get; set; }
 
 	private void OnClicked(){
-		Clicked.InvokeAsync(ValuePair);
+		Clicked.InvokeAsync(IdAndValue);
 	}
 }

@@ -12,9 +12,9 @@
 
 <main class="container-top">    
 
-    <InputComponentText LabelText="Name:" PlaceHolder="Session Name" PropertyChanged="HandleNameChanged"></InputComponentText>
+    <InputComponentText @ref="inputName" LabelText="Name:" PlaceHolder="Session Name"></InputComponentText>
 
-    <InputComponentNumber LabelText="Max Days:" DefaultValue="25" PropertyChanged="HandleMaxDaysChanged"></InputComponentNumber>
+    <InputComponentNumber @ref="inputMaxDays" LabelText="Max Days:" DefaultValue="25"></InputComponentNumber>
 
     <PlayerDropDown SelectedPlayersChanged="HandleSelectedPlayersChanged"></PlayerDropDown>
 
@@ -26,7 +26,7 @@
             <ParticipatorComponent 
             PlayerName="@(context.User.Identity?.Name)" 
             PlayerId="-1"
-            ChosenWeaponTypeChanged="HandleChosenWeaponTypeChanged">
+            ChosenItemChanged="HandleChosenWeaponTypeChanged">
             </ParticipatorComponent>
         </AuthorizeView>
 
@@ -34,31 +34,35 @@
             <ParticipatorComponent 
             PlayerName="@player.UserName" 
             PlayerId="player.Id"
-            ChosenWeaponTypeChanged="HandleChosenWeaponTypeChanged">
+            ChosenItemChanged="HandleChosenWeaponTypeChanged">
             </ParticipatorComponent>
         }
     </ul>
 
     <button class="button button-confirm theme-dark" @onclick="OnConfirmButtonClicked">Confirm</button>
 
+    @if (errors)
+    {
+        @foreach (var error in errorList)
+        {
+            <div class="alert alert-danger">@error</div>
+        }
+    }
+
 </main>
 
 <footer class="footer"></footer>
 
 @code {
-    private string sessionName = "";
-    private int sessionMaxDays = -1;
+    private InputComponentText? inputName;
+    private InputComponentNumber? inputMaxDays;
+    private ParticipatorComponent? participatorComponent;
+
     private List<Player> selectedPlayers = [];
-    private Dictionary<int, int> inputData = [];    // key: player id | value: weapontype id
+    private Dictionary<int, int> weaponTypeDictionary = [];    // key: player id | value: weapontype id
 
-    private void HandleNameChanged(string newName)
-    {
-        sessionName = newName;
-    }
-
-    private void HandleMaxDaysChanged(int newMaxDays){
-        sessionMaxDays = newMaxDays;
-    }
+    private bool errors = false;
+    private List<string> errorList = [];
 
     private void HandleSelectedPlayersChanged(List<Player> newSelectedPlayers){
         selectedPlayers = newSelectedPlayers;
@@ -67,23 +71,43 @@
 
     private void HandleChosenWeaponTypeChanged(int[] id) {
 
-        inputData.Add(id[0], id[1]);        // id[0] -> player id | id[1] -> weapontype id
+        if(weaponTypeDictionary.ContainsKey(id[0]))
+        {
+            weaponTypeDictionary[id[0]] = id[1];
+        }
+        else weaponTypeDictionary.Add(id[0], id[1]);        // id[0] -> player id | id[1] -> weapontype id
     }
 
     private async Task OnConfirmButtonClicked()
     {
+        errors = false;
+        errorList = [];
+
+        if (string.IsNullOrEmpty(inputName.Value))
+        {
+            errors = true;
+            errorList.Add("Session Name required");
+        }
+
+        if (inputMaxDays.Value < 1){
+            errors = true;
+            errorList.Add("Maximum Days must be minimum 1");
+        }
+
+        if (errors) return;
+
         Session newSession = new Session 
         { 
             Id = 0, 
-            Name = sessionName, 
-            DayCount = 1, 
-            MaxDays = sessionMaxDays, 
+            Name = inputName.Value,
+            DayCount = 1,
+            MaxDays = inputMaxDays.Value, 
             Date =  GetDate()
         };
 
         var createdSession = await sessionProvider.CreateSessionAsync(newSession);
 
-        foreach(var data in inputData)
+        foreach(var data in weaponTypeDictionary)
         {
 			bool isSelf = data.Key == -1;
 

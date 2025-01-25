@@ -1,17 +1,17 @@
 ﻿<div class="propertyContainer">
 	<label for="PropertyInput">@LabelText</label>
 	<br />
-	<input name="PropertyInput" type="number" @bind-value="input" @oninput="OnPropertyChanged" />
+	<input name="PropertyInput" type="number" @bind-value="Value" />
 </div>
 
 @code {
-	private int input;
+	public int Value { get; set; }
 
 	protected override async Task OnInitializedAsync()
 	{
-		await base.OnInitializedAsync();
+		Value = DefaultValue;
 
-		input = DefaultValue;
+		await base.OnInitializedAsync();
 	}
 
 	[Parameter]
@@ -19,12 +19,4 @@
 
 	[Parameter]
 	public required string LabelText { get; set; }
-
-	[Parameter]
-	public required EventCallback<int> PropertyChanged { get; set; }
-
-	private async Task OnPropertyChanged()
-	{
-		await PropertyChanged.InvokeAsync(input);
-	}
 }

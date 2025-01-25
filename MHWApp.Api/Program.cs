@@ -213,7 +213,7 @@ app.MapPost("/participators", async (AppDbContext dbContext, ClaimsPrincipal use
     if (isSelf)
     {
         var playerId = int.Parse(userIdClaim.Value);
-        participator.Id = playerId;
+        participator.PlayerId = playerId;
     }
     
     await dbContext.Participators.AddAsync(participator);

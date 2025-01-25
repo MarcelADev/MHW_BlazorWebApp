@@ -3,15 +3,15 @@
 <div class="dropdown-container">
 
 	<button class="dropdown-button" @onclick="ToggleDropdown">
-		@ChosenValuePair.Value
+		@ChosenTtem.Value
 	</button>
 
 	@if (isDropdownOpen)
 	{
 		<ul class="dropdown-list">
-			@foreach (ValuePair vP in ValuePairList)
+			@foreach (IdAndValue vP in ValuePairList)
 			{
-				<DropDownComponent ValuePair="vP" Clicked="HandleClicked"></DropDownComponent>
+				<DropDownComponent IdAndValue="vP" Clicked="HandleClicked"></DropDownComponent>
 			}
 		</ul>
 	}
@@ -21,28 +21,28 @@
 	private bool isDropdownOpen = false;
 
 	[Parameter]
-	public required List<ValuePair> ValuePairList { get; set; }
+	public required List<IdAndValue> ValuePairList { get; set; }
 
 	[Parameter]
-	public required ValuePair ChosenValuePair { get; set; }
+	public required IdAndValue ChosenTtem { get; set; }
 
 	[Parameter]
-	public required EventCallback<ValuePair> ChosenValuePairChanged { get; set; }
+	public required EventCallback<IdAndValue> ChosenItemChanged { get; set; }
 
 	private void ToggleDropdown()
 	{
 		isDropdownOpen = !isDropdownOpen;
 	}
 
-	public void HandleClicked(ValuePair valuePair)
+	public void HandleClicked(IdAndValue idAndValue)
 	{
-		ChosenValuePair = valuePair;
+		ChosenTtem = idAndValue;
 		isDropdownOpen = false;
-		OnChosenValuePairChanged();
+		OnChosenItemChanged();
 	}
 
-	private void OnChosenValuePairChanged()
+	private void OnChosenItemChanged()
 	{
-		ChosenValuePairChanged.InvokeAsync(ChosenValuePair);
+		ChosenItemChanged.InvokeAsync(ChosenTtem);
 	}
 }
