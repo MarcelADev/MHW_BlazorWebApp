@@ -41,6 +41,5 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUi();
 }
 
-app.UseHttpsRedirection();
 app.UseFastEndpoints();
 app.Run();
