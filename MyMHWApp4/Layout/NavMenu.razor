@@ -22,49 +22,49 @@
             </NotAuthorized>
             <Authorized>
 
-                @if(sessionIsPicked){
+                @if (mainMenuActive)
+                {
+                    <div class="nav-item px-3">
+                        <p class="userName"><b>@context.User.Identity?.Name</b></p>
+                    </div>
+
+                    if(isAdmin){
+                        <div class="nav-item px-3">
+                            <NavLink class="nav-link" href="edit/categories">
+                                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Admin Pages
+                            </NavLink>
+                        </div>
+                    }
+                }
+                else if (gamePagesActive){
 
                     <div class="nav-item px-3">
                         <NavLink class="nav-link" href="inventory">
                             <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Inventory
                         </NavLink>
                     </div>
-
+                }
+                else if (adminPagesActive)
+                {
                     <div class="nav-item px-3">
-                        <NavLink class="nav-link" href="counter">
-                            <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Counter
+                        <NavLink class="nav-link" href="edit/inventoryentries">
+                            <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Edit Inventory Entries
                         </NavLink>
                     </div>
 
                     <div class="nav-item px-3">
-                        <NavLink class="nav-link" href="weather">
-                            <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Weather
+                        <NavLink class="nav-link" href="edit/categories">
+                            <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Edit Categories
                         </NavLink>
                     </div>
+                }
 
-                    @if (isAdmin) {
-                        <div class="nav-item px-3">
-                            <NavLink class="nav-link" href="edit/inventoryentries">
-                                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Edit Inventory Entries
-                            </NavLink>
-                        </div>
-
-                        <div class="nav-item px-3">
-                            <NavLink class="nav-link" href="edit/categories">
-                                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Edit Categories
-                            </NavLink>
-                        </div>
-                    }
-
+                @if(gamePagesActive || adminPagesActive)
+                {
                     <div class="nav-item px-3">
                         <NavLink class="nav-link" href="session">
                             <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Return to Menu
                         </NavLink>
-                    </div>
-                }
-                else{
-                    <div class="nav-item px-3">
-                        <p class="userName"><b>@context.User.Identity?.Name</b></p>
                     </div>
                 }
 
@@ -85,7 +85,10 @@
 
     private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
 
-    private bool sessionIsPicked = false;
+    private bool mainMenuActive = true;
+    private bool gamePagesActive = false;
+    private bool adminPagesActive = false;
+
     private bool isAdmin = true;
 
     private void ToggleNavMenu()
@@ -105,19 +108,28 @@
         CurrentUrl = url switch
         {
             "/" => "Home",
-            "/counter" => "Counter",
             "/session" => "Menu",
             "/session/create" => "Create Session",
             "/inventory" => "Inventory",
-            "/weather" => "Weather",
-            "/playlists" => "Playlists",
             "/edit/inventoryentries" => "Edit Inventory Entries",
             "/edit/categories" => "Edit Categories",
             _ => "Unknown",
         };
 
-        if (CurrentUrl == "Menu" || CurrentUrl == "Create Session") { sessionIsPicked = false; }
-        else { sessionIsPicked = true; }
+        mainMenuActive = gamePagesActive = adminPagesActive = false;
+
+        if (CurrentUrl == "Menu" || CurrentUrl == "Create Session") 
+        { 
+            mainMenuActive = true; 
+        }
+        else if (CurrentUrl == "Inventory")
+        {
+            gamePagesActive = true;
+        }
+        else if (CurrentUrl == "Edit Categories" || CurrentUrl == "Edit Inventory Entries")
+        {
+            adminPagesActive = true;
+        }
 
         StateHasChanged();  // Trigger a re-render
     }
