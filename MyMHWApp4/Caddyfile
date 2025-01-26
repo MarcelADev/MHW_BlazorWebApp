@@ -1,5 +1,8 @@
 http:// {
 	root * /var/www/web
+
+	try_files {path} {path}/ /index.html
+
 	encode gzip zstd
 	file_server
 }
