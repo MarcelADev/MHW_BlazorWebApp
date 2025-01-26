@@ -3,6 +3,8 @@ services:
         image: gitea.vuquangphuc.dev/marcelabbas/mhwapp-api:latest
         container_name: mhwapp-api
         restart: unless-stopped
+        volumes:
+        - ./database:/app/database:z
         networks:
             - caddy
             - mhwapp
