@@ -20,8 +20,8 @@ public record RawWebhookEvent : IPlainTextRequest
 
 public record WebhookEvent
 {
-    public required string Action { get; set; }
-    public required WorkflowRun WorkflowRun { get; set; }
+    public string? Action { get; set; }
+    public WorkflowRun? WorkflowRun { get; set; }
 }
 
 public record WorkflowRun
