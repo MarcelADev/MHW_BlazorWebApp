@@ -131,6 +131,7 @@ code {
     /*  %% PADDING %% */
     --input-padding: 5px;
     --standard-padding: 5px;
+    --tab-padding: 20px;
     /*  %% FONT %% */
     --thin: 100;
     --standard-font-size: 1.3rem;
@@ -152,6 +153,12 @@ h2 {
 h3 {
     font-weight: var(--thin);
     font-size: 2rem;
+    color: var(--primary-color);
+}
+
+h4 {
+    font-weight: var(--thin);
+    font-size: 1.7rem;
     color: var(--primary-color);
 }
 
@@ -199,7 +206,8 @@ input {
     height: 5vh;
 }
 
-.container-h3 {
+.container-h3,
+.container-h4 {
     width: var(--standard-width);
     max-width: var(--standard-max-width);
 }
@@ -227,6 +235,20 @@ input {
         opacity: 0.9;
         color: var(--secondary-color-dark);
     }
+
+.margin-h3 {
+    margin-top: 2rem;
+}
+
+.margin-h4 {
+    margin-top: 1rem;
+}
+
+.tab {
+    width: = var(--standard-width);
+    max-width = var(--standard-max-width);
+    padding-left: var(--tab-padding);
+}
 
 /* ## THEMES ## */
 

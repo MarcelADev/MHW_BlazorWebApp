@@ -19,5 +19,41 @@ namespace MyMHWApp4.Provider
                 return null;
             }
         }
+
+        public async Task<List<Category>> GetInventoryEntryCategoriesAsync()
+        {
+            try
+            {
+                return await _httpClient.GetFromJsonAsync<List<Category>>($"categories/inventoryentries");
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+        public async Task<List<Category>> GetWeaponCategoriesAsync()
+        {
+            try
+            {
+                return await _httpClient.GetFromJsonAsync<List<Category>>($"categories/weapons");
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+        public async Task<List<Category>> GetArmorCategoriesAsync()
+        {
+            try
+            {
+                return await _httpClient.GetFromJsonAsync<List<Category>>($"categories/armor");
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
     }
 }

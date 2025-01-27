@@ -1,0 +1,14 @@
+﻿input {
+    width: 15px;
+    height: 15px;
+    border: 1px solid var(--primary-color);
+    margin-right: 10px;
+    margin-left: 5px;
+}
+
+.container-property {
+    margin-bottom: 10px;
+    width: 100%;
+    color: var(--primary-color);
+    text-align: left;
+}

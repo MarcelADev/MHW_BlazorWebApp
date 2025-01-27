@@ -5,7 +5,7 @@
 	border: 1px solid var(--primary-color);
 }
 
-.propertyContainer {
+.container-property {
 	margin-bottom: 10px;
 	width: var(--standard-width);
 	max-width: var(--standard-max-width);

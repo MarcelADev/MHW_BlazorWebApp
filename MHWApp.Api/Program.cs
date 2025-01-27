@@ -260,6 +260,64 @@ app.MapGet("/categories", async (AppDbContext dbContext, ClaimsPrincipal user) =
     return Results.Ok(categories);
 });
 
+app.MapGet("/categories/inventoryentries", async (AppDbContext dbContext, ClaimsPrincipal user) =>
+{
+    var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
+    if (userIdClaim == null)
+    {
+        return Results.Unauthorized();
+    }
+
+    var inventoryentryCategories = await dbContext.InventoryEntryCategories.ToListAsync();
+
+    return Results.Ok(inventoryentryCategories);
+});
+
+app.MapGet("/categories/weapons", async (AppDbContext dbContext, ClaimsPrincipal user) =>
+{
+    var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
+    if (userIdClaim == null)
+    {
+        return Results.Unauthorized();
+    }
+
+    var weaponCategories = await dbContext.WeaponCategories.ToListAsync();
+
+    return Results.Ok(weaponCategories);
+});
+
+app.MapGet("/categories/armors", async (AppDbContext dbContext, ClaimsPrincipal user) =>
+{
+    var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
+    if (userIdClaim == null)
+    {
+        return Results.Unauthorized();
+    }
+
+    var armorCategories = await dbContext.ArmorCategories.ToListAsync();
+
+    return Results.Ok(armorCategories);
+});
+
+app.MapPost("categories/{inventoryentry}/{weapon}/{armor}", async (Category newCategory, AppDbContext dbContext, bool inventoryentry, bool weapon, bool armor) =>
+{
+    // Naming für obj CategoryDTO   => Data Transfer Object
+    await dbContext.Categories.AddAsync(newCategory);
+
+    await dbContext.SaveChangesAsync();
+
+    //await dbContext.InventoryEntryCategories.AddAsync(
+    //    new InventoryEntryCategory 
+    //    { 
+    //        Id = 0,
+    //        CategoryId = newCategory.Id,
+    //        Order = 0
+    //    });
+
+    return Results.Created($"/newcategory/{newCategory.Id}", newCategory);
+}
+).RequireAuthorization(policy => policy.RequireRole("Manager", "Admin"));
+
 #endregion
 
 #region Endpoint: Inventory Entry

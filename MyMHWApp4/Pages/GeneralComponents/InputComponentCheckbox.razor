@@ -1,0 +1,11 @@
+﻿<label class="container-property">
+	<input id="checkbox" name="PropertyInput" type="checkbox" @bind-value="Value" />
+	@LabelText
+</label>
+
+@code {
+	public bool Value { get; set; }
+
+	[Parameter]
+	public required string LabelText { get; set; }
+}

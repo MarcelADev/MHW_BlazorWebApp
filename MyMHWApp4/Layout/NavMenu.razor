@@ -47,14 +47,14 @@
                 else if (adminPagesActive)
                 {
                     <div class="nav-item px-3">
-                        <NavLink class="nav-link" href="edit/inventoryentries">
-                            <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Edit Inventory Entries
+                        <NavLink class="nav-link" href="edit/categories">
+                            <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Admin: Category
                         </NavLink>
                     </div>
 
                     <div class="nav-item px-3">
-                        <NavLink class="nav-link" href="edit/categories">
-                            <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Edit Categories
+                        <NavLink class="nav-link" href="edit/inventoryentries">
+                            <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Admin: Inventory Entry
                         </NavLink>
                     </div>
                 }
@@ -111,8 +111,8 @@
             "/session" => "Menu",
             "/session/create" => "Create Session",
             "/inventory" => "Inventory",
-            "/edit/inventoryentries" => "Edit Inventory Entries",
-            "/edit/categories" => "Edit Categories",
+            "/edit/categories" => "Admin: Category",
+            "/edit/inventoryentries" => "Admin: Inventory Entry",
             _ => "Unknown",
         };
 
@@ -126,7 +126,7 @@
         {
             gamePagesActive = true;
         }
-        else if (CurrentUrl == "Edit Categories" || CurrentUrl == "Edit Inventory Entries")
+        else if (CurrentUrl == "Admin: Category" || CurrentUrl == "Admin: Inventory Entry")
         {
             adminPagesActive = true;
         }

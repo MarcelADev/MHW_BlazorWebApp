@@ -4,27 +4,55 @@
 @using Provider
 @inject CategoryProvider categoryProvider
 
-<h3>Edit Categories</h3>
+<header class="container-center header">
+	<h2>Categories</h2>
+</header>
 
-<InputComponentText LabelText="Name:" PropertyChanged="HandleNameChanged"></InputComponentText>
+<main class="container-top">
 
-@if(categories == null){
-	<p>Loading ...</p>
-}
-else if(!categories.Any()){
-	<p>List is empty</p>
-}
-else{
-	@foreach(Category category in categories){
-		<EditCategoryComponent Category="category"></EditCategoryComponent>
+	<div class="container-h3"><h3>Create</h3></div>
+
+	<InputComponentText @ref="nameInput" LabelText="Name:" PlaceHolder="Category Name"></InputComponentText>
+
+	<div class="tab">
+
+		<div class="container-h4 margin-h4"><h4>Interfaces</h4></div>
+
+		<InputComponentCheckbox @ref="isInventoryEntryCategory" LabelText="Inventory Entry"></InputComponentCheckbox>
+
+		<InputComponentCheckbox @ref="isWeaponCategory" LabelText="Weapon"></InputComponentCheckbox>
+
+		<InputComponentCheckbox @ref="isArmorCategory" LabelText="Armor"></InputComponentCheckbox>
+
+	</div>
+
+	<button class="button theme-purple" @onclick="OnCreateCategoryButtonClicked">Create Category</button>
+
+	<div class="container-h3 margin-h3"><h3>Edit</h3></div>
+
+	@if(categories == null){
+		<p>Loading ...</p>
 	}
-}
+	else if(!categories.Any()){
+		<p>List is empty</p>
+	}
+	else{
+		@foreach(Category category in categories){
+			<EditCategoryComponent Category="category"></EditCategoryComponent>
+		}
+	}
 
-<p>@name</p>
+</main>
+
+<footer class="footer"></footer>
 
 @code {
 	List<Category>? categories;
-	private string name = "";
+
+	private InputComponentText? nameInput;
+	private InputComponentCheckbox? isInventoryEntryCategory;
+	private InputComponentCheckbox? isWeaponCategory;
+	private InputComponentCheckbox? isArmorCategory;
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -32,9 +60,7 @@ else{
 		await base.OnInitializedAsync();
 	}
 
-	private void HandleNameChanged(string newName)
-	{
-		name = newName;
-		StateHasChanged();
+	private async Task OnCreateCategoryButtonClicked(){
+
 	}
 }
