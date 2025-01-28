@@ -261,3 +261,11 @@ input {
     --primary-color: #3f3f3f;
     --secondary-color: whitesmoke;
 }
+
+.theme-blue {
+    --primary-color: #028df7;
+}
+
+.theme-red {
+    --primary-color: #eb4034;
+}

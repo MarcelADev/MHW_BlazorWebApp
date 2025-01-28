@@ -1,0 +1,39 @@
+﻿.container-category-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: var(--standard-width);
+    max-width: var(--standard-max-width);
+    border: 1px solid black;
+    background-color: transparent;
+    padding: var(--standard-padding);
+    margin-bottom: 5px;
+}
+
+.container-left {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    width: var(--standard-width);
+    max-width: var(--standard-max-width);
+}
+
+.expandable-content {
+    overflow: hidden;
+    transition: height 0.5s ease; /* Sanfte Animation */
+    margin-bottom: 10px;
+}
+
+    .expandable-content p {
+        margin: 0; /* Entfernt den Standardabstand */
+    }
+
+.button-edit{
+    padding: 3px 10px;
+    margin-left: 5px;
+}
+
+.button-delete {
+    padding: 3px 10px;
+    margin-left: 20px;
+}
