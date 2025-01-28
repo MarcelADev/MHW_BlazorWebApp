@@ -2,17 +2,17 @@
 
 namespace MHWApp.Library.Model
 {
-    public class ArmorCraftingIngredient : IModel
+    public class ArmorCraftingIngredient
     {
-        public int Id { get; set; }
+        public required int Id { get; set; }
 
-        public int ArmorId { get; set; }
-        public required Armor Armor { get; set; }
+        public required int ArmorId { get; set; }
+        public Armor? Armor { get; set; }
 
-        public int InventoryEntryId { get; set; }
-        public required InventoryEntry InventoryEntry { get; set; }
+        public required int InventoryEntryId { get; set; }
+        public InventoryEntry? InventoryEntry { get; set; }
 
         [Required]
-        public int Quantity { get; set; }
+        public required int Quantity { get; set; }
     }
 }

@@ -2,9 +2,9 @@
 
 namespace MHWApp.Library.Model
 {
-    public class Session : IModel
+    public class Session
     {
-        public int Id { get; set; }
+        public required int Id { get; set; }
 
         [Required]
         public required string Name { get; set; }

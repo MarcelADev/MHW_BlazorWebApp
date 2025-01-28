@@ -1,17 +1,17 @@
 ﻿namespace MHWApp.Library.Model
 {
-    public class Participator : IModel
+    public class Participator
     {
-        public int Id { get; set; }
+        public required int Id { get; set; }
 
-        public int PlayerId { get; set; }
-        public Player Player { get; set; }
+        public required int PlayerId { get; set; }
+        public Player? Player { get; set; }
 
-        public int SessionId { get; set; }
-        public Session Session { get; set; }
+        public required int SessionId { get; set; }
+        public Session? Session { get; set; }
 
-        public int WeaponTypeId { get; set; }
-        public WeaponType WeaponType { get; set; }
+        public required int WeaponTypeId { get; set; }
+        public WeaponType? WeaponType { get; set; }
 
         public List<InventoryEntry> InventoryEntries { get; set; } = [];
         public List<ParticipatorInventoryEntry> ParticipatorInventoryEntries { get; set; } = [];

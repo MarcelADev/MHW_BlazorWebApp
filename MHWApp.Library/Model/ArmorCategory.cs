@@ -2,14 +2,14 @@
 
 namespace MHWApp.Library.Model
 {
-    public class ArmorCategory : IModel
+    public class ArmorCategory
     {
-        public int Id { get; set; }
+        public required int Id { get; set; }
 
-        public int CategoryId { get; set; }
-        public required Category Category { get; set; }
+        public required int CategoryId { get; set; }
+        public Category? Category { get; set; }
 
         [Required]
-        public int Order { get; set; }
+        public required int Order { get; set; }
     }
 }

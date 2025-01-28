@@ -1,6 +1,7 @@
 ﻿using MHWApp.Library.Model;
 using System.Net.Http.Json;
 using System.Net.Http;
+using MHWApp.Library.DTO;
 
 namespace MyMHWApp4.Provider
 {
@@ -12,47 +13,80 @@ namespace MyMHWApp4.Provider
         {
             try
             {
-                return await _httpClient.GetFromJsonAsync<List<Category>>($"categories");
+                var categories = await _httpClient.GetFromJsonAsync<List<Category>>($"categories");
+
+                if (categories != null)
+                    return categories;
+
+                return new List<Category>();
             }
             catch (Exception ex)
             {
-                return null;
+                return new List<Category>();
             }
         }
 
-        public async Task<List<Category>> GetInventoryEntryCategoriesAsync()
+        public async Task<List<InventoryEntryCategory>> GetInventoryEntryCategoriesAsync()
         {
             try
             {
-                return await _httpClient.GetFromJsonAsync<List<Category>>($"categories/inventoryentries");
+                var invetoryEntryCategories = await _httpClient.GetFromJsonAsync<List<InventoryEntryCategory>>($"categories/inventoryentries");
+
+                if (invetoryEntryCategories != null)
+                    return invetoryEntryCategories;
+
+                return new List<InventoryEntryCategory>();
             }
             catch (Exception ex)
             {
-                return null;
+                return new List<InventoryEntryCategory>();
             }
         }
 
-        public async Task<List<Category>> GetWeaponCategoriesAsync()
+        public async Task<List<WeaponCategory>> GetWeaponCategoriesAsync()
         {
             try
             {
-                return await _httpClient.GetFromJsonAsync<List<Category>>($"categories/weapons");
+                var weaponCategories = await _httpClient.GetFromJsonAsync<List<WeaponCategory>>($"categories/weapons");
+
+                if (weaponCategories != null)
+                    return weaponCategories;
+
+                return new List<WeaponCategory>();
             }
             catch (Exception ex)
             {
-                return null;
+                return new List<WeaponCategory>();
             }
         }
 
-        public async Task<List<Category>> GetArmorCategoriesAsync()
+        public async Task<List<ArmorCategory>> GetArmorCategoriesAsync()
         {
             try
             {
-                return await _httpClient.GetFromJsonAsync<List<Category>>($"categories/armor");
+                var armorCategories = await _httpClient.GetFromJsonAsync<List<ArmorCategory>>($"categories/armors");
+
+                if (armorCategories != null)
+                    return armorCategories;
+
+                return new List<ArmorCategory>();
             }
             catch (Exception ex)
             {
-                return null;
+                return new List<ArmorCategory>();
+            }
+        }
+
+        public async Task<bool> CreateAllCategoriesAsync(CategoryDTO categoryDTO)
+        {
+            try
+            {
+                var response = await _httpClient.PostAsJsonAsync("categories", categoryDTO);
+                return response.IsSuccessStatusCode;
+            }
+            catch (Exception ex)
+            {
+                return false;
             }
         }
     }

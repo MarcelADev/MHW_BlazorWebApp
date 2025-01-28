@@ -1,4 +1,5 @@
 ﻿@page "/edit/categories"
+@using MHWApp.Library.DTO
 @using MHWApp.Library.Model
 @using MyMHWApp4.Pages.GeneralComponents
 @using Provider
@@ -42,12 +43,21 @@
 		}
 	}
 
+	@if (categoryDTO != null)
+	{
+		<p>@categoryDTO.NewCategory.Name</p>
+		<p>Is Inventoryentry: @categoryDTO.IsInventoryEntry</p>
+		<p>Is weapon: @categoryDTO.IsWeapon</p>
+		<p>Is Armor: @categoryDTO.IsArmor</p>
+	}
+
 </main>
 
 <footer class="footer"></footer>
 
 @code {
 	List<Category>? categories;
+	CategoryDTO? categoryDTO;
 
 	private InputComponentText? nameInput;
 	private InputComponentCheckbox? isInventoryEntryCategory;
@@ -60,7 +70,18 @@
 		await base.OnInitializedAsync();
 	}
 
-	private async Task OnCreateCategoryButtonClicked(){
+	private async Task OnCreateCategoryButtonClicked()
+	{
+		categoryDTO = new CategoryDTO
+		{
+			NewCategory = new Category { Id = 0, Name = nameInput!.Value },
+			IsInventoryEntry = isInventoryEntryCategory.Value,
+			IsWeapon= isWeaponCategory.Value,
+			IsArmor = isArmorCategory.Value
+		};
 
+		await categoryProvider.CreateAllCategoriesAsync(categoryDTO);
+
+		categories = await categoryProvider.GetCategoriesAsync();
 	}
 }

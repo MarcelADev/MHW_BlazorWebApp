@@ -1,4 +1,5 @@
-﻿@inject NavigationManager NavigationManager
+﻿@using static MHWApp.Library.StaticVariables
+@inject NavigationManager NavigationManager
 
 <div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
@@ -28,15 +29,26 @@
                         <p class="userName"><b>@context.User.Identity?.Name</b></p>
                     </div>
 
-                    if(isAdmin){
+                    if(context.User.IsInRole(ADMIN_ROLE) || context.User.IsInRole(MASTER_ROLE))
+                    {
                         <div class="nav-item px-3">
                             <NavLink class="nav-link" href="edit/categories">
                                 <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Admin Pages
                             </NavLink>
                         </div>
                     }
+
+                    if (context.User.IsInRole(MASTER_ROLE))
+                    {
+                        <div class="nav-item px-3">
+                            <NavLink class="nav-link" href="master">
+                                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Master Page
+                            </NavLink>
+                        </div>
+                    }
                 }
-                else if (gamePagesActive){
+                else if (gamePagesActive)
+                {
 
                     <div class="nav-item px-3">
                         <NavLink class="nav-link" href="inventory">
@@ -44,7 +56,7 @@
                         </NavLink>
                     </div>
                 }
-                else if (adminPagesActive)
+                else if (adminPagesActive && (context.User.IsInRole(ADMIN_ROLE) || context.User.IsInRole(MASTER_ROLE)))
                 {
                     <div class="nav-item px-3">
                         <NavLink class="nav-link" href="edit/categories">
@@ -58,8 +70,12 @@
                         </NavLink>
                     </div>
                 }
+                else if (masterPageActive && context.User.IsInRole(MASTER_ROLE))
+                {
 
-                @if(gamePagesActive || adminPagesActive)
+                }
+
+                @if(gamePagesActive || adminPagesActive || masterPageActive)
                 {
                     <div class="nav-item px-3">
                         <NavLink class="nav-link" href="session">
@@ -80,6 +96,22 @@
 </div>
 
 @code {
+	private static string HOME = "Home";
+
+    // Session
+    private static string SESSION_MENU = "Menu";
+    private static string SESSION_CREATE = "Create Session";
+
+    // Master
+    private static string MASTER = "master";
+
+    // Game Pages
+	private static string INVENTORY = "Inventory";
+
+    // Admin Pages
+	private static string ADMIN_CATEGORY = "Admin: Category";
+	private static string ADMIN_INVENTORY_ENTRY = "Admin: Inventory Entry";
+
     private bool collapseNavMenu = true;
     private string? CurrentUrl { get; set; }
 
@@ -88,8 +120,7 @@
     private bool mainMenuActive = true;
     private bool gamePagesActive = false;
     private bool adminPagesActive = false;
-
-    private bool isAdmin = true;
+	private bool masterPageActive = false;
 
     private void ToggleNavMenu()
     {
@@ -107,26 +138,33 @@
     {
         CurrentUrl = url switch
         {
-            "/" => "Home",
-            "/session" => "Menu",
-            "/session/create" => "Create Session",
-            "/inventory" => "Inventory",
-            "/edit/categories" => "Admin: Category",
-            "/edit/inventoryentries" => "Admin: Inventory Entry",
+            "/" => HOME,
+            "/session" => SESSION_MENU,
+            "/session/create" => SESSION_CREATE,
+            "/master" => MASTER,
+            "/inventory" => INVENTORY,
+            "/edit/categories" => ADMIN_CATEGORY,
+            "/edit/inventoryentries" => ADMIN_INVENTORY_ENTRY,
             _ => "Unknown",
         };
 
-        mainMenuActive = gamePagesActive = adminPagesActive = false;
+        mainMenuActive = gamePagesActive = adminPagesActive = masterPageActive = false;
 
-        if (CurrentUrl == "Menu" || CurrentUrl == "Create Session") 
+        if (CurrentUrl == SESSION_MENU || 
+            CurrentUrl == SESSION_CREATE)
         { 
             mainMenuActive = true; 
         }
-        else if (CurrentUrl == "Inventory")
+		else if (CurrentUrl == MASTER)
+		{
+			masterPageActive = true;
+		}
+        else if (CurrentUrl == INVENTORY)
         {
             gamePagesActive = true;
         }
-        else if (CurrentUrl == "Admin: Category" || CurrentUrl == "Admin: Inventory Entry")
+        else if (CurrentUrl == ADMIN_CATEGORY || 
+            CurrentUrl == ADMIN_INVENTORY_ENTRY)
         {
             adminPagesActive = true;
         }

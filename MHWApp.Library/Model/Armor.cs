@@ -2,21 +2,21 @@
 
 namespace MHWApp.Library.Model
 {
-    public class Armor : IModel
+    public class Armor
     {
-        public int Id { get; set; }
+        public required int Id { get; set; }
 
-        public int ArmorCategoryId { get; set; }
-        public required ArmorCategory ArmorCategory { get; set; }
+        public required int ArmorCategoryId { get; set; }
+        public ArmorCategory? ArmorCategory { get; set; }
 
-        public int GameExtensionId { get; set; }
-        public required GameExtension GameExtension { get; set; }
+        public required int GameExtensionId { get; set; }
+        public GameExtension? GameExtension { get; set; }
 
         [Required]
         public required string Name { get; set; }
 
         [Required]
-        public int Order { get; set; }
+        public required int Order { get; set; }
 
         public List<Participator> Participators { get; set; } = [];
         public List<ParticipatorArmor> ParticipatorArmors { get; set; } = [];

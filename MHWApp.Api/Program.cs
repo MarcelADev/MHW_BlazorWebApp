@@ -1,8 +1,11 @@
 using MHWApp.Api.Data;
+using MHWApp.Library;
+using MHWApp.Library.DTO;
 using MHWApp.Library.Model;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Runtime.CompilerServices;
 using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -299,24 +302,50 @@ app.MapGet("/categories/armors", async (AppDbContext dbContext, ClaimsPrincipal 
     return Results.Ok(armorCategories);
 });
 
-app.MapPost("categories/{inventoryentry}/{weapon}/{armor}", async (Category newCategory, AppDbContext dbContext, bool inventoryentry, bool weapon, bool armor) =>
+app.MapPost("/categories", async (CategoryDTO categoryDTO, AppDbContext dbContext) =>
 {
-    // Naming für obj CategoryDTO   => Data Transfer Object
-    await dbContext.Categories.AddAsync(newCategory);
+    await dbContext.Categories.AddAsync(categoryDTO.NewCategory);
 
     await dbContext.SaveChangesAsync();
 
-    //await dbContext.InventoryEntryCategories.AddAsync(
-    //    new InventoryEntryCategory 
-    //    { 
-    //        Id = 0,
-    //        CategoryId = newCategory.Id,
-    //        Order = 0
-    //    });
+    if(categoryDTO.IsInventoryEntry)
+    {
+        await dbContext.InventoryEntryCategories.AddAsync(
+        new InventoryEntryCategory
+        {
+            Id = 0,
+            CategoryId = categoryDTO.NewCategory.Id,
+            Order = StaticVariables.ORDER_DEFAULT_VALUE
+        });
+    }
 
-    return Results.Created($"/newcategory/{newCategory.Id}", newCategory);
+    if (categoryDTO.IsWeapon)
+    {
+        await dbContext.WeaponCategories.AddAsync(
+        new WeaponCategory
+        {
+            Id = 0,
+            CategoryId = categoryDTO.NewCategory.Id,
+            Order = StaticVariables.ORDER_DEFAULT_VALUE
+        });
+    }
+
+    if (categoryDTO.IsArmor)
+    {
+        await dbContext.ArmorCategories.AddAsync(
+        new ArmorCategory
+        {
+            Id = 0,
+            CategoryId = categoryDTO.NewCategory.Id,
+            Order = StaticVariables.ORDER_DEFAULT_VALUE
+        });
+    }
+
+    await dbContext.SaveChangesAsync();
+
+    return Results.Created($"/newcategory/{categoryDTO.NewCategory.Id}", categoryDTO.NewCategory);
 }
-).RequireAuthorization(policy => policy.RequireRole("Manager", "Admin"));
+).RequireAuthorization(policy => policy.RequireRole("Master", "Admin"));
 
 #endregion
 

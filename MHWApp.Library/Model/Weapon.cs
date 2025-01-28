@@ -2,30 +2,30 @@
 
 namespace MHWApp.Library.Model
 {
-    public class Weapon : IModel
+    public class Weapon
     {
-        public int Id { get; set; }
+        public required int Id { get; set; }
 
-        public int WeaponCategoryId { get; set; }
-        public required WeaponCategory WeaponCategory { get; set; }
+        public required int WeaponCategoryId { get; set; }
+        public WeaponCategory? WeaponCategory { get; set; }
 
-        public int WeaponTypeId { get; set; }
-        public required WeaponType WeaponType { get; set; }
+        public required int WeaponTypeId { get; set; }
+        public WeaponType? WeaponType { get; set; }
 
-        public int GameExtensionId { get; set; }
-        public required GameExtension GameExtension { get; set; }
+        public required int GameExtensionId { get; set; }
+        public GameExtension? GameExtension { get; set; }
 
-        public int PredecessorId { get; set; }
+        public required int PredecessorId { get; set; }
         public Weapon? Predecessor { get; set; }
 
         [Required]
         public required string Name { get; set; }
 
         [Required]
-        public int WeaponTier { get; set; }
+        public required int WeaponTier { get; set; }
 
         [Required]
-        public int Order { get; set; }
+        public required int Order { get; set; }
 
         public List<Participator> Participators { get; set; } = [];     // Weapon and Participator have the many to many relationship
         public List<ParticipatorWeapon> ParticipatorWeapons { get; set; } = [];     // Joint table of Weapon and Participator

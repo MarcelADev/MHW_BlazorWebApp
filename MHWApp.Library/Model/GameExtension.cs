@@ -2,9 +2,9 @@
 
 namespace MHWApp.Library.Model
 {
-    public class GameExtension : IModel
+    public class GameExtension
     {
-        public int Id { get; set; }
+        public required int Id { get; set; }
 
         [Required]
         public required string Name { get; set; }

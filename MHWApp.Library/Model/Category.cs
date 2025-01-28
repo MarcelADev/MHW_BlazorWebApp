@@ -2,9 +2,9 @@
 
 namespace MHWApp.Library.Model
 {
-    public class Category : IModel
+    public class Category
     {
-        public int Id { get; set; }
+        public required int Id { get; set; }
 
         [Required]
         public required string Name { get; set; }

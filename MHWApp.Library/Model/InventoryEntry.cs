@@ -2,21 +2,21 @@
 
 namespace MHWApp.Library.Model
 {
-    public class InventoryEntry : IModel
+    public class InventoryEntry
     {
-        public int Id { get; set; }
+        public required int Id { get; set; }
 
-        public int InventoryCategoryId { get; set; }
-        public required InventoryEntryCategory InventoryCategory { get; set; }
+        public required int InventoryCategoryId { get; set; }
+        public InventoryEntryCategory? InventoryCategory { get; set; }
 
-        public int GameExtensionId { get; set; }
-        public required GameExtension GameExtension { get; set; }
+        public required int GameExtensionId { get; set; }
+        public GameExtension? GameExtension { get; set; }
 
         [Required]
         public required string Name { get; set; }
 
         [Required]
-        public int Order { get; set; }
+        public required int Order { get; set; }
 
         public List<Participator> Participators { get; set; } = [];
         public List<ParticipatorInventoryEntry> ParticipatorInventoryEntries { get; set; } = [];
