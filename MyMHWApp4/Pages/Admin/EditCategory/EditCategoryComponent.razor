@@ -1,24 +1,36 @@
 ﻿@using MHWApp.Library.Model
+@using MyMHWApp4.Pages.GeneralComponents
 
-<button class="container-category-card" @onclick="OnClick">
-	@Category.Name
-</button>
+<div class="category-card">
 
-<div class="container-left expandable-content" style="@(openCard ? "height: auto;" : "height: 0;")">
-	<div>
-		<button class="button button-edit theme-blue">Edit</button>
+	<p >@Category.Name</p>
+
+	<div class="tab">
+		<div class="container-property">
+			<label for="PropertyInput">Name:</label>
+			<input name="PropertyInput" placeholder="Category Name" type="text" @bind-value="Value" />
+		</div>
+
+		<InputComponentCheckbox @ref="NewNameInput" LabelText="Inventory Entry" IsChecked="true"></InputComponentCheckbox>
+
 		<button class="button button-delete theme-red">Delete</button>
+
 	</div>
 </div>
 
+
+
 @code {
-	private bool openCard = false;
+	public InputComponentCheckbox? NewNameInput;
+
+	public string Value { get; set; } = "";
 
 	[Parameter]
 	public required Category Category { get; set; }
 
-	private void OnClick()
+	protected override async Task OnInitializedAsync()
 	{
-		openCard = !openCard;
+		Value = Category.Name;
+		await base.OnInitializedAsync();
 	}
 }

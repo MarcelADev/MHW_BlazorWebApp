@@ -245,8 +245,8 @@ input {
 }
 
 .tab {
-    width: = var(--standard-width);
-    max-width = var(--standard-max-width);
+    width: var(--standard-width);
+    max-width: var(--standard-max-width);
     padding-left: var(--tab-padding);
 }
 

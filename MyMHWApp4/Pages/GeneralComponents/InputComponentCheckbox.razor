@@ -1,5 +1,5 @@
 ﻿<label class="container-property">
-	<input id="checkbox" name="PropertyInput" type="checkbox" @bind-value="Value" />
+	<input id="checkbox" name="PropertyInput" type="checkbox" checked="@IsChecked" @bind-value="Value" />
 	@LabelText
 </label>
 
@@ -8,4 +8,7 @@
 
 	[Parameter]
 	public required string LabelText { get; set; }
+
+	[Parameter]
+	public bool IsChecked { get; set; }
 }

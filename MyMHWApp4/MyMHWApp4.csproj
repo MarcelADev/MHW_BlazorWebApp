@@ -27,6 +27,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Pages\Admin\EditGameExtension\" />
     <Folder Include="Pages\GeneralComponents\DropDownVu\" />
   </ItemGroup>
 

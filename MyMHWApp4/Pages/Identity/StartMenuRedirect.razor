@@ -1,9 +1,9 @@
 ﻿@inject NavigationManager NavigationManager
 @code {
-	protected override void OnInitialized()
+	protected override async Task OnInitializedAsync()
 	{
-		base.OnInitialized();
-		DelayedRedirect();
+		await base.OnInitializedAsync();
+		await DelayedRedirect();
 	}
 
 	private async Task DelayedRedirect()

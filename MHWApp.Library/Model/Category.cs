@@ -8,5 +8,9 @@ namespace MHWApp.Library.Model
 
         [Required]
         public required string Name { get; set; }
+
+        public InventoryEntryCategory? InventoryEntryCategory { get; set; }
+        public WeaponCategory? WeaponCategory { get; set; }
+        public ArmorCategory? ArmorCategory { get; set; }
     }
 }

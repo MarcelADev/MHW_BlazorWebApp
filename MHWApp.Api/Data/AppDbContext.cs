@@ -109,17 +109,37 @@ namespace MHWApp.Api.Data
                 );
             #endregion
 
+            #region Category
+            // one to one relationship of Category and InventoryEntryCategory
+            modelBuilder.Entity<Category>()
+                .HasOne(o => o.InventoryEntryCategory)
+                .WithOne();
+
+            // one to one relationship of Category and WeaponCategory
+            modelBuilder.Entity<Category>()
+                .HasOne(o => o.WeaponCategory)
+                .WithOne();
+
+            // one to one relationship of Category and ArmorCategory
+            modelBuilder.Entity<Category>()
+                .HasOne(o => o.ArmorCategory)
+                .WithOne();
+            #endregion
+
             #region Inventory Entry Catagory & Weapon Category & Armor Catagory
+            // one to one relationship of InventoryEntryCategory and Category
             modelBuilder.Entity<InventoryEntryCategory>()
                 .HasOne(o => o.Category)
                 .WithOne()
                 .HasForeignKey<InventoryEntryCategory>(o => o.CategoryId);
 
+            // one to one relationship of WeaponCategory and Category
             modelBuilder.Entity<WeaponCategory>()
                 .HasOne(o => o.Category)
                 .WithOne()
                 .HasForeignKey<WeaponCategory>(o => o.CategoryId);
 
+            // one to one relationship of ArmorCategory and Category
             modelBuilder.Entity<ArmorCategory>()
                 .HasOne(o => o.Category)
                 .WithOne()

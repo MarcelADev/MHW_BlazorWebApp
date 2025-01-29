@@ -128,6 +128,7 @@ app.MapGet("/roles", (ClaimsPrincipal user) =>
     return Results.Unauthorized();
 }).RequireAuthorization();
 
+#region Endpoint: Dummy-Example for Authorization
 // provide an endpoint example that requires authorization
 app.MapPost("/data-processing-1", ([FromBody] FormModel model) =>
     Results.Text($"{model.Message.Length} characters"))
@@ -137,6 +138,7 @@ app.MapPost("/data-processing-1", ([FromBody] FormModel model) =>
 app.MapPost("/data-processing-2", ([FromBody] FormModel model) =>
     Results.Text($"{model.Message.Length} characters"))
         .RequireAuthorization(policy => policy.RequireRole("Manager"));
+#endregion
 
 #region Endpoint: Session
 
@@ -258,7 +260,9 @@ app.MapGet("/categories", async (AppDbContext dbContext, ClaimsPrincipal user) =
         return Results.Unauthorized();
     }
 
-    var categories = await dbContext.Categories.ToListAsync();
+    var categories = await dbContext.Categories
+        .Include(c => c.InventoryEntryCategory)
+        .ToListAsync();
 
     return Results.Ok(categories);
 });
