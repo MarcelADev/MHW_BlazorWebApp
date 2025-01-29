@@ -260,9 +260,11 @@ app.MapGet("/categories", async (AppDbContext dbContext, ClaimsPrincipal user) =
         return Results.Unauthorized();
     }
 
-    var categories = await dbContext.Categories
-        .Include(c => c.InventoryEntryCategory)
-        .ToListAsync();
+    //var categories = await dbContext.Categories
+    //    .Include(c => c.InventoryEntryCategory)
+    //    .ToListAsync();
+
+    var categories = await dbContext.Categories.ToListAsync();
 
     return Results.Ok(categories);
 });

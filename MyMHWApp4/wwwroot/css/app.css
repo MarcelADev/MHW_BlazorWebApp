@@ -264,8 +264,15 @@ input {
 
 .theme-blue {
     --primary-color: #028df7;
+    --primary-color: #5161b8;
 }
 
 .theme-red {
     --primary-color: #eb4034;
+}
+
+.material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 48;
+    color: #EA3323;
+    font-size: 50px;
 }

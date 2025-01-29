@@ -11,9 +11,21 @@
 			<input name="PropertyInput" placeholder="Category Name" type="text" @bind-value="Value" />
 		</div>
 
-		<InputComponentCheckbox @ref="NewNameInput" LabelText="Inventory Entry" IsChecked="true"></InputComponentCheckbox>
+		<InputComponentCheckbox @ref="IsInventoryEntryInput" LabelText="Inventory Entry Category" IsChecked="true"></InputComponentCheckbox>
 
-		<button class="button button-delete theme-red">Delete</button>
+		<InputComponentCheckbox @ref="IsWeaponInput" LabelText="Weapon Category" IsChecked="true"></InputComponentCheckbox>
+		
+		<InputComponentCheckbox @ref="IsArmorInput" LabelText="Armor Category" IsChecked="true"></InputComponentCheckbox>
+
+		<div class="container-button">
+			<button class="button button-confirm theme-purple">Confirm Changes</button>
+			<button class="button button-delete theme-red">Delete</button>
+
+			<span class="material-symbols-outlined">
+				delete
+			</span>
+
+		</div>
 
 	</div>
 </div>
@@ -21,7 +33,9 @@
 
 
 @code {
-	public InputComponentCheckbox? NewNameInput;
+	public InputComponentCheckbox? IsInventoryEntryInput;
+	public InputComponentCheckbox? IsWeaponInput;
+	public InputComponentCheckbox? IsArmorInput;
 
 	public string Value { get; set; } = "";
 
