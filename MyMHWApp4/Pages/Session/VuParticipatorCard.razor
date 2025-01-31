@@ -1,0 +1,58 @@
+﻿@using MHWApp.Library.Model;
+
+@if (null != Value)
+{
+    <div class="vu-card participator">
+        <div class="vu-card-header">
+            @Value.Player.UserName
+        </div>
+        <div class="vu-card-body">
+            <div class="participator-weapon">
+                <img src="@($"Images/WeaponIcons/{Value.WeaponType.Name}.svg")"
+                     alt="@Value.WeaponType.Name" />
+                <select @onchange="@HandleWeaponChange">
+                    @foreach (var weaponType in weaponTypes)
+                    {
+                        <option>@weaponType.Name</option>
+                    }
+                </select>
+            </div>
+        </div>
+    </div>
+}
+
+
+@code {
+    private Participator? _value;
+
+    /// <summary>
+    /// Participator to bind to.
+    /// </summary>
+    [Parameter]
+    public Participator? Value { get; set; }
+
+    /// <summary>
+    /// Value changed callback.
+    /// </summary>
+    [Parameter]
+    public EventCallback<Participator> ValueChanged { get; set; }
+
+    /// <summary>
+    /// List of available weapon types to choose.
+    /// </summary>
+    [Parameter]
+    public List<WeaponType> weaponTypes { get; set; } = [];
+
+    private void HandleWeaponChange(ChangeEventArgs args)
+    {
+        if (null == args || null == args.Value) return;
+
+        var weaponTypeName = (string)args.Value;
+        var weaponType = weaponTypes.Find(w => w.Name == weaponTypeName);
+
+        if (null == weaponType) return;
+
+        Value!.WeaponTypeId = weaponType.Id;
+        Value!.WeaponType = weaponType;
+    }
+}

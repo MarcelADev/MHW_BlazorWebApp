@@ -31,7 +31,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Pages\GeneralComponents\DropDownVu\" />
+    <None Include="wwwroot\js\*" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\Images\WeaponIcons\" />
   </ItemGroup>
 
 </Project>

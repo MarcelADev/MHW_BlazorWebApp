@@ -10,7 +10,7 @@
     <h2>Create new Session</h2>
 </header>
 
-<main class="container-top">    
+<main class="container-top">
 
     <InputComponentText @ref="inputName" LabelText="Name:" PlaceHolder="Session Name"></InputComponentText>
 
@@ -23,18 +23,17 @@
     <ul class="participator-list">
 
         <AuthorizeView>
-            <ParticipatorComponent 
-            PlayerName="@(context.User.Identity?.Name)" 
-            PlayerId="-1"
-            ChosenItemChanged="HandleChosenWeaponTypeChanged">
+            <ParticipatorComponent PlayerName="@(context.User.Identity?.Name)"
+                                   PlayerId="-1"
+                                   ChosenItemChanged="HandleChosenWeaponTypeChanged">
             </ParticipatorComponent>
         </AuthorizeView>
 
-        @foreach(Player player in selectedPlayers){
-            <ParticipatorComponent 
-            PlayerName="@player.UserName" 
-            PlayerId="player.Id"
-            ChosenItemChanged="HandleChosenWeaponTypeChanged">
+        @foreach (Player player in selectedPlayers)
+        {
+            <ParticipatorComponent PlayerName="@player.UserName"
+                                   PlayerId="player.Id"
+                                   ChosenItemChanged="HandleChosenWeaponTypeChanged">
             </ParticipatorComponent>
         }
     </ul>
@@ -63,14 +62,16 @@
     private bool errors = false;
     private List<string> errorList = [];
 
-    private void HandleSelectedPlayersChanged(List<Player> newSelectedPlayers){
+    private void HandleSelectedPlayersChanged(List<Player> newSelectedPlayers)
+    {
         selectedPlayers = newSelectedPlayers;
         StateHasChanged();
     }
 
-    private void HandleChosenWeaponTypeChanged(int[] id) {
+    private void HandleChosenWeaponTypeChanged(int[] id)
+    {
 
-        if(weaponTypeDictionary.ContainsKey(id[0]))
+        if (weaponTypeDictionary.ContainsKey(id[0]))
         {
             weaponTypeDictionary[id[0]] = id[1];
         }
@@ -88,35 +89,37 @@
             errorList.Add("Session Name required");
         }
 
-        if (inputMaxDays.Value < 1){
+        if (inputMaxDays.Value < 1)
+        {
             errors = true;
             errorList.Add("Maximum Days must be minimum 1");
         }
 
         if (errors) return;
 
-        Session newSession = new Session 
-        { 
-            Id = 0, 
-            Name = inputName.Value,
-            DayCount = 1,
-            MaxDays = inputMaxDays.Value, 
-            Date =  GetDate()
-        };
+        Session newSession = new Session
+            {
+                Id = 0,
+                Name = inputName.Value,
+                DayCount = 1,
+                MaxDays = inputMaxDays.Value,
+                Date = GetDate(),
+                Participators = [],
+            };
 
         var createdSession = await sessionProvider.CreateSessionAsync(newSession);
 
-        foreach(var data in weaponTypeDictionary)
+        foreach (var data in weaponTypeDictionary)
         {
-			bool isSelf = data.Key == -1;
+            bool isSelf = data.Key == -1;
 
-			Participator participator = new Participator
-            { 
-                Id = 0, 
-                PlayerId = data.Key, 
-                SessionId = createdSession.Id, 
-                WeaponTypeId = data.Value 
-            };
+            Participator participator = new Participator
+                {
+                    Id = 0,
+                    PlayerId = data.Key,
+                    SessionId = createdSession.Id,
+                    WeaponTypeId = data.Value
+                };
 
             await participatorProvider.CreateParticipatorAsync(participator, isSelf);
         }
@@ -124,7 +127,8 @@
         navigationManager.NavigateTo("/session");
     }
 
-    private string GetDate(){
-		return DateTime.Now.ToString("dd.MM.yyyy");
+    private string GetDate()
+    {
+        return DateTime.Now.ToString("dd.MM.yyyy");
     }
 }

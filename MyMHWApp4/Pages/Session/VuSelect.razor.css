@@ -1,0 +1,63 @@
+﻿.select {
+    --neutral: #D1D1D1;
+    --focus: #0F6CBD;
+    --default-border-radius: 4px;
+    width: 100%;
+    max-width: var(--standard-width);
+}
+
+.select-container {
+    border: 1px solid var(--neutral);
+    border-radius: 4px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+    .select-container::after {
+        position: absolute;
+        left: 0px;
+        right: 0px;
+        bottom: 0px;
+        border-radius: var(--default-border-radius);
+        box-sizing: border-box;
+        height: var(--default-border-radius);
+        width: 100%;
+        content: "";
+        background-image: linear-gradient( 0deg, var(--focus) 0%, var(--focus) 50%, transparent 50%, transparent 100% );
+        transition-property: transform;
+        transition-delay: cubic-bezier(0,0,0,1);
+        transition-duration: 50ms;
+        transform: scaleX(0);
+    }
+
+    .select-container:focus-within::after {
+        transition-property: transform;
+        transition-delay: cubic-bezier(0,0,0,1);
+        transition-duration: 150ms;
+        transform: scaleX(1)
+    }
+
+.select-select {
+    appearance: none;
+    border: none;
+    border-radius: var(--default-border-radius);
+    height: 2.5rem;
+    width: 100%;
+    padding: 0.5rem;
+}
+
+    .select-select:hover {
+        cursor: pointer;
+    }
+
+    .select-select:focus-visible {
+        outline: inherit;
+    }
+
+.select-icon {
+    position: absolute;
+    right: 0.25rem;
+    pointer-events: none;
+}

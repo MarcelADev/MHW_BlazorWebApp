@@ -1,0 +1,21 @@
+﻿@typeparam T
+
+@Multiple
+
+@code {
+    [Parameter]
+    public T? Value { get; set; }
+    [Parameter]
+    public EventCallback<T?> ValueChanged { get; set; }
+
+    [Parameter]
+    public List<T> ValueList { get; set; } = [];
+    [Parameter]
+    public EventCallback<List<T>> ValueListChanged { get; set; }
+
+    [Parameter]
+    public required List<T> Options { get; set; } = [];
+
+    [Parameter]
+    public bool? Multiple { get; set; }
+}

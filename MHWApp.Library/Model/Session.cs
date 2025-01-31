@@ -17,5 +17,9 @@ namespace MHWApp.Library.Model
 
         [Required]
         public required int DayCount { get; set; }
+
+        public List<Participator> Participators { get; set; } = [];
+
+        
     }
 }
