@@ -20,6 +20,7 @@ namespace MHWApp.Api.Data
         public required DbSet<InventoryEntryCategory> InventoryEntryCategories { get; set; }
         public required DbSet<WeaponCategory> WeaponCategories { get; set; }
         public required DbSet<ArmorCategory> ArmorCategories { get; set; }
+        public required DbSet<GameExtension> GameExtensions { get; set; }
 
         public required DbSet<InventoryEntry> InventoryEntries { get; set; }
         public required DbSet<Weapon> Weapons { get; set; }

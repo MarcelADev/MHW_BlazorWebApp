@@ -260,11 +260,11 @@ app.MapGet("/categories", async (AppDbContext dbContext, ClaimsPrincipal user) =
         return Results.Unauthorized();
     }
 
-    //var categories = await dbContext.Categories
-    //    .Include(c => c.InventoryEntryCategory)
-    //    .ToListAsync();
-
-    var categories = await dbContext.Categories.ToListAsync();
+    var categories = await dbContext.Categories
+        .Include(c => c.InventoryEntryCategory)
+        .Include(c => c.WeaponCategory)
+        .Include(c => c.ArmorCategory)
+        .ToListAsync();
 
     return Results.Ok(categories);
 });
@@ -352,6 +352,23 @@ app.MapPost("/categories", async (CategoryDTO categoryDTO, AppDbContext dbContex
     return Results.Created($"/newcategory/{categoryDTO.NewCategory.Id}", categoryDTO.NewCategory);
 }
 ).RequireAuthorization(policy => policy.RequireRole("Master", "Admin"));
+
+#endregion
+
+#region Endpoint: Game Extension
+
+app.MapGet("/gameextensions", async (AppDbContext dbContext, ClaimsPrincipal user) =>
+{
+    var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
+    if (userIdClaim == null)
+    {
+        return Results.Unauthorized();
+    }
+
+    var gameExtensions = await dbContext.GameExtensions.ToListAsync();
+
+    return Results.Ok(gameExtensions);
+}).RequireAuthorization();
 
 #endregion
 

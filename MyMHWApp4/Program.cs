@@ -41,6 +41,7 @@ builder.Services.AddScoped<ParticipatorProvider>();
 builder.Services.AddScoped<InventoryEntryProvider>();
 builder.Services.AddScoped<CategoryProvider>();
 builder.Services.AddScoped<WeaponProvider>();
+builder.Services.AddScoped<GameExtensionProvider>();
 
 #endregion
 

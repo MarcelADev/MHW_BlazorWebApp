@@ -15,7 +15,7 @@ namespace MHWApp.Api.Migrations
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "9.0.0");
+            modelBuilder.HasAnnotation("ProductVersion", "9.0.1");
 
             modelBuilder.Entity("ArmorCraftingIngredient", b =>
                 {
@@ -78,12 +78,18 @@ namespace MHWApp.Api.Migrations
                     b.Property<int>("CategoryId")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int?>("CategoryId1")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int>("Order")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
                     b.HasIndex("CategoryId")
+                        .IsUnique();
+
+                    b.HasIndex("CategoryId1")
                         .IsUnique();
 
                     b.ToTable("ArmorCategories");
@@ -116,7 +122,7 @@ namespace MHWApp.Api.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("GameExtension");
+                    b.ToTable("GameExtensions");
                 });
 
             modelBuilder.Entity("MHWApp.Library.Model.InventoryEntry", b =>
@@ -156,12 +162,18 @@ namespace MHWApp.Api.Migrations
                     b.Property<int>("CategoryId")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int?>("CategoryId1")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int>("Order")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
                     b.HasIndex("CategoryId")
+                        .IsUnique();
+
+                    b.HasIndex("CategoryId1")
                         .IsUnique();
 
                     b.ToTable("InventoryEntryCategories");
@@ -333,12 +345,18 @@ namespace MHWApp.Api.Migrations
                     b.Property<int>("CategoryId")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int?>("CategoryId1")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int>("Order")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
                     b.HasIndex("CategoryId")
+                        .IsUnique();
+
+                    b.HasIndex("CategoryId1")
                         .IsUnique();
 
                     b.ToTable("WeaponCategories");
@@ -633,6 +651,10 @@ namespace MHWApp.Api.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("MHWApp.Library.Model.Category", null)
+                        .WithOne("ArmorCategory")
+                        .HasForeignKey("MHWApp.Library.Model.ArmorCategory", "CategoryId1");
+
                     b.Navigation("Category");
                 });
 
@@ -662,6 +684,10 @@ namespace MHWApp.Api.Migrations
                         .HasForeignKey("MHWApp.Library.Model.InventoryEntryCategory", "CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("MHWApp.Library.Model.Category", null)
+                        .WithOne("InventoryEntryCategory")
+                        .HasForeignKey("MHWApp.Library.Model.InventoryEntryCategory", "CategoryId1");
 
                     b.Navigation("Category");
                 });
@@ -735,6 +761,10 @@ namespace MHWApp.Api.Migrations
                         .HasForeignKey("MHWApp.Library.Model.WeaponCategory", "CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("MHWApp.Library.Model.Category", null)
+                        .WithOne("WeaponCategory")
+                        .HasForeignKey("MHWApp.Library.Model.WeaponCategory", "CategoryId1");
 
                     b.Navigation("Category");
                 });
@@ -871,6 +901,15 @@ namespace MHWApp.Api.Migrations
                     b.Navigation("ArmorCraftingIngredients");
 
                     b.Navigation("ParticipatorArmors");
+                });
+
+            modelBuilder.Entity("MHWApp.Library.Model.Category", b =>
+                {
+                    b.Navigation("ArmorCategory");
+
+                    b.Navigation("InventoryEntryCategory");
+
+                    b.Navigation("WeaponCategory");
                 });
 
             modelBuilder.Entity("MHWApp.Library.Model.InventoryEntry", b =>

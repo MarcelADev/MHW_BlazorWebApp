@@ -1,8 +1,53 @@
 ﻿@page "/edit/gameextensions"
+@using MHWApp.Library.Model
+@using MyMHWApp4.Pages.GeneralComponents
+@using MyMHWApp4.Provider
+@inject GameExtensionProvider gameExtensionProvider
 
+<header class="container-center header">
+	<h2>Game Extension</h2>
+</header>
 
-<h3>EditGameExtension</h3>
+<main class="container-top">
+
+	<div class="container-h3"><h3>Create</h3></div>
+
+	<InputComponentText LabelText="Name" PlaceHolder="New Game Extension"></InputComponentText>
+
+	<button class="button theme-purple" @onclick="OnCreateGameExtensionButtonClicked">Create Extension</button>
+
+	<div class="container-h3 margin-h3"><h3>Edit</h3></div>
+
+	@if(extensions == null){
+		<p>Loading ...</p>
+	}
+	else if (!extensions.Any())
+	{
+		<p>List is empty</p>
+	}
+	else{
+		@foreach (GameExtension extension in extensions)
+		{
+			<p>@extension.Name</p>
+		}
+	}
+
+</main>
+
+<footer class="footer"></footer>
 
 @code {
+	private List<GameExtension>? extensions;
 
+	protected override async Task OnInitializedAsync()
+	{
+		extensions = await gameExtensionProvider.GetGameExtensionsAsync();
+
+		await base.OnInitializedAsync();
+	}
+
+	private async void OnCreateGameExtensionButtonClicked()
+	{
+
+	}
 }
