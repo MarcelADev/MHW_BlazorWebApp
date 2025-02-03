@@ -20,6 +20,6 @@ namespace MHWApp.Library.Model
 
         public List<Participator> Participators { get; set; } = [];
 
-        
+
     }
 }

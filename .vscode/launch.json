@@ -1,0 +1,13 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "C#: MyMHWApp4",
+            "type": "dotnet",
+            "request": "launch",
+            "projectPath": "${workspaceFolder}\\MyMHWApp4\\MyMHWApp4.csproj",
+            "launchConfigurationId": "TargetFramework=;https"
+        },
+
+    ]
+}

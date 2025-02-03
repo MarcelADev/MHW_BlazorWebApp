@@ -33,60 +33,49 @@
                     <InputNumber name="session-max-days" @bind-Value="Model!.MaxDays" />
                 </div>
 
-                <VuSelect T="Participator" @bind-ValueList="Model!.Participators" Options="Model!.Participators" Multiple="@true"></VuSelect>
-
-                @*Prefer native component on mobile devices.*@
-                @if (os == "Android" || os == "iOS")
-                {
-                    <div class="form__field">
-                        <label for="session-participators">Participators</label>
-                        <select name="session-participators" class="form__select" @onchange="@HandleParticipatorsChange" multiple>
-                            @foreach (var player in @players)
-                            {
-                                <option value="@player.Id">@player.UserName</option>
-                            }
-                        </select>
-                    </div>
-                }
-                else
-                {
-                    <div class="form__field">
-                        <label for="session-participators">Participators</label>
-                        <InputSelect @bind-Value="@Model!.PlayerIds" multiple>
-                            @foreach (var player in @players)
-                            {
-                                <option value="@player.Id">@player.UserName</option>
-                            }
-                        </InputSelect>
-                    </div>
-                }
+                <VuSelect Label="Participators"
+                          T="Player"
+                          Options="@players"
+                          OptionNameMapper="(Player player) => player.UserName"
+                          OptionValueMapper="(Player player) => player.Id"
+                          IsMultiple="@true"
+                          ValueListChanged="HandleVuSelect">
+                    <SelectOptions>
+                        @foreach (var player in @players)
+                        {
+                            <option value="@player.Id">@player.UserName</option>
+                        }
+                    </SelectOptions>
+                </VuSelect>
 
                 <div class="form__field">
-                    <VuParticipatorCard @bind-Value="Model!.UserParticipator" weaponTypes="weaponTypes"></VuParticipatorCard>
+                    <VuParticipatorCard @bind-Value="Model!.UserParticipator" weaponTypes="weaponTypes" />
                 </div>
 
                 @for (var i = 0; i < Model!.Participators.Count; i++)
                 {
-                    <div class="form__field">
-                        <VuParticipatorCard @bind-Value="Model!.Participators[i]" weaponTypes="weaponTypes"></VuParticipatorCard>
-                    </div>
+                    var participator = Model!.Participators[i];
+
+                    @if (Model!.PlayerIds.Contains(participator.PlayerId))
+                    {
+                        <div class="form__field">
+                            <VuParticipatorCard @bind-Value="participator" weaponTypes="weaponTypes" />
+                        </div>
+                    }
                 }
 
-                <div class="form__field form__button">
+                <div class=" form__field form__button">
                     <button type="submit" class="btn btn-primary">
                         Create Session
                     </button>
                 </div>
             </EditForm>
-
         }
 
     </div>
 </main>
 
 <footer class="footer"></footer>
-
-<script src="js/os-helper.js"></script>
 
 @code {
 
@@ -140,34 +129,26 @@
         }
     }
 
-    private void HandleParticipatorsChange(ChangeEventArgs args)
+    private void HandleVuSelect(List<Player> players)
     {
-        if (null == args || null == args.Value) return;
-        Model!.PlayerIds = ((string[])args.Value).Select(s => int.Parse(s)).ToArray();
+        Model!.PlayerIds = players.Select(p => p.Id).ToArray();
 
+        Model!.Participators.RemoveAll(pa => !Model!.PlayerIds.Contains(pa.PlayerId));
         Model!.Participators.AddRange(
-            MapToParticipator(
-                Model!.PlayerIds.ToList()
-                    .FindAll(p => !Model.Participators.Select(pa => pa.PlayerId).Contains(p))
-                    .ToArray()
-            )
-        );
-        Model!.Participators.RemoveAll(p => !Model!.PlayerIds.Contains(p.Player.Id));
+        players
+            .FindAll(p => !Model.Participators.Select(pa => pa.PlayerId).Contains(p.Id))
+            .Select(p => new Participator()
+                {
+                    Player = p,
+                    PlayerId = p.Id,
+                    WeaponType = weaponTypes.First(),
+                    WeaponTypeId = weaponTypes.First().Id,
+                })
+            );
         Model!.Participators.Sort((lhs, rhs) => lhs.Player.UserName!.CompareTo(rhs.Player.UserName));
     }
 
     private void Submit() => Logger.LogInformation($"Hi");
-
-    private List<Participator> MapToParticipator(int[] playerIds)
-    {
-        return players.FindAll(p => playerIds.Contains(p.Id)).Select(p => new Participator()
-            {
-                Player = p,
-                PlayerId = p.Id,
-                WeaponType = weaponTypes.First(),
-                WeaponTypeId = weaponTypes.First().Id,
-            }).ToList();
-    }
 
     public void Dispose()
     {
@@ -176,7 +157,7 @@
             editContext.OnFieldChanged -= HandleFieldChanged;
         }
     }
-    
+
     /// <summary>
     /// Form Model for creating sessions.
     /// </summary>
@@ -187,6 +168,7 @@
         public int[] PlayerIds { get; set; } = [];
         public required Participator UserParticipator { get; set; }
         public List<Participator> Participators { get; set; } = [];
+        public List<Player> SelectedPlayers { get; set; } = [];
         public string Date { get; set; } = DateUtils.GetDateString();
         public int DayCount { get; set; } = 1;
 

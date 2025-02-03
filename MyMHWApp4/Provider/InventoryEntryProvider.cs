@@ -1,6 +1,5 @@
 ﻿using MHWApp.Library.Model;
 using System.Net.Http.Json;
-using System.Net.Http;
 
 namespace MyMHWApp4.Provider
 {

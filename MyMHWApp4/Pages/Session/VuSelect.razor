@@ -1,8 +1,109 @@
-﻿@typeparam T
+﻿@using MHWApp.Library.Model;
+@inject IJSRuntime JSRuntime
+@inject ILogger<VuSelect<T>> Logger
+@typeparam T where T : IModel
 
-@Multiple
+@*Prefer native component on mobile devices.*@
+@if (os == "Android" || os == "iOS")
+{
+    @if (null != Label)
+    {
+        <label for="select">@Label</label>
+    }
+    <select name="select" @attributes="selectAttributes" @onchange="HandleNativeChange">
+        @foreach (var option in Options)
+        {
+            <option value="@OptionValueMapper(option)">@OptionNameMapper(option)</option>
+        }
+    </select>
+}
+else
+{
+    <div class="vu-anker">
+        @if (null != Label)
+        {
+            <label>@Label</label>
+        }
+
+        <div class="vu-select">
+            <div class="vu-select__trigger" tabindex="0" @onclick="(_) => isShowingOptions = !isShowingOptions">
+                <div aria-hidden="true" class="vu-select__content">
+                    @if (IsMultiple)
+                    {
+                        @foreach (var selected in ValueList)
+                        {
+                            <button inert type="button" class="btn vu-select__chip">
+                                <span>
+                                    @OptionNameMapper(selected)
+                                    <i class="ms-Icon ms-Icon--ChromeClose" />
+                                </span>
+                            </button>
+                        }
+                    }
+                    else
+                    {
+                        if (null != Value)
+                        {
+                            @OptionNameMapper(Value)
+                        }
+                    }
+                </div>
+                <i class="ms-Icon ms-Icon--ChevronDownSmall" />
+            </div>
+
+            <div class="vu-select__dropdown" tabindex="0">
+                @foreach (var option in Options)
+                {
+                    <div class="vu-select__option">
+
+                        <label class="vu-select__option-label"
+                               for="vu-select-@(OptionValueMapper(option))">
+                            @if (IsMultiple)
+                            {
+                                <input checked="@(IsSelected(option))"
+                                       id="vu-select-@(OptionValueMapper(option))"
+                                       name="vu-select-@(OptionValueMapper(option))" type="checkbox"
+                                       @onchange="(_) => HandleCustomChange(option)" />
+                            }
+                            @OptionNameMapper(option)
+                        </label>
+                        @if (!IsMultiple)
+                        {
+                            <i class="ms-Icon ms-Icon--CheckMark" />
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div class="vu-select__content--overlay">
+            @if (IsMultiple)
+            {
+                @foreach (var selected in ValueList)
+                {
+                    <button tabindex="-1" type="button" class="btn vu-select__chip vu-select__chip--clickable" @onclick="@((_) => HandleCustomChange(selected))">
+                        <span>
+                            @OptionNameMapper(selected)
+                            <i class="ms-Icon ms-Icon--ChromeClose" />
+                        </span>
+                    </button>
+                }
+            }
+            else
+            {
+                if (null != Value)
+                {
+                    @OptionNameMapper(Value)
+                }
+            }
+        </div>
+    </div>
+}
 
 @code {
+    [Parameter]
+    public string? Label { get; set; }
+
     [Parameter]
     public T? Value { get; set; }
     [Parameter]
@@ -17,5 +118,92 @@
     public required List<T> Options { get; set; } = [];
 
     [Parameter]
-    public bool? Multiple { get; set; }
+    public Func<T, object> OptionValueMapper { get; set; }
+
+    [Parameter]
+    public Func<T, string> OptionNameMapper { get; set; }
+
+    [Parameter]
+    public bool IsMultiple { get; set; } = false;
+
+    [Parameter]
+    public RenderFragment? SelectOptions { get; set; }
+
+    private string os = "";
+
+    private Dictionary<string, object> selectAttributes = [];
+
+    private bool isShowingOptions = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        os = await JSRuntime.InvokeAsync<string>("getOperatingSystem", []);
+        if (IsMultiple)
+        {
+            selectAttributes["multiple"] = true;
+        }
+    }
+
+    private void HandleNativeChange(ChangeEventArgs args)
+    {
+        if (null == args || null == args.Value) return;
+
+        if (IsMultiple)
+        {
+            HandleNativeChangeMultiple(((string[])args.Value).Select(v => int.Parse(v)).ToArray());
+        }
+        else
+        {
+            HandleNativeChangeSingle(int.Parse((string)args.Value));
+        }
+    }
+
+    private void HandleNativeChangeMultiple(int[] ids)
+    {
+        ValueList = Options.FindAll(o => ids.Contains(o.Id)).ToList();
+        ValueListChanged.InvokeAsync(ValueList);
+    }
+
+    private void HandleNativeChangeSingle(int id)
+    {
+        Value = Options.Find(o => o.Id == id);
+        ValueChanged.InvokeAsync(Value);
+    }
+
+    private void HandleCustomChange(T option)
+    {
+        if (IsMultiple)
+        {
+            HandleCustomChangeMultiple(option);
+        }
+        else
+        {
+            HandleCustomChangeSingle(option);
+        }
+    }
+
+    private void HandleCustomChangeMultiple(T option)
+    {
+        if (ValueList.Contains(option))
+        {
+            ValueList.Remove(option);
+        }
+        else
+        {
+            ValueList.Add(option);
+        }
+        ValueListChanged.InvokeAsync(ValueList);
+    }
+
+    private void HandleCustomChangeSingle(T option)
+    {
+        Value = option;
+        ValueChanged.InvokeAsync(Value);
+    }
+
+    private bool IsSelected(T option)
+    {
+        return (null != Value && Value.Equals(option)) || ValueList.Contains(option);
+    }
+
 }

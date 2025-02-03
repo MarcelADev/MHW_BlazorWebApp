@@ -1,4 +1,5 @@
 ﻿@using MHWApp.Library.Model;
+@inject ILogger<VuParticipatorCard> Logger
 
 @if (null != Value)
 {
@@ -10,17 +11,16 @@
             <div class="participator-weapon">
                 <img src="@($"Images/WeaponIcons/{Value.WeaponType.Name}.svg")"
                      alt="@Value.WeaponType.Name" />
-                <select @onchange="@HandleWeaponChange">
+                @* <select value="@Value.WeaponTypeId" @onchange="HandleWeaponChange">
                     @foreach (var weaponType in weaponTypes)
                     {
-                        <option>@weaponType.Name</option>
+                        <option value="@weaponType.Id" selected="@(weaponType.Id == Value.WeaponTypeId)">@weaponType.Name</option>
                     }
-                </select>
+                </select> *@
             </div>
         </div>
     </div>
 }
-
 
 @code {
     private Participator? _value;
@@ -35,24 +35,27 @@
     /// Value changed callback.
     /// </summary>
     [Parameter]
-    public EventCallback<Participator> ValueChanged { get; set; }
+    public EventCallback<Participator?> ValueChanged { get; set; }
 
     /// <summary>
     /// List of available weapon types to choose.
     /// </summary>
     [Parameter]
-    public List<WeaponType> weaponTypes { get; set; } = [];
+    public List<WeaponType> weaponTypes { get; set; } = new();
 
     private void HandleWeaponChange(ChangeEventArgs args)
     {
-        if (null == args || null == args.Value) return;
+        if (args?.Value == null) return;
 
-        var weaponTypeName = (string)args.Value;
-        var weaponType = weaponTypes.Find(w => w.Name == weaponTypeName);
+        var weaponTypeId = int.Parse(args.Value.ToString());
+        var weaponType = weaponTypes.Find(w => w.Id == weaponTypeId);
 
-        if (null == weaponType) return;
+        if (weaponType == null) return;
 
         Value!.WeaponTypeId = weaponType.Id;
         Value!.WeaponType = weaponType;
+
+        ValueChanged.InvokeAsync(Value);
+        StateHasChanged();
     }
 }
