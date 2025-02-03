@@ -39,16 +39,15 @@
 	}
 	else{
 		@foreach(Category category in categories){
-			<EditCategoryComponent Category="category"></EditCategoryComponent>
-		}
-	}
+			<EditCategoryComponent 
+				Category="category"
+				HasInventoryEntryCategory="true"></EditCategoryComponent>
+				@* (category.InventoryEntryCategory != null) *@
 
-	@if (categoryDTO != null)
-	{
-		<p>@categoryDTO.NewCategory.Name</p>
-		<p>Is Inventoryentry: @categoryDTO.IsInventoryEntry</p>
-		<p>Is weapon: @categoryDTO.IsWeapon</p>
-		<p>Is Armor: @categoryDTO.IsArmor</p>
+			@* <p>InventoryEntryCategoryId: @IsNotNull(category.InventoryEntryCategory)</p>
+			<p>WeaponCatagory: @IsNotNull(category.WeaponCategory.Id)</p>
+			<p>ArmorCategory: @IsNotNull(category.ArmorCategory.Id)</p> *@
+		}
 	}
 
 </main>
@@ -83,5 +82,11 @@
 		await categoryProvider.CreateAllCategoriesAsync(categoryDTO);
 
 		categories = await categoryProvider.GetCategoriesAsync();
+	}
+
+	private bool IsNotNull(object o){
+		if (o == null) return false;
+
+		return true;
 	}
 }
