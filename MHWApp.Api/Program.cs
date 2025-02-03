@@ -14,7 +14,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
-// -- CUSTOM CODE STARTS HERE
+#region CUSTOM CODE
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -62,7 +62,7 @@ builder.Services.AddEndpointsApiExplorer();
 // add NSwag services
 builder.Services.AddOpenApiDocument();
 
-// -- CUSTOM CODE ENDS HERE
+#endregion
 
 var app = builder.Build();
 
@@ -87,6 +87,7 @@ app.UseCors("wasm");
 app.UseAuthentication();
 app.UseAuthorization();
 
+#region Endpoint: Logout
 // provide an endpoint to clear the cookie for logout
 //
 // For more information on the logout endpoint and antiforgery, see:
@@ -102,9 +103,11 @@ app.MapPost("/logout", async (SignInManager<Player> signInManager, [FromBody] ob
 
     return Results.Unauthorized();
 }).RequireAuthorization();
+#endregion
 
 app.UseHttpsRedirection();
 
+#region Endpoint: Roles
 // provide an endpoint for user roles
 app.MapGet("/roles", (ClaimsPrincipal user) =>
 {
@@ -127,6 +130,7 @@ app.MapGet("/roles", (ClaimsPrincipal user) =>
 
     return Results.Unauthorized();
 }).RequireAuthorization();
+#endregion
 
 #region Endpoint: Dummy-Example for Authorization
 // provide an endpoint example that requires authorization
@@ -369,6 +373,32 @@ app.MapGet("/gameextensions", async (AppDbContext dbContext, ClaimsPrincipal use
 
     return Results.Ok(gameExtensions);
 }).RequireAuthorization();
+
+app.MapPost("/gameextensions", async (AppDbContext dbContext, ClaimsPrincipal user, GameExtension newGameExtension) =>
+{
+    var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
+    if (userIdClaim == null)
+    {
+        return Results.Unauthorized();
+    }
+
+    await dbContext.GameExtensions.AddAsync(newGameExtension);
+    await dbContext.SaveChangesAsync();
+    return Results.Created($"/gameextensions/{newGameExtension.Id}", newGameExtension);
+}).RequireAuthorization();
+
+app.MapDelete("/gameextensions", async (AppDbContext dbContext, ClaimsPrincipal user, GameExtension expiredGameExtension) =>
+{
+    var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
+    if (userIdClaim == null)
+    {
+        return Results.Unauthorized();
+    }
+
+    dbContext.GameExtensions.Remove(expiredGameExtension);
+    await dbContext.SaveChangesAsync();
+    return Results.Ok();
+});
 
 #endregion
 

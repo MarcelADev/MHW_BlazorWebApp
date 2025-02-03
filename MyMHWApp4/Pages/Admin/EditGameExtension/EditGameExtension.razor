@@ -12,7 +12,7 @@
 
 	<div class="container-h3"><h3>Create</h3></div>
 
-	<InputComponentText LabelText="Name" PlaceHolder="New Game Extension"></InputComponentText>
+	<InputComponentText @ref="nameInput" LabelText="Name" PlaceHolder="New Game Extension"></InputComponentText>
 
 	<button class="button theme-purple" @onclick="OnCreateGameExtensionButtonClicked">Create Extension</button>
 
@@ -28,7 +28,9 @@
 	else{
 		@foreach (GameExtension extension in extensions)
 		{
-			<p>@extension.Name</p>
+			<div class="card">
+				<p>@extension.Name</p>
+			</div>
 		}
 	}
 
@@ -37,6 +39,8 @@
 <footer class="footer"></footer>
 
 @code {
+	private InputComponentText? nameInput;
+
 	private List<GameExtension>? extensions;
 
 	protected override async Task OnInitializedAsync()
@@ -46,8 +50,16 @@
 		await base.OnInitializedAsync();
 	}
 
-	private async void OnCreateGameExtensionButtonClicked()
+	private async Task OnCreateGameExtensionButtonClicked()
 	{
+		GameExtension newGameExtension = new GameExtension
+		{
+			Id = 0,
+			Name = nameInput.Value
+		};
 
+		var success = await gameExtensionProvider.CreateGameExtensionAsync(newGameExtension);
+
+		if(success) extensions.Add(newGameExtension);
 	}
 }

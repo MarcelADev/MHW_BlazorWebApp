@@ -1,7 +1,7 @@
 ﻿@using MHWApp.Library.Model
 @using MyMHWApp4.Pages.GeneralComponents
 
-<div class="category-card">
+<div class="card">
 
 	<p >@Category.Name</p>
 
@@ -16,17 +16,12 @@
 		<InputComponentCheckbox @ref="WeaponCategoryCheckbox" LabelText="Weapon Category" IsChecked="HasWeaponCategory"></InputComponentCheckbox>
 
 		<InputComponentCheckbox @ref="ArmorCategoryCheckbox" LabelText="Armor Category" IsChecked="HasArmorCategory"></InputComponentCheckbox>
+	</div>
 
-		<div class="container-button">
-			<button class="button button-confirm theme-purple">Confirm Changes</button>
-			<button class="button button-delete theme-red">Delete</button>
+	<div class="container-button">
 
-			<span class="material-symbols-outlined">
-				delete
-			</span>
-
-		</div>
-
+		<button class="button button-confirm theme-purple">Confirm Changes</button>
+		<DeleteButton></DeleteButton>
 	</div>
 </div>
 

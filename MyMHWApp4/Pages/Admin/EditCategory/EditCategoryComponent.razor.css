@@ -12,21 +12,8 @@
     margin-bottom: 1.5rem;
     box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.3);
     padding: 10px 5px 10px 15px;
-    /*background-color: #F0ECDB;
-    background-color: #FFF8DB;
-    background-color: white;
-    background-color: #E6E5E5;
-    background-color: #F9F4F4;
-    background-color: #eedfbd;
-    background-color: #bcad96;
-    background-color: #eee2cb;
-    background-color: #F6ECE5;*/
-    background-color: #f8f8f8;
-    background-color: #F3ECF1;
-    background-color: #efeef6;
-    background-color: #e0dded;
+    /*background-color: #e0dded;*/
     border-radius: 8px;
-    /*border: 1px solid black;*/
 }
 
 .button-confirm {
@@ -40,6 +27,8 @@
 .container-button {
     display:flex;
     justify-content: space-between;
+    width: 100%;
+    padding-right: 10px;
 }
 
 /* ## Input Classes ## */

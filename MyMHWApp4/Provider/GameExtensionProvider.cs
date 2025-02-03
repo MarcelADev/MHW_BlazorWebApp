@@ -24,5 +24,18 @@ namespace MyMHWApp4.Provider
                 return new List<GameExtension>();
             }
         }
+
+        public async Task<bool> CreateGameExtensionAsync(GameExtension gameExtension)
+        {
+            try
+            {
+                var response = await _httpClient.PostAsJsonAsync("gameextensions", gameExtension);
+                return response.IsSuccessStatusCode;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
     }
 }
