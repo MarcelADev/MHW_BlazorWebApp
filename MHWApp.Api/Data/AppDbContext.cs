@@ -114,36 +114,39 @@ namespace MHWApp.Api.Data
             // one to one relationship of Category and InventoryEntryCategory
             modelBuilder.Entity<Category>()
                 .HasOne(o => o.InventoryEntryCategory)
-                .WithOne();
+                .WithOne(o => o.Category)
+                .HasForeignKey<InventoryEntryCategory>(o => o.CategoryId);
 
             // one to one relationship of Category and WeaponCategory
             modelBuilder.Entity<Category>()
                 .HasOne(o => o.WeaponCategory)
-                .WithOne();
+                .WithOne(o => o.Category)
+                .HasForeignKey<WeaponCategory>(o => o.CategoryId);
 
             // one to one relationship of Category and ArmorCategory
             modelBuilder.Entity<Category>()
                 .HasOne(o => o.ArmorCategory)
-                .WithOne();
+                .WithOne(o => o.Category)
+                .HasForeignKey<ArmorCategory>(o => o.CategoryId);
             #endregion
 
             #region Inventory Entry Catagory & Weapon Category & Armor Catagory
             // one to one relationship of InventoryEntryCategory and Category
             modelBuilder.Entity<InventoryEntryCategory>()
                 .HasOne(o => o.Category)
-                .WithOne()
+                .WithOne(o => o.InventoryEntryCategory)
                 .HasForeignKey<InventoryEntryCategory>(o => o.CategoryId);
 
             // one to one relationship of WeaponCategory and Category
             modelBuilder.Entity<WeaponCategory>()
                 .HasOne(o => o.Category)
-                .WithOne()
+                .WithOne(o => o.WeaponCategory)
                 .HasForeignKey<WeaponCategory>(o => o.CategoryId);
 
             // one to one relationship of ArmorCategory and Category
             modelBuilder.Entity<ArmorCategory>()
                 .HasOne(o => o.Category)
-                .WithOne()
+                .WithOne(o => o.ArmorCategory)
                 .HasForeignKey<ArmorCategory>(o => o.CategoryId);
             #endregion
 

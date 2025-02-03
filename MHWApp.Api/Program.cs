@@ -5,8 +5,8 @@ using MHWApp.Library.Model;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Runtime.CompilerServices;
 using System.Security.Claims;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -55,6 +55,10 @@ builder.Services.AddCors(
             .AllowAnyMethod()
             .AllowAnyHeader()
             .AllowCredentials()));
+
+builder.Services.Configure<Microsoft.AspNetCore.Http.Json.JsonOptions>(
+    options => options.SerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles
+);
 
 // add services to the container
 builder.Services.AddEndpointsApiExplorer();
@@ -161,7 +165,7 @@ app.MapGet("/sessions", async (AppDbContext dbContext, ClaimsPrincipal user) =>
             .ToListAsync();
 
         return Results.Ok(playerSessions);
-    } 
+    }
 );
 
 app.MapPost("/sessions", async (Session newSession, AppDbContext dbContext, ClaimsPrincipal user) =>
@@ -224,7 +228,7 @@ app.MapPost("/participators", async (AppDbContext dbContext, ClaimsPrincipal use
         var playerId = int.Parse(userIdClaim.Value);
         participator.PlayerId = playerId;
     }
-    
+
     await dbContext.Participators.AddAsync(participator);
     await dbContext.SaveChangesAsync();
     return Results.Created($"/participators/{participator.Id}", participator);
@@ -318,7 +322,7 @@ app.MapPost("/categories", async (CategoryDTO categoryDTO, AppDbContext dbContex
 
     await dbContext.SaveChangesAsync();
 
-    if(categoryDTO.IsInventoryEntry)
+    if (categoryDTO.IsInventoryEntry)
     {
         await dbContext.InventoryEntryCategories.AddAsync(
         new InventoryEntryCategory
@@ -387,18 +391,19 @@ app.MapPost("/gameextensions", async (AppDbContext dbContext, ClaimsPrincipal us
     return Results.Created($"/gameextensions/{newGameExtension.Id}", newGameExtension);
 }).RequireAuthorization();
 
-app.MapDelete("/gameextensions", async (AppDbContext dbContext, ClaimsPrincipal user, GameExtension expiredGameExtension) =>
-{
-    var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
-    if (userIdClaim == null)
-    {
-        return Results.Unauthorized();
-    }
+/// FIXME
+//app.MapDelete("/gameextensions", async (AppDbContext dbContext, ClaimsPrincipal user, GameExtension expiredGameExtension) =>
+//{
+//    var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
+//    if (userIdClaim == null)
+//    {
+//        return Results.Unauthorized();
+//    }
 
-    dbContext.GameExtensions.Remove(expiredGameExtension);
-    await dbContext.SaveChangesAsync();
-    return Results.Ok();
-});
+//    dbContext.GameExtensions.Remove(expiredGameExtension);
+//    await dbContext.SaveChangesAsync();
+//    return Results.Ok();
+//});
 
 #endregion
 
