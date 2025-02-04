@@ -28,9 +28,10 @@
 	else{
 		@foreach (GameExtension extension in extensions)
 		{
-			<div class="card">
-				<p>@extension.Name</p>
-			</div>
+			<EditGameExtensionComponent
+				GameExtension="extension"
+				RemoveGameExtension="HandleRemoveGameExtension">
+			</EditGameExtensionComponent>
 		}
 	}
 
@@ -61,5 +62,12 @@
 		var success = await gameExtensionProvider.CreateGameExtensionAsync(newGameExtension);
 
 		if(success) extensions.Add(newGameExtension);
+	}
+
+	private async Task HandleRemoveGameExtension(GameExtension gameExtension)
+	{
+		await gameExtensionProvider.RemoveGameExtensionAsync(gameExtension.Id);
+
+		extensions.Remove(gameExtension);
 	}
 }

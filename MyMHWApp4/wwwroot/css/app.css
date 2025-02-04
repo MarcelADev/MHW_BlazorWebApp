@@ -247,6 +247,13 @@ input {
     border-radius: 8px;
 }
 
+.header-card {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 300;
+    border: 0;
+}
+
 .margin-h3 {
     margin-top: 2rem;
 }

@@ -39,7 +39,7 @@ namespace MyMHWApp4.Provider
             }
         }
 
-        public async Task<bool> RemoveGameExtensionAxync(int gameExtensionId)
+        public async Task<bool> RemoveGameExtensionAsync(int gameExtensionId)
         {
             try
             {

@@ -1,0 +1,22 @@
+﻿@using MHWApp.Library.Model
+@using MyMHWApp4.Pages.GeneralComponents
+
+<div class="card">
+	<div class="container-card-header">
+		<p class="header-card">@GameExtension.Name</p>
+		<DeleteButton DeleteButtonClicked="HandleDeleteButtonClicked"></DeleteButton>
+	</div>
+</div>
+
+@code {
+	[Parameter]
+	public required GameExtension GameExtension { get; set; }
+
+	[Parameter]
+	public required EventCallback<GameExtension> RemoveGameExtension { get; set; }
+
+	private async Task HandleDeleteButtonClicked()
+	{
+		await RemoveGameExtension.InvokeAsync(GameExtension);
+	}
+}
