@@ -41,9 +41,11 @@
 		@foreach(Category category in categories){
 			<EditCategoryComponent 
 				Category="category"
-				HasInventoryEntryCategory="true"></EditCategoryComponent>
-				@* (category.InventoryEntryCategory != null) *@
+				HasInventoryEntryCategory="true"
+				RemoveCategory="HandleRemoveCategory">
+			</EditCategoryComponent>
 
+			@* (category.InventoryEntryCategory != null) *@
 			@* <p>InventoryEntryCategoryId: @IsNotNull(category.InventoryEntryCategory)</p>
 			<p>WeaponCatagory: @IsNotNull(category.WeaponCategory.Id)</p>
 			<p>ArmorCategory: @IsNotNull(category.ArmorCategory.Id)</p> *@
@@ -82,6 +84,13 @@
 		await categoryProvider.CreateAllCategoriesAsync(categoryDTO);
 
 		categories = await categoryProvider.GetCategoriesAsync();
+	}
+
+	private async Task HandleRemoveCategory(Category category)
+	{
+		await categoryProvider.RemoveCategoryAsync(category.Id);
+
+		categories.Remove(category);
 	}
 
 	private bool IsNotNull(object o){

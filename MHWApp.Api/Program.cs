@@ -361,6 +361,24 @@ app.MapPost("/categories", async (CategoryDTO categoryDTO, AppDbContext dbContex
 }
 ).RequireAuthorization(policy => policy.RequireRole("Master", "Admin"));
 
+app.MapDelete("/categories/{id}", async (AppDbContext dbContext, ClaimsPrincipal user, int id) =>
+{
+    var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
+    if (userIdClaim == null)
+    {
+        return Results.Unauthorized();
+    }
+
+    var category = await dbContext.Categories.FindAsync(id);
+
+    if (category == null) return Results.NotFound();
+
+    dbContext.Categories.Remove(category);
+    await dbContext.SaveChangesAsync();
+
+    return Results.NoContent();
+}).RequireAuthorization();
+
 #endregion
 
 #region Endpoint: Game Extension
@@ -391,19 +409,23 @@ app.MapPost("/gameextensions", async (AppDbContext dbContext, ClaimsPrincipal us
     return Results.Created($"/gameextensions/{newGameExtension.Id}", newGameExtension);
 }).RequireAuthorization();
 
-/// FIXME
-//app.MapDelete("/gameextensions", async (AppDbContext dbContext, ClaimsPrincipal user, GameExtension expiredGameExtension) =>
-//{
-//    var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
-//    if (userIdClaim == null)
-//    {
-//        return Results.Unauthorized();
-//    }
+app.MapDelete("/gameextensions/{id}", async (AppDbContext dbContext, ClaimsPrincipal user, int id) =>
+{
+    var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
+    if (userIdClaim == null)
+    {
+        return Results.Unauthorized();
+    }
 
-//    dbContext.GameExtensions.Remove(expiredGameExtension);
-//    await dbContext.SaveChangesAsync();
-//    return Results.Ok();
-//});
+    var gameExtension = await dbContext.GameExtensions.FindAsync(id);
+
+    if (gameExtension == null) return Results.NotFound();
+    
+    dbContext.GameExtensions.Remove(gameExtension);
+    await dbContext.SaveChangesAsync();
+
+    return Results.NoContent();
+}).RequireAuthorization();
 
 #endregion
 

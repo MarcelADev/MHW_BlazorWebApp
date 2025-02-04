@@ -21,7 +21,7 @@
 	<div class="container-button">
 
 		<button class="button button-confirm theme-purple">Confirm Changes</button>
-		<DeleteButton></DeleteButton>
+		<DeleteButton DeleteButtonClicked="HandleDeleteButtonClicked"></DeleteButton>
 	</div>
 </div>
 
@@ -39,16 +39,24 @@
 
 	[Parameter]
 	public required bool HasInventoryEntryCategory { get; set; }
-	
+
 	[Parameter]
 	public bool HasWeaponCategory { get; set; }
-	
+
 	[Parameter]
 	public bool HasArmorCategory { get; set; }
+
+	[Parameter]
+	public required EventCallback<Category> RemoveCategory { get; set; }
 
 	protected override async Task OnInitializedAsync()
 	{
 		Value = Category.Name;
 		await base.OnInitializedAsync();
+	}
+
+	private async Task HandleDeleteButtonClicked()
+	{
+		await RemoveCategory.InvokeAsync(Category);
 	}
 }

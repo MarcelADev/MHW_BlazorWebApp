@@ -2,6 +2,7 @@
 using System.Net.Http.Json;
 using System.Net.Http;
 using MHWApp.Library.DTO;
+using System.Net;
 
 namespace MyMHWApp4.Provider
 {
@@ -83,6 +84,19 @@ namespace MyMHWApp4.Provider
             {
                 var response = await _httpClient.PostAsJsonAsync("categories", categoryDTO);
                 return response.IsSuccessStatusCode;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> RemoveCategoryAsync(int categoryId)
+        {
+            try
+            {
+                var response = await _httpClient.DeleteAsync($"categories/{categoryId}");
+                return response.StatusCode == HttpStatusCode.NoContent;
             }
             catch (Exception ex)
             {

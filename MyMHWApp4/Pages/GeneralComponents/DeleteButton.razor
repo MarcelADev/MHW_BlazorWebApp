@@ -1,9 +1,15 @@
-﻿<button class="container-center">
+﻿<button class="container-center" type="button" @onclick="OnDeleteButtonClicked">
 	<span class="material-symbols-outlined">
 		delete
 	</span>
 </button>
 
 @code {
+	[Parameter]
+	public required EventCallback DeleteButtonClicked { get; set; }
 
+	private async Task OnDeleteButtonClicked()
+	{
+		await DeleteButtonClicked.InvokeAsync();
+	}
 }

@@ -2,6 +2,7 @@
 using MHWApp.Library.Model;
 using System.Net.Http.Json;
 using System.Net.Http;
+using System.Net;
 
 namespace MyMHWApp4.Provider
 {
@@ -31,6 +32,19 @@ namespace MyMHWApp4.Provider
             {
                 var response = await _httpClient.PostAsJsonAsync("gameextensions", gameExtension);
                 return response.IsSuccessStatusCode;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> RemoveGameExtensionAxync(int gameExtensionId)
+        {
+            try
+            {
+                var response = await _httpClient.DeleteAsync($"gameextensions/{gameExtensionId}");
+                return response.StatusCode == HttpStatusCode.NoContent;
             }
             catch (Exception ex)
             {
