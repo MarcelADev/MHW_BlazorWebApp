@@ -4,7 +4,11 @@
 <div class="card">
 	<div class="container-card-header">
 		<p class="header-card">@GameExtension.Name</p>
+
+		<EditButton EditButtonClicked="HandleEditButtonClicked"></EditButton>
+
 		<DeleteButton DeleteButtonClicked="HandleDeleteButtonClicked"></DeleteButton>
+
 	</div>
 </div>
 
@@ -18,5 +22,10 @@
 	private async Task HandleDeleteButtonClicked()
 	{
 		await RemoveGameExtension.InvokeAsync(GameExtension);
+	}
+
+	private void HandleEditButtonClicked()
+	{
+
 	}
 }

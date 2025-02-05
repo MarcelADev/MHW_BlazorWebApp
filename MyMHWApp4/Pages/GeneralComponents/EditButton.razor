@@ -1,0 +1,15 @@
+﻿<button class="container-center" type="button" @onclick="OnEditButtonClicked">
+	<span class="material-symbols-outlined">
+		edit
+	</span>
+</button>
+
+@code {
+	[Parameter]
+	public required EventCallback EditButtonClicked { get; set; }
+
+	private async Task OnEditButtonClicked()
+	{
+		await EditButtonClicked.InvokeAsync();
+	}
+}
