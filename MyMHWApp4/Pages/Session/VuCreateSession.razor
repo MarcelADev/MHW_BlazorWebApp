@@ -33,19 +33,15 @@
                     <InputNumber name="session-max-days" @bind-Value="Model!.MaxDays" />
                 </div>
 
-                <VuSelect Label="Participators"
-                          T="Player"
-                          Options="@players"
-                          OptionNameMapper="(Player player) => player.UserName"
-                          OptionValueMapper="(Player player) => player.Id"
-                          IsMultiple="@true"
-                          ValueListChanged="HandleVuSelect">
-                    <SelectOptions>
-                        @foreach (var player in @players)
-                        {
-                            <option value="@player.Id">@player.UserName</option>
-                        }
-                    </SelectOptions>
+                <VuSelect
+                    Label="Participators" 
+                    Placeholder="Select" 
+                    T="Player" 
+                    Options="@players"
+                    OptionNameMapper="(Player player) => player.UserName" 
+                    OptionValueMapper="(Player player) => player.Id"
+                    IsMultiple="@true" 
+                    ValueListChanged="HandleVuSelect">
                 </VuSelect>
 
                 <div class="form__field">
@@ -71,8 +67,8 @@
                 </div>
             </EditForm>
         }
-
     </div>
+
 </main>
 
 <footer class="footer"></footer>
@@ -99,7 +95,6 @@
         players = await playerProvider.GetPlayersAsync();
         weaponTypes = await weaponProvider.GetWeaponTypesAsync();
 
-        os = await JSRuntime.InvokeAsync<string>("getOperatingSystem", []);
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         user = authState.User.Identity;
 
@@ -136,16 +131,16 @@
         Model!.Participators.RemoveAll(pa => !Model!.PlayerIds.Contains(pa.PlayerId));
         Model!.Participators.AddRange(
         players
-            .FindAll(p => !Model.Participators.Select(pa => pa.PlayerId).Contains(p.Id))
-            .Select(p => new Participator()
-                {
-                    Player = p,
-                    PlayerId = p.Id,
-                    WeaponType = weaponTypes.First(),
-                    WeaponTypeId = weaponTypes.First().Id,
-                })
-            );
-        Model!.Participators.Sort((lhs, rhs) => lhs.Player.UserName!.CompareTo(rhs.Player.UserName));
+        .FindAll(p => !Model.Participators.Select(pa => pa.PlayerId).Contains(p.Id))
+        .Select(p => new Participator()
+            {
+                Player = p,
+                PlayerId = p.Id,
+                WeaponType = weaponTypes.First(),
+                WeaponTypeId = weaponTypes.First().Id,
+            })
+        );
+        Model!.Participators.Sort((lhs, rhs) => lhs.Player!.UserName!.CompareTo(rhs.Player!.UserName));
     }
 
     private void Submit() => Logger.LogInformation($"Hi");

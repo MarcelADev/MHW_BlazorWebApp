@@ -1,7 +1,7 @@
 ﻿@using MHWApp.Library.Model;
 @inject IJSRuntime JSRuntime
 @inject ILogger<VuSelect<T>> Logger
-@typeparam T where T : IModel
+@typeparam T
 
 @*Prefer native component on mobile devices.*@
 @if (os == "Android" || os == "iOS")
@@ -26,10 +26,14 @@ else
         }
 
         <div class="vu-select">
-            <div class="vu-select__trigger" tabindex="0" @onclick="(_) => isShowingOptions = !isShowingOptions">
+            <div class="vu-select__trigger" tabindex="0">
                 <div aria-hidden="true" class="vu-select__content">
-                    @if (IsMultiple)
+                    @if (IsMultipleSelection())
                     {
+                        if (ValueList.Count == 0)
+                        {
+                            @Placeholder
+                        }
                         @foreach (var selected in ValueList)
                         {
                             <button inert type="button" class="btn vu-select__chip">
@@ -46,6 +50,10 @@ else
                         {
                             @OptionNameMapper(Value)
                         }
+                        else
+                        {
+                            @Placeholder
+                        }
                     }
                 </div>
                 <i class="ms-Icon ms-Icon--ChevronDownSmall" />
@@ -55,19 +63,14 @@ else
                 @foreach (var option in Options)
                 {
                     <div class="vu-select__option">
-
-                        <label class="vu-select__option-label"
-                               for="vu-select-@(OptionValueMapper(option))">
-                            @if (IsMultiple)
-                            {
-                                <input checked="@(IsSelected(option))"
-                                       id="vu-select-@(OptionValueMapper(option))"
-                                       name="vu-select-@(OptionValueMapper(option))" type="checkbox"
-                                       @onchange="(_) => HandleCustomChange(option)" />
-                            }
+                        <label class="vu-select__option-label ">
+                            <input checked="@(IsSelected(option))"
+                                class="@((!IsMultipleSelection()) ? "vu-select__option-label--hidden" : "")"
+                                id="vu-select-@id-@(OptionValueMapper(option))" name="vu-select-@(OptionValueMapper(option))"
+                                type="checkbox" @onchange="(_) => HandleCustomChange(option)" />
                             @OptionNameMapper(option)
                         </label>
-                        @if (!IsMultiple)
+                        @if ((!IsMultipleSelection()) && IsSelected(option))
                         {
                             <i class="ms-Icon ms-Icon--CheckMark" />
                         }
@@ -77,11 +80,12 @@ else
         </div>
 
         <div class="vu-select__content--overlay">
-            @if (IsMultiple)
+            @if (IsMultipleSelection())
             {
                 @foreach (var selected in ValueList)
                 {
-                    <button tabindex="-1" type="button" class="btn vu-select__chip vu-select__chip--clickable" @onclick="@((_) => HandleCustomChange(selected))">
+                    <button tabindex="-1" type="button" class="btn vu-select__chip vu-select__chip--clickable"
+                        @onclick="@((_) => HandleCustomChange(selected))">
                         <span>
                             @OptionNameMapper(selected)
                             <i class="ms-Icon ms-Icon--ChromeClose" />
@@ -89,51 +93,85 @@ else
                     </button>
                 }
             }
-            else
-            {
-                if (null != Value)
-                {
-                    @OptionNameMapper(Value)
-                }
-            }
+
         </div>
     </div>
 }
 
 @code {
+    /// <summary>
+    /// Display this label string above the select.
+    /// </summary>
     [Parameter]
     public string? Label { get; set; }
 
+    /// <summary>
+    /// Display this placeholder string in the select.
+    /// </summary>
+    [Parameter]
+    public string? Placeholder { get; set; }
+
+    /// <summary>
+    /// Bind to this value in case of single select.
+    /// </summary>
     [Parameter]
     public T? Value { get; set; }
+
+    /// <summary>
+    /// Event callback for single value select changes.
+    /// </summary>
+    /// <value></value>
     [Parameter]
     public EventCallback<T?> ValueChanged { get; set; }
 
+    /// <summary>
+    /// Bind to this value in case of multiple select.
+    /// </summary>
     [Parameter]
     public List<T> ValueList { get; set; } = [];
+
+    /// <summary>
+    /// Event callback for multiple value select changes.
+    /// </summary>
+    /// <value></value>
     [Parameter]
     public EventCallback<List<T>> ValueListChanged { get; set; }
 
-    [Parameter]
+    /// <summary>
+    /// These options populate the select.
+    /// </summary>
+    [Parameter, EditorRequired]
     public required List<T> Options { get; set; } = [];
 
-    [Parameter]
-    public Func<T, object> OptionValueMapper { get; set; }
+    private Type? _optionType;
 
-    [Parameter]
-    public Func<T, string> OptionNameMapper { get; set; }
+    /// <summary>
+    /// Used to map an option of type T to a value for the select option HTML element.
+    /// </summary>
+    [Parameter, EditorRequired]
+    public Func<T, object> OptionValueMapper { get; set; } = null!;
 
-    [Parameter]
-    public bool IsMultiple { get; set; } = false;
+    /// <summary>
+    /// Used to map an option of type T to a readable string.
+    /// </summary>
+    [Parameter, EditorRequired]
+    public Func<T, string> OptionNameMapper { get; set; } = null!;
 
+    private bool? _isMultiple = null;
+
+    /// <summary>
+    /// Indicates if the select should allow multiple selections.
+    ///
+    /// This property can only be set once and can not be changed afterwards.
+    /// </summary>
     [Parameter]
-    public RenderFragment? SelectOptions { get; set; }
+    public bool IsMultiple { get; set; }
+
+    private Guid id = Guid.NewGuid();
 
     private string os = "";
 
     private Dictionary<string, object> selectAttributes = [];
-
-    private bool isShowingOptions = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -144,29 +182,70 @@ else
         }
     }
 
+    protected override void OnParametersSet()
+    {
+        if (null == _isMultiple)
+        {
+            _isMultiple = IsMultiple;
+        }
+        else if (_isMultiple != IsMultiple)
+        {
+            throw new InvalidOperationException("Changing IsMultiple is not supported.");
+        }
+
+        _optionType = OptionValueMapper(Options[0]).GetType();
+    }
+
     private void HandleNativeChange(ChangeEventArgs args)
     {
         if (null == args || null == args.Value) return;
 
-        if (IsMultiple)
+
+        if (IsMultipleSelection())
         {
-            HandleNativeChangeMultiple(((string[])args.Value).Select(v => int.Parse(v)).ToArray());
+            if (_optionType == typeof(int))
+            {
+                HandleNativeChangeMultiple(((string[])args.Value).Select(v => int.Parse(v)).ToArray());
+            }
+            else if (_optionType == typeof(string))
+            {
+                HandleNativeChangeMultiple(((string[])args.Value).Select(v => v).ToArray());
+            }
         }
         else
         {
-            HandleNativeChangeSingle(int.Parse((string)args.Value));
+            if (_optionType == typeof(int))
+            {
+                HandleNativeChangeSingle(int.Parse((string)args.Value));
+            }
+            else if (_optionType == typeof(string))
+            {
+                HandleNativeChangeSingle((string)args.Value);
+            }
         }
     }
 
     private void HandleNativeChangeMultiple(int[] ids)
     {
-        ValueList = Options.FindAll(o => ids.Contains(o.Id)).ToList();
+        ValueList = Options.FindAll(o => ids.Contains((int)OptionValueMapper(o))).ToList();
+        ValueListChanged.InvokeAsync(ValueList);
+    }
+
+    private void HandleNativeChangeMultiple(string[] ids)
+    {
+        ValueList = Options.FindAll(o => ids.Contains((string)OptionValueMapper(o))).ToList();
         ValueListChanged.InvokeAsync(ValueList);
     }
 
     private void HandleNativeChangeSingle(int id)
     {
-        Value = Options.Find(o => o.Id == id);
+        Value = Options.Find(o => (int)OptionValueMapper(o) == id);
+        ValueChanged.InvokeAsync(Value);
+    }
+
+    private void HandleNativeChangeSingle(string id)
+    {
+        Value = Options.Find(o => (string)OptionValueMapper(o) == id);
         ValueChanged.InvokeAsync(Value);
     }
 
@@ -204,6 +283,11 @@ else
     private bool IsSelected(T option)
     {
         return (null != Value && Value.Equals(option)) || ValueList.Contains(option);
+    }
+
+    private bool IsMultipleSelection()
+    {
+        return _isMultiple ?? false;
     }
 
 }

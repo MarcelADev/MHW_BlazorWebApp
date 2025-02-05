@@ -1,9 +1,11 @@
 ﻿.vu-anker {
     position: relative;
+    width: 100%;
 }
 
 .vu-select {
     position: relative;
+    width: 100%;
     --focus: #0F6CBD;
 }
 
@@ -20,7 +22,6 @@
     cursor: pointer;
 }
 
-
 .vu-select__content {
     flex: 1;
     display: flex;
@@ -31,11 +32,10 @@
 .vu-select__content--overlay {
     position: absolute;
     padding: 0.5rem;
-    bottom: 0;
+    bottom: 1px;
     display: flex;
     gap: 0.5rem;
     flex-wrap: wrap;
-    margin-right: 16px;
 }
 
 .vu-select__chip {
@@ -48,14 +48,14 @@
     pointer-events: none;
 }
 
-    .vu-select__chip span {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
+.vu-select__chip span {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
 
 .vu-select__chip--clickable {
-    pointer-events:all;
+    pointer-events: all;
 }
 
 .vu-select__dropdown {
@@ -82,26 +82,59 @@
     transform: scaleY(1)
 }
 
+.vu-select::after {
+    position: absolute;
+    left: calc(var(--border-radius) / 2);
+    right: 0px;
+    bottom: 0px;
+    border-radius: var(--border-radius);
+    box-sizing: border-box;
+    height: var(--border-radius);
+    width: calc(100% - var(--border-radius));
+    content: "";
+    background-image: linear-gradient(0deg, var(--focus) 0%, var(--focus) 50%, transparent 50%, transparent 100%);
+    transition-property: transform;
+    transition-duration: 50ms;
+    transform: scaleX(0)
+}
+
+.vu-select:focus-within::after {
+    transition-property: transform;
+    transition-duration: 150ms;
+    transform: scaleX(1)
+}
+
 .vu-select__option {
+    display: flex;
+    align-items: center;
     padding: 0.25rem 0.5rem;
 }
 
-    .vu-select__option:hover {
-        cursor: pointer;
-        background-color: var(--hover);
-    }
+.vu-select__option:hover {
+    cursor: pointer;
+    background-color: var(--hover);
+}
 
-        .vu-select__option:hover * {
-            cursor: pointer;
-        }
+.vu-select__option:hover * {
+    cursor: pointer;
+}
 
-    .vu-select__option input {
-        width: initial;
-    }
+.vu-select__option input {
+    width: initial;
+}
+
+.vu-select__option .ms-Icon {
+    color: var(--focus);
+    font-weight: bold;
+}
 
 .vu-select__option-label {
     display: flex;
     gap: 0.5rem;
     align-items: center;
     width: 100%;
+}
+
+.vu-select__option-label--hidden {
+    display: none;
 }

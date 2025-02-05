@@ -5,26 +5,31 @@
 {
     <div class="vu-card participator">
         <div class="vu-card-header">
-            @Value.Player.UserName
+            @Value!.Player?.UserName
         </div>
         <div class="vu-card-body">
             <div class="participator-weapon">
-                <img src="@($"Images/WeaponIcons/{Value.WeaponType.Name}.svg")"
-                     alt="@Value.WeaponType.Name" />
+                <img src="@($"Images/WeaponIcons/{Value!.WeaponType?.Name}.svg")" alt="@Value.WeaponType?.Name" />
                 @* <select value="@Value.WeaponTypeId" @onchange="HandleWeaponChange">
                     @foreach (var weaponType in weaponTypes)
                     {
                         <option value="@weaponType.Id" selected="@(weaponType.Id == Value.WeaponTypeId)">@weaponType.Name</option>
                     }
                 </select> *@
+                
+                <VuSelect T="WeaponType"
+                    Options="@weaponTypes"
+                    OptionNameMapper="(WeaponType weaponType) => weaponType.Name"
+                    OptionValueMapper="(WeaponType weaponType) => weaponType.Id"
+                    @bind-Value="Value.WeaponType">
+                </VuSelect>
+
             </div>
         </div>
     </div>
 }
 
 @code {
-    private Participator? _value;
-
     /// <summary>
     /// Participator to bind to.
     /// </summary>
@@ -43,15 +48,8 @@
     [Parameter]
     public List<WeaponType> weaponTypes { get; set; } = new();
 
-    private void HandleWeaponChange(ChangeEventArgs args)
+    private void HandleWeaponChange(WeaponType weaponType)
     {
-        if (args?.Value == null) return;
-
-        var weaponTypeId = int.Parse(args.Value.ToString());
-        var weaponType = weaponTypes.Find(w => w.Id == weaponTypeId);
-
-        if (weaponType == null) return;
-
         Value!.WeaponTypeId = weaponType.Id;
         Value!.WeaponType = weaponType;
 
