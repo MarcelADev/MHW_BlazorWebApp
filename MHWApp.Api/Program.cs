@@ -1,9 +1,11 @@
 using MHWApp.Api.Data;
+using MHWApp.Api.Hubs;
 using MHWApp.Library;
 using MHWApp.Library.DTO;
 using MHWApp.Library.Model;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using System.Text.Json.Serialization;
@@ -66,9 +68,21 @@ builder.Services.AddEndpointsApiExplorer();
 // add NSwag services
 builder.Services.AddOpenApiDocument();
 
+// add SignalR services
+builder.Services.AddSignalR();
+
+builder.Services.AddResponseCompression(opts =>
+{
+    opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
+        ["application/octet-stream"]);
+});
+
 #endregion
 
 var app = builder.Build();
+
+// Use Response Compression Middleware at the top of the processing pipeline's configuration
+app.UseResponseCompression();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -466,6 +480,7 @@ app.MapGet("/weapontypes", async (AppDbContext dbContext, ClaimsPrincipal user) 
 
 #endregion
 
+#region Endpoint: Weatherforecast
 var summaries = new[]
 {
     "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
@@ -484,6 +499,12 @@ app.MapGet("/weatherforecast", () =>
     return forecast;
 })
 .WithName("GetWeatherForecast");
+#endregion
+
+#region Endpoint: ChatHub
+// Add an endpoint for the hub immediately before the line that runs the app (app.Run();):
+app.MapHub<ChatHub>("/chathub");
+#endregion
 
 app.Run();
 
