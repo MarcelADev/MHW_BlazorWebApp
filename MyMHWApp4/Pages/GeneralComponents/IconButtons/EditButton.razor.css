@@ -1,6 +1,6 @@
 ﻿button {
     border: 0;
-    background: #EA3323;
+    background: var(--button-edit-color);
     color: white;
     border-radius: 5px;
     padding: 10px;

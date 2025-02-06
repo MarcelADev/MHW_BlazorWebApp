@@ -1,0 +1,15 @@
+﻿<button class="container-center" type="button" @onclick="OnCancelButtonClicked">
+	<span class="material-symbols-outlined">
+		cancel
+	</span>
+</button>
+
+@code {
+	[Parameter]
+	public required EventCallback CancelButtonClicked { get; set; }
+
+	private async Task OnCancelButtonClicked()
+	{
+		await CancelButtonClicked.InvokeAsync();
+	}
+}

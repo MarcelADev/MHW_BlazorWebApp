@@ -1,31 +1,63 @@
 ﻿@using MHWApp.Library.Model
 @using MyMHWApp4.Pages.GeneralComponents
+@using MyMHWApp4.Pages.GeneralComponents.IconButtons
 
 <div class="card">
-	<div class="container-card-header">
+
+	<div class="container-left-space-between">
 		<p class="header-card">@GameExtension.Name</p>
 
-		<EditButton EditButtonClicked="HandleEditButtonClicked"></EditButton>
-
-		<DeleteButton DeleteButtonClicked="HandleDeleteButtonClicked"></DeleteButton>
-
+		<div class="container-left">
+			@if (!toggleEdit)
+			{
+				<EditButton EditButtonClicked="HandleEditButtonClicked"></EditButton>
+				<DeleteButton DeleteButtonClicked="HandleDeleteButtonClicked"></DeleteButton>
+			}
+			else
+			{
+				<ConfirmButton ConfirmButtonClicked="HandleConfirmButtonClicked"></ConfirmButton>
+				<CancelButton CancelButtonClicked="HandleCancelButtonClicked"></CancelButton>
+			}
+		</div>
 	</div>
+
+	@if (toggleEdit)
+	{
+		<EditTextInput Value="@GameExtension.Name" LabelText="Name" PlaceHolder="Game Extension"></EditTextInput>
+	}
+
+	<p>Hi</p>
+
 </div>
 
 @code {
+	private bool toggleEdit = false;
+
+	private EditTextInput? changeNameInput;
+
 	[Parameter]
 	public required GameExtension GameExtension { get; set; }
 
 	[Parameter]
 	public required EventCallback<GameExtension> RemoveGameExtension { get; set; }
 
+	private void HandleEditButtonClicked()
+	{
+		toggleEdit = !toggleEdit;
+	}
+
+	private void HandleConfirmButtonClicked()
+	{
+		toggleEdit = !toggleEdit;
+	}
+
+	private void HandleCancelButtonClicked()
+	{
+		toggleEdit = !toggleEdit;
+	}
+
 	private async Task HandleDeleteButtonClicked()
 	{
 		await RemoveGameExtension.InvokeAsync(GameExtension);
-	}
-
-	private void HandleEditButtonClicked()
-	{
-
 	}
 }

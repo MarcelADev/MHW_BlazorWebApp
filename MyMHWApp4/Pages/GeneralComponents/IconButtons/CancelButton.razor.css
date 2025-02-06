@@ -1,6 +1,6 @@
 ﻿button {
     border: 0;
-    background: blue;
+    background: var(--button-cancel-color);
     color: white;
     border-radius: 5px;
     padding: 10px;

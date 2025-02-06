@@ -1,0 +1,11 @@
+﻿button {
+    border: 0;
+    background: var(--button-confirm-color);
+    color: white;
+    border-radius: 5px;
+    padding: 10px;
+}
+
+button:hover {
+    opacity: 0.9;
+}

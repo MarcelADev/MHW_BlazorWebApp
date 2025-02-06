@@ -1,0 +1,16 @@
+﻿<div class="container-property">
+	<label for="PropertyInput">@LabelText</label>
+	<br />
+	<input name="PropertyInput" placeholder="@PlaceHolder" type="text" @bind-value="Value" />
+</div>
+
+@code {
+	[Parameter]
+	public string Value { get; set; } = "";
+
+	[Parameter]
+	public required string LabelText { get; set; }
+
+	[Parameter]
+	public string? PlaceHolder { get; set; }
+}

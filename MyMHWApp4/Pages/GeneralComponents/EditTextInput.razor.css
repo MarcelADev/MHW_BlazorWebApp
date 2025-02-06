@@ -1,0 +1,18 @@
+﻿input {
+	width: var(--full-width);
+	padding: var(--input-padding);
+	border-color: var(--primary-color);
+	border: 0;
+	border-bottom: 1px solid var(--primary-color);
+	margin-left: 10px;
+	background-color: transparent;
+}
+
+.container-property {
+	display: flex;
+	align-items: center;
+	margin-bottom: 10px;
+	width: var(--standard-width);
+	max-width: var(--standard-max-width);
+	color: var(--primary-color);
+}

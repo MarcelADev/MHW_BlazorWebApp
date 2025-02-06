@@ -123,6 +123,10 @@ code {
     --secondary-color: white;
     --secondary-color-dark: whitesmoke;
     --primary-color-alternative: gray;
+    --button-edit-color: #337eff;
+    --button-confirm-color: #337eff;
+    --button-delete-color: #EA3323;
+    --button-cancel-color: var(--button-delete-color);
     /*  %% WIDTH & HEIGHT %% */
     --full-width: 100%;
     --standard-width: 90%;
@@ -191,6 +195,20 @@ input {
     flex-direction: column;
     align-items: center;
     justify-content: center;
+}
+
+.container-left {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.container-left-space-between {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
 }
 
 .header {

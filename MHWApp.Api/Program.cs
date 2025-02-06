@@ -423,6 +423,20 @@ app.MapPost("/gameextensions", async (AppDbContext dbContext, ClaimsPrincipal us
     return Results.Created($"/gameextensions/{newGameExtension.Id}", newGameExtension);
 }).RequireAuthorization();
 
+app.MapPut("/gameextensions/{id}", async (AppDbContext dbContext, ClaimsPrincipal user, GameExtension updatedGameExtension, int id) => 
+{
+    var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
+    if (userIdClaim == null) return Results.Unauthorized();
+
+    var existingGameExtension = await dbContext.GameExtensions.FindAsync(id);
+    if (existingGameExtension == null) return Results.NotFound();
+
+    existingGameExtension.Name = updatedGameExtension.Name;
+    await dbContext.SaveChangesAsync();
+    return Results.NoContent();
+
+}).RequireAuthorization();
+
 app.MapDelete("/gameextensions/{id}", async (AppDbContext dbContext, ClaimsPrincipal user, int id) =>
 {
     var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);

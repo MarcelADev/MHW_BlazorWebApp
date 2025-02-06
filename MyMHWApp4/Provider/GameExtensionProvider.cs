@@ -3,6 +3,7 @@ using MHWApp.Library.Model;
 using System.Net.Http.Json;
 using System.Net.Http;
 using System.Net;
+using System.Runtime.InteropServices;
 
 namespace MyMHWApp4.Provider
 {
@@ -35,6 +36,24 @@ namespace MyMHWApp4.Provider
             }
             catch (Exception ex)
             {
+                return false;
+            }
+        }
+
+        public async Task<bool> UpdateGameExtensionAsync(GameExtension updatedGameExtension)
+        {
+            try
+            {
+                var response = await _httpClient.PutAsJsonAsync($"gameextensions/{updatedGameExtension.Id}", updatedGameExtension);
+
+                if (response.StatusCode == HttpStatusCode.NotFound) return false;
+                else if (response.StatusCode == HttpStatusCode.NoContent) return true;
+
+                throw new Exception();
+            }
+            catch (Exception ex)
+            {
+
                 return false;
             }
         }
