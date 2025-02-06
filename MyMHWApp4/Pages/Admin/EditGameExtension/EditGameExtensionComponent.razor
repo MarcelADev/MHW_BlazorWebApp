@@ -26,9 +26,10 @@
 	@if (toggleEdit)
 	{
 		<EditTextInput 
-		Value="@GameExtension.Name" 
-		LabelText="Name" 
-		PlaceHolder="Game Extension">
+			@ref="changeNameInput"
+			Value="@GameExtension.Name" 
+			LabelText="Name" 
+			PlaceHolder="Game Extension">
 		</EditTextInput>
 	}
 
@@ -59,12 +60,15 @@
 	private void HandleEditButtonClicked()
 	{
 		toggleEdit = !toggleEdit;
+		errors = false;
 	}
 
 	private async Task HandleConfirmButtonClicked()
 	{
-		if (changeNameInput != null) 
+		if (changeNameInput != null)
 		{
+			errorList = [];
+
 			if (changeNameInput.Value == GameExtension.Name)
 			{
 				errorList.Add("Name wasnt changed!");
@@ -85,6 +89,7 @@
 	private void HandleCancelButtonClicked()
 	{
 		toggleEdit = !toggleEdit;
+		errors = false;
 	}
 
 	private async Task HandleDeleteButtonClicked()

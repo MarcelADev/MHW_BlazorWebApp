@@ -133,10 +133,12 @@ code {
     --standard-width: 90%;
     --standard-max-width: 400px;
     --standard-height: 100vh;
-    /*  %% PADDING %% */
+    /*  %% PADDING & MARGIN & GAP %% */
     --input-padding: 5px;
     --standard-padding: 5px;
     --tab-padding: 20px;
+    --card-container-button-gap: 1rem;
+    --card-container-button-margin-right: 0.5rem;
     /*  %% FONT %% */
     --thin: 100;
     --standard-font-size: 1.3rem;

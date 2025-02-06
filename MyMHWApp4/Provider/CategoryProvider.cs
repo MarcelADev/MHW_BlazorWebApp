@@ -10,6 +10,61 @@ namespace MyMHWApp4.Provider
     {
         private readonly HttpClient _httpClient = httpClientFactory.CreateClient("Auth");
 
+        #region CREATE
+        public async Task<bool> CreateAllCategoriesAsync(CategoryDTO categoryDTO)
+        {
+            try
+            {
+                var response = await _httpClient.PostAsJsonAsync("categories", categoryDTO);
+                return response.IsSuccessStatusCode;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> CreateInventoryEntryCategoryAsync(InventoryEntryCategory inventoryEntryCategory)
+        {
+            try
+            {
+                var response = await _httpClient.PostAsJsonAsync($"categories/inventoryentries", inventoryEntryCategory);
+                return response.IsSuccessStatusCode;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> CreateWeaponCategoryAsync(WeaponCategory weaponCategory)
+        {
+            try
+            {
+                var response = await _httpClient.PostAsJsonAsync($"categories/weapons", weaponCategory);
+                return response.IsSuccessStatusCode;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> CreateArmorCategoryAsync(ArmorCategory armorCategory)
+        {
+            try
+            {
+                var response = await _httpClient.PostAsJsonAsync($"categories/armors", armorCategory);
+                return response.IsSuccessStatusCode;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+        #endregion
+
+        #region READ
         public async Task<List<Category>> GetCategoriesAsync()
         {
             try
@@ -26,71 +81,29 @@ namespace MyMHWApp4.Provider
                 return new List<Category>();
             }
         }
+        #endregion
 
-        public async Task<List<InventoryEntryCategory>> GetInventoryEntryCategoriesAsync()
+        #region UPDATE
+        public async Task<bool> UpdateCategoryAsync(Category updatedCategory)
         {
             try
             {
-                var invetoryEntryCategories = await _httpClient.GetFromJsonAsync<List<InventoryEntryCategory>>($"categories/inventoryentries");
+                var response = await _httpClient.PutAsJsonAsync($"categories/{updatedCategory.Id}", updatedCategory);
 
-                if (invetoryEntryCategories != null)
-                    return invetoryEntryCategories;
+                if (response.StatusCode == HttpStatusCode.NotFound) return false;
+                else if (response.StatusCode == HttpStatusCode.NoContent) return true;
 
-                return new List<InventoryEntryCategory>();
+                throw new Exception();
             }
             catch (Exception ex)
             {
-                return new List<InventoryEntryCategory>();
-            }
-        }
 
-        public async Task<List<WeaponCategory>> GetWeaponCategoriesAsync()
-        {
-            try
-            {
-                var weaponCategories = await _httpClient.GetFromJsonAsync<List<WeaponCategory>>($"categories/weapons");
-
-                if (weaponCategories != null)
-                    return weaponCategories;
-
-                return new List<WeaponCategory>();
-            }
-            catch (Exception ex)
-            {
-                return new List<WeaponCategory>();
-            }
-        }
-
-        public async Task<List<ArmorCategory>> GetArmorCategoriesAsync()
-        {
-            try
-            {
-                var armorCategories = await _httpClient.GetFromJsonAsync<List<ArmorCategory>>($"categories/armors");
-
-                if (armorCategories != null)
-                    return armorCategories;
-
-                return new List<ArmorCategory>();
-            }
-            catch (Exception ex)
-            {
-                return new List<ArmorCategory>();
-            }
-        }
-
-        public async Task<bool> CreateAllCategoriesAsync(CategoryDTO categoryDTO)
-        {
-            try
-            {
-                var response = await _httpClient.PostAsJsonAsync("categories", categoryDTO);
-                return response.IsSuccessStatusCode;
-            }
-            catch (Exception ex)
-            {
                 return false;
             }
         }
+        #endregion
 
+        #region DELETE
         public async Task<bool> RemoveCategoryAsync(int categoryId)
         {
             try
@@ -103,5 +116,6 @@ namespace MyMHWApp4.Provider
                 return false;
             }
         }
+        #endregion
     }
 }

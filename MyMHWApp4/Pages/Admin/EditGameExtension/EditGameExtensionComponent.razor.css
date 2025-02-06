@@ -1,4 +1,4 @@
 ﻿.container-left {
-    gap: 1rem;
-    margin-right: 0.5rem;
+    gap: var(--card-container-button-gap);
+    margin-right: var(--card-container-button-margin-right);
 }

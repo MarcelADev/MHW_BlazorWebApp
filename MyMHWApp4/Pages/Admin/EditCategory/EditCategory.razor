@@ -19,11 +19,11 @@
 
 		<div class="container-h4 margin-h4"><h4>Interfaces</h4></div>
 
-		<InputComponentCheckbox @ref="isInventoryEntryCategory" LabelText="Inventory Entry"></InputComponentCheckbox>
+		<InputComponentCheckbox @ref="InvCatCheckbox" LabelText="Inventory Entry"></InputComponentCheckbox>
 
-		<InputComponentCheckbox @ref="isWeaponCategory" LabelText="Weapon"></InputComponentCheckbox>
+		<InputComponentCheckbox @ref="WepCatCheckbox" LabelText="Weapon"></InputComponentCheckbox>
 
-		<InputComponentCheckbox @ref="isArmorCategory" LabelText="Armor"></InputComponentCheckbox>
+		<InputComponentCheckbox @ref="ArmCatCheckbox" LabelText="Armor"></InputComponentCheckbox>
 
 	</div>
 
@@ -31,24 +31,22 @@
 
 	<div class="container-h3 margin-h3"><h3>Edit</h3></div>
 
-	@if(categories == null){
+	@if(categories == null)
+	{
 		<p>Loading ...</p>
 	}
-	else if(!categories.Any()){
+	else if(!categories.Any())
+	{
 		<p>List is empty</p>
 	}
-	else{
-		@foreach(Category category in categories){
+	else
+	{
+		@foreach(Category category in categories)
+		{
 			<EditCategoryComponent 
-				Category="category"
-				HasInventoryEntryCategory="true"
-				RemoveCategory="HandleRemoveCategory">
+			Category="category" 
+			CategoryGotRemoved="HandleCategoryGotRemoved">
 			</EditCategoryComponent>
-
-			@* (category.InventoryEntryCategory != null) *@
-			@* <p>InventoryEntryCategoryId: @IsNotNull(category.InventoryEntryCategory)</p>
-			<p>WeaponCatagory: @IsNotNull(category.WeaponCategory.Id)</p>
-			<p>ArmorCategory: @IsNotNull(category.ArmorCategory.Id)</p> *@
 		}
 	}
 
@@ -61,9 +59,9 @@
 	CategoryDTO? categoryDTO;
 
 	private InputComponentText? nameInput;
-	private InputComponentCheckbox? isInventoryEntryCategory;
-	private InputComponentCheckbox? isWeaponCategory;
-	private InputComponentCheckbox? isArmorCategory;
+	private InputComponentCheckbox? InvCatCheckbox;
+	private InputComponentCheckbox? WepCatCheckbox;
+	private InputComponentCheckbox? ArmCatCheckbox;
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -73,12 +71,14 @@
 
 	private async Task OnCreateCategoryButtonClicked()
 	{
+		if (InvCatCheckbox == null || WepCatCheckbox == null || ArmCatCheckbox == null) throw new Exception("Components weren't initialized correctly");
+
 		categoryDTO = new CategoryDTO
 		{
 			NewCategory = new Category { Id = 0, Name = nameInput!.Value },
-			IsInventoryEntry = isInventoryEntryCategory.Value,
-			IsWeapon= isWeaponCategory.Value,
-			IsArmor = isArmorCategory.Value
+			IsInventoryEntry = InvCatCheckbox.Value,
+			IsWeapon= WepCatCheckbox.Value,
+			IsArmor = ArmCatCheckbox.Value
 		};
 
 		await categoryProvider.CreateAllCategoriesAsync(categoryDTO);
@@ -86,16 +86,9 @@
 		categories = await categoryProvider.GetCategoriesAsync();
 	}
 
-	private async Task HandleRemoveCategory(Category category)
+	private void HandleCategoryGotRemoved(Category category)
 	{
-		await categoryProvider.RemoveCategoryAsync(category.Id);
-
+		if (categories == null) return;
 		categories.Remove(category);
-	}
-
-	private bool IsNotNull(object o){
-		if (o == null) return false;
-
-		return true;
 	}
 }

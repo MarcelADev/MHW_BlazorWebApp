@@ -1,6 +1,7 @@
 using MHWApp.Api.Data;
 using MHWApp.Api.Hubs;
 using MHWApp.Library;
+using static MHWApp.Library.StaticVariables;
 using MHWApp.Library.DTO;
 using MHWApp.Library.Model;
 using Microsoft.AspNetCore.Identity;
@@ -274,62 +275,6 @@ app.MapPost("/participators", async (AppDbContext dbContext, ClaimsPrincipal use
 
 #region Endpoint: Category
 
-app.MapGet("/categories", async (AppDbContext dbContext, ClaimsPrincipal user) =>
-{
-    var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
-    if (userIdClaim == null)
-    {
-        return Results.Unauthorized();
-    }
-
-    var categories = await dbContext.Categories
-        .Include(c => c.InventoryEntryCategory)
-        .Include(c => c.WeaponCategory)
-        .Include(c => c.ArmorCategory)
-        .ToListAsync();
-
-    return Results.Ok(categories);
-});
-
-app.MapGet("/categories/inventoryentries", async (AppDbContext dbContext, ClaimsPrincipal user) =>
-{
-    var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
-    if (userIdClaim == null)
-    {
-        return Results.Unauthorized();
-    }
-
-    var inventoryentryCategories = await dbContext.InventoryEntryCategories.ToListAsync();
-
-    return Results.Ok(inventoryentryCategories);
-});
-
-app.MapGet("/categories/weapons", async (AppDbContext dbContext, ClaimsPrincipal user) =>
-{
-    var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
-    if (userIdClaim == null)
-    {
-        return Results.Unauthorized();
-    }
-
-    var weaponCategories = await dbContext.WeaponCategories.ToListAsync();
-
-    return Results.Ok(weaponCategories);
-});
-
-app.MapGet("/categories/armors", async (AppDbContext dbContext, ClaimsPrincipal user) =>
-{
-    var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
-    if (userIdClaim == null)
-    {
-        return Results.Unauthorized();
-    }
-
-    var armorCategories = await dbContext.ArmorCategories.ToListAsync();
-
-    return Results.Ok(armorCategories);
-});
-
 app.MapPost("/categories", async (CategoryDTO categoryDTO, AppDbContext dbContext) =>
 {
     await dbContext.Categories.AddAsync(categoryDTO.NewCategory);
@@ -365,7 +310,7 @@ app.MapPost("/categories", async (CategoryDTO categoryDTO, AppDbContext dbContex
         {
             Id = 0,
             CategoryId = categoryDTO.NewCategory.Id,
-            Order = StaticVariables.ORDER_DEFAULT_VALUE
+            Order = ORDER_DEFAULT_VALUE
         });
     }
 
@@ -374,6 +319,61 @@ app.MapPost("/categories", async (CategoryDTO categoryDTO, AppDbContext dbContex
     return Results.Created($"/newcategory/{categoryDTO.NewCategory.Id}", categoryDTO.NewCategory);
 }
 ).RequireAuthorization(policy => policy.RequireRole("Master", "Admin"));
+
+app.MapPost("/categories/inventoryentries", async (AppDbContext dbContext, InventoryEntryCategory inventoryEntryCategory) => 
+{
+    await dbContext.InventoryEntryCategories.AddAsync(inventoryEntryCategory);
+    await dbContext.SaveChangesAsync();
+    Results.Created($"/newcategory/inventoryentry/{inventoryEntryCategory.Id}", inventoryEntryCategory);
+
+}).RequireAuthorization(policy => policy.RequireRole("Master", "Admin"));
+
+app.MapPost("/categories/weapons", async (AppDbContext dbContext, WeaponCategory weaponCategory) =>
+{
+    await dbContext.WeaponCategories.AddAsync(weaponCategory);
+    await dbContext.SaveChangesAsync();
+    Results.Created($"/newcategory/weapon/{weaponCategory.Id}", weaponCategory);
+
+}).RequireAuthorization(policy => policy.RequireRole("Master", "Admin"));
+
+app.MapPost("/categories/armors", async (AppDbContext dbContext, ArmorCategory armorCategory) =>
+{
+    await dbContext.ArmorCategories.AddAsync(armorCategory);
+    await dbContext.SaveChangesAsync();
+    Results.Created($"/newcategory/armor/{armorCategory.Id}", armorCategory);
+
+}).RequireAuthorization(policy => policy.RequireRole("Master", "Admin"));
+
+app.MapGet("/categories", async (AppDbContext dbContext, ClaimsPrincipal user) =>
+{
+    var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
+    if (userIdClaim == null)
+    {
+        return Results.Unauthorized();
+    }
+
+    var categories = await dbContext.Categories
+        .Include(c => c.InventoryEntryCategory)
+        .Include(c => c.WeaponCategory)
+        .Include(c => c.ArmorCategory)
+        .ToListAsync();
+
+    return Results.Ok(categories);
+});
+
+app.MapPut("/categories/{id}", async (AppDbContext dbContext, ClaimsPrincipal user, Category updatedCategory, int id) =>
+{
+    var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
+    if (userIdClaim == null) return Results.Unauthorized();
+
+    var existingCategory = await dbContext.Categories.FindAsync(id);
+    if (existingCategory == null) return Results.NotFound();
+
+    existingCategory.Name = updatedCategory.Name;
+    await dbContext.SaveChangesAsync();
+    return Results.NoContent();
+
+}).RequireAuthorization();
 
 app.MapDelete("/categories/{id}", async (AppDbContext dbContext, ClaimsPrincipal user, int id) =>
 {

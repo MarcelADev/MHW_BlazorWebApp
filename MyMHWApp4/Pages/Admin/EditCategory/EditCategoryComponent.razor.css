@@ -4,49 +4,7 @@
     font-weight: 300;
 }
 
-.category-card {
-    display: flex;
-    flex-direction: column;
-    width: var(--standard-width);
-    max-width: var(--standard-max-width);
-    margin-bottom: 1.5rem;
-    box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.3);
-    padding: 10px 5px 10px 15px;
-    /*background-color: #e0dded;*/
-    border-radius: 8px;
-}
-
-.button-confirm {
-    padding: 3px 10px;
-}
-
-.button-delete {
-    padding: 3px 10px;
-}
-
-.container-button {
-    display:flex;
-    justify-content: space-between;
-    width: 100%;
-    padding-right: 10px;
-}
-
-/* ## Input Classes ## */
-input {
-    width: var(--full-width);
-    padding: var(--input-padding);
-    border-color: var(--primary-color);
-    border: 0;
-    border-bottom: 1px solid var(--primary-color);
-    margin-left: 10px;
-    background-color: transparent;
-}
-
-.container-property {
-    display:flex;
-    align-items: center;
-    margin-bottom: 10px;
-    width: var(--standard-width);
-    max-width: var(--standard-max-width);
-    color: var(--primary-color);
+.container-left {
+    gap: var(--card-container-button-gap);
+    margin-right: var(--card-container-button-margin-right);
 }
