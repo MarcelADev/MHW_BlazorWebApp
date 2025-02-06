@@ -1,6 +1,8 @@
 ﻿@using MHWApp.Library.Model
 @using MyMHWApp4.Pages.GeneralComponents
 @using MyMHWApp4.Pages.GeneralComponents.IconButtons
+@using MyMHWApp4.Provider
+@inject GameExtensionProvider gameExtensionProvider
 
 <div class="card">
 
@@ -15,7 +17,7 @@
 			}
 			else
 			{
-				<ConfirmButton ConfirmButtonClicked="HandleConfirmButtonClicked"></ConfirmButton>
+				<ConfirmButton @ref="confirmButton" ConfirmButtonClicked="HandleConfirmButtonClicked"></ConfirmButton>
 				<CancelButton CancelButtonClicked="HandleCancelButtonClicked"></CancelButton>
 			}
 		</div>
@@ -23,17 +25,30 @@
 
 	@if (toggleEdit)
 	{
-		<EditTextInput Value="@GameExtension.Name" LabelText="Name" PlaceHolder="Game Extension"></EditTextInput>
+		<EditTextInput 
+		Value="@GameExtension.Name" 
+		LabelText="Name" 
+		PlaceHolder="Game Extension">
+		</EditTextInput>
 	}
-
-	<p>Hi</p>
 
 </div>
 
+@if (errors)
+{
+	@foreach (var error in errorList)
+	{
+		<div class="alert alert-danger">@error</div>
+	}
+}
+
 @code {
 	private bool toggleEdit = false;
+	private bool errors = false;
+	private List<string> errorList = [];
 
 	private EditTextInput? changeNameInput;
+	private ConfirmButton? confirmButton;
 
 	[Parameter]
 	public required GameExtension GameExtension { get; set; }
@@ -46,8 +61,24 @@
 		toggleEdit = !toggleEdit;
 	}
 
-	private void HandleConfirmButtonClicked()
+	private async Task HandleConfirmButtonClicked()
 	{
+		if (changeNameInput != null) 
+		{
+			if (changeNameInput.Value == GameExtension.Name)
+			{
+				errorList.Add("Name wasnt changed!");
+
+				errors = true;
+			}
+
+			if (!errors)
+			{
+				GameExtension.Name = changeNameInput.Value;
+				await gameExtensionProvider.UpdateGameExtensionAsync(GameExtension);
+			}
+		}
+
 		toggleEdit = !toggleEdit;
 	}
 

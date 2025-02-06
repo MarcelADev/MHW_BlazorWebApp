@@ -125,6 +125,7 @@ code {
     --primary-color-alternative: gray;
     --button-edit-color: #337eff;
     --button-confirm-color: #337eff;
+    --button-confirm-color-disabled: gray;
     --button-delete-color: #EA3323;
     --button-cancel-color: var(--button-delete-color);
     /*  %% WIDTH & HEIGHT %% */
