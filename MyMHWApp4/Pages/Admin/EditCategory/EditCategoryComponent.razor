@@ -1,6 +1,7 @@
 ﻿@using MHWApp.Library.Model
 @using MyMHWApp4.Pages.GeneralComponents
 @using MyMHWApp4.Pages.GeneralComponents.IconButtons
+@using MyMHWApp4.Pages.Modals
 @using MyMHWApp4.Provider
 @using static MHWApp.Library.StaticVariables
 @inject CategoryProvider categoryProvider
@@ -36,21 +37,21 @@
 		<div class="container-top tab">
 
 			<InputComponentCheckbox 
-				@ref="InvCatCheckbox" 
-				LabelText="Inventory Entry Category" 
-				IsChecked="@(Category.InventoryEntryCategory != null)">
+			@ref="InvCatCheckbox" 
+			LabelText="Inventory Entry Category" 
+			IsChecked="@(Category.InventoryEntryCategory != null)">
 			</InputComponentCheckbox>
 
 			<InputComponentCheckbox 
-				@ref="WepCatCheckbox" 
-				LabelText="Weapon Category" 
-				IsChecked="@(Category.WeaponCategory != null)">
+			@ref="WepCatCheckbox" 
+			LabelText="Weapon Category" 
+			IsChecked="@(Category.WeaponCategory != null)">
 			</InputComponentCheckbox>
 
 			<InputComponentCheckbox 
-				@ref="ArmCatCheckbox" 
-				LabelText="Armor Category" 
-				IsChecked="@(Category.ArmorCategory != null)">
+			@ref="ArmCatCheckbox" 
+			LabelText="Armor Category" 
+			IsChecked="@(Category.ArmorCategory != null)">
 			</InputComponentCheckbox>
 		</div>
 	}
@@ -64,7 +65,20 @@
 	}
 }
 
+@if(showModal){
+	<Modal
+		Title="Confirm Delete"
+		BodyText="@modalBodyText"
+		CloseButtonClicked="HandleModalCloseOrCancelButtonClicked"
+		SecondaryButtonClicked="HandleModalCloseOrCancelButtonClicked"
+		PrimaryButtonClicked="HandleDeleteConfirmedButtonClicked">
+	</Modal>
+}
+
 @code {
+	private string? modalBodyText;
+
+	private bool showModal = false;
 	private bool toggleEdit = false;
 	private bool errors = false;
 	private List<string> errorList = [];
@@ -91,6 +105,8 @@
 		invCat = Category.InventoryEntryCategory != null;
 		wepCat = Category.WeaponCategory != null;
 		armCat = Category.ArmorCategory != null;
+
+		modalBodyText = $"Are you sure you want to remove {Category.Name}?";
 
 		await base.OnInitializedAsync();
 	}
@@ -166,7 +182,7 @@
 		else error2 = true;
 
 		// Check if Weapon Category was changed
-		if (WepCatCheckbox.Value != invCat)
+		if (WepCatCheckbox.Value != wepCat)
 		{
 			if (WepCatCheckbox.Value)
 			{
@@ -187,7 +203,7 @@
 		else error3 = true;
 
 		// Check if Armor Category was changed
-		if (ArmCatCheckbox.Value != invCat)
+		if (ArmCatCheckbox.Value != armCat)
 		{
 			if (ArmCatCheckbox.Value)
 			{
@@ -222,7 +238,18 @@
 
 	private async Task HandleDeleteButtonClicked()
 	{
+		showModal = true;
+	}
+
+	private async Task HandleModalCloseOrCancelButtonClicked()
+	{
+		showModal = false;
+	}
+
+	private async Task HandleDeleteConfirmedButtonClicked()
+	{
 		await categoryProvider.RemoveCategoryAsync(Category.Id);
 		await CategoryGotRemoved.InvokeAsync(Category);
+		showModal = false;
 	}
 }
