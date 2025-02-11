@@ -8,16 +8,19 @@
     margin: 0;
     padding: 0;
     border: 1px solid #ccc;
-    width: var(--standard-width);
-    max-width: var(--standard-max-width);
-}
-
-.container-h3 {
-    margin-top: 2rem;
-    margin-bottom: 0.5rem;
+    width: 100%;
 }
 
 .button-confirm {
     margin-top: 5rem;
     margin-bottom: 20px;
+}
+
+.form-container {
+    margin: 5%;
+    --neutral: #d1d1d1;
+    --focus: #0F6CBD;
+    --border-radius: 4px;
+    --input-height: 2.5rem;
+    --box-shadow: rgba(0, 0, 0, 0.12) 0px 0px 2px 0px, rgba(0, 0, 0, 0.14) 0px 2px 4px 0px
 }

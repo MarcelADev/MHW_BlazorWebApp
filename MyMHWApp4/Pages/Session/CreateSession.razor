@@ -4,13 +4,24 @@
 @using MyMHWApp4.Provider
 @inject SessionProvider sessionProvider
 @inject ParticipatorProvider participatorProvider
+@inject PlayerProvider playerProvider
+@inject WeaponProvider weaponProvider
 @inject NavigationManager navigationManager
 
 <header class="container-center header">
     <h2>Create new Session</h2>
 </header>
 
-<main class="container-top">    
+<main class="container-top">
+
+    <div class="form-container">
+        @if(!isLoading)
+        {
+            <EditForm>
+
+            </EditForm>
+        }
+    </div>
 
     <InputComponentText @ref="inputName" LabelText="Name:" PlaceHolder="Session Name"></InputComponentText>
 
@@ -18,7 +29,7 @@
 
     <PlayerDropDown SelectedPlayersChanged="HandleSelectedPlayersChanged"></PlayerDropDown>
 
-    <div class="container-h3"><h3>Participators</h3></div>
+    <div class="container-h3 margin-h3"><h3>Participators</h3></div>
 
     <ul class="participator-list">
 
@@ -54,6 +65,19 @@
 <footer class="footer"></footer>
 
 @code {
+
+    #region Baustelle
+    private bool isLoading = true;
+    private EditContext? editContext;
+
+    [SupplyParameterFromForm]
+    private SessionFormModel? Model { get; set; }
+
+    private List<Player> players = [];
+    private List<WeaponType> weaponTypes = [];
+
+    #endregion
+
     private InputComponentText? inputName;
     private InputComponentNumber? inputMaxDays;
 
@@ -62,6 +86,26 @@
 
     private bool errors = false;
     private List<string> errorList = [];
+
+    protected override async Task OnInitializedAsync()
+    {
+        players = await playerProvider.GetPlayersAsync();
+        weaponTypes = await weaponProvider.GetWeaponTypesAsync();
+
+        Model ??= new SessionFormModel()
+        {
+            UserParticipator = new Participator()
+            {
+                Player = new Player() { UserName = "TO DO" },
+                PlayerId = 0,
+                WeaponType = weaponTypes.First(),
+                WeaponTypeId = weaponTypes.First().Id,
+            }
+        };
+
+        isLoading = false;
+        StateHasChanged();
+    }
 
     private void HandleSelectedPlayersChanged(List<Player> newSelectedPlayers){
         selectedPlayers = newSelectedPlayers;
