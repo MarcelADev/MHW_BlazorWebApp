@@ -112,10 +112,10 @@
 
 			Participator participator = new Participator
             { 
-                Id = 0, 
-                PlayerId = data.Key, 
-                SessionId = createdSession.Id, 
-                WeaponTypeId = data.Value 
+                Id = 0,
+                PlayerId = data.Key,
+                SessionId = createdSession.Id,
+                WeaponTypeId = data.Value
             };
 
             await participatorProvider.CreateParticipatorAsync(participator, isSelf);
