@@ -2,11 +2,13 @@
 @using MHWApp.Library.Model
 @using MyMHWApp4.Pages.GeneralComponents
 @using MyMHWApp4.Provider
+@using System.Security.Principal
 @inject SessionProvider sessionProvider
 @inject ParticipatorProvider participatorProvider
 @inject PlayerProvider playerProvider
 @inject WeaponProvider weaponProvider
 @inject NavigationManager navigationManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
 
 <header class="container-center header">
     <h2>Create new Session</h2>
@@ -17,8 +19,19 @@
     <div class="form-container">
         @if(!isLoading)
         {
-            <EditForm>
+            <EditForm EditContext="editContext" FormName="session">         @* OnValidSubmit="Submit" *@
+                <DataAnnotationsValidator />
+				<ValidationSummary />
 
+                <div class="form-field form-field-input">
+                    <label fpr="session-name">Name</label>
+                    <InputText name="session-name" @bind-Value="Model!.Name"/>
+                </div>
+
+                <div class="form-field form-field-input">
+					<label for="session-max-days">Max Days</label>
+                    <InputNumber name="session-max-days" @bind-Value="Model!.MaxDays"/>
+                </div>
             </EditForm>
         }
     </div>
@@ -68,6 +81,7 @@
 
     #region Baustelle
     private bool isLoading = true;
+    private bool isFormValid = true;
     private EditContext? editContext;
 
     [SupplyParameterFromForm]
@@ -75,6 +89,8 @@
 
     private List<Player> players = [];
     private List<WeaponType> weaponTypes = [];
+
+    private IIdentity? user { get; set; } = null;
 
     #endregion
 
@@ -92,22 +108,37 @@
         players = await playerProvider.GetPlayersAsync();
         weaponTypes = await weaponProvider.GetWeaponTypesAsync();
 
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        user = authState.User.Identity;
+
         Model ??= new SessionFormModel()
         {
             UserParticipator = new Participator()
             {
-                Id = 0,         //TO DO
-				SessionId = 0,  //TO DO
-                Player = new Player() { UserName = "TO DO" },
+                Id = 0,
+				SessionId = 0,
+                Player = new Player() { UserName = user?.Name },
                 PlayerId = 0,
                 WeaponType = weaponTypes.First(),
                 WeaponTypeId = weaponTypes.First().Id,
             }
         };
 
+        editContext = new(Model);
+		editContext.OnFieldChanged += HandleFieldChanged;
+
         isLoading = false;
         StateHasChanged();
     }
+
+	private void HandleFieldChanged(object sender, FieldChangedEventArgs e)
+	{
+        if(editContext is not null)
+        {
+			isFormValid = !editContext.Validate();
+            StateHasChanged();
+        }
+	}
 
     private void HandleSelectedPlayersChanged(List<Player> newSelectedPlayers){
         selectedPlayers = newSelectedPlayers;
