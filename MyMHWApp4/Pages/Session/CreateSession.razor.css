@@ -17,7 +17,8 @@
 }
 
 .form-container {
-    margin: 5%;
+    /*margin: 5%;*/
+    width: 100%;
     --neutral: #d1d1d1;
     --focus: #0F6CBD;
     --border-radius: 4px;

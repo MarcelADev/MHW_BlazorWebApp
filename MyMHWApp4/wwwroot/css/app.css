@@ -317,6 +317,11 @@ input {
 }
 
 .material-symbols-outlined {
+    --primary-color: white;
     font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 48;
-    color: white;
+    color: var(--primary-color);
+}
+
+.chevron-down {
+    transform: rotate(90deg);
 }

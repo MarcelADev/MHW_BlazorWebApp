@@ -3,12 +3,14 @@
 @using MyMHWApp4.Pages.GeneralComponents
 @using MyMHWApp4.Provider
 @using System.Security.Principal
+@using MyMHWApp4.Utils
 @inject SessionProvider sessionProvider
 @inject ParticipatorProvider participatorProvider
 @inject PlayerProvider playerProvider
 @inject WeaponProvider weaponProvider
 @inject NavigationManager navigationManager
 @inject AuthenticationStateProvider AuthenticationStateProvider
+@inject ILogger<CreateSession> Logger
 
 <header class="container-center header">
     <h2>Create new Session</h2>
@@ -19,7 +21,7 @@
     <div class="form-container">
         @if(!isLoading)
         {
-            <EditForm EditContext="editContext" FormName="session">         @* OnValidSubmit="Submit" *@
+            <EditForm EditContext="editContext" FormName="session" OnValidSubmit="Submit">
                 <DataAnnotationsValidator />
 				<ValidationSummary />
 
@@ -32,6 +34,18 @@
 					<label for="session-max-days">Max Days</label>
                     <InputNumber name="session-max-days" @bind-Value="Model!.MaxDays"/>
                 </div>
+
+                <Select
+                    Label="Select Players"
+                    Placeholder="Select"
+                    T="Player"
+                    Options="@players"
+                    OptionNameMapper="(Player player) => player.UserName"
+                    OptionValueMapper="(Player player) => player.Id"
+                    IsMultiple="@true"
+                    ValueListChanged="HandleSelect">
+                </Select>
+
             </EditForm>
         }
     </div>
@@ -140,6 +154,37 @@
         }
 	}
 
+    private void HandleSelect(List<Player> players)
+    {
+        Model!.PlayerIds = players.Select(p => p.Id).ToArray();
+
+        Model!.Participators.RemoveAll(pa => !Model!.PlayerIds.Contains(pa.PlayerId));
+        Model!.Participators.AddRange(
+        players
+        .FindAll(p => !Model.Participators.Select(pa => pa.PlayerId).Contains(p.Id))
+        .Select(p => new Participator()
+            {
+				Id = 0,
+                SessionId = 0,
+                Player = p,
+                PlayerId = p.Id,
+                WeaponType = weaponTypes.First(),
+                WeaponTypeId = weaponTypes.First().Id,
+            })
+        );
+        Model!.Participators.Sort((lhs, rhs) => lhs.Player!.UserName!.CompareTo(rhs.Player!.UserName));
+    }
+
+    private void Submit() => Logger.LogInformation($"Hi");
+
+    public void Dispose()
+    {
+        if (editContext is not null)
+        {
+            editContext.OnFieldChanged -= HandleFieldChanged;
+        }
+    }
+
     private void HandleSelectedPlayersChanged(List<Player> newSelectedPlayers){
         selectedPlayers = newSelectedPlayers;
         StateHasChanged();
@@ -178,7 +223,7 @@
             Name = inputName.Value,
             DayCount = 1,
             MaxDays = inputMaxDays.Value, 
-            Date =  GetDate()
+            Date = DateUtils.GetDateString()  
         };
 
         var createdSession = await sessionProvider.CreateSessionAsync(newSession);
@@ -199,9 +244,5 @@
         }
 
         navigationManager.NavigateTo("/session");
-    }
-
-    private string GetDate(){
-		return DateTime.Now.ToString("dd.MM.yyyy");
     }
 }
