@@ -37,13 +37,17 @@ else
                         @foreach (var selected in ValueList)
                         {
                             <button inert type="button" class="btn select-chip">
-                                <span>
+                                @* <span>
                                     @OptionNameMapper(selected)
                                     <i class="ms-Icon ms-Icon--ChromeClose" />
+                                </span> *@
+                                <span>
+                                    @OptionNameMapper(selected)
+                                    <span class="material-symbols-outlined">
+                                        close
+                                    </span>
                                 </span>
-                                <span class="material-symbols-outlined chevron-down">
-                                    arrow_forward_ios
-                                </span>
+                                
                             </button>
                         }
                     }
