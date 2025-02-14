@@ -1,0 +1,56 @@
+﻿@using MHWApp.Library.Model;
+@using MyMHWApp4.Pages.GeneralComponents
+@inject ILogger<ParticipatorCard> Logger
+
+@if (null != Value)
+{
+    <div class="card__customized participator">
+
+        <div class="card__header">
+            @Value!.Player?.UserName
+        </div>
+
+        <div >
+            <div class="participator-weapon">
+                <img src="@($"Images/WeaponIcons/{Value!.WeaponType?.Name}.svg")" alt="@Value.WeaponType?.Name" />
+                
+                <Select T="WeaponType"
+                    Options="@weaponTypes"
+                    OptionNameMapper="(WeaponType weaponType) => weaponType.Name"
+                    OptionValueMapper="(WeaponType weaponType) => weaponType.Id"
+                    @bind-Value="Value.WeaponType">
+                </Select>
+
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    /// <summary>
+    /// Participator to bind to.
+    /// </summary>
+    [Parameter]
+    public Participator? Value { get; set; }
+
+    /// <summary>
+    /// Value changed callback.
+    /// </summary>
+    [Parameter]
+    public EventCallback<Participator?> ValueChanged { get; set; }
+
+    /// <summary>
+    /// List of available weapon types to choose.
+    /// </summary>
+    [Parameter]
+    public List<WeaponType> weaponTypes { get; set; } = new();
+
+    private void HandleWeaponChange(WeaponType weaponType)
+    {
+        Value!.WeaponTypeId = weaponType.Id;
+        Value!.WeaponType = weaponType;
+
+        ValueChanged.InvokeAsync(Value);
+        StateHasChanged();
+    }
+}

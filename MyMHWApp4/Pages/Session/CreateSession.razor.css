@@ -26,12 +26,12 @@
     --box-shadow: rgba(0, 0, 0, 0.12) 0px 0px 2px 0px, rgba(0, 0, 0, 0.14) 0px 2px 4px 0px
 }
 
-.form-field {
+.form__field {
     margin: 1rem 0;
     position: relative;
 }
 
-.form-field-input::after {
+.form__field-input::after {
     position: absolute;
     left: calc(var(--border-radius) / 2);
     right: 0px;
@@ -48,7 +48,7 @@
     transform: scaleX(0)
 }
 
-.form-field-input:focus-within::after {
+.form__field-input:focus-within::after {
     transition-property: transform;
     transition-duration: 150ms;
     transform: scaleX(1)

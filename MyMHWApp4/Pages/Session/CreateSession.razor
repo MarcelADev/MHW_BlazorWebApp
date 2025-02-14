@@ -25,12 +25,12 @@
                 <DataAnnotationsValidator />
 				<ValidationSummary />
 
-                <div class="form-field form-field-input">
+                <div class="form__field form__field-input">
                     <label fpr="session-name">Name</label>
                     <InputText name="session-name" @bind-Value="Model!.Name"/>
                 </div>
 
-                <div class="form-field form-field-input">
+                <div class="form__field form__field-input">
 					<label for="session-max-days">Max Days</label>
                     <InputNumber name="session-max-days" @bind-Value="Model!.MaxDays"/>
                 </div>
@@ -45,6 +45,28 @@
                     IsMultiple="@true"
                     ValueListChanged="HandleSelect">
                 </Select>
+
+                <div class="form__field">
+                    <ParticipatorCard @bind-Value="Model!.UserParticipator" weaponTypes="weaponTypes" />
+                </div>
+
+                @for (var i = 0; i < Model!.Participators.Count; i++)
+                {
+                    var participator = Model!.Participators[i];
+
+                    @if (Model!.PlayerIds.Contains(participator.PlayerId))
+                    {
+                        <div class="form__field">
+                            <ParticipatorCard @bind-Value="participator" weaponTypes="weaponTypes" />
+                        </div>
+                    }
+                }
+
+                <div class=" form__field form__button">
+                    <button type="submit" class="btn btn-primary">
+                        Create Session
+                    </button>
+                </div>
 
             </EditForm>
         }
@@ -145,7 +167,7 @@
         StateHasChanged();
     }
 
-	private void HandleFieldChanged(object sender, FieldChangedEventArgs e)
+	private void HandleFieldChanged(object? sender, FieldChangedEventArgs e)
 	{
         if(editContext is not null)
         {
@@ -204,13 +226,13 @@
         errors = false;
         errorList = [];
 
-        if (string.IsNullOrEmpty(inputName.Value))
+        if (string.IsNullOrEmpty(inputName!.Value))
         {
             errors = true;
             errorList.Add("Session Name required");
         }
 
-        if (inputMaxDays.Value < 1){
+        if (inputMaxDays!.Value < 1){
             errors = true;
             errorList.Add("Maximum Days must be minimum 1");
         }
