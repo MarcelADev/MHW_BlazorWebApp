@@ -16,7 +16,7 @@
     margin-bottom: 20px;
 }
 
-.form-container {
+.form__container {
     /*margin: 5%;*/
     width: 100%;
     --neutral: #d1d1d1;
@@ -54,7 +54,7 @@
     transform: scaleX(1)
 }
 
-.form-button {
+.form__button {
     width: 100%;
     display: flex;
     justify-content: center;
