@@ -46,6 +46,15 @@
                     ValueListChanged="HandleSelect">
                 </Select>
 
+                <MultiSelect Label="Select Players"
+                    Placeholder="Select"
+                    T="Player"
+                    Options="@players"
+                    OptionNameMapper="(Player player) => player.UserName"
+                    OptionValueMapper="(Player player) => player.Id"
+                    ValueListChanged="HandleSelect">
+                </MultiSelect>
+
                 <div class="form__field">
                     <ParticipatorCard @bind-Value="Model!.UserParticipator" weaponTypes="weaponTypes" />
                 </div>

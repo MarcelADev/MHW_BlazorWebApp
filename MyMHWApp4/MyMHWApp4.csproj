@@ -35,4 +35,10 @@
     <Folder Include="Pages\GeneralComponents\DropDownVu\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Update="Pages\GeneralComponents\MultiSelect.razor">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+    </Content>
+  </ItemGroup>
+
 </Project>
