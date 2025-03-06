@@ -5,8 +5,7 @@
     margin-top: 5px;
     margin-bottom: 0;
     justify-content: space-between;
-    width: var(--standard-width);
-    max-width: var(--standard-max-width);
+    width: 100%;
     padding: var(--standard-padding);
     padding-inline: 10px;
 }
@@ -16,6 +15,5 @@
     margin: 0;
     padding: 0;
     border: 1px solid #ccc;
-    width: var(--standard-width);
-    max-width: var(--standard-max-width);
+    width: 100%;
 }

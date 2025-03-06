@@ -1,13 +1,1 @@
-﻿input {
-    width: var(--full-width);
-    padding: var(--input-padding);
-    border-color: var(--primary-color);
-    border: 1px solid var(--primary-color);
-}
-
-.container-property {
-    margin-bottom: 10px;
-    width: var(--standard-width);
-    max-width: var(--standard-max-width);
-    color: var(--primary-color);
-}
+﻿

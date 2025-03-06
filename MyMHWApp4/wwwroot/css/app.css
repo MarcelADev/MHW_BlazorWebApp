@@ -184,7 +184,12 @@ input {
 /* ## CONTAINERS ## */
 
 .container-main {
-    height: 100vh;
+    width: 100%;
+}
+
+.container-main-inner {
+    width: var(--standard-width);
+    max-width: var(--standard-max-width);
 }
 
 .container-top {
@@ -229,14 +234,18 @@ input {
 
 .container-h3,
 .container-h4 {
-    width: var(--standard-width);
-    max-width: var(--standard-max-width);
+    width: 100%;
+}
+
+.container-property {
+    margin-bottom: 10px;
+    width: 100%;
+    color: var(--primary-color);
 }
 
 .container-property-identity {
     margin-bottom: 10px;
-    width: var(--standard-width);
-    max-width: var(--standard-max-width);
+    width: 100%;
     color: var(--primary-color);
 }
 
@@ -260,8 +269,7 @@ input {
 .card {
     display: flex;
     flex-direction: column;
-    width: var(--standard-width);
-    max-width: var(--standard-max-width);
+    width: 100%;
     margin-bottom: 1.5rem;
     box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.3);
     padding: 10px 5px 10px 15px;
@@ -284,8 +292,6 @@ input {
 }
 
 .tab {
-    width: var(--standard-width);
-    max-width: var(--standard-max-width);
     padding-left: var(--tab-padding);
 }
 
@@ -311,6 +317,11 @@ input {
 }
 
 .material-symbols-outlined {
+    --primary-color: white;
     font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 48;
-    color: white;
+    color: var(--primary-color);
+}
+
+.chevron-down {
+    transform: rotate(90deg);
 }

@@ -1,0 +1,140 @@
+﻿﻿.anchor {
+    position: relative;
+    width: 100%;
+}
+
+.select {
+    position: relative;
+    width: 100%;
+    --focus: #0F6CBD;
+}
+
+.select__trigger {
+    display: flex;
+    align-items: center;
+    border: 1px solid var(--neutral);
+    border-radius: var(--border-radius);
+    padding: 0.5rem;
+    min-height: var(--input-height);
+}
+
+.select:hover {
+    cursor: pointer;
+}
+
+.select-content {
+    flex: 1;
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.select_content-overlay {
+    position: absolute;
+    padding: 0.5rem;
+    bottom: 1px;
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.select-chip {
+    border: none;
+    border-radius: 100px;
+    background-color: var(--focus);
+    color: white;
+    padding: 0.25rem 0.5rem;
+    z-index: 10;
+    pointer-events: none;
+}
+
+    .select-chip span {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+.select-chip-clickable {
+    pointer-events: all;
+}
+
+.select-dropdown {
+    --hover: #C7C7C7;
+    border: 1px solid var(--neutral);
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    background-color: white;
+    position: absolute;
+    right: 0;
+    left: 0;
+    width: 100%;
+    z-index: 10;
+    transition-property: transform;
+    transition-duration: 50ms;
+    transform-origin: top;
+    transform: scaleY(0)
+}
+
+.select:focus-within .select-dropdown {
+    transition-property: transform;
+    transition-duration: 50ms;
+    transform-origin: top;
+    transform: scaleY(1)
+}
+
+.select::after {
+    position: absolute;
+    left: calc(var(--border-radius) / 2);
+    right: 0px;
+    bottom: 0px;
+    border-radius: var(--border-radius);
+    box-sizing: border-box;
+    height: var(--border-radius);
+    width: calc(100% - var(--border-radius));
+    content: "";
+    background-image: linear-gradient(0deg, var(--focus) 0%, var(--focus) 50%, transparent 50%, transparent 100%);
+    transition-property: transform;
+    transition-duration: 50ms;
+    transform: scaleX(0)
+}
+
+.select:focus-within::after {
+    transition-property: transform;
+    transition-duration: 150ms;
+    transform: scaleX(1)
+}
+
+.select-option {
+    display: flex;
+    align-items: center;
+    padding: 0.25rem 0.5rem;
+}
+
+    .select-option:hover {
+        cursor: pointer;
+        background-color: var(--hover);
+    }
+
+        .select-option:hover * {
+            cursor: pointer;
+        }
+
+    .select-option input {
+        width: initial;
+    }
+
+    .select-option .ms-Icon {
+        color: var(--focus);
+        font-weight: bold;
+    }
+
+.select-option-label {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    width: 100%;
+}
+
+.select-option-label-hidden {
+    display: none;
+}

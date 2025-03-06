@@ -8,16 +8,78 @@
     margin: 0;
     padding: 0;
     border: 1px solid #ccc;
-    width: var(--standard-width);
-    max-width: var(--standard-max-width);
-}
-
-.container-h3 {
-    margin-top: 2rem;
-    margin-bottom: 0.5rem;
+    width: 100%;
 }
 
 .button-confirm {
     margin-top: 5rem;
     margin-bottom: 20px;
+}
+
+.form__container {
+    /*margin: 5%;*/
+    width: 100%;
+    --neutral: #d1d1d1;
+    --focus: #0F6CBD;
+    --border-radius: 4px;
+    --input-height: 2.5rem;
+    --box-shadow: rgba(0, 0, 0, 0.12) 0px 0px 2px 0px, rgba(0, 0, 0, 0.14) 0px 2px 4px 0px
+}
+
+.form__field {
+    margin: 1rem 0;
+    position: relative;
+}
+
+.form__field-input::after {
+    position: absolute;
+    left: calc(var(--border-radius) / 2);
+    right: 0px;
+    bottom: 0px;
+    border-radius: var(--border-radius);
+    box-sizing: border-box;
+    height: var(--border-radius);
+    width: calc(100% - var(--border-radius));
+    width: 100%;
+    content: "";
+    background-image: linear-gradient( 0deg, var(--focus) 0%, var(--focus) 50%, transparent 50%, transparent 100% );
+    transition-property: transform;
+    transition-duration: 50ms;
+    transform: scaleX(0)
+}
+
+.form__field-input:focus-within::after {
+    transition-property: transform;
+    transition-duration: 150ms;
+    transform: scaleX(1)
+}
+
+.form__button {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.form-select {
+    display: block;
+}
+
+/* Keinen Zugriff auf source code von Edit Form -> deshalb ::deep */
+::deep .form__container form {
+    width: 100%;
+}
+
+::deep .form__container input {
+    border: 1px solid var(--neutral);
+    border-radius: var(--border-radius);
+    position: relative;
+    padding: 0.5rem;
+    height: var(--input-height);
+}
+
+::deep .form__container select {
+    border: 1px solid var(--neutral);
+    border-radius: var(--border-radius);
+    padding: 0.5rem;
+    width: 100%;
 }
