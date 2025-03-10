@@ -14,12 +14,12 @@
             <div class="participator-weapon">
                 <img src="@($"Images/WeaponIcons/{Value!.WeaponType?.Name}.svg")" alt="@Value.WeaponType?.Name" />
                 
-                <Select T="WeaponType"
+                <SingleSelect T="WeaponType"
                     Options="@weaponTypes"
                     OptionNameMapper="(WeaponType weaponType) => weaponType.Name"
                     OptionValueMapper="(WeaponType weaponType) => weaponType.Id"
                     @bind-Value="Value.WeaponType">
-                </Select>
+                </SingleSelect>
 
             </div>
         </div>

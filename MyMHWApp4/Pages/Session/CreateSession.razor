@@ -35,17 +35,6 @@
                     <InputNumber name="session-max-days" @bind-Value="Model!.MaxDays"/>
                 </div>
 
-                <Select
-                    Label="Select Players"
-                    Placeholder="Select"
-                    T="Player"
-                    Options="@players"
-                    OptionNameMapper="(Player player) => player.UserName"
-                    OptionValueMapper="(Player player) => player.Id"
-                    IsMultiple="@true"
-                    ValueListChanged="HandleSelect">
-                </Select>
-
                 <MultiSelect Label="Select Players"
                     Placeholder="Select"
                     T="Player"
@@ -80,43 +69,6 @@
             </EditForm>
         }
     </div>
-
-    <InputComponentText @ref="inputName" LabelText="Name:" PlaceHolder="Session Name"></InputComponentText>
-
-    <InputComponentNumber @ref="inputMaxDays" LabelText="Max Days:" DefaultValue="25"></InputComponentNumber>
-
-    <PlayerDropDown SelectedPlayersChanged="HandleSelectedPlayersChanged"></PlayerDropDown>
-
-    <div class="container-h3 margin-h3"><h3>Participators</h3></div>
-
-    <ul class="participator-list">
-
-        <AuthorizeView>
-            <ParticipatorComponent 
-            PlayerName="@(context.User.Identity?.Name)" 
-            PlayerId="-1"
-            ChosenItemChanged="HandleChosenWeaponTypeChanged">
-            </ParticipatorComponent>
-        </AuthorizeView>
-
-        @foreach(Player player in selectedPlayers){
-            <ParticipatorComponent 
-            PlayerName="@player.UserName" 
-            PlayerId="player.Id"
-            ChosenItemChanged="HandleChosenWeaponTypeChanged">
-            </ParticipatorComponent>
-        }
-    </ul>
-
-    <button class="button button-confirm theme-dark" @onclick="OnConfirmButtonClicked">Confirm</button>
-
-    @if (errors)
-    {
-        @foreach (var error in errorList)
-        {
-            <div class="alert alert-danger">@error</div>
-        }
-    }
 
 </main>
 
