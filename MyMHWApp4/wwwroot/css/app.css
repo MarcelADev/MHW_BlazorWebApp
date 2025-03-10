@@ -322,6 +322,10 @@ input {
     color: var(--primary-color);
 }
 
-.chevron-down {
-    transform: rotate(90deg);
+.icon__color-black {
+    color: black;
+}
+
+.icon__color-blue {
+    color: #5161b8;
 }
