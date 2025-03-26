@@ -16,21 +16,6 @@
     margin-bottom: 20px;
 }
 
-.form__container {
-    /*margin: 5%;*/
-    width: 100%;
-    --neutral: #d1d1d1;
-    --focus: #0F6CBD;
-    --border-radius: 4px;
-    --input-height: 2.5rem;
-    --box-shadow: rgba(0, 0, 0, 0.12) 0px 0px 2px 0px, rgba(0, 0, 0, 0.14) 0px 2px 4px 0px
-}
-
-.form__field {
-    margin: 1rem 0;
-    position: relative;
-}
-
 .form__field-input::after {
     position: absolute;
     left: calc(var(--border-radius) / 2);
@@ -52,12 +37,6 @@
     transition-property: transform;
     transition-duration: 150ms;
     transform: scaleX(1)
-}
-
-.form__button {
-    width: 100%;
-    display: flex;
-    justify-content: center;
 }
 
 .form-select {

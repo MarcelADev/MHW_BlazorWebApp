@@ -1,4 +1,5 @@
 ﻿@using MHWApp.Library.Model;
+@using MyMHWApp4.Extensions
 @using MyMHWApp4.Pages.GeneralComponents
 @using System.Text.RegularExpressions
 @inject ILogger<ParticipatorCard> Logger
@@ -13,7 +14,7 @@
 
         <div >
             <div class="participator-weapon">
-                <img src="@($"Images/WeaponIcons/{Value!.WeaponType?.Name}.svg")" alt="@Value.WeaponType?.Name" />
+                <img src="@($"Images/WeaponIcons/{Value!.WeaponType?.Name.ReplaceWhitespace()}.svg")" alt="@Value.WeaponType?.Name" />
                 
                 <SingleSelect T="WeaponType"
                     Options="@weaponTypes"
@@ -53,12 +54,5 @@
 
         ValueChanged.InvokeAsync(Value);
         StateHasChanged();
-    }
-
-    // TO DO: String Extension
-    private static readonly Regex sWhitespace = new Regex(@"\s+");
-    public static string ReplaceWhitespace(string input, string replacement)
-    {
-        return sWhitespace.Replace(input, replacement);
     }
 }

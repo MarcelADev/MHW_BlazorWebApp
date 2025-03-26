@@ -2,7 +2,9 @@
 @using MHWApp.Library.Model
 @using MyMHWApp4.Pages.GeneralComponents
 @using MyMHWApp4.Provider
+@using System.Security.Principal
 @inject GameExtensionProvider gameExtensionProvider
+@inject ILogger<EditGameExtension> Logger
 
 <header class="container-center header">
 	<h2>Game Extension</h2>
@@ -12,9 +14,31 @@
 
 	<div class="container-h3"><h3>Create</h3></div>
 
-	<InputComponentText @ref="nameInput" LabelText="Name" PlaceHolder="New Game Extension"></InputComponentText>
+	<div class="form__container">
+		@if(!isLoading)
+		{
+			<EditForm EditContext="editContext" FormName="gameExtension" OnvalidSubmit="Submit">
+				<DataAnnotationsValidator />
+				<ValidationSummary />
 
-	<button class="button theme-purple" @onclick="OnCreateGameExtensionButtonClicked">Create Extension</button>
+				<div class="form__field">
+					<label for="gameExtension-name">Name</label>
+					<InputText name="gameExtension-name" @bind-Value="Model!.Name" />
+				</div>
+
+				<div class=" form__field form__button">
+					<button type="submit" class="btn btn-primary">
+						Create Session
+					</button>
+				</div>
+
+			</EditForm>
+		}
+	</div>
+
+	@* <InputComponentText @ref="nameInput" LabelText="Name" PlaceHolder="New Game Extension"></InputComponentText>
+
+	<button class="button theme-purple" @onclick="OnCreateGameExtensionButtonClicked">Create Extension</button> *@
 
 	<div class="container-h3 margin-h3"><h3>Edit</h3></div>
 
@@ -40,6 +64,13 @@
 <footer class="footer"></footer>
 
 @code {
+	private bool isLoading = true;
+	private bool isFormValid = false;
+	private EditContext? editContext;
+
+	[SupplyParameterFromForm]
+	private GameExtensionFormModel? Model { get; set; }
+
 	private InputComponentText? nameInput;
 
 	private List<GameExtension>? extensions;
@@ -48,7 +79,44 @@
 	{
 		extensions = await gameExtensionProvider.GetGameExtensionsAsync();
 
-		await base.OnInitializedAsync();
+		Model ??= new GameExtensionFormModel(){};
+		editContext = new (Model);
+		editContext.OnFieldChanged += HandleFieldChanged;
+
+		isLoading = false;
+		StateHasChanged();
+	}
+
+	private void HandleFieldChanged(object? sender, FieldChangedEventArgs e)
+	{
+		if(editContext is not null)
+		{
+			isFormValid = !editContext.Validate();
+			StateHasChanged();
+		}
+	}
+
+	private async Task Submit() => await CreateGameExtension();
+
+	private async Task CreateGameExtension()
+	{
+		GameExtension newGameExtension = new GameExtension
+		{
+			Id = 0,
+			Name = Model!.Name
+		};
+
+		var success = await gameExtensionProvider.CreateGameExtensionAsync(newGameExtension);
+
+		if (success) 
+		{
+			Logger.LogInformation($"Success");
+			extensions!.Add(newGameExtension);
+		}
+		else
+		{
+			Logger.LogInformation($"Failure");
+		}
 	}
 
 	private async Task OnCreateGameExtensionButtonClicked()
@@ -61,13 +129,13 @@
 
 		var success = await gameExtensionProvider.CreateGameExtensionAsync(newGameExtension);
 
-		if(success) extensions.Add(newGameExtension);
+		if(success) extensions!.Add(newGameExtension);
 	}
 
 	private async Task HandleRemoveGameExtension(GameExtension gameExtension)
 	{
 		await gameExtensionProvider.RemoveGameExtensionAsync(gameExtension.Id);
 
-		extensions.Remove(gameExtension);
+		extensions!.Remove(gameExtension);
 	}
 }
