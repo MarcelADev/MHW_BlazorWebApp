@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using System.Text.Json.Serialization;
+using System.Net;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -416,6 +417,11 @@ app.MapPost("/gameextensions", async (AppDbContext dbContext, ClaimsPrincipal us
     if (userIdClaim == null)
     {
         return Results.Unauthorized();
+    }
+
+    foreach (GameExtension gameExtension in await dbContext.GameExtensions.ToListAsync())
+    {
+        if(gameExtension.Name.Equals(newGameExtension.Name)) return Results.StatusCode(HTTP_STATUSCODE_CONFLICT);
     }
 
     await dbContext.GameExtensions.AddAsync(newGameExtension);

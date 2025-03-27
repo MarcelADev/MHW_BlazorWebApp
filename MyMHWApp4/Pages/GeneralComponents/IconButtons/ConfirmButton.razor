@@ -1,4 +1,4 @@
-﻿<button  class="container-center" type="button" @onclick="OnConfirmButtonClicked">
+﻿<button  class="container-center" type="submit" @onclick="OnConfirmButtonClicked">
 	<span class="material-symbols-outlined">
 		check
 	</span>
@@ -6,7 +6,7 @@
 
 @code {
 	[Parameter]
-	public required EventCallback ConfirmButtonClicked { get; set; }
+	public EventCallback ConfirmButtonClicked { get; set; }
 
 	private async Task OnConfirmButtonClicked()
 	{

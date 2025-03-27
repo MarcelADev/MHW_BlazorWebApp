@@ -36,26 +36,22 @@
 		}
 	</div>
 
-	@* <InputComponentText @ref="nameInput" LabelText="Name" PlaceHolder="New Game Extension"></InputComponentText>
-
-	<button class="button theme-purple" @onclick="OnCreateGameExtensionButtonClicked">Create Extension</button> *@
-
 	<div class="container-h3 margin-h3"><h3>Edit</h3></div>
 
-	@if(extensions == null){
+	@if(isLoading){
 		<p>Loading ...</p>
 	}
-	else if (!extensions.Any())
+	else if (!extensions!.Any())
 	{
 		<p>List is empty</p>
 	}
 	else{
-		@foreach (GameExtension extension in extensions)
+		@foreach (GameExtension extension in extensions!)
 		{
-			<EditGameExtensionComponent
+			<GameExtensionCard
 				GameExtension="extension"
 				RemoveGameExtension="HandleRemoveGameExtension">
-			</EditGameExtensionComponent>
+			</GameExtensionCard>
 		}
 	}
 
@@ -71,9 +67,9 @@
 	[SupplyParameterFromForm]
 	private GameExtensionFormModel? Model { get; set; }
 
-	private InputComponentText? nameInput;
-
 	private List<GameExtension>? extensions;
+
+	private 
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -108,28 +104,17 @@
 
 		var success = await gameExtensionProvider.CreateGameExtensionAsync(newGameExtension);
 
-		if (success) 
+		if (success > -1) 
 		{
-			Logger.LogInformation($"Success");
+			Logger.LogInformation($"Game Extension was created");
+			newGameExtension.Id = success;
 			extensions!.Add(newGameExtension);
 		}
 		else
 		{
-			Logger.LogInformation($"Failure");
+			Logger.LogInformation($"Game Extension already exists");
 		}
-	}
-
-	private async Task OnCreateGameExtensionButtonClicked()
-	{
-		GameExtension newGameExtension = new GameExtension
-		{
-			Id = 0,
-			Name = nameInput.Value
-		};
-
-		var success = await gameExtensionProvider.CreateGameExtensionAsync(newGameExtension);
-
-		if(success) extensions!.Add(newGameExtension);
+		StateHasChanged();
 	}
 
 	private async Task HandleRemoveGameExtension(GameExtension gameExtension)

@@ -310,6 +310,7 @@ input {
 .theme-blue {
     --primary-color: #028df7;
     --primary-color: #5161b8;
+    --primary-color: #0d6efd;
 }
 
 .theme-red {

@@ -1,0 +1,106 @@
+﻿@using MHWApp.Library.Model
+@using MyMHWApp4.Pages.GeneralComponents
+@using MyMHWApp4.Pages.GeneralComponents.IconButtons
+@using MyMHWApp4.Provider
+@inject GameExtensionProvider gameExtensionProvider
+
+@if(!isLoading)
+{
+	<div class="form__container">
+		<EditForm EditContext="editContext" FormName="session" OnValidSubmit="Submit">
+			<DataAnnotationsValidator />
+			<ValidationSummary />
+			<div class="card">
+
+				<div class="container-left-space-between">
+					<p class="header-card">@GameExtension.Name</p>
+
+					<div class="container-left">
+						@if (!toggleEdit)
+						{
+							<EditButton EditButtonClicked="HandleEditButtonClicked"></EditButton>
+							<DeleteButton DeleteButtonClicked="HandleDeleteButtonClicked"></DeleteButton>
+						}
+						else
+						{
+							<ConfirmButton />
+							<CancelButton CancelButtonClicked="HandleCancelButtonClicked"></CancelButton>
+						}
+					</div>
+				</div>
+
+				@if (toggleEdit)
+				{
+					<div class="form__field">
+						<label for="gameExtension-nameChange">Change Name:</label>
+						<InputText name="gameExtension-nameChange" @bind-Value="Model!.NewName" />
+					</div>
+				}
+			</div>
+		</EditForm>
+	</div>
+}
+
+@code {
+	private bool isLoading = true;
+	private bool isFormValid = true;
+	private bool toggleEdit = false;
+
+	public EditContext? editContext;
+	//private ConfirmButton? confirmButton;
+
+	[SupplyParameterFromForm]
+	public ChangeGameExtensionFormModel? Model { get; set; }
+
+	[Parameter]
+	public required GameExtension GameExtension { get; set; }
+
+	[Parameter]
+	public required EventCallback<GameExtension> RemoveGameExtension { get; set; }
+
+	protected override async Task OnInitializedAsync()
+	{
+		Model ??= new ChangeGameExtensionFormModel(GameExtension);
+		editContext = new(Model);
+
+		isLoading = false;
+		StateHasChanged();
+	}
+
+	private async Task Submit() => await ChangeGameExtensionName();
+
+	private async Task ChangeGameExtensionName()
+	{
+		GameExtension.Name = Model!.NewName;
+		var result = await gameExtensionProvider.UpdateGameExtensionAsync(GameExtension);
+
+		if (result)
+		{
+			Model!.Name = Model!.NewName;
+			toggleEdit = !toggleEdit;
+		}
+		else
+		{
+			GameExtension.Name = Model!.Name;
+		}
+		StateHasChanged();
+	}
+
+	private void HandleEditButtonClicked()
+	{
+		toggleEdit = !toggleEdit;
+		StateHasChanged();
+	}
+
+	private void HandleCancelButtonClicked()
+	{
+		Model!.NewName = Model.Name;
+		toggleEdit = !toggleEdit;
+		StateHasChanged();
+	}
+
+	private async Task HandleDeleteButtonClicked()
+	{
+		await RemoveGameExtension.InvokeAsync(GameExtension);
+	}
+}

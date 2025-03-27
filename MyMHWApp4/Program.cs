@@ -32,7 +32,8 @@ builder.Services.AddScoped(sp =>
 builder.Services.AddHttpClient(
     "Auth",
     opt => opt.BaseAddress = new Uri(builder.Configuration["BackendUrl"] ?? "https://localhost:5001"))
-    .AddHttpMessageHandler<CookieHandler>();
+    .AddHttpMessageHandler<CookieHandler>()
+    .AddHttpMessageHandler<UnauthorizedResponseHandler>();
 
 #region SELFMADE SERVICES
 

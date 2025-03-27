@@ -4,10 +4,12 @@ using System.Net.Http.Json;
 using System.Net.Http;
 using System.Net;
 using System.Runtime.InteropServices;
+using Microsoft.Extensions.Logging;
+using static MHWApp.Library.StaticVariables;
 
 namespace MyMHWApp4.Provider
 {
-    public class GameExtensionProvider(IHttpClientFactory httpClientFactory)
+    public class GameExtensionProvider(IHttpClientFactory httpClientFactory, ILogger<GameExtensionProvider> logger)
     {
         private readonly HttpClient _httpClient = httpClientFactory.CreateClient("Auth");
 
@@ -27,17 +29,30 @@ namespace MyMHWApp4.Provider
             }
         }
 
-        public async Task<bool> CreateGameExtensionAsync(GameExtension gameExtension)
+        public async Task<int> CreateGameExtensionAsync(GameExtension gameExtension)
         {
-            try
+            var response = await _httpClient.PostAsJsonAsync("gameextensions", gameExtension);
+
+            if (response.StatusCode == HttpStatusCode.Unauthorized)
             {
-                var response = await _httpClient.PostAsJsonAsync("gameextensions", gameExtension);
-                return response.IsSuccessStatusCode;
+                logger.LogInformation(LOG_UNAUTHORIZED);
+                return -1;
             }
-            catch (Exception ex)
+            if (response.StatusCode == HttpStatusCode.Conflict)
             {
-                return false;
+                logger.LogInformation(LOG_WARNING + nameof(GameExtension) + LOG_CREATE_FAILURE);
+                return -1;
             }
+
+            if (response.StatusCode == HttpStatusCode.Created)
+            {
+                logger.LogInformation(nameof(GameExtension) + LOG_CREATE_SUCCESS);
+                var newGameExtension = await response.Content.ReadFromJsonAsync<GameExtension>();
+                return newGameExtension?.Id ?? -1;
+            }
+
+            logger.LogInformation(LOG_UNEXPECTED_HTTP_STATUSCODE);
+            return -1;
         }
 
         public async Task<bool> UpdateGameExtensionAsync(GameExtension updatedGameExtension)

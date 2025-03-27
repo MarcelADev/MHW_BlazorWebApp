@@ -15,7 +15,7 @@ namespace MyMHWApp4.Pages.Admin.EditGameExtension
         }
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
-            if (Name.Trim() == "")
+            if (NewName.Trim() == "")
             {
                 yield return new ValidationResult("Name must not be empty", [nameof(Name)]);
             }
