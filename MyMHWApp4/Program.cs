@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.SignalR.Client;
 using MyMHWApp4;
 using MyMHWApp4.Identity;
 using MyMHWApp4.Provider;
+using MyMHWApp4.Services;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
@@ -56,6 +57,9 @@ builder.Services.AddScoped<InventoryEntryProvider>();
 builder.Services.AddScoped<CategoryProvider>();
 builder.Services.AddScoped<WeaponProvider>();
 builder.Services.AddScoped<GameExtensionProvider>();
+
+// this still needs to be tested
+builder.Services.AddSingleton<SessionUpdateService>();
 
 #endregion
 

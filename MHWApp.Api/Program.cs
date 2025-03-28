@@ -521,9 +521,12 @@ app.MapGet("/weatherforecast", () =>
 .WithName("GetWeatherForecast");
 #endregion
 
-#region Endpoint: ChatHub
+#region Endpoint: Hubs
 // Add an endpoint for the hub immediately before the line that runs the app (app.Run();):
 app.MapHub<ChatHub>("/chathub");
+
+app.MapHub<SessionUpdateHub>("/sessionhub");
+
 #endregion
 
 app.Run();
