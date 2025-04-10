@@ -11,7 +11,7 @@ namespace MyMHWApp4.Provider
 {
     public class GameExtensionProvider(IHttpClientFactory httpClientFactory, ILogger<GameExtensionProvider> logger)
     {
-        private readonly HttpClient _httpClient = httpClientFactory.CreateClient("Auth");
+        private readonly HttpClient _httpClient = httpClientFactory.CreateClient("AuthAndResp");
 
         public async Task<List<GameExtension>> GetGameExtensionsAsync()
         {

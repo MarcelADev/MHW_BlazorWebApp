@@ -40,7 +40,12 @@ builder.Services.AddHttpClient(
     "Auth",
     opt => opt.BaseAddress = new Uri(builder.Configuration["BackendUrl"] ?? "https://localhost:5001"))
     .AddHttpMessageHandler<CookieHandler>();
-//.AddHttpMessageHandler<UnauthorizedResponseHandler>()
+
+builder.Services.AddHttpClient(
+    "AuthAndResp",
+    opt => opt.BaseAddress = new Uri(builder.Configuration["BackendUrl"] ?? "https://localhost:5001"))
+    .AddHttpMessageHandler<UnauthorizedResponseHandler>()
+    .AddHttpMessageHandler<CookieHandler>();
 
 #region SELFMADE SERVICES
 

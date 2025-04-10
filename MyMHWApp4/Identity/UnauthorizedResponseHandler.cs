@@ -17,7 +17,7 @@ namespace MyMHWApp4.Identity
             if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
             {
                 // Log out user (for example, by clearing cookies, local storage, etc.)
-                accountManagement.LogoutAsync();
+                await accountManagement.LogoutAsync();
 
                 // Redirect to the start page or login page
                 navigationManager.NavigateTo("/logout"); // Or use the appropriate route
