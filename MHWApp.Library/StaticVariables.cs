@@ -30,6 +30,9 @@ namespace MHWApp.Library
         public static string LOG_UNAUTHORIZED = "WARNING: You were not authorized!";
         public static string LOG_UNEXPECTED_HTTP_STATUSCODE = "Received an unexpected HTTP Response Statuscode";
 
+        public static string LOG_GET_ONE_SUCCESS = " was retrieved successfully";
+        public static string LOG_GET_MANY_SUCCESS = " were retrieved successfully";
+
         public static string LOG_CREATE_SUCCESS = " was created successfully";
         public static string LOG_CREATE_FAILURE = " was NOT created";
 

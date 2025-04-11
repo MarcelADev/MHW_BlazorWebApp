@@ -15,18 +15,23 @@ namespace MyMHWApp4.Provider
 
         public async Task<List<GameExtension>> GetGameExtensionsAsync()
         {
-            try
+            var request = new HttpRequestMessage(HttpMethod.Get, "gameextensions");
+            var response = await _httpClient.SendAsync(request);
+            var gameExtensions = await response.Content.ReadFromJsonAsync<List<GameExtension>>();
+
+            if (response.StatusCode == HttpStatusCode.Unauthorized)
             {
-                var gameExtensions = await _httpClient.GetFromJsonAsync<List<GameExtension>>($"gameextensions");
-
-                if (gameExtensions != null) return gameExtensions;
-
+                logger.LogInformation(LOG_UNAUTHORIZED);
                 return new List<GameExtension>();
             }
-            catch (Exception ex)
+            if (response.StatusCode == HttpStatusCode.OK)
             {
-                return new List<GameExtension>();
+                logger.LogInformation(nameof(GameExtension) + LOG_GET_MANY_SUCCESS);
+                return gameExtensions ?? new List<GameExtension>();
             }
+
+            logger.LogInformation(LOG_UNEXPECTED_HTTP_STATUSCODE);
+            return new List<GameExtension>();
         }
 
         public async Task<int> CreateGameExtensionAsync(GameExtension gameExtension)
@@ -43,7 +48,6 @@ namespace MyMHWApp4.Provider
                 logger.LogInformation(LOG_WARNING + nameof(GameExtension) + LOG_CREATE_FAILURE);
                 return -1;
             }
-
             if (response.StatusCode == HttpStatusCode.Created)
             {
                 logger.LogInformation(nameof(GameExtension) + LOG_CREATE_SUCCESS);
@@ -57,33 +61,50 @@ namespace MyMHWApp4.Provider
 
         public async Task<bool> UpdateGameExtensionAsync(GameExtension updatedGameExtension)
         {
-            try
+            var response = await _httpClient.PutAsJsonAsync($"gameextensions/{updatedGameExtension.Id}", updatedGameExtension);
+
+            if (response.StatusCode == HttpStatusCode.Unauthorized)
             {
-                var response = await _httpClient.PutAsJsonAsync($"gameextensions/{updatedGameExtension.Id}", updatedGameExtension);
-
-                if (response.StatusCode == HttpStatusCode.NotFound) return false;
-                else if (response.StatusCode == HttpStatusCode.NoContent) return true;
-
-                throw new Exception();
-            }
-            catch (Exception ex)
-            {
-
+                logger.LogInformation(LOG_UNAUTHORIZED);
                 return false;
             }
+            if (response.StatusCode == HttpStatusCode.NotFound)
+            {
+                logger.LogInformation(LOG_WARNING + nameof(GameExtension) + LOG_UPDATE_FAILURE);
+                return false;
+            }
+            if (response.StatusCode == HttpStatusCode.NoContent)
+            {
+                logger.LogInformation(nameof(GameExtension) + LOG_UPDATE_SUCCESS);
+                return true;
+            }
+
+            logger.LogInformation(LOG_UNEXPECTED_HTTP_STATUSCODE);
+            return false;
         }
 
         public async Task<bool> RemoveGameExtensionAsync(int gameExtensionId)
         {
-            try
+            var response = await _httpClient.DeleteAsync($"gameextensions/{gameExtensionId}");
+
+            if (response.StatusCode == HttpStatusCode.Unauthorized)
             {
-                var response = await _httpClient.DeleteAsync($"gameextensions/{gameExtensionId}");
-                return response.StatusCode == HttpStatusCode.NoContent;
-            }
-            catch (Exception ex)
-            {
+                logger.LogInformation(LOG_UNAUTHORIZED);
                 return false;
             }
+            if (response.StatusCode == HttpStatusCode.NotFound)
+            {
+                logger.LogInformation(LOG_WARNING + nameof(GameExtension) + LOG_DELETE_FAILURE);
+                return false;
+            }
+            if (response.StatusCode == HttpStatusCode.NoContent)
+            {
+                logger.LogInformation(nameof(GameExtension) + LOG_DELETE_SUCCESS);
+                return true;
+            }
+
+            logger.LogInformation(LOG_UNEXPECTED_HTTP_STATUSCODE);
+            return false;
         }
     }
 }

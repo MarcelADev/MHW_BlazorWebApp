@@ -16,13 +16,11 @@ namespace MyMHWApp4.Identity
             // Check if the response is 401 Unauthorized
             if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
             {
-                // Log out user (for example, by clearing cookies, local storage, etc.)
+                // Log out user
                 await accountManagement.LogoutAsync();
 
-                // Redirect to the start page or login page
-                navigationManager.NavigateTo("/logout"); // Or use the appropriate route
-
-                // Optionally, you could also handle any other cleanup (e.g., clearing session or tokens).
+                // Redirect to the logout page
+                navigationManager.NavigateTo("/logout");
             }
 
             return response;

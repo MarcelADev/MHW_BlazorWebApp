@@ -401,10 +401,7 @@ app.MapDelete("/categories/{id}", async (AppDbContext dbContext, ClaimsPrincipal
 app.MapGet("/gameextensions", async (AppDbContext dbContext, ClaimsPrincipal user) =>
 {
     var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
-    if (userIdClaim == null)
-    {
-        return Results.Unauthorized();
-    }
+    if (userIdClaim == null) return Results.Unauthorized();
 
     var gameExtensions = await dbContext.GameExtensions.ToListAsync();
 
@@ -414,10 +411,7 @@ app.MapGet("/gameextensions", async (AppDbContext dbContext, ClaimsPrincipal use
 app.MapPost("/gameextensions", async (AppDbContext dbContext, ClaimsPrincipal user, GameExtension newGameExtension) =>
 {
     var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
-    if (userIdClaim == null)
-    {
-        return Results.Unauthorized();
-    }
+    if (userIdClaim == null) return Results.Unauthorized();
 
     foreach (GameExtension gameExtension in await dbContext.GameExtensions.ToListAsync())
     {
@@ -446,18 +440,13 @@ app.MapPut("/gameextensions/{id}", async (AppDbContext dbContext, ClaimsPrincipa
 app.MapDelete("/gameextensions/{id}", async (AppDbContext dbContext, ClaimsPrincipal user, int id) =>
 {
     var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
-    if (userIdClaim == null)
-    {
-        return Results.Unauthorized();
-    }
+    if (userIdClaim == null) return Results.Unauthorized();
 
     var gameExtension = await dbContext.GameExtensions.FindAsync(id);
-
     if (gameExtension == null) return Results.NotFound();
     
     dbContext.GameExtensions.Remove(gameExtension);
     await dbContext.SaveChangesAsync();
-
     return Results.NoContent();
 }).RequireAuthorization();
 
