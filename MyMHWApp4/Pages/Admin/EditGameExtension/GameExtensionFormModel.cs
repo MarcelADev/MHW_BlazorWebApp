@@ -9,7 +9,9 @@ namespace MyMHWApp4.Pages.Admin.EditGameExtension
         public string Name { get; set; } = string.Empty;
         private List<GameExtension> _gameExtensionList;
 
-        public bool SideNeedsReload { get; set; } = false;
+        public bool EntityAlreadyExistsFlag { get; set; } = false;
+        public bool EntityWasNullFlag { get; set; } = false;
+        public bool UnexpectedResponseFlag { get; set; } = false;
 
         public GameExtensionFormModel(List<GameExtension> gameExtensionList)
         {
@@ -17,9 +19,17 @@ namespace MyMHWApp4.Pages.Admin.EditGameExtension
         }
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
-            if (SideNeedsReload)
+            if (EntityAlreadyExistsFlag)
             {
                 yield return new ValidationResult("Database and Client are unsynchronized. Please reload page!", [nameof(Name)]);
+            }
+            if (EntityWasNullFlag)
+            {
+                yield return new ValidationResult("Contradictory HTTP Response. Please contact Server Provider!", [nameof(Name)]);
+            }
+            if (UnexpectedResponseFlag)
+            {
+                yield return new ValidationResult("Unexpected HTTP Response. Please contact Devs!", [nameof(Name)]);
             }
             if (Name.Trim() == "")
             {

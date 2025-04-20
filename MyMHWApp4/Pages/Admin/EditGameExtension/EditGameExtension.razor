@@ -118,7 +118,17 @@
 		}
 		catch (EntityAlreadyExistsException)
 		{
-			Model.SideNeedsReload = true;
+			Model.EntityAlreadyExistsFlag = true;
+			editContext!.Validate();
+		}
+		catch (EntityWasNullException)
+		{
+			Model.EntityWasNullFlag = true;
+			editContext!.Validate();
+		}
+		catch (UnexpectedResponseException)
+		{
+			Model.UnexpectedResponseFlag = true;
 			editContext!.Validate();
 		}
 		StateHasChanged();
