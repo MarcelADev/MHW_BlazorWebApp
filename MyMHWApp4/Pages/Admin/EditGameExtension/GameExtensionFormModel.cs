@@ -8,16 +8,16 @@ namespace MyMHWApp4.Pages.Admin.EditGameExtension
     {
         public string Name { get; set; } = string.Empty;
         private List<GameExtension> _gameExtensionList;
-        private bool _sideNeedsReload;
 
-        public GameExtensionFormModel(List<GameExtension> gameExtensionList, bool sideNeedsReload)
+        public bool SideNeedsReload { get; set; } = false;
+
+        public GameExtensionFormModel(List<GameExtension> gameExtensionList)
         {
             _gameExtensionList = gameExtensionList;
-            _sideNeedsReload = sideNeedsReload;
         }
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
-            if (_sideNeedsReload)
+            if (SideNeedsReload)
             {
                 yield return new ValidationResult("Database and Client are unsynchronized. Please reload page!", [nameof(Name)]);
             }

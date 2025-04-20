@@ -63,7 +63,6 @@
 @code {
 	private bool isLoading = true;
 	private bool isFormValid = false;
-	private bool sideNeedsReload = false;
 	private EditContext? editContext;
 
 	[SupplyParameterFromForm]
@@ -75,7 +74,7 @@
 	{
 		extensions = await gameExtensionProvider.GetGameExtensionsAsync();
 
-		Model ??= new GameExtensionFormModel(extensions, sideNeedsReload) { };
+		Model ??= new GameExtensionFormModel(extensions) { };
 		editContext = new(Model);
 		editContext.OnFieldChanged += HandleFieldChanged;
 
@@ -116,12 +115,13 @@
 			{
 				Logger.LogInformation($"Game Extension already exists");
 			}
-			StateHasChanged();
 		}
 		catch (EntityAlreadyExistsException)
 		{
-			sideNeedsReload = true;
+			Model.SideNeedsReload = true;
+			editContext!.Validate();
 		}
+		StateHasChanged();
 	}
 
 	private async Task HandleRemoveGameExtension(GameExtension gameExtension)
