@@ -115,9 +115,10 @@
 	private static string INVENTORY = "Inventory";
 
     // Admin Pages
-    private static string ADMIN_CATEGORY = "Admin: Category";
-    private static string ADMIN_GAME_EXTENSION = "Admin: Game Extension";
-	private static string ADMIN_INVENTORY_ENTRY = "Admin: Inventory Entry";
+    private static string ADMIN_CATEGORY = "Category";
+    private static string ADMIN_GAME_EXTENSION = "Game Extension";
+    private static string ADMIN_INVENTORY_ENTRY = "Inventory Entry";
+    private static string ADMIN = "Admin";
 
     private bool collapseNavMenu = true;
     private string? CurrentUrl { get; set; }
@@ -150,9 +151,9 @@
             "/session/create" => SESSION_CREATE,
             "/master" => MASTER,
             "/inventory" => INVENTORY,
-            "/edit/categories" => ADMIN_CATEGORY,
-            "/edit/gameextensions" => ADMIN_GAME_EXTENSION,
-            "/edit/inventoryentries" => ADMIN_INVENTORY_ENTRY,
+            "/edit/categories" => ADMIN,
+            "/edit/gameextensions" => ADMIN,
+            "/edit/inventoryentries" => ADMIN,
             _ => "Unknown",
         };
 
@@ -171,9 +172,7 @@
         {
             gamePagesActive = true;
         }
-        else if (CurrentUrl == ADMIN_CATEGORY ||
-			CurrentUrl == ADMIN_GAME_EXTENSION ||
-            CurrentUrl == ADMIN_INVENTORY_ENTRY)
+        else if (CurrentUrl == ADMIN)
         {
             adminPagesActive = true;
         }

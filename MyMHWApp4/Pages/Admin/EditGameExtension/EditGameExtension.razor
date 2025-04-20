@@ -1,4 +1,5 @@
 ﻿@page "/edit/gameextensions"
+@using MHWApp.Library.Exceptions
 @using MHWApp.Library.Model
 @using MyMHWApp4.Pages.GeneralComponents
 @using MyMHWApp4.Provider
@@ -49,8 +50,8 @@
 		@foreach (GameExtension extension in extensions!)
 		{
 			<GameExtensionCard
-				GameExtension="extension"
-				RemoveGameExtension="HandleRemoveGameExtension">
+			GameExtension="extension"
+			RemoveGameExtension="HandleRemoveGameExtension">
 			</GameExtensionCard>
 		}
 	}
@@ -62,6 +63,7 @@
 @code {
 	private bool isLoading = true;
 	private bool isFormValid = false;
+	private bool sideNeedsReload = false;
 	private EditContext? editContext;
 
 	[SupplyParameterFromForm]
@@ -73,8 +75,8 @@
 	{
 		extensions = await gameExtensionProvider.GetGameExtensionsAsync();
 
-		Model ??= new GameExtensionFormModel(){};
-		editContext = new (Model);
+		Model ??= new GameExtensionFormModel(extensions, sideNeedsReload) { };
+		editContext = new(Model);
 		editContext.OnFieldChanged += HandleFieldChanged;
 
 		isLoading = false;
@@ -94,25 +96,32 @@
 
 	private async Task CreateGameExtension()
 	{
-		GameExtension newGameExtension = new GameExtension
+		GameExtension newGameExtension = new GameExtension 
 		{
 			Id = 0,
 			Name = Model!.Name
 		};
 
-		var success = await gameExtensionProvider.CreateGameExtensionAsync(newGameExtension);
+		try
+		{
+			var id = await gameExtensionProvider.CreateGameExtensionAsync(newGameExtension);
 
-		if (success > -1) 
-		{
-			Logger.LogInformation($"Game Extension was created");
-			newGameExtension.Id = success;
-			extensions!.Add(newGameExtension);
+			if (id > -1)
+			{
+				Logger.LogInformation($"Game Extension was created");
+				newGameExtension.Id = id;
+				extensions!.Add(newGameExtension);
+			}
+			else
+			{
+				Logger.LogInformation($"Game Extension already exists");
+			}
+			StateHasChanged();
 		}
-		else
+		catch (EntityAlreadyExistsException)
 		{
-			Logger.LogInformation($"Game Extension already exists");
+			sideNeedsReload = true;
 		}
-		StateHasChanged();
 	}
 
 	private async Task HandleRemoveGameExtension(GameExtension gameExtension)
@@ -120,5 +129,6 @@
 		await gameExtensionProvider.RemoveGameExtensionAsync(gameExtension.Id);
 
 		extensions!.Remove(gameExtension);
+		StateHasChanged();
 	}
 }
