@@ -41,7 +41,15 @@ namespace MyMHWApp4.Provider
             if (response.StatusCode == HttpStatusCode.Created)
             {
                 var newGameExtension = await response.Content.ReadFromJsonAsync<GameExtension>();
-                return newGameExtension?.Id ?? throw new EntityWasNullException();
+
+                if (newGameExtension is null)
+                {
+                    logger.LogInformation($"Received 201 HTTP Statuscode, but the entity was null");
+                    throw new EntityWasNullException();
+                }
+
+                logger.LogInformation($"Enttity was successfully created: {newGameExtension.Name}");
+                return newGameExtension.Id;
             }
 
             logger.LogWarning($"Unexpexted HTTP Response: {response.StatusCode.ToString()}");

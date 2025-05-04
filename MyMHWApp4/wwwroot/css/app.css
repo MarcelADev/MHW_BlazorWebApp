@@ -157,6 +157,20 @@ h2 {
     color: var(--primary-color);
 }
 
+.scalable { }
+
+@media (max-width: 500px) {
+    h2.scalable {
+        font-size: 3.2rem;
+    }
+}
+
+@media (max-width: 402px) {
+    h2.scalable {
+        font-size: 3rem;
+    }
+}
+
 h3 {
     font-weight: var(--thin);
     font-size: 2rem;

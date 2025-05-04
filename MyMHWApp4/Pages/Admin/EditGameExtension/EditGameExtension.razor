@@ -8,7 +8,7 @@
 @inject ILogger<EditGameExtension> Logger
 
 <header class="container-center header">
-	<h2>Game Extension</h2>
+	<h2 class="scalable">Game Extension</h2>
 </header>
 
 <main class="container-top">
@@ -95,26 +95,14 @@
 
 	private async Task CreateGameExtension()
 	{
-		GameExtension newGameExtension = new GameExtension 
-		{
-			Id = 0,
-			Name = Model!.Name
-		};
+		GameExtension newGameExtension = new GameExtension { Id = 0, Name = Model!.Name };
 
 		try
 		{
 			var id = await gameExtensionProvider.CreateGameExtensionAsync(newGameExtension);
 
-			if (id > -1)
-			{
-				Logger.LogInformation($"Game Extension was created");
-				newGameExtension.Id = id;
-				extensions!.Add(newGameExtension);
-			}
-			else
-			{
-				Logger.LogInformation($"Game Extension already exists");
-			}
+			newGameExtension.Id = id;
+			extensions!.Add(newGameExtension);
 		}
 		catch (EntityAlreadyExistsException)
 		{
