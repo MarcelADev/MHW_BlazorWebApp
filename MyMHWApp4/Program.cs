@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.AspNetCore.SignalR.Client;
 using MyMHWApp4;
+using MyMHWApp4.HubConnections;
 using MyMHWApp4.Identity;
 using MyMHWApp4.Provider;
 using MyMHWApp4.Services;
@@ -49,12 +50,8 @@ builder.Services.AddHttpClient(
 
 #region SELFMADE SERVICES
 
-builder.Services.AddScoped<HubConnection>(hc =>
-    new HubConnectionBuilder()
-        .WithUrl(builder.Configuration["BackendUrl"] + "/chathub")
-        .WithAutomaticReconnect()
-        .Build());
-
+builder.Services.AddScoped<IChatHubConnection, ChatHubConnection>();
+builder.Services.AddScoped<IDataBaseUpdatesHubConnection, DataBaseUpdatesHubConnection>();
 builder.Services.AddScoped<SessionProvider>();
 builder.Services.AddScoped<PlayerProvider>();
 builder.Services.AddScoped<ParticipatorProvider>();
@@ -62,9 +59,6 @@ builder.Services.AddScoped<InventoryEntryProvider>();
 builder.Services.AddScoped<CategoryProvider>();
 builder.Services.AddScoped<WeaponProvider>();
 builder.Services.AddScoped<GameExtensionProvider>();
-
-// this still needs to be tested
-builder.Services.AddSingleton<SessionUpdateService>();
 
 #endregion
 

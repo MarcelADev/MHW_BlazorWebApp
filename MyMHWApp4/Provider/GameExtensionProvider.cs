@@ -48,6 +48,9 @@ namespace MyMHWApp4.Provider
                     throw new EntityWasNullException();
                 }
 
+                //Signal R ????
+                await _hubContext.Clients.All.SendAsync("ReceiveNewGameExtension", newGameExtension);
+
                 logger.LogInformation($"Enttity was successfully created: {newGameExtension.Name}");
                 return newGameExtension.Id;
             }
