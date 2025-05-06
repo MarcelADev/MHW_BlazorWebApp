@@ -10,5 +10,9 @@ namespace MyMHWApp4.HubConnections
         event Action<GameExtension>? OnNewGameExtension;
         event Action<GameExtension>? OnUpdatedGameExtension;
         event Action<int>? OnDeletedGameExtension;
+
+        event Action<Category>? OnNewCategory;
+        event Action<Category>? OnUpdatedCategory;
+        event Action<int>? OnDeletedCategory;
     }
 }

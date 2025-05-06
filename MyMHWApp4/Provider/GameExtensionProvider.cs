@@ -29,7 +29,7 @@ namespace MyMHWApp4.Provider
             throw new UnexpectedResponseException(response.StatusCode.ToString());
         }
 
-        public async Task<int> CreateGameExtensionAsync(GameExtension gameExtension)
+        public async Task CreateGameExtensionAsync(GameExtension gameExtension)
         {
             var response = await _httpClient.PostAsJsonAsync("gameextensions", gameExtension);
 
@@ -48,11 +48,8 @@ namespace MyMHWApp4.Provider
                     throw new EntityWasNullException();
                 }
 
-                //Signal R ????
-                //await _hubContext.Clients.All.SendAsync("ReceiveNewGameExtension", newGameExtension);
-
-                logger.LogInformation($"Enttity was successfully created: {newGameExtension.Name}");
-                return newGameExtension.Id;
+                logger.LogInformation($"Entity was successfully created: {newGameExtension.Name}");
+                return;
             }
 
             logger.LogWarning($"Unexpexted HTTP Response: {response.StatusCode.ToString()}");

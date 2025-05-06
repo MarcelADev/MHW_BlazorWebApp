@@ -106,10 +106,7 @@
 
         try
         {
-            var id = await gameExtensionProvider.CreateGameExtensionAsync(newGameExtension);
-
-            newGameExtension.Id = id;
-            extensions!.Add(newGameExtension);
+            await gameExtensionProvider.CreateGameExtensionAsync(newGameExtension);
         }
         catch (EntityAlreadyExistsException)
         {
@@ -146,18 +143,14 @@
     private void HandleSignalRUpdatedGameExtension(GameExtension updatedGameExtension)
     {
         var existing = extensions!.Find(ge => ge.Id == updatedGameExtension.Id);
-
         if (existing != null) existing.Name = updatedGameExtension.Name;
-
         StateHasChanged();
     }
 
     private void HandleSignalRDeletedGameExtension(int deletedGameExtensionId)
     {
         var existing = extensions!.Find(ge => ge.Id == deletedGameExtensionId);
-
         if (existing != null) extensions.Remove(existing);
-
         StateHasChanged();
     }
 

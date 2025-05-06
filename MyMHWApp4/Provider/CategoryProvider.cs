@@ -3,118 +3,179 @@ using System.Net.Http.Json;
 using System.Net.Http;
 using MHWApp.Library.DTO;
 using System.Net;
+using MHWApp.Library.Exceptions;
+using Microsoft.Extensions.Logging;
 
 namespace MyMHWApp4.Provider
 {
-    public class CategoryProvider(IHttpClientFactory httpClientFactory)
+    public class CategoryProvider(IHttpClientFactory httpClientFactory, ILogger<CategoryProvider> logger)
     {
-        private readonly HttpClient _httpClient = httpClientFactory.CreateClient("Auth");
-
-        #region CREATE
-        public async Task<bool> CreateAllCategoriesAsync(CategoryDTO categoryDTO)
-        {
-            try
-            {
-                var response = await _httpClient.PostAsJsonAsync("categories", categoryDTO);
-                return response.IsSuccessStatusCode;
-            }
-            catch (Exception ex)
-            {
-                return false;
-            }
-        }
-
-        public async Task<bool> CreateInventoryEntryCategoryAsync(InventoryEntryCategory inventoryEntryCategory)
-        {
-            try
-            {
-                var response = await _httpClient.PostAsJsonAsync($"categories/inventoryentries", inventoryEntryCategory);
-                return response.IsSuccessStatusCode;
-            }
-            catch (Exception ex)
-            {
-                return false;
-            }
-        }
-
-        public async Task<bool> CreateWeaponCategoryAsync(WeaponCategory weaponCategory)
-        {
-            try
-            {
-                var response = await _httpClient.PostAsJsonAsync($"categories/weapons", weaponCategory);
-                return response.IsSuccessStatusCode;
-            }
-            catch (Exception ex)
-            {
-                return false;
-            }
-        }
-
-        public async Task<bool> CreateArmorCategoryAsync(ArmorCategory armorCategory)
-        {
-            try
-            {
-                var response = await _httpClient.PostAsJsonAsync($"categories/armors", armorCategory);
-                return response.IsSuccessStatusCode;
-            }
-            catch (Exception ex)
-            {
-                return false;
-            }
-        }
-        #endregion
+        private readonly HttpClient _httpClient = httpClientFactory.CreateClient("AuthAndResp");
 
         #region READ
         public async Task<List<Category>> GetCategoriesAsync()
         {
-            try
-            {
-                var categories = await _httpClient.GetFromJsonAsync<List<Category>>($"categories");
+            var request = new HttpRequestMessage(HttpMethod.Get, "categories");
+            var response = await _httpClient.SendAsync(request);
+            var categories = await response.Content.ReadFromJsonAsync<List<Category>>();
 
-                if (categories != null)
-                    return categories;
-
-                return new List<Category>();
-            }
-            catch (Exception ex)
+            if (response.StatusCode == HttpStatusCode.OK)
             {
-                return new List<Category>();
+                return categories ?? throw new EntityWasNullException();
             }
+
+            logger.LogWarning($"Unexpexted HTTP Response: {response.StatusCode.ToString()}");
+            throw new UnexpectedResponseException(response.StatusCode.ToString());
+        }
+        #endregion
+
+        #region CREATE
+        public async Task CreateCategoryAsync(CategoryDTO categoryDTO)
+        {
+            var response = await _httpClient.PostAsJsonAsync("categories", categoryDTO);
+
+            if (response.StatusCode == HttpStatusCode.Conflict)
+            {
+                logger.LogInformation($"Entity already exists: {categoryDTO.NewCategory.Name}");
+                throw new EntityAlreadyExistsException();
+            }
+            if (response.StatusCode == HttpStatusCode.Created)
+            {
+                var newCategory = await response.Content.ReadFromJsonAsync<Category>();
+
+                if (newCategory is null)
+                {
+                    logger.LogInformation($"Received 201 HTTP Statuscode, but the entity was null");
+                    throw new EntityWasNullException();
+                }
+
+                logger.LogInformation($"Entity was successfully created: {newCategory.Name}");
+                return;
+            }
+
+            logger.LogWarning($"Unexpexted HTTP Response: {response.StatusCode.ToString()}");
+            throw new UnexpectedResponseException(response.StatusCode.ToString());
+        }
+
+        public async Task<bool> CreateInventoryEntryCategoryAsync(InventoryEntryCategory inventoryCategory)
+        {
+            var response = await _httpClient.PostAsJsonAsync($"categories/inventoryentries", inventoryCategory);
+
+            if (response.StatusCode == HttpStatusCode.Conflict)
+            {
+                logger.LogInformation($"InventoryCategory already exists: Id:{inventoryCategory.Id} CategoryId: {inventoryCategory.CategoryId}");
+                throw new EntityAlreadyExistsException();
+            }
+            if (response.StatusCode == HttpStatusCode.Created)
+            {
+                var newInventoryCategory = await response.Content.ReadFromJsonAsync<InventoryEntryCategory>();
+
+                if (newInventoryCategory is null)
+                {
+                    logger.LogInformation($"Received 201 HTTP Statuscode, but the entity was null");
+                    throw new EntityWasNullException();
+                }
+
+                logger.LogInformation($"InventoryCategory was successfully created: Id:{newInventoryCategory.Id} CategoryId: {newInventoryCategory.CategoryId}");
+                return true;
+            }
+
+            logger.LogWarning($"Unexpexted HTTP Response: {response.StatusCode.ToString()}");
+            throw new UnexpectedResponseException(response.StatusCode.ToString());
+        }
+
+        public async Task<bool> CreateWeaponCategoryAsync(WeaponCategory weaponCategory)
+        {
+            var response = await _httpClient.PostAsJsonAsync($"categories/weapons", weaponCategory);
+
+            if (response.StatusCode == HttpStatusCode.Conflict)
+            {
+                logger.LogInformation($"WeaponCategory already exists: Id:{weaponCategory.Id} CategoryId: {weaponCategory.CategoryId}");
+                throw new EntityAlreadyExistsException();
+            }
+            if (response.StatusCode == HttpStatusCode.Created)
+            {
+                var newWeaponCategory = await response.Content.ReadFromJsonAsync<WeaponCategory>();
+
+                if (newWeaponCategory is null)
+                {
+                    logger.LogInformation($"Received 201 HTTP Statuscode, but the entity was null");
+                    throw new EntityWasNullException();
+                }
+
+                logger.LogInformation($"WeaponCategory was successfully created: Id:{newWeaponCategory.Id} CategoryId: {newWeaponCategory.CategoryId}");
+                return true;
+            }
+
+            logger.LogWarning($"Unexpexted HTTP Response: {response.StatusCode.ToString()}");
+            throw new UnexpectedResponseException(response.StatusCode.ToString());
+        }
+
+        public async Task<bool> CreateArmorCategoryAsync(ArmorCategory armorCategory)
+        {
+            var response = await _httpClient.PostAsJsonAsync($"categories/armors", armorCategory);
+
+            if (response.StatusCode == HttpStatusCode.Conflict)
+            {
+                logger.LogInformation($"ArmorCategory already exists: Id:{armorCategory.Id} CategoryId: {armorCategory.CategoryId}");
+                throw new EntityAlreadyExistsException();
+            }
+            if (response.StatusCode == HttpStatusCode.Created)
+            {
+                var newArmorCategory = await response.Content.ReadFromJsonAsync<ArmorCategory>();
+
+                if (newArmorCategory is null)
+                {
+                    logger.LogInformation($"Received 201 HTTP Statuscode, but the entity was null");
+                    throw new EntityWasNullException();
+                }
+
+                logger.LogInformation($"ArmorCategory was successfully created: Id:{newArmorCategory.Id} CategoryId: {newArmorCategory.CategoryId}");
+                return true;
+            }
+
+            logger.LogWarning($"Unexpexted HTTP Response: {response.StatusCode.ToString()}");
+            throw new UnexpectedResponseException(response.StatusCode.ToString());
         }
         #endregion
 
         #region UPDATE
         public async Task<bool> UpdateCategoryAsync(Category updatedCategory)
         {
-            try
+            var response = await _httpClient.PutAsJsonAsync($"categories/{updatedCategory.Id}", updatedCategory);
+
+            if (response.StatusCode == HttpStatusCode.NotFound)
             {
-                var response = await _httpClient.PutAsJsonAsync($"categories/{updatedCategory.Id}", updatedCategory);
-
-                if (response.StatusCode == HttpStatusCode.NotFound) return false;
-                else if (response.StatusCode == HttpStatusCode.NoContent) return true;
-
-                throw new Exception();
-            }
-            catch (Exception ex)
-            {
-
+                logger.LogInformation($"Entity couldnt be updated, because it wasn't found: {updatedCategory.Name}");
                 return false;
             }
+            if (response.StatusCode == HttpStatusCode.NoContent)
+            {
+                return true;
+            }
+
+            logger.LogWarning($"Unexpexted HTTP Response: {response.StatusCode.ToString()}");
+            throw new UnexpectedResponseException(response.StatusCode.ToString());
         }
         #endregion
 
         #region DELETE
         public async Task<bool> RemoveCategoryAsync(int categoryId)
         {
-            try
+            var response = await _httpClient.DeleteAsync($"categories/{categoryId}");
+
+            if (response.StatusCode == HttpStatusCode.NotFound)
             {
-                var response = await _httpClient.DeleteAsync($"categories/{categoryId}");
-                return response.StatusCode == HttpStatusCode.NoContent;
-            }
-            catch (Exception ex)
-            {
+                logger.LogInformation($"Category couldnt be deleted, because it wasn't found: Id={categoryId}");
                 return false;
             }
+            if (response.StatusCode == HttpStatusCode.NoContent)
+            {
+                return true;
+            }
+
+            logger.LogWarning($"Unexpexted HTTP Response: {response.StatusCode.ToString()}");
+            throw new UnexpectedResponseException(response.StatusCode.ToString());
         }
         #endregion
     }

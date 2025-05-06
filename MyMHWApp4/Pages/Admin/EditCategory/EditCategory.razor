@@ -1,9 +1,13 @@
 ﻿@page "/edit/categories"
 @using MHWApp.Library.DTO
+@using MHWApp.Library.Exceptions
 @using MHWApp.Library.Model
+@using MyMHWApp4.HubConnections
 @using MyMHWApp4.Pages.GeneralComponents
 @using Provider
 @inject CategoryProvider categoryProvider
+@inject IDataBaseUpdatesHubConnection HubService
+@implements IDisposable
 
 <header class="container-center header">
 	<h2>Categories</h2>
@@ -13,25 +17,46 @@
 
 	<div class="container-h3"><h3>Create</h3></div>
 
-	<InputComponentText @ref="nameInput" LabelText="Name:" PlaceHolder="Category Name"></InputComponentText>
+	<div class="form__container">
+		@if(!isLoading)
+		{
+			<EditForm EditContext="editContext" FormName="category" OnValidSubmit="Submit">
+				<DataAnnotationsValidator />
+				<ValidationSummary />
 
-	<div class="tab">
+				<div class="form__field">
+					<label for="category-name">Name</label>
+					<InputText name="category-name" @bind-Value="Model!.Name"></InputText>
+				</div>
 
-		<div class="container-h4 margin-h4"><h4>Interfaces</h4></div>
+				<div class="form__field-checkbox">
+					<InputCheckbox name="category-inventory" @bind-Value="Model.IsInventoryCategory"></InputCheckbox>
+					<label for="category-inventory">Inventory Category</label>
+				</div>
 
-		<InputComponentCheckbox @ref="InvCatCheckbox" LabelText="Inventory Entry"></InputComponentCheckbox>
+				<div class="form__field-checkbox">
+					<InputCheckbox name="category-weapon" @bind-Value="Model.IsWeaponCategory"></InputCheckbox>
+					<label for="category-weapon">Weapon Category</label>
+				</div>
 
-		<InputComponentCheckbox @ref="WepCatCheckbox" LabelText="Weapon"></InputComponentCheckbox>
+				<div class="form__field-checkbox">
+					<InputCheckbox name="category-armor" @bind-Value="Model.IsArmorCategory"></InputCheckbox>
+					<label for="category-armor">Armor Category</label>
+				</div>
 
-		<InputComponentCheckbox @ref="ArmCatCheckbox" LabelText="Armor"></InputComponentCheckbox>
+				<div class="form__field form__button">
+					<button type="submit" class="btn btn-primary">
+						Create Category
+					</button>
+				</div>
 
+			</EditForm>
+		}
 	</div>
-
-	<button class="button theme-purple" @onclick="OnCreateCategoryButtonClicked">Create Category</button>
 
 	<div class="container-h3 margin-h3"><h3>Edit</h3></div>
 
-	@if(categories == null)
+	@if(isLoading)
 	{
 		<p>Loading ...</p>
 	}
@@ -55,35 +80,99 @@
 <footer class="footer"></footer>
 
 @code {
-	List<Category>? categories;
-	CategoryDTO? categoryDTO;
+	private bool isLoading = true;
+	private bool isFormValid = false;
+	private EditContext? editContext;
 
-	private InputComponentText? nameInput;
-	private InputComponentCheckbox? InvCatCheckbox;
-	private InputComponentCheckbox? WepCatCheckbox;
-	private InputComponentCheckbox? ArmCatCheckbox;
+	[SupplyParameterFromForm]
+	private CategoryFormModel? Model { get; set; }
+
+	List<Category>? categories;
 
 	protected override async Task OnInitializedAsync()
 	{
 		categories = await categoryProvider.GetCategoriesAsync();
-		await base.OnInitializedAsync();
+
+		Model ??= new CategoryFormModel(categories) { };
+		editContext = new(Model);
+		editContext.OnFieldChanged += HandleFieldChanged;
+
+		HubService.OnNewCategory += HandleSignalRNewCategory;
+		HubService.OnUpdatedCategory += HandleSignalRUpdatedCategory;
+		HubService.OnDeletedCategory += HandleSignalRDeletedCategory;
+
+		isLoading = false;
+		StateHasChanged();
 	}
 
-	private async Task OnCreateCategoryButtonClicked()
+	private void HandleFieldChanged(object? sender, FieldChangedEventArgs e)
 	{
-		if (InvCatCheckbox == null || WepCatCheckbox == null || ArmCatCheckbox == null) throw new Exception("Components weren't initialized correctly");
-
-		categoryDTO = new CategoryDTO
+		if(editContext is not null)
 		{
-			NewCategory = new Category { Id = 0, Name = nameInput!.Value },
-			IsInventoryEntry = InvCatCheckbox.Value,
-			IsWeapon= WepCatCheckbox.Value,
-			IsArmor = ArmCatCheckbox.Value
-		};
+			isFormValid = !editContext.Validate();
+			StateHasChanged();
+		}
+	}
 
-		await categoryProvider.CreateAllCategoriesAsync(categoryDTO);
+	private async Task Submit() => await CreateCategory();
 
-		categories = await categoryProvider.GetCategoriesAsync();
+	private async Task CreateCategory()
+	{
+		CategoryDTO categoryDTO = new CategoryDTO
+			{
+				NewCategory = new Category { Id = 0, Name = Model!.Name },
+				IsInventoryEntry = Model.IsInventoryCategory,
+				IsWeapon = Model.IsWeaponCategory,
+				IsArmor = Model.IsArmorCategory
+			};
+
+		try
+		{
+			await categoryProvider.CreateCategoryAsync(categoryDTO);
+		}
+		catch (EntityAlreadyExistsException)
+		{
+			Model.EntityAlreadyExistsFlag = true;
+			editContext!.Validate();
+		}
+		catch (EntityWasNullException)
+		{
+			Model.EntityWasNullFlag = true;
+			editContext!.Validate();
+		}
+		catch (UnexpectedResponseException)
+		{
+			Model.UnexpectedResponseFlag = true;
+			editContext!.Validate();
+		}
+		StateHasChanged();
+	}
+
+	private void HandleSignalRNewCategory(Category newCategory)
+	{
+		categories!.Add(newCategory);
+		StateHasChanged();
+	}
+
+	private void HandleSignalRUpdatedCategory(Category updatedCategory)
+	{
+		var existing = categories!.Find(ge => ge.Id == updatedCategory.Id);
+		if (existing != null) existing.Name = updatedCategory.Name;
+		StateHasChanged();
+	}
+
+	private void HandleSignalRDeletedCategory(int deletedCategoryId)
+	{
+		var existing = categories!.Find(ge => ge.Id == deletedCategoryId);
+		if (existing != null) categories.Remove(existing);
+		StateHasChanged();
+	}
+
+	public void Dispose()
+	{
+		HubService.OnNewCategory -= HandleSignalRNewCategory;
+		HubService.OnUpdatedCategory -= HandleSignalRUpdatedCategory;
+		HubService.OnDeletedCategory -= HandleSignalRDeletedCategory;
 	}
 
 	private void HandleCategoryGotRemoved(Category category)

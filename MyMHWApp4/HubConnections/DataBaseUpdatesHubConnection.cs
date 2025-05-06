@@ -12,6 +12,10 @@ namespace MyMHWApp4.HubConnections
         public event Action<GameExtension>? OnUpdatedGameExtension;
         public event Action<int>? OnDeletedGameExtension;
 
+        public event Action<Category>? OnNewCategory;
+        public event Action<Category>? OnUpdatedCategory;
+        public event Action<int>? OnDeletedCategory;
+
         public DataBaseUpdatesHubConnection(IConfiguration configuration)
         {
             Connection = new HubConnectionBuilder()
@@ -26,6 +30,7 @@ namespace MyMHWApp4.HubConnections
 
         private void RegisterHandlers()
         {
+            // ## GAME EXTENSION ##
             Connection.On<GameExtension>("ReceiveNewGameExtension", (data) =>
             {
                 OnNewGameExtension?.Invoke(data);
@@ -38,6 +43,22 @@ namespace MyMHWApp4.HubConnections
             Connection.On<int>("ReceiveDeletedGameExtension", (deletedId) =>
             {
                 OnDeletedGameExtension?.Invoke(deletedId);
+            });
+
+            // ## Category ##
+            Connection.On<Category>("ReceiveNewCategory", (data) =>
+            {
+                OnNewCategory?.Invoke(data);
+            });
+
+            Connection.On<Category>("ReceiveUpdatedCategory", (data) =>
+            {
+                OnUpdatedCategory?.Invoke(data);
+            });
+
+            Connection.On<int>("ReceiveDeletedCategory", (deletedId) =>
+            {
+                OnDeletedCategory?.Invoke(deletedId);
             });
 
             //Extendable

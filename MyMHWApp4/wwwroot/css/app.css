@@ -188,11 +188,15 @@ label, p, button, a {
     color: var(--primary-color);
 }
 
-input {
+input:not([type="checkbox"]) {
     width: 100%;
     padding: var(--input-padding);
     border: 1px solid var(--primary-color);
     font-size: var(--standard-font-size);
+}
+
+input[type="checkbox"] {
+    
 }
 
 /* ## CONTAINERS ## */
@@ -360,6 +364,17 @@ input {
 .form__field {
     margin: 1rem 0;
     position: relative;
+}
+
+.form__field-checkbox {
+    margin: 1rem 0;
+    padding-left: 1rem;
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 1rem;
 }
 
 .form__button {
