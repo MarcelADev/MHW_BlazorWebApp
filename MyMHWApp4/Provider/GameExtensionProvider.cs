@@ -49,7 +49,7 @@ namespace MyMHWApp4.Provider
                 }
 
                 //Signal R ????
-                await _hubContext.Clients.All.SendAsync("ReceiveNewGameExtension", newGameExtension);
+                //await _hubContext.Clients.All.SendAsync("ReceiveNewGameExtension", newGameExtension);
 
                 logger.LogInformation($"Enttity was successfully created: {newGameExtension.Name}");
                 return newGameExtension.Id;

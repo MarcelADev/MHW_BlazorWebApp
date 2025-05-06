@@ -1,132 +1,169 @@
 ﻿@page "/edit/gameextensions"
 @using MHWApp.Library.Exceptions
 @using MHWApp.Library.Model
+@using MyMHWApp4.HubConnections
 @using MyMHWApp4.Pages.GeneralComponents
 @using MyMHWApp4.Provider
 @using System.Security.Principal
 @inject GameExtensionProvider gameExtensionProvider
 @inject ILogger<EditGameExtension> Logger
+@inject IDataBaseUpdatesHubConnection HubService
+@implements IDisposable
 
 <header class="container-center header">
-	<h2 class="scalable">Game Extension</h2>
+    <h2 class="scalable">Game Extension</h2>
 </header>
 
 <main class="container-top">
 
-	<div class="container-h3"><h3>Create</h3></div>
+    <div class="container-h3"><h3>Create</h3></div>
 
-	<div class="form__container">
-		@if(!isLoading)
-		{
-			<EditForm EditContext="editContext" FormName="gameExtension" OnvalidSubmit="Submit">
-				<DataAnnotationsValidator />
-				<ValidationSummary />
+    <div class="form__container">
+        @if(!isLoading)
+        {
+            <EditForm EditContext="editContext" FormName="gameExtension" OnvalidSubmit="Submit">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
 
-				<div class="form__field">
-					<label for="gameExtension-name">Name</label>
-					<InputText name="gameExtension-name" @bind-Value="Model!.Name" />
-				</div>
+                <div class="form__field">
+                    <label for="gameExtension-name">Name</label>
+                    <InputText name="gameExtension-name" @bind-Value="Model!.Name" />
+                </div>
 
-				<div class=" form__field form__button">
-					<button type="submit" class="btn btn-primary">
-						Create Session
-					</button>
-				</div>
+                <div class=" form__field form__button">
+                    <button type="submit" class="btn btn-primary">
+                        Create Session
+                    </button>
+                </div>
 
-			</EditForm>
-		}
-	</div>
+            </EditForm>
+        }
+    </div>
 
-	<div class="container-h3 margin-h3"><h3>Edit</h3></div>
+    <div class="container-h3 margin-h3"><h3>Edit</h3></div>
 
-	@if(isLoading){
-		<p>Loading ...</p>
-	}
-	else if (!extensions!.Any())
-	{
-		<p>List is empty</p>
-	}
-	else{
-		@foreach (GameExtension extension in extensions!)
-		{
-			<GameExtensionCard
-			GameExtension="extension"
-			RemoveGameExtension="HandleRemoveGameExtension">
-			</GameExtensionCard>
-		}
-	}
+    @if(isLoading){
+        <p>Loading ...</p>
+    }
+    else if (!extensions!.Any())
+    {
+        <p>List is empty</p>
+    }
+    else{
+        @foreach (GameExtension extension in extensions!)
+        {
+            <GameExtensionCard
+            GameExtension="extension"
+            RemoveGameExtension="HandleRemoveGameExtension">
+            </GameExtensionCard>
+        }
+    }
 
 </main>
 
 <footer class="footer"></footer>
 
 @code {
-	private bool isLoading = true;
-	private bool isFormValid = false;
-	private EditContext? editContext;
+    private bool isLoading = true;
+    private bool isFormValid = false;
+    private EditContext? editContext;
 
-	[SupplyParameterFromForm]
-	private GameExtensionFormModel? Model { get; set; }
+    [SupplyParameterFromForm]
+    private GameExtensionFormModel? Model { get; set; }
 
-	private List<GameExtension>? extensions;
+    private List<GameExtension>? extensions;
 
-	protected override async Task OnInitializedAsync()
-	{
-		extensions = await gameExtensionProvider.GetGameExtensionsAsync();
+    protected override async Task OnInitializedAsync()
+    {
+        extensions = await gameExtensionProvider.GetGameExtensionsAsync();
 
-		Model ??= new GameExtensionFormModel(extensions) { };
-		editContext = new(Model);
-		editContext.OnFieldChanged += HandleFieldChanged;
+        Model ??= new GameExtensionFormModel(extensions) { };
+        editContext = new(Model);
+        editContext.OnFieldChanged += HandleFieldChanged;
 
-		isLoading = false;
-		StateHasChanged();
-	}
+        HubService.OnNewGameExtension += HandleSignalRNewGameExtension;
+        HubService.OnUpdatedGameExtension += HandleSignalRUpdatedGameExtension;
+        HubService.OnDeletedGameExtension += HandleSignalRDeletedGameExtension;
 
-	private void HandleFieldChanged(object? sender, FieldChangedEventArgs e)
-	{
-		if(editContext is not null)
-		{
-			isFormValid = !editContext.Validate();
-			StateHasChanged();
-		}
-	}
+        isLoading = false;
+        StateHasChanged();
+    }
 
-	private async Task Submit() => await CreateGameExtension();
+    private void HandleFieldChanged(object? sender, FieldChangedEventArgs e)
+    {
+        if(editContext is not null)
+        {
+            isFormValid = !editContext.Validate();
+            StateHasChanged();
+        }
+    }
 
-	private async Task CreateGameExtension()
-	{
-		GameExtension newGameExtension = new GameExtension { Id = 0, Name = Model!.Name };
+    private async Task Submit() => await CreateGameExtension();
 
-		try
-		{
-			var id = await gameExtensionProvider.CreateGameExtensionAsync(newGameExtension);
+    private async Task CreateGameExtension()
+    {
+        GameExtension newGameExtension = new GameExtension { Id = 0, Name = Model!.Name };
 
-			newGameExtension.Id = id;
-			extensions!.Add(newGameExtension);
-		}
-		catch (EntityAlreadyExistsException)
-		{
-			Model.EntityAlreadyExistsFlag = true;
-			editContext!.Validate();
-		}
-		catch (EntityWasNullException)
-		{
-			Model.EntityWasNullFlag = true;
-			editContext!.Validate();
-		}
-		catch (UnexpectedResponseException)
-		{
-			Model.UnexpectedResponseFlag = true;
-			editContext!.Validate();
-		}
-		StateHasChanged();
-	}
+        try
+        {
+            var id = await gameExtensionProvider.CreateGameExtensionAsync(newGameExtension);
 
-	private async Task HandleRemoveGameExtension(GameExtension gameExtension)
-	{
-		await gameExtensionProvider.RemoveGameExtensionAsync(gameExtension.Id);
+            newGameExtension.Id = id;
+            extensions!.Add(newGameExtension);
+        }
+        catch (EntityAlreadyExistsException)
+        {
+            Model.EntityAlreadyExistsFlag = true;
+            editContext!.Validate();
+        }
+        catch (EntityWasNullException)
+        {
+            Model.EntityWasNullFlag = true;
+            editContext!.Validate();
+        }
+        catch (UnexpectedResponseException)
+        {
+            Model.UnexpectedResponseFlag = true;
+            editContext!.Validate();
+        }
+        StateHasChanged();
+    }
 
-		extensions!.Remove(gameExtension);
-		StateHasChanged();
-	}
+    private async Task HandleRemoveGameExtension(GameExtension gameExtension)
+    {
+        await gameExtensionProvider.RemoveGameExtensionAsync(gameExtension.Id);
+
+        extensions!.Remove(gameExtension);
+        StateHasChanged();
+    }
+
+    private void HandleSignalRNewGameExtension(GameExtension newGameExtension)
+    {
+        extensions!.Add(newGameExtension);
+        StateHasChanged();
+    }
+
+    private void HandleSignalRUpdatedGameExtension(GameExtension updatedGameExtension)
+    {
+        var existing = extensions!.Find(ge => ge.Id == updatedGameExtension.Id);
+
+        if (existing != null) existing.Name = updatedGameExtension.Name;
+
+        StateHasChanged();
+    }
+
+    private void HandleSignalRDeletedGameExtension(int deletedGameExtensionId)
+    {
+        var existing = extensions!.Find(ge => ge.Id == deletedGameExtensionId);
+
+        if (existing != null) extensions.Remove(existing);
+
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        HubService.OnNewGameExtension -= HandleSignalRNewGameExtension;
+        HubService.OnUpdatedGameExtension -= HandleSignalRUpdatedGameExtension;
+    }
 }

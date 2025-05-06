@@ -51,7 +51,7 @@ builder.Services.AddHttpClient(
 #region SELFMADE SERVICES
 
 builder.Services.AddScoped<IChatHubConnection, ChatHubConnection>();
-builder.Services.AddScoped<IDataBaseUpdatesHubConnection, DataBaseUpdatesHubConnection>();
+builder.Services.AddSingleton<IDataBaseUpdatesHubConnection, DataBaseUpdatesHubConnection>();
 builder.Services.AddScoped<SessionProvider>();
 builder.Services.AddScoped<PlayerProvider>();
 builder.Services.AddScoped<ParticipatorProvider>();

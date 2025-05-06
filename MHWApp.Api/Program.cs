@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using System.Text.Json.Serialization;
 using System.Net;
+using Microsoft.AspNetCore.SignalR;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -408,22 +409,23 @@ app.MapGet("/gameextensions", async (AppDbContext dbContext, ClaimsPrincipal use
     return Results.Ok(gameExtensions);
 }).RequireAuthorization();
 
-app.MapPost("/gameextensions", async (AppDbContext dbContext, ClaimsPrincipal user, GameExtension newGameExtension) =>
+app.MapPost("/gameextensions", async (AppDbContext dbContext, ClaimsPrincipal user, IHubContext<DataBaseUpdatesHub> hubContext, GameExtension newGameExtension) =>
 {
     var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
     if (userIdClaim == null) return Results.Unauthorized();
 
-    foreach (GameExtension gameExtension in await dbContext.GameExtensions.ToListAsync())
-    {
-        if(gameExtension.Name.Equals(newGameExtension.Name)) return Results.StatusCode(HTTP_STATUSCODE_CONFLICT);
-    }
+    bool exists = await dbContext.GameExtensions.AnyAsync(ge => ge.Name == newGameExtension.Name);
+    if (exists) return Results.StatusCode(HTTP_STATUSCODE_CONFLICT);
 
     await dbContext.GameExtensions.AddAsync(newGameExtension);
     await dbContext.SaveChangesAsync();
+
+    await hubContext.Clients.All.SendAsync("ReceiveNewGameExtension", newGameExtension);
+
     return Results.Created($"/gameextensions/{newGameExtension.Id}", newGameExtension);
 }).RequireAuthorization();
 
-app.MapPut("/gameextensions/{id}", async (AppDbContext dbContext, ClaimsPrincipal user, GameExtension updatedGameExtension, int id) => 
+app.MapPut("/gameextensions/{id}", async (AppDbContext dbContext, IHubContext<DataBaseUpdatesHub> hubContext, ClaimsPrincipal user, GameExtension updatedGameExtension, int id) => 
 {
     var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
     if (userIdClaim == null) return Results.Unauthorized();
@@ -433,11 +435,14 @@ app.MapPut("/gameextensions/{id}", async (AppDbContext dbContext, ClaimsPrincipa
 
     existingGameExtension.Name = updatedGameExtension.Name;
     await dbContext.SaveChangesAsync();
+
+    await hubContext.Clients.All.SendAsync("ReceiveUpdatedGameExtension", existingGameExtension);
+
     return Results.NoContent();
 
 }).RequireAuthorization();
 
-app.MapDelete("/gameextensions/{id}", async (AppDbContext dbContext, ClaimsPrincipal user, int id) =>
+app.MapDelete("/gameextensions/{id}", async (AppDbContext dbContext, IHubContext<DataBaseUpdatesHub> hubContext, ClaimsPrincipal user, int id) =>
 {
     var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
     if (userIdClaim == null) return Results.Unauthorized();
@@ -447,6 +452,9 @@ app.MapDelete("/gameextensions/{id}", async (AppDbContext dbContext, ClaimsPrinc
     
     dbContext.GameExtensions.Remove(gameExtension);
     await dbContext.SaveChangesAsync();
+
+    await hubContext.Clients.All.SendAsync("ReceiveDeletedGameExtension", id);
+
     return Results.NoContent();
 }).RequireAuthorization();
 
