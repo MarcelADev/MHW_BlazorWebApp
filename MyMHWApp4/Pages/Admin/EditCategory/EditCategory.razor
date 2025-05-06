@@ -68,10 +68,10 @@
 	{
 		@foreach(Category category in categories)
 		{
-			<EditCategoryComponent 
-			Category="category" 
-			CategoryGotRemoved="HandleCategoryGotRemoved">
-			</EditCategoryComponent>
+			<CategoryCard 
+				Category="category" 
+				RemoveCategory="HandleRemoveCategory">
+			</CategoryCard>
 		}
 	}
 
@@ -148,6 +148,14 @@
 		StateHasChanged();
 	}
 
+	private async Task HandleRemoveCategory(Category category)
+	{
+		await categoryProvider.RemoveCategoryAsync(category.Id);
+
+		categories!.Remove(category);
+		StateHasChanged();
+	}
+
 	private void HandleSignalRNewCategory(Category newCategory)
 	{
 		categories!.Add(newCategory);
@@ -173,11 +181,5 @@
 		HubService.OnNewCategory -= HandleSignalRNewCategory;
 		HubService.OnUpdatedCategory -= HandleSignalRUpdatedCategory;
 		HubService.OnDeletedCategory -= HandleSignalRDeletedCategory;
-	}
-
-	private void HandleCategoryGotRemoved(Category category)
-	{
-		if (categories == null) return;
-		categories.Remove(category);
 	}
 }
