@@ -62,6 +62,8 @@ builder.Services.AddCors(
             .AllowAnyHeader()
             .AllowCredentials()));
 
+
+// JSON Serialization ignores cylces
 builder.Services.Configure<Microsoft.AspNetCore.Http.Json.JsonOptions>(
     options => options.SerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles
 );
@@ -73,7 +75,13 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddOpenApiDocument();
 
 // add SignalR services
-builder.Services.AddSignalR();
+builder.Services.AddSignalR()
+    .AddJsonProtocol(options =>
+    {
+        // JSON Serialization ignores cylces also for SignalR
+        options.PayloadSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+        options.PayloadSerializerOptions.WriteIndented = true;
+    });
 
 builder.Services.AddResponseCompression(opts =>
 {
