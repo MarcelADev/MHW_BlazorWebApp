@@ -68,9 +68,8 @@
 	{
 		@foreach(Category category in categories)
 		{
-			<CategoryCard 
-				Category="category" 
-				RemoveCategory="HandleRemoveCategory">
+			<CategoryCard
+			Category="category">
 			</CategoryCard>
 		}
 	}
@@ -100,6 +99,9 @@
 		HubService.OnNewCategory += HandleSignalRNewCategory;
 		HubService.OnUpdatedCategory += HandleSignalRUpdatedCategory;
 		HubService.OnDeletedCategory += HandleSignalRDeletedCategory;
+
+		HubService.OnNewInventoryCategory += HandleSignalRNewInventoryCategory;
+		HubService.OnDeletedInventoryCategory += HandleSignalRDeletedInventoryCategory;
 
 		isLoading = false;
 		StateHasChanged();
@@ -148,14 +150,6 @@
 		StateHasChanged();
 	}
 
-	private async Task HandleRemoveCategory(Category category)
-	{
-		await categoryProvider.RemoveCategoryAsync(category.Id);
-
-		categories!.Remove(category);
-		StateHasChanged();
-	}
-
 	private void HandleSignalRNewCategory(Category newCategory)
 	{
 		categories!.Add(newCategory);
@@ -164,15 +158,35 @@
 
 	private void HandleSignalRUpdatedCategory(Category updatedCategory)
 	{
-		var existing = categories!.Find(ge => ge.Id == updatedCategory.Id);
+		var existing = categories!.Find(c => c.Id == updatedCategory.Id);
 		if (existing != null) existing.Name = updatedCategory.Name;
 		StateHasChanged();
 	}
 
 	private void HandleSignalRDeletedCategory(int deletedCategoryId)
 	{
-		var existing = categories!.Find(ge => ge.Id == deletedCategoryId);
+		var existing = categories!.Find(c => c.Id == deletedCategoryId);
 		if (existing != null) categories.Remove(existing);
+		StateHasChanged();
+	}
+
+	private void HandleSignalRNewInventoryCategory(InventoryEntryCategory newInventoryCategory)
+	{
+		var existing = categories.Find(ic => ic.Id == newInventoryCategory.CategoryId);
+		if (existing != null)
+		{
+			categories.Remove(existing);
+			existing.InventoryEntryCategory = newInventoryCategory;
+			categories.Add(existing);
+		}
+
+		StateHasChanged();
+	}
+
+	private void HandleSignalRDeletedInventoryCategory(int categoryIdOfDeletedInventoryCategory)
+	{
+		var existing = categories!.Find(ge => ge.Id == categoryIdOfDeletedInventoryCategory);
+		if (existing != null) existing.InventoryEntryCategory = null;
 		StateHasChanged();
 	}
 
@@ -181,5 +195,8 @@
 		HubService.OnNewCategory -= HandleSignalRNewCategory;
 		HubService.OnUpdatedCategory -= HandleSignalRUpdatedCategory;
 		HubService.OnDeletedCategory -= HandleSignalRDeletedCategory;
+
+		HubService.OnNewInventoryCategory -= HandleSignalRNewInventoryCategory;
+		HubService.OnDeletedInventoryCategory -= HandleSignalRDeletedInventoryCategory;
 	}
 }

@@ -305,7 +305,7 @@ app.MapPost("/categories", async (AppDbContext dbContext, ClaimsPrincipal user, 
     var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
     if (userIdClaim == null) return Results.Unauthorized();
 
-    bool exists = await dbContext.Categories.AnyAsync(ge => ge.Name == categoryDTO.NewCategory.Name);
+    bool exists = await dbContext.Categories.AnyAsync(c => c.Name == categoryDTO.NewCategory.Name);
     if (exists) return Results.StatusCode(HTTP_STATUSCODE_CONFLICT);
 
     await dbContext.Categories.AddAsync(categoryDTO.NewCategory);
@@ -354,13 +354,19 @@ async Task AddSubCategories(AppDbContext dbContext, CategoryDTO categoryDTO)
     await dbContext.SaveChangesAsync();
 }
 
-app.MapPost("/categories/inventoryentries", async (AppDbContext dbContext, ClaimsPrincipal user, InventoryEntryCategory inventoryEntryCategory) => 
+app.MapPost("/categories/inventoryentries", async (AppDbContext dbContext, ClaimsPrincipal user, IHubContext<DataBaseUpdatesHub> hubContext, InventoryEntryCategory inventoryEntryCategory) => 
 {
     var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
     if (userIdClaim == null) return Results.Unauthorized();
 
+    bool exists = await dbContext.InventoryEntryCategories.AnyAsync(ic => ic.CategoryId == inventoryEntryCategory.CategoryId);
+    if (exists) return Results.StatusCode(HTTP_STATUSCODE_CONFLICT);
+
     await dbContext.InventoryEntryCategories.AddAsync(inventoryEntryCategory);
     await dbContext.SaveChangesAsync();
+
+    await hubContext.Clients.All.SendAsync("ReceiveNewInventoryCategory", inventoryEntryCategory);
+
     return Results.Created($"/categories/inventoryentries/{inventoryEntryCategory.Id}", inventoryEntryCategory);
 
 }).RequireAuthorization(policy => policy.RequireRole("Master", "Admin"));
@@ -369,6 +375,9 @@ app.MapPost("/categories/weapons", async (AppDbContext dbContext, ClaimsPrincipa
 {
     var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
     if (userIdClaim == null) return Results.Unauthorized();
+
+    bool exists = await dbContext.WeaponCategories.AnyAsync(wc => wc.CategoryId == weaponCategory.CategoryId);
+    if (exists) return Results.StatusCode(HTTP_STATUSCODE_CONFLICT);
 
     await dbContext.WeaponCategories.AddAsync(weaponCategory);
     await dbContext.SaveChangesAsync();
@@ -381,13 +390,16 @@ app.MapPost("/categories/armors", async (AppDbContext dbContext, ClaimsPrincipal
     var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
     if (userIdClaim == null) return Results.Unauthorized();
 
+    bool exists = await dbContext.ArmorCategories.AnyAsync(ac => ac.CategoryId == armorCategory.CategoryId);
+    if (exists) return Results.StatusCode(HTTP_STATUSCODE_CONFLICT);
+
     await dbContext.ArmorCategories.AddAsync(armorCategory);
     await dbContext.SaveChangesAsync();
     return Results.Created($"/categories/armors/{armorCategory.Id}", armorCategory);
 
 }).RequireAuthorization(policy => policy.RequireRole("Master", "Admin"));
 
-app.MapPut("/categories/{id}", async (AppDbContext dbContext, ClaimsPrincipal user, Category updatedCategory, int id) =>
+app.MapPut("/categories/{id}", async (AppDbContext dbContext, ClaimsPrincipal user, IHubContext<DataBaseUpdatesHub> hubContext, Category updatedCategory, int id) =>
 {
     var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
     if (userIdClaim == null) return Results.Unauthorized();
@@ -398,13 +410,13 @@ app.MapPut("/categories/{id}", async (AppDbContext dbContext, ClaimsPrincipal us
     existingCategory.Name = updatedCategory.Name;
     await dbContext.SaveChangesAsync();
 
-    //await hubContext.Clients.All.SendAsync("ReceiveUpdatedGameExtension", existingGameExtension);
+    await hubContext.Clients.All.SendAsync("ReceiveUpdatedCategory", existingCategory);
 
     return Results.NoContent();
 
 }).RequireAuthorization();
 
-app.MapDelete("/categories/{id}", async (AppDbContext dbContext, ClaimsPrincipal user, int id) =>
+app.MapDelete("/categories/{id}", async (AppDbContext dbContext, ClaimsPrincipal user, IHubContext<DataBaseUpdatesHub> hubContext, int id) =>
 {
     var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
     if (userIdClaim == null) return Results.Unauthorized();
@@ -415,11 +427,64 @@ app.MapDelete("/categories/{id}", async (AppDbContext dbContext, ClaimsPrincipal
     dbContext.Categories.Remove(category);
     await dbContext.SaveChangesAsync();
 
-    //await hubContext.Clients.All.SendAsync("ReceiveDeletedGameExtension", id);
+    await hubContext.Clients.All.SendAsync("ReceiveDeletedCategory", id);
 
     return Results.NoContent();
 }).RequireAuthorization();
 
+app.MapDelete("/categories/inventoryentries/{id}", async (AppDbContext dbContext, ClaimsPrincipal user, IHubContext<DataBaseUpdatesHub> hubContext, int id) =>
+{
+    var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
+    if (userIdClaim == null) return Results.Unauthorized();
+
+    var inventoryCategory = await dbContext.InventoryEntryCategories.FindAsync(id);
+    if (inventoryCategory == null) return Results.NotFound();
+
+    int categoryId = inventoryCategory.CategoryId;
+
+    dbContext.InventoryEntryCategories.Remove(inventoryCategory);
+    await dbContext.SaveChangesAsync();
+
+    await hubContext.Clients.All.SendAsync("ReceiveDeletedInventoryCategory", categoryId);
+
+    return Results.NoContent();
+}).RequireAuthorization();
+
+app.MapDelete("/categories/weapons/{id}", async (AppDbContext dbContext, ClaimsPrincipal user, IHubContext<DataBaseUpdatesHub> hubContext, int id) =>
+{
+    var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
+    if (userIdClaim == null) return Results.Unauthorized();
+
+    var weaponCategory = await dbContext.WeaponCategories.FindAsync(id);
+    if (weaponCategory == null) return Results.NotFound();
+
+    int categoryId = weaponCategory.CategoryId;
+
+    dbContext.WeaponCategories.Remove(weaponCategory);
+    await dbContext.SaveChangesAsync();
+
+    await hubContext.Clients.All.SendAsync("ReceiveDeletedWeaponCategory", categoryId);
+
+    return Results.NoContent();
+}).RequireAuthorization();
+
+app.MapDelete("/categories/armors/{id}", async (AppDbContext dbContext, ClaimsPrincipal user, IHubContext<DataBaseUpdatesHub> hubContext, int id) =>
+{
+    var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
+    if (userIdClaim == null) return Results.Unauthorized();
+
+    var armorCategory = await dbContext.ArmorCategories.FindAsync(id);
+    if (armorCategory == null) return Results.NotFound();
+
+    int categoryId = armorCategory.CategoryId;
+
+    dbContext.ArmorCategories.Remove(armorCategory);
+    await dbContext.SaveChangesAsync();
+
+    await hubContext.Clients.All.SendAsync("ReceiveDeletedArmorCategory", categoryId);
+
+    return Results.NoContent();
+}).RequireAuthorization();
 #endregion
 
 #region Endpoint: Game Extension

@@ -16,6 +16,15 @@ namespace MyMHWApp4.HubConnections
         public event Action<Category>? OnUpdatedCategory;
         public event Action<int>? OnDeletedCategory;
 
+        public event Action<InventoryEntryCategory>? OnNewInventoryCategory;
+        public event Action<int>? OnDeletedInventoryCategory;
+
+        public event Action<WeaponCategory>? OnNewWeaponCategory;
+        public event Action<int>? OnDeletedWeaponCategory;
+
+        public event Action<ArmorCategory>? OnNewArmorCategory;
+        public event Action<int>? OnDeletedArmorCategory;
+
         public DataBaseUpdatesHubConnection(IConfiguration configuration)
         {
             Connection = new HubConnectionBuilder()
@@ -59,6 +68,39 @@ namespace MyMHWApp4.HubConnections
             Connection.On<int>("ReceiveDeletedCategory", (deletedId) =>
             {
                 OnDeletedCategory?.Invoke(deletedId);
+            });
+
+            // ## Inventory Category ##
+            Connection.On<InventoryEntryCategory>("ReceiveNewInventoryCategory", (data) =>
+            {
+                OnNewInventoryCategory?.Invoke(data);
+            });
+
+            Connection.On<int>("ReceiveDeletedInventoryCategory", (deletedId) =>
+            {
+                OnDeletedInventoryCategory?.Invoke(deletedId);
+            });
+
+            // ## Weapon Category ##
+            Connection.On<WeaponCategory>("ReceiveNewWeaponCategory", (data) =>
+            {
+                OnNewWeaponCategory?.Invoke(data);
+            });
+
+            Connection.On<int>("ReceiveDeletedWeaponCategory", (deletedId) =>
+            {
+                OnDeletedWeaponCategory?.Invoke(deletedId);
+            });
+
+            // ## Armor Category ##
+            Connection.On<ArmorCategory>("ReceiveNewArmorCategory", (data) =>
+            {
+                OnNewArmorCategory?.Invoke(data);
+            });
+
+            Connection.On<int>("ReceiveDeletedArmorCategory", (deletedId) =>
+            {
+                OnDeletedArmorCategory?.Invoke(deletedId);
             });
 
             //Extendable

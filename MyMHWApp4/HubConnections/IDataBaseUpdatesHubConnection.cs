@@ -14,5 +14,14 @@ namespace MyMHWApp4.HubConnections
         event Action<Category>? OnNewCategory;
         event Action<Category>? OnUpdatedCategory;
         event Action<int>? OnDeletedCategory;
+
+        event Action<InventoryEntryCategory>? OnNewInventoryCategory;
+        event Action<int>? OnDeletedInventoryCategory;
+
+        event Action<WeaponCategory>? OnNewWeaponCategory;
+        event Action<int>? OnDeletedWeaponCategory;
+
+        event Action<ArmorCategory>? OnNewArmorCategory;
+        event Action<int>? OnDeletedArmorCategory;
     }
 }

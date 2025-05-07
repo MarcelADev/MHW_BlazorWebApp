@@ -1,4 +1,7 @@
-﻿@using MHWApp.Library.Model
+﻿@using MHWApp.Library
+@using MHWApp.Library.Exceptions
+@using MHWApp.Library.Model
+@using MyMHWApp4.HubConnections
 @using MyMHWApp4.Pages.GeneralComponents
 @using MyMHWApp4.Pages.GeneralComponents.IconButtons
 @using MyMHWApp4.Pages.Modals
@@ -60,21 +63,13 @@
 	</div>
 }
 
-@if (errors)
-{
-	@foreach (var error in errorList)
-	{
-		<div class="alert alert-danger">@error</div>
-	}
-}
-
 @if(showModal){
 	<Modal
 	Title="Confirm Delete"
 	BodyText="@modalBodyText"
 	CloseButtonClicked="HandleModalCloseOrCancelButtonClicked"
 	SecondaryButtonClicked="HandleModalCloseOrCancelButtonClicked"
-	PrimaryButtonClicked="HandleDeleteConfirmedButtonClicked">
+	PrimaryButtonClicked="HandleModalConfirmButtonClicked">
 	</Modal>
 }
 
@@ -82,6 +77,9 @@
 	private bool isLoading = true;
 	private bool isFormValid = true;
 	private bool toggleEdit = false;
+	private bool showModal = false;
+
+	private string? modalBodyText;
 
 	public EditContext? editContext;
 
@@ -91,186 +89,269 @@
 	[Parameter]
 	public required Category Category { get; set; }
 
-	[Parameter]
-	public required EventCallback<Category> RemoveCategory { get; set; }
 
-
-	// ## GRENZE ##
-
-	private string? modalBodyText;
-
-	private bool showModal = false;
-	private bool errors = false;
-	private List<string> errorList = [];
-
-	private bool invCat;
-	private bool wepCat;
-	private bool armCat;
-
-	public InputComponentCheckbox? InvCatCheckbox;
-	public InputComponentCheckbox? WepCatCheckbox;
-	public InputComponentCheckbox? ArmCatCheckbox;
-	private EditTextInput? changeNameInput;
-
-	public string Value { get; set; } = "";
 
 	protected override async Task OnInitializedAsync()
 	{
-		invCat = Category.InventoryEntryCategory != null;
-		wepCat = Category.WeaponCategory != null;
-		armCat = Category.ArmorCategory != null;
-
 		modalBodyText = $"Are you sure you want to remove {Category.Name}?";
 
 		Model ??= new CategoryCardFormModel(Category);
 		editContext = new(Model);
-		
+
 		isLoading = false;
 		StateHasChanged();
 	}
 
-	private async Task Submit() => await ChangeCategoryName();
+	private async Task Submit() => await ChangeCategoryNameAndOrSubCategories();
 
-	private async Task ChangeCategoryName()
+	private async Task ChangeCategoryNameAndOrSubCategories()
 	{
-		Category.Name = Model!.NewName;
-		var result = await categoryProvider.UpdateCategoryAsync(Category);
+		bool cancel = false;
 
-		if (result)
+		if(Model!.IsCurrentlyInventoryCategory != Model.IsInventoryCategory)
 		{
-			Model!.Name = Model!.NewName;
-			toggleEdit = !toggleEdit;
+			if (Model.IsInventoryCategory)
+			{
+				cancel = await CreateInventoryCategory();
+			}
+			else
+			{
+				cancel = await DeleteInventoryCategory();
+			}
 		}
-		else
+
+		if(!cancel && Model.IsCurrentlyWeaponCategory != Model.IsWeaponCategory)
 		{
-			Category.Name = Model!.Name;
+			if (Model.IsWeaponCategory)
+			{
+				cancel = await CreateWeaponCategory();
+			}
+			else
+			{
+				cancel = await DeleteWeaponCategory();
+			}
+		}
+
+		if(!cancel && Model.IsCurrentlyArmorCategory != Model.IsArmorCategory)
+		{
+			if (Model.IsArmorCategory)
+			{
+				cancel = await CreateArmorCategory();
+			}
+			else
+			{
+				cancel = await DeleteArmorCategory();
+			}
+		}
+
+		if(!Category.Name.Equals(Model.NewName))
+		{
+			cancel = await ChangeCategoryName();
+		}
+
+		if (cancel) Model.CancelFlag = true;
+
+		Model = new CategoryCardFormModel(Category);
+		toggleEdit = !toggleEdit;
+		StateHasChanged();
+	}
+
+	private async Task<bool> CreateInventoryCategory()
+	{
+		InventoryEntryCategory inventoryEntryCategory = new InventoryEntryCategory
+			{
+				Id = 0,
+				CategoryId = Category.Id,
+				Order = StaticVariables.ORDER_DEFAULT_VALUE
+			};
+
+		try
+		{
+			await categoryProvider.CreateInventoryEntryCategoryAsync(inventoryEntryCategory);
+			return false;
+		}
+		catch (EntityAlreadyExistsException)
+		{
+			Model.EntityAlreadyExistsFlag = true;
+			editContext!.Validate();
+		}
+		catch (EntityWasNullException)
+		{
+			Model.EntityWasNullFlag = true;
+			editContext!.Validate();
+		}
+		catch (UnexpectedResponseException)
+		{
+			Model.UnexpectedResponseFlag = true;
+			editContext!.Validate();
 		}
 		StateHasChanged();
+		return true;
+	}
+
+	private async Task<bool> DeleteInventoryCategory()
+	{
+		try
+		{
+			await categoryProvider.RemoveInventoryCategoryAsync(Category.InventoryEntryCategory!.Id);
+			return false;
+		}
+		catch(EntityWasNotFoundException)
+		{
+			Model.EntityWasNotFoundFlag = true;
+			editContext!.Validate();
+		}
+		catch (UnexpectedResponseException)
+		{
+			Model.UnexpectedResponseFlag = true;
+			editContext!.Validate();
+		}
+
+		StateHasChanged();
+		return true;
+	}
+
+	private async Task<bool> CreateWeaponCategory()
+	{
+		WeaponCategory weaponCategory = new WeaponCategory
+			{
+				Id = 0,
+				CategoryId = Category.Id,
+				Order = StaticVariables.ORDER_DEFAULT_VALUE
+			};
+
+		try
+		{
+			await categoryProvider.CreateWeaponCategoryAsync(weaponCategory);
+			return false;
+		}
+		catch (EntityAlreadyExistsException)
+		{
+			Model.EntityAlreadyExistsFlag = true;
+			editContext!.Validate();
+		}
+		catch (EntityWasNullException)
+		{
+			Model.EntityWasNullFlag = true;
+			editContext!.Validate();
+		}
+		catch (UnexpectedResponseException)
+		{
+			Model.UnexpectedResponseFlag = true;
+			editContext!.Validate();
+		}
+		StateHasChanged();
+		return true;
+	}
+
+	private async Task<bool> DeleteWeaponCategory()
+	{
+		try
+		{
+			await categoryProvider.RemoveWeaponCategoryAsync(Category.WeaponCategory!.Id);
+			return false;
+		}
+		catch (EntityWasNotFoundException)
+		{
+			Model.EntityWasNotFoundFlag = true;
+			editContext!.Validate();
+		}
+		catch (UnexpectedResponseException)
+		{
+			Model.UnexpectedResponseFlag = true;
+			editContext!.Validate();
+		}
+
+		StateHasChanged();
+		return true;
+	}
+
+	private async Task<bool> CreateArmorCategory()
+	{
+		ArmorCategory armorCategory = new ArmorCategory
+			{
+				Id = 0,
+				CategoryId = Category.Id,
+				Order = StaticVariables.ORDER_DEFAULT_VALUE
+			};
+
+		try
+		{
+			await categoryProvider.CreateArmorCategoryAsync(armorCategory);
+			return false;
+		}
+		catch (EntityAlreadyExistsException)
+		{
+			Model.EntityAlreadyExistsFlag = true;
+			editContext!.Validate();
+		}
+		catch (EntityWasNullException)
+		{
+			Model.EntityWasNullFlag = true;
+			editContext!.Validate();
+		}
+		catch (UnexpectedResponseException)
+		{
+			Model.UnexpectedResponseFlag = true;
+			editContext!.Validate();
+		}
+		StateHasChanged();
+		return true;
+	}
+
+	private async Task<bool> DeleteArmorCategory()
+	{
+		try
+		{
+			await categoryProvider.RemoveArmorCategoryAsync(Category.ArmorCategory!.Id);
+			return false;
+		}
+		catch (EntityWasNotFoundException)
+		{
+			Model.EntityWasNotFoundFlag = true;
+			editContext!.Validate();
+		}
+		catch (UnexpectedResponseException)
+		{
+			Model.UnexpectedResponseFlag = true;
+			editContext!.Validate();
+		}
+
+		StateHasChanged();
+		return true;
+	}
+
+	private async Task<bool> ChangeCategoryName()
+	{
+		try
+		{
+			await categoryProvider.UpdateCategoryAsync(Category);
+			return false;
+		}
+		catch (EntityWasNotFoundException)
+		{
+			Model.EntityWasNotFoundFlag = true;
+			editContext!.Validate();
+		}
+		catch (UnexpectedResponseException)
+		{
+			Model.UnexpectedResponseFlag = true;
+			editContext!.Validate();
+		}
+
+		StateHasChanged();
+		return true;
 	}
 
 	private void HandleEditButtonClicked()
 	{
-		toggleEdit = !toggleEdit;
-		errors = false;
-	}
-
-	private async Task HandleConfirmButtonClicked()
-	{
-		errorList = [];
-		bool error1, error2, error3, error4;
-		error1 = error2 = error3 = error4 = false;
-
-		// Check if all components are initialized
-		if (changeNameInput == null)
-		{
-			errorList.Add("changeNameInput is null!");
-			errors = true;
-			return;
-		}
-
-		if (InvCatCheckbox == null)
-		{
-			errorList.Add("InvCatCheckbox is null!");
-			errors = true;
-			return;
-		}
-
-		if (WepCatCheckbox == null)
-		{
-			errorList.Add("WepCatCheckbox is null!");
-			errors = true;
-			return;
-		}
-
-		if (ArmCatCheckbox == null)
-		{
-			errorList.Add("ArmCatCheckbox is null!");
-			errors = true;
-			return;
-		}
-
-		// Check if name was changed
-		if (changeNameInput.Value != Category.Name)
-		{
-			Category.Name = changeNameInput.Value;
-			await categoryProvider.UpdateCategoryAsync(Category);
-		}
-		else error1 = true;
-
-		// Check if Inventory Entry Category was changed
-		if (InvCatCheckbox.Value != invCat)
-		{
-			if (InvCatCheckbox.Value)
-			{
-				InventoryEntryCategory newInvCat = new InventoryEntryCategory
-				{
-						Id = 0,
-						CategoryId = Category.Id,
-						Order = ORDER_DEFAULT_VALUE
-				};
-				await categoryProvider.CreateInventoryEntryCategoryAsync(newInvCat);
-				Category.InventoryEntryCategory = newInvCat;
-			}
-			else
-			{
-				//TO DO: Modal
-			}
-		}
-		else error2 = true;
-
-		// Check if Weapon Category was changed
-		if (WepCatCheckbox.Value != wepCat)
-		{
-			if (WepCatCheckbox.Value)
-			{
-				WeaponCategory newWepCat = new WeaponCategory
-					{
-						Id = 0,
-						CategoryId = Category.Id,
-						Order = ORDER_DEFAULT_VALUE
-					};
-				await categoryProvider.CreateWeaponCategoryAsync(newWepCat);
-				Category.WeaponCategory = newWepCat;
-			}
-			else
-			{
-				//TO DO: Modal
-			}
-		}
-		else error3 = true;
-
-		// Check if Armor Category was changed
-		if (ArmCatCheckbox.Value != armCat)
-		{
-			if (ArmCatCheckbox.Value)
-			{
-				ArmorCategory newArmCat = new ArmorCategory
-					{
-						Id = 0,
-						CategoryId = Category.Id,
-						Order = ORDER_DEFAULT_VALUE
-					};
-				await categoryProvider.CreateArmorCategoryAsync(newArmCat);
-				Category.ArmorCategory = newArmCat;
-			}
-			else
-			{
-				//TO DO: Modal
-			}
-		}
-		else error4 = true;
-
-		errors = error1 && error2 && error3 && error4;
-
-		if (errors) errorList.Add("No changes were made!");
-
 		toggleEdit = !toggleEdit;
 	}
 
 	private void HandleCancelButtonClicked()
 	{
 		toggleEdit = !toggleEdit;
-		errors = false;
+		Model = new CategoryCardFormModel(Category);
 	}
 
 	private async Task HandleDeleteButtonClicked()
@@ -283,9 +364,24 @@
 		showModal = false;
 	}
 
-	private async Task HandleDeleteConfirmedButtonClicked()
+	private async Task HandleModalConfirmButtonClicked()
 	{
 		showModal = false;
-		await RemoveCategory.InvokeAsync(Category);
+
+		try
+		{
+			await categoryProvider.RemoveCategoryAsync(Category.Id);
+		}
+		catch (EntityWasNotFoundException)
+		{
+			Model.EntityWasNullFlag = true;
+			editContext!.Validate();
+		}
+		catch (UnexpectedResponseException)
+		{
+			Model.UnexpectedResponseFlag = true;
+			editContext!.Validate();
+		}
+		StateHasChanged();
 	}
 }

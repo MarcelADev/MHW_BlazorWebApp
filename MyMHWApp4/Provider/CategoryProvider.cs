@@ -57,7 +57,7 @@ namespace MyMHWApp4.Provider
             throw new UnexpectedResponseException(response.StatusCode.ToString());
         }
 
-        public async Task<bool> CreateInventoryEntryCategoryAsync(InventoryEntryCategory inventoryCategory)
+        public async Task CreateInventoryEntryCategoryAsync(InventoryEntryCategory inventoryCategory)
         {
             var response = await _httpClient.PostAsJsonAsync($"categories/inventoryentries", inventoryCategory);
 
@@ -77,14 +77,14 @@ namespace MyMHWApp4.Provider
                 }
 
                 logger.LogInformation($"InventoryCategory was successfully created: Id:{newInventoryCategory.Id} CategoryId: {newInventoryCategory.CategoryId}");
-                return true;
+                return;
             }
 
             logger.LogWarning($"Unexpexted HTTP Response: {response.StatusCode.ToString()}");
             throw new UnexpectedResponseException(response.StatusCode.ToString());
         }
 
-        public async Task<bool> CreateWeaponCategoryAsync(WeaponCategory weaponCategory)
+        public async Task CreateWeaponCategoryAsync(WeaponCategory weaponCategory)
         {
             var response = await _httpClient.PostAsJsonAsync($"categories/weapons", weaponCategory);
 
@@ -104,14 +104,14 @@ namespace MyMHWApp4.Provider
                 }
 
                 logger.LogInformation($"WeaponCategory was successfully created: Id:{newWeaponCategory.Id} CategoryId: {newWeaponCategory.CategoryId}");
-                return true;
+                return;
             }
 
             logger.LogWarning($"Unexpexted HTTP Response: {response.StatusCode.ToString()}");
             throw new UnexpectedResponseException(response.StatusCode.ToString());
         }
 
-        public async Task<bool> CreateArmorCategoryAsync(ArmorCategory armorCategory)
+        public async Task CreateArmorCategoryAsync(ArmorCategory armorCategory)
         {
             var response = await _httpClient.PostAsJsonAsync($"categories/armors", armorCategory);
 
@@ -131,7 +131,7 @@ namespace MyMHWApp4.Provider
                 }
 
                 logger.LogInformation($"ArmorCategory was successfully created: Id:{newArmorCategory.Id} CategoryId: {newArmorCategory.CategoryId}");
-                return true;
+                return;
             }
 
             logger.LogWarning($"Unexpexted HTTP Response: {response.StatusCode.ToString()}");
@@ -146,7 +146,7 @@ namespace MyMHWApp4.Provider
 
             if (response.StatusCode == HttpStatusCode.NotFound)
             {
-                logger.LogInformation($"Entity couldnt be updated, because it wasn't found: {updatedCategory.Name}");
+                logger.LogInformation($"Entity couldn't be updated, because it wasn't found: {updatedCategory.Name}");
                 return false;
             }
             if (response.StatusCode == HttpStatusCode.NoContent)
@@ -160,18 +160,72 @@ namespace MyMHWApp4.Provider
         #endregion
 
         #region DELETE
-        public async Task<bool> RemoveCategoryAsync(int categoryId)
+        public async Task RemoveCategoryAsync(int categoryId)
         {
             var response = await _httpClient.DeleteAsync($"categories/{categoryId}");
 
             if (response.StatusCode == HttpStatusCode.NotFound)
             {
                 logger.LogInformation($"Category couldnt be deleted, because it wasn't found: Id={categoryId}");
-                return false;
+                throw new EntityWasNotFoundException();
             }
             if (response.StatusCode == HttpStatusCode.NoContent)
             {
-                return true;
+                return;
+            }
+
+            logger.LogWarning($"Unexpexted HTTP Response: {response.StatusCode.ToString()}");
+            throw new UnexpectedResponseException(response.StatusCode.ToString());
+        }
+
+        public async Task RemoveInventoryCategoryAsync(int inventoryCategoryId)
+        {
+            var response = await _httpClient.DeleteAsync($"categories/inventoryentries/{inventoryCategoryId}");
+
+            if (response.StatusCode == HttpStatusCode.NotFound)
+            {
+                logger.LogInformation($"Inventory Category couldnt be deleted, because it wasn't found: Id={inventoryCategoryId}");
+                throw new EntityWasNotFoundException();
+            }
+            if (response.StatusCode == HttpStatusCode.NoContent)
+            {
+                return;
+            }
+
+            logger.LogWarning($"Unexpexted HTTP Response: {response.StatusCode.ToString()}");
+            throw new UnexpectedResponseException(response.StatusCode.ToString());
+        }
+
+        public async Task RemoveWeaponCategoryAsync(int weaponCategoryId)
+        {
+            var response = await _httpClient.DeleteAsync($"categories/weapons/{weaponCategoryId}");
+
+            if (response.StatusCode == HttpStatusCode.NotFound)
+            {
+                logger.LogInformation($"Weapon Category couldnt be deleted, because it wasn't found: Id={weaponCategoryId}");
+                throw new EntityWasNotFoundException();
+            }
+            if (response.StatusCode == HttpStatusCode.NoContent)
+            {
+                return;
+            }
+
+            logger.LogWarning($"Unexpexted HTTP Response: {response.StatusCode.ToString()}");
+            throw new UnexpectedResponseException(response.StatusCode.ToString());
+        }
+
+        public async Task RemoveArmorCategoryAsync(int armorCategoryId)
+        {
+            var response = await _httpClient.DeleteAsync($"categories/armors/{armorCategoryId}");
+
+            if (response.StatusCode == HttpStatusCode.NotFound)
+            {
+                logger.LogInformation($"Weapon Category couldnt be deleted, because it wasn't found: Id={armorCategoryId}");
+                throw new EntityWasNotFoundException();
+            }
+            if (response.StatusCode == HttpStatusCode.NoContent)
+            {
+                return;
             }
 
             logger.LogWarning($"Unexpexted HTTP Response: {response.StatusCode.ToString()}");
