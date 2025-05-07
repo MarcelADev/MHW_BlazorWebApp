@@ -103,6 +103,12 @@
 		HubService.OnNewInventoryCategory += HandleSignalRNewInventoryCategory;
 		HubService.OnDeletedInventoryCategory += HandleSignalRDeletedInventoryCategory;
 
+		HubService.OnNewWeaponCategory += HandleSignalRNewWeaponCategory;
+		HubService.OnDeletedWeaponCategory += HandleSignalRDeletedWeaponCategory;
+
+		HubService.OnNewArmorCategory += HandleSignalRNewArmorCategory;
+		HubService.OnDeletedArmorCategory += HandleSignalRDeletedArmorCategory;
+
 		isLoading = false;
 		StateHasChanged();
 	}
@@ -173,20 +179,42 @@
 	private void HandleSignalRNewInventoryCategory(InventoryEntryCategory newInventoryCategory)
 	{
 		var existing = categories.Find(ic => ic.Id == newInventoryCategory.CategoryId);
-		if (existing != null)
-		{
-			categories.Remove(existing);
-			existing.InventoryEntryCategory = newInventoryCategory;
-			categories.Add(existing);
-		}
-
+		if (existing != null) existing.InventoryEntryCategory = newInventoryCategory;
 		StateHasChanged();
 	}
 
 	private void HandleSignalRDeletedInventoryCategory(int categoryIdOfDeletedInventoryCategory)
 	{
-		var existing = categories!.Find(ge => ge.Id == categoryIdOfDeletedInventoryCategory);
+		var existing = categories!.Find(ic => ic.Id == categoryIdOfDeletedInventoryCategory);
 		if (existing != null) existing.InventoryEntryCategory = null;
+		StateHasChanged();
+	}
+
+	private void HandleSignalRNewWeaponCategory(WeaponCategory newWeaponCategory)
+	{
+		var existing = categories.Find(wc => wc.Id == newWeaponCategory.CategoryId);
+		if (existing != null) existing.WeaponCategory = newWeaponCategory;
+		StateHasChanged();
+	}
+
+	private void HandleSignalRDeletedWeaponCategory(int categoryIdOfDeletedWeaponCategory)
+	{
+		var existing = categories!.Find(wc => wc.Id == categoryIdOfDeletedWeaponCategory);
+		if (existing != null) existing.WeaponCategory = null;
+		StateHasChanged();
+	}
+
+	private void HandleSignalRNewArmorCategory(ArmorCategory newArmorCategory)
+	{
+		var existing = categories.Find(ac => ac.Id == newArmorCategory.CategoryId);
+		if (existing != null) existing.ArmorCategory = newArmorCategory;
+		StateHasChanged();
+	}
+
+	private void HandleSignalRDeletedArmorCategory(int categoryIdOfDeletedArmorCategory)
+	{
+		var existing = categories!.Find(ac => ac.Id == categoryIdOfDeletedArmorCategory);
+		if (existing != null) existing.ArmorCategory = null;
 		StateHasChanged();
 	}
 
@@ -198,5 +226,11 @@
 
 		HubService.OnNewInventoryCategory -= HandleSignalRNewInventoryCategory;
 		HubService.OnDeletedInventoryCategory -= HandleSignalRDeletedInventoryCategory;
+
+		HubService.OnNewWeaponCategory -= HandleSignalRNewWeaponCategory;
+		HubService.OnDeletedWeaponCategory -= HandleSignalRDeletedWeaponCategory;
+
+		HubService.OnNewArmorCategory -= HandleSignalRNewArmorCategory;
+		HubService.OnDeletedArmorCategory -= HandleSignalRDeletedArmorCategory;
 	}
 }

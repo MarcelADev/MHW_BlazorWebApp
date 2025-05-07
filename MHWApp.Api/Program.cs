@@ -371,7 +371,7 @@ app.MapPost("/categories/inventoryentries", async (AppDbContext dbContext, Claim
 
 }).RequireAuthorization(policy => policy.RequireRole("Master", "Admin"));
 
-app.MapPost("/categories/weapons", async (AppDbContext dbContext, ClaimsPrincipal user, WeaponCategory weaponCategory) =>
+app.MapPost("/categories/weapons", async (AppDbContext dbContext, ClaimsPrincipal user, IHubContext<DataBaseUpdatesHub> hubContext, WeaponCategory weaponCategory) =>
 {
     var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
     if (userIdClaim == null) return Results.Unauthorized();
@@ -381,11 +381,14 @@ app.MapPost("/categories/weapons", async (AppDbContext dbContext, ClaimsPrincipa
 
     await dbContext.WeaponCategories.AddAsync(weaponCategory);
     await dbContext.SaveChangesAsync();
+
+    await hubContext.Clients.All.SendAsync("ReceiveNewWeaponCategory", weaponCategory);
+
     return Results.Created($"/categories/weapons/{weaponCategory.Id}", weaponCategory);
 
 }).RequireAuthorization(policy => policy.RequireRole("Master", "Admin"));
 
-app.MapPost("/categories/armors", async (AppDbContext dbContext, ClaimsPrincipal user, ArmorCategory armorCategory) =>
+app.MapPost("/categories/armors", async (AppDbContext dbContext, ClaimsPrincipal user, IHubContext<DataBaseUpdatesHub> hubContext, ArmorCategory armorCategory) =>
 {
     var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
     if (userIdClaim == null) return Results.Unauthorized();
@@ -395,6 +398,9 @@ app.MapPost("/categories/armors", async (AppDbContext dbContext, ClaimsPrincipal
 
     await dbContext.ArmorCategories.AddAsync(armorCategory);
     await dbContext.SaveChangesAsync();
+
+    await hubContext.Clients.All.SendAsync("ReceiveNewArmorCategory", armorCategory);
+
     return Results.Created($"/categories/armors/{armorCategory.Id}", armorCategory);
 
 }).RequireAuthorization(policy => policy.RequireRole("Master", "Admin"));

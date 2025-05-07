@@ -91,8 +91,6 @@
 	[Parameter]
 	public required Category Category { get; set; }
 
-
-
 	protected override async Task OnInitializedAsync()
 	{
 		modalBodyText = $"Are you sure you want to remove {Category.Name}?";
@@ -100,8 +98,16 @@
 		Model ??= new CategoryCardFormModel(Category);
 		editContext = new(Model);
 
+		HubService.OnUpdatedCategory += HandleSignalRUpdatedCategory;
+
 		HubService.OnNewInventoryCategory += HandleSignalRNewInventoryCategory;
 		HubService.OnDeletedInventoryCategory += HandleSignalRDeletedInventoryCategory;
+
+		HubService.OnNewWeaponCategory += HandleSignalRNewWeaponCategory;
+		HubService.OnDeletedWeaponCategory += HandleSignalRDeletedWeaponCategory;
+
+		HubService.OnNewArmorCategory += HandleSignalRNewArmorCategory;
+		HubService.OnDeletedArmorCategory += HandleSignalRDeletedArmorCategory;
 
 		isLoading = false;
 		StateHasChanged();
@@ -390,29 +396,59 @@
 		StateHasChanged();
 	}
 
+	private void HandleSignalRUpdatedCategory(Category updatedCategory)
+	{
+		Category.Name = Model!.Name = Model.NewName = updatedCategory.Name;
+		StateHasChanged();
+	}
+
 	private void HandleSignalRNewInventoryCategory(InventoryEntryCategory newInventoryCategory)
 	{
-		if (newInventoryCategory.CategoryId == Category.Id)
-		{
-			Model!.IsCurrentlyInventoryCategory = Model.IsInventoryCategory = true;
-		}
-
+		if (newInventoryCategory.CategoryId == Category.Id) Model!.IsCurrentlyInventoryCategory = Model.IsInventoryCategory = true;
 		StateHasChanged();
 	}
 
 	private void HandleSignalRDeletedInventoryCategory(int categoryIdOfDeletedInventoryCategory)
 	{
-		if (categoryIdOfDeletedInventoryCategory == Category.Id)
-		{
-			Model!.IsCurrentlyInventoryCategory = Model.IsInventoryCategory = false;
-		}
+		if (categoryIdOfDeletedInventoryCategory == Category.Id) Model!.IsCurrentlyInventoryCategory = Model.IsInventoryCategory = false;
+		StateHasChanged();
+	}
 
+	private void HandleSignalRNewWeaponCategory(WeaponCategory newWeaponCategory)
+	{
+		if (newWeaponCategory.CategoryId == Category.Id) Model!.IsCurrentlyWeaponCategory = Model.IsWeaponCategory = true;
+		StateHasChanged();
+	}
+
+	private void HandleSignalRDeletedWeaponCategory(int categoryIdOfDeletedWeaponCategory)
+	{
+		if (categoryIdOfDeletedWeaponCategory == Category.Id) Model!.IsCurrentlyWeaponCategory = Model.IsWeaponCategory = false;
+		StateHasChanged();
+	}
+
+	private void HandleSignalRNewArmorCategory(ArmorCategory newArmorCategory)
+	{
+		if (newArmorCategory.CategoryId == Category.Id) Model!.IsCurrentlyArmorCategory = Model.IsArmorCategory = true;
+		StateHasChanged();
+	}
+
+	private void HandleSignalRDeletedArmorCategory(int categoryIdOfDeletedArmorCategory)
+	{
+		if (categoryIdOfDeletedArmorCategory == Category.Id) Model!.IsCurrentlyArmorCategory = Model.IsArmorCategory = false;
 		StateHasChanged();
 	}
 
 	public void Dispose()
 	{
+		HubService.OnUpdatedCategory -= HandleSignalRUpdatedCategory;
+
 		HubService.OnNewInventoryCategory -= HandleSignalRNewInventoryCategory;
 		HubService.OnDeletedInventoryCategory -= HandleSignalRDeletedInventoryCategory;
+
+		HubService.OnNewWeaponCategory -= HandleSignalRNewWeaponCategory;
+		HubService.OnDeletedWeaponCategory -= HandleSignalRDeletedWeaponCategory;
+
+		HubService.OnNewArmorCategory -= HandleSignalRNewArmorCategory;
+		HubService.OnDeletedArmorCategory -= HandleSignalRDeletedArmorCategory;
 	}
 }
