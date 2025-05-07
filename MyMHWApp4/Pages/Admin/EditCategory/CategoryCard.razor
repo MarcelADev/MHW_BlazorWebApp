@@ -8,6 +8,8 @@
 @using MyMHWApp4.Provider
 @using static MHWApp.Library.StaticVariables
 @inject CategoryProvider categoryProvider
+@inject IDataBaseUpdatesHubConnection HubService
+@implements IDisposable
 
 @if(!isLoading)
 {
@@ -98,6 +100,9 @@
 		Model ??= new CategoryCardFormModel(Category);
 		editContext = new(Model);
 
+		HubService.OnNewInventoryCategory += HandleSignalRNewInventoryCategory;
+		HubService.OnDeletedInventoryCategory += HandleSignalRDeletedInventoryCategory;
+
 		isLoading = false;
 		StateHasChanged();
 	}
@@ -151,7 +156,6 @@
 
 		if (cancel) Model.CancelFlag = true;
 
-		Model = new CategoryCardFormModel(Category);
 		toggleEdit = !toggleEdit;
 		StateHasChanged();
 	}
@@ -325,6 +329,7 @@
 	{
 		try
 		{
+			Category.Name = Model.NewName;
 			await categoryProvider.UpdateCategoryAsync(Category);
 			return false;
 		}
@@ -383,5 +388,31 @@
 			editContext!.Validate();
 		}
 		StateHasChanged();
+	}
+
+	private void HandleSignalRNewInventoryCategory(InventoryEntryCategory newInventoryCategory)
+	{
+		if (newInventoryCategory.CategoryId == Category.Id)
+		{
+			Model!.IsCurrentlyInventoryCategory = Model.IsInventoryCategory = true;
+		}
+
+		StateHasChanged();
+	}
+
+	private void HandleSignalRDeletedInventoryCategory(int categoryIdOfDeletedInventoryCategory)
+	{
+		if (categoryIdOfDeletedInventoryCategory == Category.Id)
+		{
+			Model!.IsCurrentlyInventoryCategory = Model.IsInventoryCategory = false;
+		}
+
+		StateHasChanged();
+	}
+
+	public void Dispose()
+	{
+		HubService.OnNewInventoryCategory -= HandleSignalRNewInventoryCategory;
+		HubService.OnDeletedInventoryCategory -= HandleSignalRDeletedInventoryCategory;
 	}
 }
