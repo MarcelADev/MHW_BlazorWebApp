@@ -26,21 +26,21 @@
 
 				<div class="form__field">
 					<label for="category-name">Name</label>
-					<InputText name="category-name" @bind-Value="Model!.Name"></InputText>
+					<InputText id="category-name" @bind-Value="Model!.Name"></InputText>
 				</div>
 
 				<div class="form__field-checkbox">
-					<InputCheckbox name="category-inventory" @bind-Value="Model.IsInventoryCategory"></InputCheckbox>
+					<InputCheckbox id="category-inventory" @bind-Value="Model.IsInventoryCategory"></InputCheckbox>
 					<label for="category-inventory">Inventory Category</label>
 				</div>
 
 				<div class="form__field-checkbox">
-					<InputCheckbox name="category-weapon" @bind-Value="Model.IsWeaponCategory"></InputCheckbox>
+					<InputCheckbox id="category-weapon" @bind-Value="Model.IsWeaponCategory"></InputCheckbox>
 					<label for="category-weapon">Weapon Category</label>
 				</div>
 
 				<div class="form__field-checkbox">
-					<InputCheckbox name="category-armor" @bind-Value="Model.IsArmorCategory"></InputCheckbox>
+					<InputCheckbox id="category-armor" @bind-Value="Model.IsArmorCategory"></InputCheckbox>
 					<label for="category-armor">Armor Category</label>
 				</div>
 

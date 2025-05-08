@@ -41,21 +41,21 @@
 				{
 					<div class="form__field">
 						<label for="categoryCard-name">Change Name:</label>
-						<InputText name="categoryCard-name" @bind-Value="Model!.NewName" />
+						<InputText id="categoryCard-name" @bind-Value="Model!.NewName" />
 					</div>
 
 					<div class="form__field-checkbox">
-						<InputCheckbox name="categoryCard-inventory" @bind-Value="Model.IsInventoryCategory"></InputCheckbox>
+						<InputCheckbox id="categoryCard-inventory" @bind-Value="Model.IsInventoryCategory"></InputCheckbox>
 						<label for="categoryCard-inventory">Inventory Category</label>
 					</div>
 
 					<div class="form__field-checkbox">
-						<InputCheckbox name="categoryCard-weapon" @bind-Value="Model.IsWeaponCategory"></InputCheckbox>
+						<InputCheckbox id="categoryCard-weapon" @bind-Value="Model.IsWeaponCategory"></InputCheckbox>
 						<label for="categoryCard-weapon">Weapon Category</label>
 					</div>
 
 					<div class="form__field-checkbox">
-						<InputCheckbox name="categoryCard-armor" @bind-Value="Model.IsArmorCategory"></InputCheckbox>
+						<InputCheckbox id="categoryCard-armor" @bind-Value="Model.IsArmorCategory"></InputCheckbox>
 						<label for="categoryCard-armor">Armor Category</label>
 					</div>
 				}
