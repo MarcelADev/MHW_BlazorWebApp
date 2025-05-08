@@ -69,7 +69,8 @@
 		@foreach(Category category in categories)
 		{
 			<CategoryCard
-			Category="category">
+				@key="category.Id"
+				Category="category">
 			</CategoryCard>
 		}
 	}
