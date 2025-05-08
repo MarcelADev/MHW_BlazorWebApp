@@ -401,7 +401,7 @@
 
 	private void HandleSignalRUpdatedCategory(Category updatedCategory)
 	{
-		Category.Name = Model!.Name = Model.NewName = updatedCategory.Name;
+		if(Category.Id == updatedCategory.Id) Category.Name = Model!.Name = Model.NewName = updatedCategory.Name;
 		StateHasChanged();
 	}
 
