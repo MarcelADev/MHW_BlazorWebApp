@@ -362,7 +362,10 @@
 	private void HandleCancelButtonClicked()
 	{
 		toggleEdit = !toggleEdit;
-		Model = new CategoryCardFormModel(Category);
+		Model!.NewName = Model.Name;
+		Model.IsInventoryCategory = Model.IsCurrentlyInventoryCategory;
+		Model.IsWeaponCategory = Model.IsCurrentlyWeaponCategory;
+		Model.IsArmorCategory = Model.IsCurrentlyArmorCategory;
 	}
 
 	private async Task HandleDeleteButtonClicked()
