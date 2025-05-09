@@ -26,10 +26,11 @@
                 </div>
 
                 <SingleSelect
-                    T="InventoryEntryCategory"
-                    Options="@inventoryCategories"
-                    OptionNameMapper="(InventoryEntryCategory inventoryCategory) => inventoryCategory.Category.Name"
-                    OptionValueMapper="(InventoryEntryCategory inventoryCategory) => inventoryCategory.Id">
+                T="InventoryEntryCategory"
+                Options="@inventoryCategories"
+                OptionNameMapper="(InventoryEntryCategory inventoryCategory) => inventoryCategory.Category.Name"
+                OptionValueMapper="(InventoryEntryCategory inventoryCategory) => inventoryCategory.Id"
+                @bind-Value="Model.InventoryCategory">
                 </SingleSelect>
 
                 <div class=" form__field form__button">
@@ -86,6 +87,7 @@
         if (inventoryCategories.Any()) inventoryCategories.Sort((x, y) => x.Category!.Name.CompareTo(y.Category!.Name));
 
         Model ??= new InventoryEntryFormModel(inventoryEntries) { };
+        if (inventoryCategories.Any()) Model.InventoryCategory = inventoryCategories.First();
         editContext = new(Model);
         editContext.OnFieldChanged += HandleFieldChanged;
 

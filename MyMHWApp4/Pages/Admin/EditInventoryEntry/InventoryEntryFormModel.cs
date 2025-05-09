@@ -9,6 +9,8 @@ namespace MyMHWApp4.Pages.Admin.EditInventoryEntry
         public string Name { get; set; } = string.Empty;
         private List<InventoryEntry> _inventoryEntryList;
 
+        public InventoryEntryCategory InventoryCategory { get; set; }
+
         public bool EntityAlreadyExistsFlag { get; set; } = false;
         public bool EntityWasNullFlag { get; set; } = false;
         public bool UnexpectedResponseFlag { get; set; } = false;
