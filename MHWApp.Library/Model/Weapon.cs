@@ -12,9 +12,6 @@ namespace MHWApp.Library.Model
         public required int WeaponTypeId { get; set; }
         public WeaponType? WeaponType { get; set; }
 
-        public required int GameExtensionId { get; set; }
-        public GameExtension? GameExtension { get; set; }
-
         public required int PredecessorId { get; set; }
         public Weapon? Predecessor { get; set; }
 

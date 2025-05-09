@@ -9,9 +9,6 @@ namespace MHWApp.Library.Model
         public required int InventoryCategoryId { get; set; }
         public InventoryEntryCategory? InventoryCategory { get; set; }
 
-        public required int GameExtensionId { get; set; }
-        public GameExtension? GameExtension { get; set; }
-
         [Required]
         public required string Name { get; set; }
 

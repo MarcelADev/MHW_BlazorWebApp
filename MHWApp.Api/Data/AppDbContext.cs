@@ -111,6 +111,11 @@ namespace MHWApp.Api.Data
             #endregion
 
             #region Category
+            // one to one relationship of Category and Game Extension
+            modelBuilder.Entity<Category>()
+                .HasOne(o => o.GameExtension)
+                .WithMany()
+                .HasForeignKey(o => o.GameExtensionId);
             // one to one relationship of Category and InventoryEntryCategory
             modelBuilder.Entity<Category>()
                 .HasOne(o => o.InventoryEntryCategory)
@@ -155,11 +160,6 @@ namespace MHWApp.Api.Data
                 .HasOne(o => o.InventoryCategory)
                 .WithMany()
                 .HasForeignKey(o => o.InventoryCategoryId);
-
-            modelBuilder.Entity<InventoryEntry>()
-                .HasOne(o => o.GameExtension)
-                .WithMany()
-                .HasForeignKey(o => o.GameExtensionId);
 
             // Many to Many Relationship of InventoryEntry and Participator
             modelBuilder.Entity<InventoryEntry>()
@@ -216,11 +216,6 @@ namespace MHWApp.Api.Data
                 .WithMany()
                 .HasForeignKey(o => o.ArmorCategoryId);
 
-            modelBuilder.Entity<Armor>()
-                .HasOne(o => o.GameExtension)
-                .WithMany()
-                .HasForeignKey(o => o.GameExtensionId);
-
             // Many to Many Relationship of Armor and Participator
             modelBuilder.Entity<Armor>()
                 .HasMany(o => o.Participators)
@@ -264,11 +259,6 @@ namespace MHWApp.Api.Data
                 .HasOne(o => o.WeaponType)
                 .WithMany()
                 .HasForeignKey(o => o.WeaponTypeId);
-
-            modelBuilder.Entity<Weapon>()
-                .HasOne(o => o.GameExtension)
-                .WithMany()
-                .HasForeignKey(o => o.GameExtensionId);
 
             modelBuilder.Entity<Weapon>()
                 .HasOne(o => o.Predecessor)

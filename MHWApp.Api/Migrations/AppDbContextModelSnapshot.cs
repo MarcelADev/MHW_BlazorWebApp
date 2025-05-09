@@ -50,9 +50,6 @@ namespace MHWApp.Api.Migrations
                     b.Property<int>("ArmorCategoryId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("GameExtensionId")
-                        .HasColumnType("INTEGER");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -63,8 +60,6 @@ namespace MHWApp.Api.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("ArmorCategoryId");
-
-                    b.HasIndex("GameExtensionId");
 
                     b.ToTable("Armors");
                 });
@@ -78,18 +73,12 @@ namespace MHWApp.Api.Migrations
                     b.Property<int>("CategoryId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("CategoryId1")
-                        .HasColumnType("INTEGER");
-
                     b.Property<int>("Order")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
                     b.HasIndex("CategoryId")
-                        .IsUnique();
-
-                    b.HasIndex("CategoryId1")
                         .IsUnique();
 
                     b.ToTable("ArmorCategories");
@@ -101,11 +90,16 @@ namespace MHWApp.Api.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("GameExtensionId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("GameExtensionId");
 
                     b.ToTable("Categories");
                 });
@@ -131,9 +125,6 @@ namespace MHWApp.Api.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("GameExtensionId")
-                        .HasColumnType("INTEGER");
-
                     b.Property<int>("InventoryCategoryId")
                         .HasColumnType("INTEGER");
 
@@ -145,8 +136,6 @@ namespace MHWApp.Api.Migrations
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("GameExtensionId");
 
                     b.HasIndex("InventoryCategoryId");
 
@@ -162,18 +151,12 @@ namespace MHWApp.Api.Migrations
                     b.Property<int>("CategoryId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("CategoryId1")
-                        .HasColumnType("INTEGER");
-
                     b.Property<int>("Order")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
                     b.HasIndex("CategoryId")
-                        .IsUnique();
-
-                    b.HasIndex("CategoryId1")
                         .IsUnique();
 
                     b.ToTable("InventoryEntryCategories");
@@ -301,9 +284,6 @@ namespace MHWApp.Api.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("GameExtensionId")
-                        .HasColumnType("INTEGER");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -325,8 +305,6 @@ namespace MHWApp.Api.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("GameExtensionId");
-
                     b.HasIndex("PredecessorId");
 
                     b.HasIndex("WeaponCategoryId");
@@ -345,18 +323,12 @@ namespace MHWApp.Api.Migrations
                     b.Property<int>("CategoryId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("CategoryId1")
-                        .HasColumnType("INTEGER");
-
                     b.Property<int>("Order")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
                     b.HasIndex("CategoryId")
-                        .IsUnique();
-
-                    b.HasIndex("CategoryId1")
                         .IsUnique();
 
                     b.ToTable("WeaponCategories");
@@ -632,33 +604,21 @@ namespace MHWApp.Api.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MHWApp.Library.Model.GameExtension", "GameExtension")
-                        .WithMany()
-                        .HasForeignKey("GameExtensionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("ArmorCategory");
-
-                    b.Navigation("GameExtension");
                 });
 
             modelBuilder.Entity("MHWApp.Library.Model.ArmorCategory", b =>
                 {
                     b.HasOne("MHWApp.Library.Model.Category", "Category")
-                        .WithOne()
+                        .WithOne("ArmorCategory")
                         .HasForeignKey("MHWApp.Library.Model.ArmorCategory", "CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MHWApp.Library.Model.Category", null)
-                        .WithOne("ArmorCategory")
-                        .HasForeignKey("MHWApp.Library.Model.ArmorCategory", "CategoryId1");
-
                     b.Navigation("Category");
                 });
 
-            modelBuilder.Entity("MHWApp.Library.Model.InventoryEntry", b =>
+            modelBuilder.Entity("MHWApp.Library.Model.Category", b =>
                 {
                     b.HasOne("MHWApp.Library.Model.GameExtension", "GameExtension")
                         .WithMany()
@@ -666,13 +626,16 @@ namespace MHWApp.Api.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.Navigation("GameExtension");
+                });
+
+            modelBuilder.Entity("MHWApp.Library.Model.InventoryEntry", b =>
+                {
                     b.HasOne("MHWApp.Library.Model.InventoryEntryCategory", "InventoryCategory")
                         .WithMany()
                         .HasForeignKey("InventoryCategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("GameExtension");
 
                     b.Navigation("InventoryCategory");
                 });
@@ -680,14 +643,10 @@ namespace MHWApp.Api.Migrations
             modelBuilder.Entity("MHWApp.Library.Model.InventoryEntryCategory", b =>
                 {
                     b.HasOne("MHWApp.Library.Model.Category", "Category")
-                        .WithOne()
+                        .WithOne("InventoryEntryCategory")
                         .HasForeignKey("MHWApp.Library.Model.InventoryEntryCategory", "CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("MHWApp.Library.Model.Category", null)
-                        .WithOne("InventoryEntryCategory")
-                        .HasForeignKey("MHWApp.Library.Model.InventoryEntryCategory", "CategoryId1");
 
                     b.Navigation("Category");
                 });
@@ -721,12 +680,6 @@ namespace MHWApp.Api.Migrations
 
             modelBuilder.Entity("MHWApp.Library.Model.Weapon", b =>
                 {
-                    b.HasOne("MHWApp.Library.Model.GameExtension", "GameExtension")
-                        .WithMany()
-                        .HasForeignKey("GameExtensionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("MHWApp.Library.Model.Weapon", "Predecessor")
                         .WithMany()
                         .HasForeignKey("PredecessorId")
@@ -745,8 +698,6 @@ namespace MHWApp.Api.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("GameExtension");
-
                     b.Navigation("Predecessor");
 
                     b.Navigation("WeaponCategory");
@@ -757,14 +708,10 @@ namespace MHWApp.Api.Migrations
             modelBuilder.Entity("MHWApp.Library.Model.WeaponCategory", b =>
                 {
                     b.HasOne("MHWApp.Library.Model.Category", "Category")
-                        .WithOne()
+                        .WithOne("WeaponCategory")
                         .HasForeignKey("MHWApp.Library.Model.WeaponCategory", "CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("MHWApp.Library.Model.Category", null)
-                        .WithOne("WeaponCategory")
-                        .HasForeignKey("MHWApp.Library.Model.WeaponCategory", "CategoryId1");
 
                     b.Navigation("Category");
                 });
