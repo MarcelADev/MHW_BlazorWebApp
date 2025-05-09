@@ -1,0 +1,226 @@
+﻿@using MHWApp.Library
+@using MHWApp.Library.Exceptions
+@using MHWApp.Library.Model
+@using MyMHWApp4.HubConnections
+@using MyMHWApp4.Pages.Admin.EditCategory
+@using MyMHWApp4.Pages.GeneralComponents
+@using MyMHWApp4.Pages.GeneralComponents.IconButtons
+@using MyMHWApp4.Pages.Modals
+@using MyMHWApp4.Provider
+@using static MHWApp.Library.StaticVariables
+@inject CategoryProvider categoryProvider
+@inject IDataBaseUpdatesHubConnection hubService
+
+@if(!isLoading)
+{
+	<div class="form__container">
+		<EditForm EditContext="editContext" FormName="inventoryEntryCard" OnValidSubmit="Submit">
+			<DataAnnotationsValidator />
+			<ValidationSummary />
+
+			<div class="card">
+
+				<div class="container-left-space-between">
+					<p class="header-card">@InventoryEntry.Name</p>
+
+					<div class="container-left">
+						@if (!toggleEdit)
+						{
+							<EditButton EditButtonClicked="HandleEditButtonClicked"></EditButton>
+							<DeleteButton DeleteButtonClicked="HandleDeleteButtonClicked"></DeleteButton>
+						}
+						else
+						{
+							<ConfirmButton />
+							<CancelButton CancelButtonClicked="HandleCancelButtonClicked"></CancelButton>
+						}
+					</div>
+				</div>
+
+				@if (toggleEdit)
+				{
+					<div class="form__field">
+						<label for="inventoryEntryCard-name">Change Name:</label>
+						<InputText id="inventoryEntryCard-name" @bind-Value="Model!.NewName" />
+					</div>
+
+					<SingleSelect T="InventoryEntryCategory"
+					Options="@InventoryEntryCategories"
+					OptionNameMapper="(InventoryEntryCategory inventoryCategory) => inventoryCategory.Category.Name"
+					OptionValueMapper="(InventoryEntryCategory inventoryCategory) => inventoryCategory.Id"
+					@bind-Value="Model.InventoryCategory">
+					</SingleSelect>
+				}
+			</div>
+
+		</EditForm>
+	</div>
+}
+
+@if(showModal){
+	<Modal
+	Title="Confirm Delete"
+	BodyText="@modalBodyText"
+	CloseButtonClicked="HandleModalCloseOrCancelButtonClicked"
+	SecondaryButtonClicked="HandleModalCloseOrCancelButtonClicked"
+	PrimaryButtonClicked="HandleModalConfirmButtonClicked">
+	</Modal>
+}
+
+@code {
+	private bool isLoading = true;
+	private bool isFormValid = true;
+	private bool toggleEdit = false;
+	private bool showModal = false;
+
+	private string? modalBodyText;
+
+	public EditContext? editContext;
+
+	[SupplyParameterFromForm]
+	public InventoryEntryCardFormModel? Model { get; set; }
+
+	[Parameter]
+	public required InventoryEntry InventoryEntry { get; set; }
+
+	[Parameter]
+	public required List<InventoryEntryCategory> InventoryEntryCategories { get; set; }
+
+	protected override async Task OnInitializedAsync()
+	{
+		modalBodyText = $"Are you sure you want to remove {InventoryEntry.Name}?";
+
+		Model ??= new InventoryEntryCardFormModel(InventoryEntry);
+		editContext = new(Model);
+
+		// hubService.OnUpdatedCategory += HandleSignalRUpdatedCategory;
+
+		// hubService.OnNewInventoryCategory += HandleSignalRNewInventoryCategory;
+		// hubService.OnDeletedInventoryCategory += HandleSignalRDeletedInventoryCategory;
+
+		// hubService.OnNewWeaponCategory += HandleSignalRNewWeaponCategory;
+		// hubService.OnDeletedWeaponCategory += HandleSignalRDeletedWeaponCategory;
+
+		// hubService.OnNewArmorCategory += HandleSignalRNewArmorCategory;
+		// hubService.OnDeletedArmorCategory += HandleSignalRDeletedArmorCategory;
+
+		isLoading = false;
+		StateHasChanged();
+	}
+
+	private async Task Submit() => await ChangeInventoryEntryNameAndOrCategory();
+
+	private async Task ChangeInventoryEntryNameAndOrCategory()
+	{
+		InventoryEntry inventoryEntry = new InventoryEntry
+		{
+			Id = 0,
+			Name = Model.NewName,
+			InventoryCategoryId = Model.InventoryCategory.Id,
+			GameExtensionId = 0, //TO DO
+			Order = ORDER_DEFAULT_VALUE
+		};
+
+		toggleEdit = !toggleEdit;
+		StateHasChanged();
+	}
+
+	private void HandleEditButtonClicked()
+	{
+		toggleEdit = !toggleEdit;
+	}
+
+	private void HandleCancelButtonClicked()
+	{
+		toggleEdit = !toggleEdit;
+		Model!.NewName = Model.Name;
+	}
+
+	private async Task HandleDeleteButtonClicked()
+	{
+		showModal = true;
+	}
+
+	private async Task HandleModalCloseOrCancelButtonClicked()
+	{
+		showModal = false;
+	}
+
+	private async Task HandleModalConfirmButtonClicked()
+	{
+		showModal = false;
+
+		// try
+		// {
+		// 	await categoryProvider.RemoveCategoryAsync(Category.Id);
+
+		// }
+		// catch (EntityWasNotFoundException)
+		// {
+		// 	Model.EntityWasNullFlag = true;
+		// 	editContext!.Validate();
+		// }
+		// catch (UnexpectedResponseException)
+		// {
+		// 	Model.UnexpectedResponseFlag = true;
+		// 	editContext!.Validate();
+		// }
+		StateHasChanged();
+	}
+
+	// private void HandleSignalRUpdatedCategory(Category updatedCategory)
+	// {
+	// 	if(Category.Id == updatedCategory.Id) Category.Name = Model!.Name = Model.NewName = updatedCategory.Name;
+	// 	StateHasChanged();
+	// }
+
+	// private void HandleSignalRNewInventoryCategory(InventoryEntryCategory newInventoryCategory)
+	// {
+	// 	if (newInventoryCategory.CategoryId == Category.Id) Model!.IsCurrentlyInventoryCategory = Model.IsInventoryCategory = true;
+	// 	StateHasChanged();
+	// }
+
+	// private void HandleSignalRDeletedInventoryCategory(int categoryIdOfDeletedInventoryCategory)
+	// {
+	// 	if (categoryIdOfDeletedInventoryCategory == Category.Id) Model!.IsCurrentlyInventoryCategory = Model.IsInventoryCategory = false;
+	// 	StateHasChanged();
+	// }
+
+	// private void HandleSignalRNewWeaponCategory(WeaponCategory newWeaponCategory)
+	// {
+	// 	if (newWeaponCategory.CategoryId == Category.Id) Model!.IsCurrentlyWeaponCategory = Model.IsWeaponCategory = true;
+	// 	StateHasChanged();
+	// }
+
+	// private void HandleSignalRDeletedWeaponCategory(int categoryIdOfDeletedWeaponCategory)
+	// {
+	// 	if (categoryIdOfDeletedWeaponCategory == Category.Id) Model!.IsCurrentlyWeaponCategory = Model.IsWeaponCategory = false;
+	// 	StateHasChanged();
+	// }
+
+	// private void HandleSignalRNewArmorCategory(ArmorCategory newArmorCategory)
+	// {
+	// 	if (newArmorCategory.CategoryId == Category.Id) Model!.IsCurrentlyArmorCategory = Model.IsArmorCategory = true;
+	// 	StateHasChanged();
+	// }
+
+	// private void HandleSignalRDeletedArmorCategory(int categoryIdOfDeletedArmorCategory)
+	// {
+	// 	if (categoryIdOfDeletedArmorCategory == Category.Id) Model!.IsCurrentlyArmorCategory = Model.IsArmorCategory = false;
+	// 	StateHasChanged();
+	// }
+
+	// public void Dispose()
+	// {
+	// 	hubService.OnUpdatedCategory -= HandleSignalRUpdatedCategory;
+
+	// 	hubService.OnNewInventoryCategory -= HandleSignalRNewInventoryCategory;
+	// 	hubService.OnDeletedInventoryCategory -= HandleSignalRDeletedInventoryCategory;
+
+	// 	hubService.OnNewWeaponCategory -= HandleSignalRNewWeaponCategory;
+	// 	hubService.OnDeletedWeaponCategory -= HandleSignalRDeletedWeaponCategory;
+
+	// 	hubService.OnNewArmorCategory -= HandleSignalRNewArmorCategory;
+	// 	hubService.OnDeletedArmorCategory -= HandleSignalRDeletedArmorCategory;
+	// }
+}
