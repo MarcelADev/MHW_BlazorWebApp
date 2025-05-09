@@ -50,7 +50,7 @@
 	//private ConfirmButton? confirmButton;
 
 	[SupplyParameterFromForm]
-	public ChangeGameExtensionFormModel? Model { get; set; }
+	public GameExtensionCardFormModel? Model { get; set; }
 
 	[Parameter]
 	public required GameExtension GameExtension { get; set; }
@@ -60,7 +60,7 @@
 
 	protected override async Task OnInitializedAsync()
 	{
-		Model ??= new ChangeGameExtensionFormModel(GameExtension);
+		Model ??= new GameExtensionCardFormModel(GameExtension);
 		editContext = new(Model);
 
 		isLoading = false;

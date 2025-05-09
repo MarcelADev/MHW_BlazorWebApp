@@ -4,12 +4,12 @@ using System.Xml.Linq;
 
 namespace MyMHWApp4.Pages.Admin.EditGameExtension
 {
-    public record ChangeGameExtensionFormModel : IValidatableObject
+    public record GameExtensionCardFormModel : IValidatableObject
     {
         public string Name { get; set; }
         public string NewName { get; set; }
 
-        public ChangeGameExtensionFormModel(GameExtension gameExtension)
+        public GameExtensionCardFormModel(GameExtension gameExtension)
         {
             Name = NewName = gameExtension.Name;
         }
