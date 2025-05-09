@@ -1,39 +1,132 @@
 ﻿@page "/edit/inventoryentries"
 @using MHWApp.Library.Model
+@using MyMHWApp4.Pages.GeneralComponents
 @using Provider;
 @inject InventoryEntryProvider inventoryEntryProvider
+@inject CategoryProvider categoryProvider; 
 
-<main>
-	<h3>Edit Inventory Entries</h3>
+<header class="container-center header">
+    <h2>Inventory Entry</h2>
+</header>
 
-	<div class="propertyContainer">
-		<label>Name:</label>
-		<br />
-		<input placeholder="Inventory Entry Name" type="text" @bind-value="name" />
-	</div>
+<main class="container-top">
 
-	@if (inventoryEntries == null) {
-		<p>Loading...</p>
-	}
-	else if (!inventoryEntries.Any()) {
-		<p>List is empty</p>
-	}
-	else {
-		@foreach (InventoryEntry entry in inventoryEntries) {
-			<EditInventoryEntryComponent InventoryEntry="entry"></EditInventoryEntryComponent>
-		}
-	}
+    <div class="container-h3"><h3>Create</h3></div>
+
+    <div class="form__container">
+        @if(!isLoading)
+        {
+            <EditForm EditContext="editContext" FormName="inventoryEntry" OnvalidSubmit="Submit">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+
+                <div class="form__field">
+                    <label for="inventoryEntry-name">Name</label>
+                    <InputText name="inventoryEntry-name" @bind-Value="Model!.Name" />
+                </div>
+
+                <SingleSelect
+                    T="InventoryEntryCategory"
+                    Options="@inventoryCategories"
+                    OptionNameMapper="(InventoryEntryCategory inventoryCategory) => inventoryCategory.Category.Name"
+                    OptionValueMapper="(InventoryEntryCategory inventoryCategory) => inventoryCategory.Id">
+                </SingleSelect>
+
+                <div class=" form__field form__button">
+                    <button type="submit" class="btn btn-primary">
+                        Create Inventory Entry
+                    </button>
+                </div>
+
+            </EditForm>
+        }
+    </div>
+
+    <div class="container-h3 margin-h3"><h3>Edit</h3></div>
+
+    @if(isLoading){
+        <p>Loading ...</p>
+    }
+    else if (!inventoryEntries!.Any())
+    {
+        <p>List is empty</p>
+    }
+    else{
+        @foreach (InventoryEntry entry in inventoryEntries!)
+        {
+            @* <GameExtensionCard
+                GameExtension="extension"
+                RemoveGameExtension="HandleRemoveGameExtension">
+            </GameExtensionCard> *@
+        }
+    }
+
 </main>
+
+<footer class="footer"></footer>
 
 
 @code {
-	private string name = "";
-	List<InventoryEntry>? inventoryEntries;
+    private bool isLoading = true;
+    private bool isFormValid = false;
+    private EditContext? editContext;
 
-	protected async override Task OnInitializedAsync()
-	{
-		inventoryEntries = await inventoryEntryProvider.GetInventoryEntriesAsync();
+    [SupplyParameterFromForm]
+    private InventoryEntryFormModel? Model { get; set; }
 
-		await base.OnInitializedAsync();
-	}
+    List<InventoryEntry>? inventoryEntries;
+    List<InventoryEntryCategory>? inventoryCategories;
+
+    protected override async Task OnInitializedAsync()
+    {
+        inventoryEntries = await inventoryEntryProvider.GetInventoryEntriesAsync();
+        if (inventoryEntries.Any()) inventoryEntries.Sort((x, y) => x.Name.CompareTo(y.Name));
+
+        inventoryCategories = await categoryProvider.GetInventoryCategoriesAsync();
+        if (inventoryCategories.Any()) inventoryCategories.Sort((x, y) => x.Category!.Name.CompareTo(y.Category!.Name));
+
+        Model ??= new InventoryEntryFormModel(inventoryEntries) { };
+        editContext = new(Model);
+        editContext.OnFieldChanged += HandleFieldChanged;
+
+        isLoading = false;
+        StateHasChanged();
+    }
+
+    private void HandleFieldChanged(object? sender, FieldChangedEventArgs e)
+    {
+        if (editContext is not null)
+        {
+            isFormValid = !editContext.Validate();
+            StateHasChanged();
+        }
+    }
+
+    private async Task Submit() => await CreateInventoryEntry();
+
+    private async Task CreateInventoryEntry()
+    {
+        // InventoryEntry newInventoryEntry = new InventoryEntry { Id = 0, Name = Model!.Name };
+
+        // try
+        // {
+        //     await gameExtensionProvider.CreateGameExtensionAsync(newGameExtension);
+        // }
+        // catch (EntityAlreadyExistsException)
+        // {
+        //     Model.EntityAlreadyExistsFlag = true;
+        //     editContext!.Validate();
+        // }
+        // catch (EntityWasNullException)
+        // {
+        //     Model.EntityWasNullFlag = true;
+        //     editContext!.Validate();
+        // }
+        // catch (UnexpectedResponseException)
+        // {
+        //     Model.UnexpectedResponseFlag = true;
+        //     editContext!.Validate();
+        // }
+        StateHasChanged();
+    }
 }

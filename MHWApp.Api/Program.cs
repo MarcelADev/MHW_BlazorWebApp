@@ -300,6 +300,18 @@ app.MapGet("/categories", async (AppDbContext dbContext, ClaimsPrincipal user) =
     return Results.Ok(categories);
 });
 
+app.MapGet("/categories/inventoryentries", async (AppDbContext dbContext, ClaimsPrincipal user) =>
+{
+    var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
+    if (userIdClaim == null) return Results.Unauthorized();
+
+    var inventoryCategories = await dbContext.InventoryEntryCategories
+        .Include(ic => ic.Category)
+        .ToListAsync();
+
+    return Results.Ok(inventoryCategories);
+}).RequireAuthorization(policy => policy.RequireRole("Master", "Admin"));
+
 app.MapPost("/categories", async (AppDbContext dbContext, ClaimsPrincipal user, IHubContext<DataBaseUpdatesHub> hubContext, CategoryDTO categoryDTO) =>
 {
     var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
@@ -316,8 +328,7 @@ app.MapPost("/categories", async (AppDbContext dbContext, ClaimsPrincipal user, 
     await hubContext.Clients.All.SendAsync("ReceiveNewCategory", categoryDTO.NewCategory);
 
     return Results.Created($"/categories/{categoryDTO.NewCategory.Id}", categoryDTO.NewCategory);
-}
-).RequireAuthorization(policy => policy.RequireRole("Master", "Admin"));
+}).RequireAuthorization(policy => policy.RequireRole("Master", "Admin"));
 
 async Task AddSubCategories(AppDbContext dbContext, CategoryDTO categoryDTO)
 {

@@ -27,6 +27,21 @@ namespace MyMHWApp4.Provider
             logger.LogWarning($"Unexpexted HTTP Response: {response.StatusCode.ToString()}");
             throw new UnexpectedResponseException(response.StatusCode.ToString());
         }
+
+        public async Task<List<InventoryEntryCategory>> GetInventoryCategoriesAsync()
+        {
+            var request = new HttpRequestMessage(HttpMethod.Get, "categories/inventoryentries");
+            var response = await _httpClient.SendAsync(request);
+            var categories = await response.Content.ReadFromJsonAsync<List<InventoryEntryCategory>>();
+
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                return categories ?? throw new EntityWasNullException();
+            }
+
+            logger.LogWarning($"Unexpexted HTTP Response: {response.StatusCode.ToString()}");
+            throw new UnexpectedResponseException(response.StatusCode.ToString());
+        }
         #endregion
 
         #region CREATE
