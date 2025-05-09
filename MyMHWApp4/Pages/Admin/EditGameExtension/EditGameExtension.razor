@@ -7,7 +7,7 @@
 @using System.Security.Principal
 @inject GameExtensionProvider gameExtensionProvider
 @inject ILogger<EditGameExtension> Logger
-@inject IDataBaseUpdatesHubConnection HubService
+@inject IDataBaseUpdatesHubConnection hubService
 @implements IDisposable
 
 <header class="container-center header">
@@ -83,9 +83,9 @@
         editContext = new(Model);
         editContext.OnFieldChanged += HandleFieldChanged;
 
-        HubService.OnNewGameExtension += HandleSignalRNewGameExtension;
-        HubService.OnUpdatedGameExtension += HandleSignalRUpdatedGameExtension;
-        HubService.OnDeletedGameExtension += HandleSignalRDeletedGameExtension;
+        hubService.OnNewGameExtension += HandleSignalRNewGameExtension;
+        hubService.OnUpdatedGameExtension += HandleSignalRUpdatedGameExtension;
+        hubService.OnDeletedGameExtension += HandleSignalRDeletedGameExtension;
 
         isLoading = false;
         StateHasChanged();
@@ -158,7 +158,7 @@
 
     public void Dispose()
     {
-        HubService.OnNewGameExtension -= HandleSignalRNewGameExtension;
-        HubService.OnUpdatedGameExtension -= HandleSignalRUpdatedGameExtension;
+        hubService.OnNewGameExtension -= HandleSignalRNewGameExtension;
+        hubService.OnUpdatedGameExtension -= HandleSignalRUpdatedGameExtension;
     }
 }

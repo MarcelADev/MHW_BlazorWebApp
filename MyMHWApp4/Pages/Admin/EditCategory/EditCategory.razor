@@ -6,7 +6,7 @@
 @using MyMHWApp4.Pages.GeneralComponents
 @using Provider
 @inject CategoryProvider categoryProvider
-@inject IDataBaseUpdatesHubConnection HubService
+@inject IDataBaseUpdatesHubConnection hubService
 @implements IDisposable
 
 <header class="container-center header">
@@ -99,18 +99,18 @@
 		editContext = new(Model);
 		editContext.OnFieldChanged += HandleFieldChanged;
 
-		HubService.OnNewCategory += HandleSignalRNewCategory;
-		HubService.OnUpdatedCategory += HandleSignalRUpdatedCategory;
-		HubService.OnDeletedCategory += HandleSignalRDeletedCategory;
+		hubService.OnNewCategory += HandleSignalRNewCategory;
+		hubService.OnUpdatedCategory += HandleSignalRUpdatedCategory;
+		hubService.OnDeletedCategory += HandleSignalRDeletedCategory;
 
-		HubService.OnNewInventoryCategory += HandleSignalRNewInventoryCategory;
-		HubService.OnDeletedInventoryCategory += HandleSignalRDeletedInventoryCategory;
+		hubService.OnNewInventoryCategory += HandleSignalRNewInventoryCategory;
+		hubService.OnDeletedInventoryCategory += HandleSignalRDeletedInventoryCategory;
 
-		HubService.OnNewWeaponCategory += HandleSignalRNewWeaponCategory;
-		HubService.OnDeletedWeaponCategory += HandleSignalRDeletedWeaponCategory;
+		hubService.OnNewWeaponCategory += HandleSignalRNewWeaponCategory;
+		hubService.OnDeletedWeaponCategory += HandleSignalRDeletedWeaponCategory;
 
-		HubService.OnNewArmorCategory += HandleSignalRNewArmorCategory;
-		HubService.OnDeletedArmorCategory += HandleSignalRDeletedArmorCategory;
+		hubService.OnNewArmorCategory += HandleSignalRNewArmorCategory;
+		hubService.OnDeletedArmorCategory += HandleSignalRDeletedArmorCategory;
 
 		isLoading = false;
 		StateHasChanged();
@@ -223,17 +223,17 @@
 
 	public void Dispose()
 	{
-		HubService.OnNewCategory -= HandleSignalRNewCategory;
-		HubService.OnUpdatedCategory -= HandleSignalRUpdatedCategory;
-		HubService.OnDeletedCategory -= HandleSignalRDeletedCategory;
+		hubService.OnNewCategory -= HandleSignalRNewCategory;
+		hubService.OnUpdatedCategory -= HandleSignalRUpdatedCategory;
+		hubService.OnDeletedCategory -= HandleSignalRDeletedCategory;
 
-		HubService.OnNewInventoryCategory -= HandleSignalRNewInventoryCategory;
-		HubService.OnDeletedInventoryCategory -= HandleSignalRDeletedInventoryCategory;
+		hubService.OnNewInventoryCategory -= HandleSignalRNewInventoryCategory;
+		hubService.OnDeletedInventoryCategory -= HandleSignalRDeletedInventoryCategory;
 
-		HubService.OnNewWeaponCategory -= HandleSignalRNewWeaponCategory;
-		HubService.OnDeletedWeaponCategory -= HandleSignalRDeletedWeaponCategory;
+		hubService.OnNewWeaponCategory -= HandleSignalRNewWeaponCategory;
+		hubService.OnDeletedWeaponCategory -= HandleSignalRDeletedWeaponCategory;
 
-		HubService.OnNewArmorCategory -= HandleSignalRNewArmorCategory;
-		HubService.OnDeletedArmorCategory -= HandleSignalRDeletedArmorCategory;
+		hubService.OnNewArmorCategory -= HandleSignalRNewArmorCategory;
+		hubService.OnDeletedArmorCategory -= HandleSignalRDeletedArmorCategory;
 	}
 }

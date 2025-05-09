@@ -8,7 +8,7 @@
 @using MyMHWApp4.Provider
 @using static MHWApp.Library.StaticVariables
 @inject CategoryProvider categoryProvider
-@inject IDataBaseUpdatesHubConnection HubService
+@inject IDataBaseUpdatesHubConnection hubService
 @implements IDisposable
 
 @if(!isLoading)
@@ -98,16 +98,16 @@
 		Model ??= new CategoryCardFormModel(Category);
 		editContext = new(Model);
 
-		HubService.OnUpdatedCategory += HandleSignalRUpdatedCategory;
+		hubService.OnUpdatedCategory += HandleSignalRUpdatedCategory;
 
-		HubService.OnNewInventoryCategory += HandleSignalRNewInventoryCategory;
-		HubService.OnDeletedInventoryCategory += HandleSignalRDeletedInventoryCategory;
+		hubService.OnNewInventoryCategory += HandleSignalRNewInventoryCategory;
+		hubService.OnDeletedInventoryCategory += HandleSignalRDeletedInventoryCategory;
 
-		HubService.OnNewWeaponCategory += HandleSignalRNewWeaponCategory;
-		HubService.OnDeletedWeaponCategory += HandleSignalRDeletedWeaponCategory;
+		hubService.OnNewWeaponCategory += HandleSignalRNewWeaponCategory;
+		hubService.OnDeletedWeaponCategory += HandleSignalRDeletedWeaponCategory;
 
-		HubService.OnNewArmorCategory += HandleSignalRNewArmorCategory;
-		HubService.OnDeletedArmorCategory += HandleSignalRDeletedArmorCategory;
+		hubService.OnNewArmorCategory += HandleSignalRNewArmorCategory;
+		hubService.OnDeletedArmorCategory += HandleSignalRDeletedArmorCategory;
 
 		isLoading = false;
 		StateHasChanged();
@@ -444,15 +444,15 @@
 
 	public void Dispose()
 	{
-		HubService.OnUpdatedCategory -= HandleSignalRUpdatedCategory;
+		hubService.OnUpdatedCategory -= HandleSignalRUpdatedCategory;
 
-		HubService.OnNewInventoryCategory -= HandleSignalRNewInventoryCategory;
-		HubService.OnDeletedInventoryCategory -= HandleSignalRDeletedInventoryCategory;
+		hubService.OnNewInventoryCategory -= HandleSignalRNewInventoryCategory;
+		hubService.OnDeletedInventoryCategory -= HandleSignalRDeletedInventoryCategory;
 
-		HubService.OnNewWeaponCategory -= HandleSignalRNewWeaponCategory;
-		HubService.OnDeletedWeaponCategory -= HandleSignalRDeletedWeaponCategory;
+		hubService.OnNewWeaponCategory -= HandleSignalRNewWeaponCategory;
+		hubService.OnDeletedWeaponCategory -= HandleSignalRDeletedWeaponCategory;
 
-		HubService.OnNewArmorCategory -= HandleSignalRNewArmorCategory;
-		HubService.OnDeletedArmorCategory -= HandleSignalRDeletedArmorCategory;
+		hubService.OnNewArmorCategory -= HandleSignalRNewArmorCategory;
+		hubService.OnDeletedArmorCategory -= HandleSignalRDeletedArmorCategory;
 	}
 }
