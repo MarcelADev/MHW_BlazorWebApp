@@ -93,6 +93,8 @@
 	{
 		categories = await categoryProvider.GetCategoriesAsync();
 
+		if (categories.Any()) categories.Sort((x, y) => x.Name.CompareTo(y.Name));
+
 		Model ??= new CategoryFormModel(categories) { };
 		editContext = new(Model);
 		editContext.OnFieldChanged += HandleFieldChanged;
