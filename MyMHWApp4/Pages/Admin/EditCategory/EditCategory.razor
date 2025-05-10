@@ -131,7 +131,7 @@
 	{
 		CategoryDTO categoryDTO = new CategoryDTO
 			{
-				NewCategory = new Category { Id = 0, Name = Model!.Name },
+				NewCategory = new Category { Id = 0, Name = Model!.Name, GameExtensionId = 1 },		// TODO
 				IsInventoryEntry = Model.IsInventoryCategory,
 				IsWeapon = Model.IsWeaponCategory,
 				IsArmor = Model.IsArmorCategory
