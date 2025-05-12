@@ -53,6 +53,7 @@
         @foreach (GameExtension extension in extensions!)
         {
             <GameExtensionCard
+                @key="extension.Id"
             GameExtension="extension"
             RemoveGameExtension="HandleRemoveGameExtension">
             </GameExtensionCard>
@@ -131,8 +132,6 @@
     private async Task HandleRemoveGameExtension(GameExtension gameExtension)
     {
         await gameExtensionProvider.RemoveGameExtensionAsync(gameExtension.Id);
-
-        extensions!.Remove(gameExtension);
         StateHasChanged();
     }
 
