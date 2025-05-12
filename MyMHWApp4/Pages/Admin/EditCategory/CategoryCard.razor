@@ -24,7 +24,7 @@
 				<div class="container-left-space-between">
 					<p class="header-card">@Category.Name</p>
 
-					<div class="container-left">
+					<div class="container-right-gap">
 						@if (!toggleEdit)
 						{
 							<EditButton EditButtonClicked="HandleEditButtonClicked"></EditButton>
@@ -61,10 +61,10 @@
 					</div>
 
 					<SingleSelect T="GameExtension"
-					Options="@extensions"
-					OptionNameMapper="(GameExtension gameExtension) => gameExtension.Name"
-					OptionValueMapper="(GameExtension gameExtension) => gameExtension.Id"
-					@bind-Value="Model.NewGameExtension">
+						Options="@extensions"
+						OptionNameMapper="(GameExtension gameExtension) => gameExtension.Name"
+						OptionValueMapper="(GameExtension gameExtension) => gameExtension.Id"
+						@bind-Value="Model.NewGameExtension">
 					</SingleSelect>
 				}
 			</div>

@@ -151,11 +151,12 @@
 				{ 
 					Id = 0,
 					Name = Model!.Name,
-					GameExtensionId = Model.GameExtension.Id 
+					GameExtensionId = Model.GameExtension.Id
 				},
 				IsInventoryEntry = Model.IsInventoryCategory,
 				IsWeapon = Model.IsWeaponCategory,
-				IsArmor = Model.IsArmorCategory
+				IsArmor = Model.IsArmorCategory,
+				GameExtension = Model.GameExtension,
 			};
 
 		try

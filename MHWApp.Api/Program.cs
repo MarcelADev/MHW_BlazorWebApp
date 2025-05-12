@@ -310,24 +310,7 @@ app.MapGet("/categories/inventoryentries", async (AppDbContext dbContext, Claims
     .Include(ic => ic.Category)
     .ToListAsync();
 
-    var inventoryCategoryDTOList = inventoryCategories
-        .Select(ic => 
-        {
-            var category = ic.Category!;
-
-            category.InventoryEntryCategory = null;
-            category.ArmorCategory = null;
-            category.WeaponCategory = null;
-            category.GameExtension = null;
-
-            return new InventoryCategoryDTO
-            {
-                InventoryEntryCategory = ic,
-                Category = category!
-            };
-        }).ToList();
-
-    return Results.Ok(inventoryCategoryDTOList);
+    return Results.Ok(inventoryCategories);
 }).RequireAuthorization(policy => policy.RequireRole("Master", "Admin"));
 
 app.MapPost("/categories", async (AppDbContext dbContext, ClaimsPrincipal user, IHubContext<DataBaseUpdatesHub> hubContext, CategoryDTO categoryDTO) =>
@@ -342,6 +325,7 @@ app.MapPost("/categories", async (AppDbContext dbContext, ClaimsPrincipal user, 
     await dbContext.SaveChangesAsync();
 
     await AddSubCategories(dbContext, categoryDTO);
+    categoryDTO.NewCategory.GameExtension = categoryDTO.GameExtension;
 
     await hubContext.Clients.All.SendAsync("ReceiveNewCategory", categoryDTO.NewCategory);
 
@@ -594,7 +578,7 @@ app.MapGet("/inventoryEntries", async (AppDbContext dbContext, ClaimsPrincipal u
     if (userIdClaim == null) return Results.Unauthorized();
 
     var inventoryEntries = await dbContext.InventoryEntries
-        .Include(i => i.InventoryCategory)
+        .Include(i => i.InventoryCategory!.Category)
         .ToListAsync();
     
     return Results.Ok(inventoryEntries); ;

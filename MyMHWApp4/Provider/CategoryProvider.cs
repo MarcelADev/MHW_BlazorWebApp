@@ -29,16 +29,9 @@ namespace MyMHWApp4.Provider
         {
             var request = new HttpRequestMessage(HttpMethod.Get, "categories/inventoryentries");
             var response = await _httpClient.SendAsync(request);
-            var inventoryCategoryDTOList = await response.Content.ReadFromJsonAsync<List<InventoryCategoryDTO>>();
-            var inventoryCategoryList = new List<InventoryEntryCategory>();
+            var inventoryCategories = await response.Content.ReadFromJsonAsync<List<InventoryEntryCategory>>();
 
-            foreach (InventoryCategoryDTO dto in inventoryCategoryDTOList!)
-            {
-                dto.InventoryEntryCategory.Category = dto.Category;
-                inventoryCategoryList.Add(dto.InventoryEntryCategory);
-            }
-
-            if (response.StatusCode == HttpStatusCode.OK) return inventoryCategoryList ?? throw new EntityWasNullException();
+            if (response.StatusCode == HttpStatusCode.OK) return inventoryCategories ?? throw new EntityWasNullException();
 
             logger.LogWarning($"Unexpexted HTTP Response: {response.StatusCode.ToString()}");
             throw new UnexpectedResponseException(response.StatusCode.ToString());
