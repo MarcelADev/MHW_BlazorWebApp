@@ -295,6 +295,7 @@ app.MapGet("/categories", async (AppDbContext dbContext, ClaimsPrincipal user) =
         .Include(c => c.InventoryEntryCategory)
         .Include(c => c.WeaponCategory)
         .Include(c => c.ArmorCategory)
+        .Include(c => c.GameExtension)
         .ToListAsync();
 
     return Results.Ok(categories);
@@ -425,6 +426,7 @@ app.MapPut("/categories/{id}", async (AppDbContext dbContext, ClaimsPrincipal us
     if (existingCategory == null) return Results.NotFound();
 
     existingCategory.Name = updatedCategory.Name;
+    existingCategory.GameExtension = updatedCategory.GameExtension;
     await dbContext.SaveChangesAsync();
 
     await hubContext.Clients.All.SendAsync("ReceiveUpdatedCategory", existingCategory);

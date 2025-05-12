@@ -5,19 +5,24 @@ namespace MyMHWApp4.Pages.Admin.EditCategory
 {
     public class CategoryFormModel : IValidatableObject
     {
+        private List<Category> _categoryList;
+
         public string Name { get; set; } = string.Empty;
+
         public bool IsInventoryCategory { get; set; } = false;
         public bool IsWeaponCategory { get; set; } = false;
         public bool IsArmorCategory { get; set; } = false;
-        private List<Category> _categoryList;
+        
 
         public bool EntityAlreadyExistsFlag { get; set; } = false;
         public bool EntityWasNullFlag { get; set; } = false;
         public bool UnexpectedResponseFlag { get; set; } = false;
 
+        public GameExtension GameExtension { get; set; }
+
         public CategoryFormModel(List<Category> categoryList)
         {
-            _categoryList = categoryList;   
+            _categoryList = categoryList;
         }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)

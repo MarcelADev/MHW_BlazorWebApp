@@ -8,6 +8,7 @@
 @using MyMHWApp4.Provider
 @using static MHWApp.Library.StaticVariables
 @inject CategoryProvider categoryProvider
+@inject GameExtensionProvider gameExtensionProvider
 @inject IDataBaseUpdatesHubConnection hubService
 @implements IDisposable
 
@@ -58,6 +59,13 @@
 						<InputCheckbox id="categoryCard-armor" @bind-Value="Model.IsArmorCategory"></InputCheckbox>
 						<label for="categoryCard-armor">Armor Category</label>
 					</div>
+
+					<SingleSelect T="GameExtension"
+					Options="@extensions"
+					OptionNameMapper="(GameExtension gameExtension) => gameExtension.Name"
+					OptionValueMapper="(GameExtension gameExtension) => gameExtension.Id"
+					@bind-Value="Model.NewGameExtension">
+					</SingleSelect>
 				}
 			</div>
 
@@ -81,6 +89,8 @@
 	private bool toggleEdit = false;
 	private bool showModal = false;
 
+	private List<GameExtension>? extensions;
+
 	private string? modalBodyText;
 
 	public EditContext? editContext;
@@ -93,9 +103,13 @@
 
 	protected override async Task OnInitializedAsync()
 	{
+		extensions = await gameExtensionProvider.GetGameExtensionsAsync();
+		if (extensions.Any()) extensions.Sort((x, y) => x.Name.CompareTo(y.Name));
+
 		modalBodyText = $"Are you sure you want to remove {Category.Name}?";
 
 		Model ??= new CategoryCardFormModel(Category);
+		Model.CurrentGameExtension = Model.NewGameExtension = Category.GameExtension!;
 		editContext = new(Model);
 
 		hubService.OnUpdatedCategory += HandleSignalRUpdatedCategory;
@@ -109,13 +123,17 @@
 		hubService.OnNewArmorCategory += HandleSignalRNewArmorCategory;
 		hubService.OnDeletedArmorCategory += HandleSignalRDeletedArmorCategory;
 
+		hubService.OnNewGameExtension += HandleSignalRNewGameExtension;
+		hubService.OnUpdatedGameExtension += HandleSignalRUpdatedGameExtension;
+		hubService.OnDeletedGameExtension += HandleSignalRDeletedGameExtension;
+
 		isLoading = false;
 		StateHasChanged();
 	}
 
-	private async Task Submit() => await ChangeCategoryNameAndOrSubCategories();
+	private async Task Submit() => await ChangeCategoryProperties();
 
-	private async Task ChangeCategoryNameAndOrSubCategories()
+	private async Task ChangeCategoryProperties()
 	{
 		bool cancel = false;
 
@@ -155,9 +173,9 @@
 			}
 		}
 
-		if(!Category.Name.Equals(Model.NewName))
+		if(!Category.Name.Equals(Model.NewName) || !(Category.GameExtensionId == Model.NewGameExtension.Id))
 		{
-			cancel = await ChangeCategoryName();
+			cancel = await ChangeCategoryNameAndOrGameExtension();
 		}
 
 		if (cancel) Model.CancelFlag = true;
@@ -331,11 +349,12 @@
 		return true;
 	}
 
-	private async Task<bool> ChangeCategoryName()
+	private async Task<bool> ChangeCategoryNameAndOrGameExtension()
 	{
 		try
 		{
-			Category.Name = Model.NewName;
+			Category.Name = Model!.NewName;
+			Category.GameExtension = Model.NewGameExtension;
 			await categoryProvider.UpdateCategoryAsync(Category);
 			return false;
 		}
@@ -402,7 +421,11 @@
 
 	private void HandleSignalRUpdatedCategory(Category updatedCategory)
 	{
-		if(Category.Id == updatedCategory.Id) Category.Name = Model!.Name = Model.NewName = updatedCategory.Name;
+		if(Category.Id == updatedCategory.Id)
+		{
+			Category.Name = Model!.Name = Model.NewName = updatedCategory.Name;
+			Category.GameExtension = Model.CurrentGameExtension = Model.NewGameExtension = updatedCategory.GameExtension!;
+		}
 		StateHasChanged();
 	}
 
@@ -442,6 +465,26 @@
 		StateHasChanged();
 	}
 
+	private void HandleSignalRNewGameExtension(GameExtension newGameExtension)
+	{
+		extensions!.Add(newGameExtension);
+		StateHasChanged();
+	}
+
+	private void HandleSignalRUpdatedGameExtension(GameExtension updatedGameExtension)
+	{
+		var existing = extensions!.Find(ge => ge.Id == updatedGameExtension.Id);
+		if (existing != null) existing.Name = updatedGameExtension.Name;
+		StateHasChanged();
+	}
+
+	private void HandleSignalRDeletedGameExtension(int deletedGameExtensionId)
+	{
+		var existing = extensions!.Find(ge => ge.Id == deletedGameExtensionId);
+		if (existing != null) extensions.Remove(existing);
+		StateHasChanged();
+	}
+
 	public void Dispose()
 	{
 		hubService.OnUpdatedCategory -= HandleSignalRUpdatedCategory;
@@ -454,5 +497,9 @@
 
 		hubService.OnNewArmorCategory -= HandleSignalRNewArmorCategory;
 		hubService.OnDeletedArmorCategory -= HandleSignalRDeletedArmorCategory;
+
+		hubService.OnNewGameExtension -= HandleSignalRNewGameExtension;
+		hubService.OnUpdatedGameExtension -= HandleSignalRUpdatedGameExtension;
+		hubService.OnDeletedGameExtension -= HandleSignalRDeletedGameExtension;
 	}
 }

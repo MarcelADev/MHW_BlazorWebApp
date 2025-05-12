@@ -6,6 +6,7 @@
 @using MyMHWApp4.Pages.GeneralComponents
 @using Provider
 @inject CategoryProvider categoryProvider
+@inject GameExtensionProvider gameExtensionProvider
 @inject IDataBaseUpdatesHubConnection hubService
 @implements IDisposable
 
@@ -44,6 +45,13 @@
 					<label for="category-armor">Armor Category</label>
 				</div>
 
+				<SingleSelect T="GameExtension"
+				Options="@extensions"
+				OptionNameMapper="(GameExtension gameExtension) => gameExtension.Name"
+				OptionValueMapper="(GameExtension gameExtension) => gameExtension.Id"
+				@bind-Value="Model.GameExtension">
+				</SingleSelect>
+
 				<div class="form__field form__button">
 					<button type="submit" class="btn btn-primary">
 						Create Category
@@ -69,8 +77,8 @@
 		@foreach(Category category in categories)
 		{
 			<CategoryCard
-				@key="category.Id"
-				Category="category">
+			@key="category.Id"
+			Category="category">
 			</CategoryCard>
 		}
 	}
@@ -88,14 +96,18 @@
 	private CategoryFormModel? Model { get; set; }
 
 	List<Category>? categories;
+	List<GameExtension>? extensions;
 
 	protected override async Task OnInitializedAsync()
 	{
 		categories = await categoryProvider.GetCategoriesAsync();
-
 		if (categories.Any()) categories.Sort((x, y) => x.Name.CompareTo(y.Name));
 
+		extensions = await gameExtensionProvider.GetGameExtensionsAsync();
+		if (extensions.Any()) extensions.Sort((x, y) => x.Name.CompareTo(y.Name));
+
 		Model ??= new CategoryFormModel(categories) { };
+		if (extensions.Any()) Model.GameExtension = extensions.First();
 		editContext = new(Model);
 		editContext.OnFieldChanged += HandleFieldChanged;
 
@@ -111,6 +123,10 @@
 
 		hubService.OnNewArmorCategory += HandleSignalRNewArmorCategory;
 		hubService.OnDeletedArmorCategory += HandleSignalRDeletedArmorCategory;
+
+		hubService.OnNewGameExtension += HandleSignalRNewGameExtension;
+		hubService.OnUpdatedGameExtension += HandleSignalRUpdatedGameExtension;
+		hubService.OnDeletedGameExtension += HandleSignalRDeletedGameExtension;
 
 		isLoading = false;
 		StateHasChanged();
@@ -131,7 +147,12 @@
 	{
 		CategoryDTO categoryDTO = new CategoryDTO
 			{
-				NewCategory = new Category { Id = 0, Name = Model!.Name, GameExtensionId = 1 },		// TODO
+				NewCategory = new Category 
+				{ 
+					Id = 0,
+					Name = Model!.Name,
+					GameExtensionId = Model.GameExtension.Id 
+				},
 				IsInventoryEntry = Model.IsInventoryCategory,
 				IsWeapon = Model.IsWeaponCategory,
 				IsArmor = Model.IsArmorCategory
@@ -221,6 +242,26 @@
 		StateHasChanged();
 	}
 
+	private void HandleSignalRNewGameExtension(GameExtension newGameExtension)
+	{
+		extensions!.Add(newGameExtension);
+		StateHasChanged();
+	}
+
+	private void HandleSignalRUpdatedGameExtension(GameExtension updatedGameExtension)
+	{
+		var existing = extensions!.Find(ge => ge.Id == updatedGameExtension.Id);
+		if (existing != null) existing.Name = updatedGameExtension.Name;
+		StateHasChanged();
+	}
+
+	private void HandleSignalRDeletedGameExtension(int deletedGameExtensionId)
+	{
+		var existing = extensions!.Find(ge => ge.Id == deletedGameExtensionId);
+		if (existing != null) extensions.Remove(existing);
+		StateHasChanged();
+	}
+
 	public void Dispose()
 	{
 		hubService.OnNewCategory -= HandleSignalRNewCategory;
@@ -235,5 +276,9 @@
 
 		hubService.OnNewArmorCategory -= HandleSignalRNewArmorCategory;
 		hubService.OnDeletedArmorCategory -= HandleSignalRDeletedArmorCategory;
+
+		hubService.OnNewGameExtension -= HandleSignalRNewGameExtension;
+		hubService.OnUpdatedGameExtension -= HandleSignalRUpdatedGameExtension;
+		hubService.OnDeletedGameExtension -= HandleSignalRDeletedGameExtension;
 	}
 }
