@@ -1,6 +1,6 @@
 ﻿@page "/logout"
 @using MyMHWApp4.Identity
-@inject IAccountManagement Acct
+@inject IAccountManagement accountManagement
 @inject NavigationManager NavigationManager
 
 <PageTitle>Logout</PageTitle>
@@ -26,9 +26,9 @@
 
     protected override async Task OnInitializedAsync()
     {
-        if (await Acct.CheckAuthenticatedAsync())
+        if (await accountManagement.CheckAuthenticatedAsync())
         {
-            await Acct.LogoutAsync();
+            await accountManagement.LogoutAsync();
         }
 
         await Task.Delay(5000);

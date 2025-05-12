@@ -19,10 +19,7 @@ namespace MyMHWApp4.Provider
             var response = await _httpClient.SendAsync(request);
             var categories = await response.Content.ReadFromJsonAsync<List<Category>>();
 
-            if (response.StatusCode == HttpStatusCode.OK)
-            {
-                return categories ?? throw new EntityWasNullException();
-            }
+            if (response.StatusCode == HttpStatusCode.OK) return categories ?? throw new EntityWasNullException();
 
             logger.LogWarning($"Unexpexted HTTP Response: {response.StatusCode.ToString()}");
             throw new UnexpectedResponseException(response.StatusCode.ToString());
@@ -32,12 +29,16 @@ namespace MyMHWApp4.Provider
         {
             var request = new HttpRequestMessage(HttpMethod.Get, "categories/inventoryentries");
             var response = await _httpClient.SendAsync(request);
-            var categories = await response.Content.ReadFromJsonAsync<List<InventoryEntryCategory>>();
+            var inventoryCategoryDTOList = await response.Content.ReadFromJsonAsync<List<InventoryCategoryDTO>>();
+            var inventoryCategoryList = new List<InventoryEntryCategory>();
 
-            if (response.StatusCode == HttpStatusCode.OK)
+            foreach (InventoryCategoryDTO dto in inventoryCategoryDTOList!)
             {
-                return categories ?? throw new EntityWasNullException();
+                dto.InventoryEntryCategory.Category = dto.Category;
+                inventoryCategoryList.Add(dto.InventoryEntryCategory);
             }
+
+            if (response.StatusCode == HttpStatusCode.OK) return inventoryCategoryList ?? throw new EntityWasNullException();
 
             logger.LogWarning($"Unexpexted HTTP Response: {response.StatusCode.ToString()}");
             throw new UnexpectedResponseException(response.StatusCode.ToString());
@@ -155,18 +156,18 @@ namespace MyMHWApp4.Provider
         #endregion
 
         #region UPDATE
-        public async Task<bool> UpdateCategoryAsync(Category updatedCategory)
+        public async Task UpdateCategoryAsync(Category updatedCategory)
         {
             var response = await _httpClient.PutAsJsonAsync($"categories/{updatedCategory.Id}", updatedCategory);
 
             if (response.StatusCode == HttpStatusCode.NotFound)
             {
                 logger.LogInformation($"Entity couldn't be updated, because it wasn't found: {updatedCategory.Name}");
-                return false;
+                throw new EntityWasNotFoundException();
             }
             if (response.StatusCode == HttpStatusCode.NoContent)
             {
-                return true;
+                return;
             }
 
             logger.LogWarning($"Unexpexted HTTP Response: {response.StatusCode.ToString()}");

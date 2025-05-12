@@ -1,8 +1,13 @@
-﻿@using MHWApp.Library.Model
+﻿@using MHWApp.Library.Exceptions
+@using MHWApp.Library.Model
+@using MyMHWApp4.HubConnections
 @using MyMHWApp4.Pages.GeneralComponents
 @using MyMHWApp4.Pages.GeneralComponents.IconButtons
+@using MyMHWApp4.Pages.Modals
 @using MyMHWApp4.Provider
 @inject GameExtensionProvider gameExtensionProvider
+@inject IDataBaseUpdatesHubConnection hubService
+@implements IDisposable
 
 @if(!isLoading)
 {
@@ -41,13 +46,25 @@
 	</div>
 }
 
+@if(showModal){
+	<Modal
+	Title="Confirm Delete"
+	BodyText="@modalBodyText"
+	CloseButtonClicked="HandleModalCloseOrCancelButtonClicked"
+	SecondaryButtonClicked="HandleModalCloseOrCancelButtonClicked"
+	PrimaryButtonClicked="HandleModalConfirmButtonClicked">
+	</Modal>
+}
+
 @code {
 	private bool isLoading = true;
 	private bool isFormValid = true;
 	private bool toggleEdit = false;
+	private bool showModal = false;
+
+	private string? modalBodyText;
 
 	public EditContext? editContext;
-	//private ConfirmButton? confirmButton;
 
 	[SupplyParameterFromForm]
 	public GameExtensionCardFormModel? Model { get; set; }
@@ -55,13 +72,14 @@
 	[Parameter]
 	public required GameExtension GameExtension { get; set; }
 
-	[Parameter]
-	public required EventCallback<GameExtension> RemoveGameExtension { get; set; }
-
 	protected override async Task OnInitializedAsync()
 	{
+		modalBodyText = $"Are you sure you want to remove {GameExtension.Name}?";
+
 		Model ??= new GameExtensionCardFormModel(GameExtension);
 		editContext = new(Model);
+
+		hubService.OnUpdatedGameExtension += HandleSignalRUpdatedGameExtension;
 
 		isLoading = false;
 		StateHasChanged();
@@ -72,16 +90,20 @@
 	private async Task ChangeGameExtensionName()
 	{
 		GameExtension.Name = Model!.NewName;
-		var result = await gameExtensionProvider.UpdateGameExtensionAsync(GameExtension);
 
-		if (result)
+		try
 		{
-			Model!.Name = Model!.NewName;
-			toggleEdit = !toggleEdit;
+			await gameExtensionProvider.UpdateGameExtensionAsync(GameExtension);
 		}
-		else
+		catch (EntityWasNotFoundException)
 		{
-			GameExtension.Name = Model!.Name;
+			Model.EntityWasNotFoundFlag = true;
+			editContext!.Validate();
+		}
+		catch (UnexpectedResponseException)
+		{
+			Model.UnexpectedResponseFlag = true;
+			editContext!.Validate();
 		}
 		StateHasChanged();
 	}
@@ -89,18 +111,56 @@
 	private void HandleEditButtonClicked()
 	{
 		toggleEdit = !toggleEdit;
-		StateHasChanged();
 	}
 
 	private void HandleCancelButtonClicked()
 	{
 		Model!.NewName = Model.Name;
 		toggleEdit = !toggleEdit;
-		StateHasChanged();
 	}
 
 	private async Task HandleDeleteButtonClicked()
 	{
-		await RemoveGameExtension.InvokeAsync(GameExtension);
+		showModal = true;
+	}
+
+	private async Task HandleModalCloseOrCancelButtonClicked()
+	{
+		showModal = false;
+	}
+
+	private async Task HandleModalConfirmButtonClicked()
+	{
+		showModal = false;
+
+		try
+		{
+			await gameExtensionProvider.RemoveGameExtensionAsync(GameExtension.Id);
+		}
+		catch (EntityWasNotFoundException)
+		{
+			Model.EntityWasNullFlag = true;
+			editContext!.Validate();
+		}
+		catch (UnexpectedResponseException)
+		{
+			Model.UnexpectedResponseFlag = true;
+			editContext!.Validate();
+		}
+		StateHasChanged();
+	}
+
+	private void HandleSignalRUpdatedGameExtension(GameExtension updatedGameExtension)
+	{
+		if (GameExtension.Id == updatedGameExtension.Id)
+		{
+			GameExtension.Name = Model!.Name = Model.NewName = updatedGameExtension.Name;
+		}
+		StateHasChanged();
+	}
+
+	public void Dispose()
+	{
+		hubService.OnUpdatedGameExtension -= HandleSignalRUpdatedGameExtension;
 	}
 }

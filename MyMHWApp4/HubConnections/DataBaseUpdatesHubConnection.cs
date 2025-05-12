@@ -25,6 +25,10 @@ namespace MyMHWApp4.HubConnections
         public event Action<ArmorCategory>? OnNewArmorCategory;
         public event Action<int>? OnDeletedArmorCategory;
 
+        public event Action<InventoryEntry>? OnNewInventoryEntry;
+        public event Action<InventoryEntry>? OnUpdatedInventoryEntry;
+        public event Action<int>? OnDeletedInventoryEntry;
+
         public DataBaseUpdatesHubConnection(IConfiguration configuration)
         {
             Connection = new HubConnectionBuilder()
@@ -103,7 +107,21 @@ namespace MyMHWApp4.HubConnections
                 OnDeletedArmorCategory?.Invoke(deletedId);
             });
 
-            //Extendable
+            // ## Inventory Entry ##
+            Connection.On<InventoryEntry>("ReceiveNewInventoryEntry", (data) =>
+            {
+                OnNewInventoryEntry?.Invoke(data);
+            });
+
+            Connection.On<InventoryEntry>("ReceiveUpdatedInventoryEntry", (data) =>
+            {
+                OnUpdatedInventoryEntry?.Invoke(data);
+            });
+
+            Connection.On<int>("ReceiveDeletedInventoryEntry", (deletedId) =>
+            {
+                OnDeletedInventoryEntry?.Invoke(deletedId);
+            });
         }
 
         private async Task EnsureConnectAsync()

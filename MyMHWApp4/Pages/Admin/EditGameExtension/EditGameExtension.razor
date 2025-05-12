@@ -53,9 +53,8 @@
         @foreach (GameExtension extension in extensions!)
         {
             <GameExtensionCard
-                @key="extension.Id"
-            GameExtension="extension"
-            RemoveGameExtension="HandleRemoveGameExtension">
+            @key="extension.Id"
+            GameExtension="extension">
             </GameExtensionCard>
         }
     }
@@ -129,12 +128,6 @@
         StateHasChanged();
     }
 
-    private async Task HandleRemoveGameExtension(GameExtension gameExtension)
-    {
-        await gameExtensionProvider.RemoveGameExtensionAsync(gameExtension.Id);
-        StateHasChanged();
-    }
-
     private void HandleSignalRNewGameExtension(GameExtension newGameExtension)
     {
         extensions!.Add(newGameExtension);
@@ -159,5 +152,6 @@
     {
         hubService.OnNewGameExtension -= HandleSignalRNewGameExtension;
         hubService.OnUpdatedGameExtension -= HandleSignalRUpdatedGameExtension;
+        hubService.OnDeletedGameExtension -= HandleSignalRDeletedGameExtension;
     }
 }

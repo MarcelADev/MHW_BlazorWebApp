@@ -8,6 +8,7 @@
 @using MyMHWApp4.Pages.Modals
 @using MyMHWApp4.Provider
 @using static MHWApp.Library.StaticVariables
+@inject InventoryEntryProvider inventoryEntryProvider
 @inject CategoryProvider categoryProvider
 @inject IDataBaseUpdatesHubConnection hubService
 
@@ -45,10 +46,10 @@
 					</div>
 
 					<SingleSelect T="InventoryEntryCategory"
-					Options="@InventoryEntryCategories"
-					OptionNameMapper="(InventoryEntryCategory inventoryCategory) => inventoryCategory.Category.Name"
-					OptionValueMapper="(InventoryEntryCategory inventoryCategory) => inventoryCategory.Id"
-					@bind-Value="Model.InventoryCategory">
+						Options="@inventoryEntryCategories"
+						OptionNameMapper="(InventoryEntryCategory inventoryCategory) => inventoryCategory.Category!.Name"
+						OptionValueMapper="(InventoryEntryCategory inventoryCategory) => inventoryCategory.Id"
+						@bind-Value="Model.InventoryCategory">
 					</SingleSelect>
 				}
 			</div>
@@ -75,6 +76,8 @@
 
 	private string? modalBodyText;
 
+	private List<InventoryEntryCategory>? inventoryEntryCategories;
+
 	public EditContext? editContext;
 
 	[SupplyParameterFromForm]
@@ -83,26 +86,18 @@
 	[Parameter]
 	public required InventoryEntry InventoryEntry { get; set; }
 
-	[Parameter]
-	public required List<InventoryEntryCategory> InventoryEntryCategories { get; set; }
-
 	protected override async Task OnInitializedAsync()
 	{
+		inventoryEntryCategories = await categoryProvider.GetInventoryCategoriesAsync();
+		if (inventoryEntryCategories.Any()) inventoryEntryCategories.Sort((x, y) => x.Category!.Name.CompareTo(y.Category!.Name));
+
 		modalBodyText = $"Are you sure you want to remove {InventoryEntry.Name}?";
 
 		Model ??= new InventoryEntryCardFormModel(InventoryEntry);
+		Model.InventoryCategory = InventoryEntry.InventoryCategory!;
 		editContext = new(Model);
 
-		// hubService.OnUpdatedCategory += HandleSignalRUpdatedCategory;
-
-		// hubService.OnNewInventoryCategory += HandleSignalRNewInventoryCategory;
-		// hubService.OnDeletedInventoryCategory += HandleSignalRDeletedInventoryCategory;
-
-		// hubService.OnNewWeaponCategory += HandleSignalRNewWeaponCategory;
-		// hubService.OnDeletedWeaponCategory += HandleSignalRDeletedWeaponCategory;
-
-		// hubService.OnNewArmorCategory += HandleSignalRNewArmorCategory;
-		// hubService.OnDeletedArmorCategory += HandleSignalRDeletedArmorCategory;
+		hubService.OnUpdatedInventoryEntry += HandleSignalRUpdatedInventoryEntry;
 
 		isLoading = false;
 		StateHasChanged();
@@ -114,11 +109,26 @@
 	{
 		InventoryEntry inventoryEntry = new InventoryEntry
 		{
-			Id = 0,
-			Name = Model.NewName,
+			Id = InventoryEntry.Id,
+			Name = Model!.NewName,
 			InventoryCategoryId = Model.InventoryCategory.Id,
 			Order = ORDER_DEFAULT_VALUE
 		};
+
+		try
+		{
+			await inventoryEntryProvider.UpdateInventoryEntryAsync(inventoryEntry);
+		}
+		catch (EntityWasNotFoundException)
+		{
+			Model.EntityWasNotFoundFlag = true;
+			editContext!.Validate();
+		}
+		catch (UnexpectedResponseException)
+		{
+			Model.UnexpectedResponseFlag = true;
+			editContext!.Validate();
+		}
 
 		toggleEdit = !toggleEdit;
 		StateHasChanged();
@@ -149,77 +159,35 @@
 	{
 		showModal = false;
 
-		// try
-		// {
-		// 	await categoryProvider.RemoveCategoryAsync(Category.Id);
-
-		// }
-		// catch (EntityWasNotFoundException)
-		// {
-		// 	Model.EntityWasNullFlag = true;
-		// 	editContext!.Validate();
-		// }
-		// catch (UnexpectedResponseException)
-		// {
-		// 	Model.UnexpectedResponseFlag = true;
-		// 	editContext!.Validate();
-		// }
+		try
+		{
+			await inventoryEntryProvider.RemoveInventoryEntryAsync(InventoryEntry.Id);
+		}
+		catch (EntityWasNotFoundException)
+		{
+			Model.EntityWasNullFlag = true;
+			editContext!.Validate();
+		}
+		catch (UnexpectedResponseException)
+		{
+			Model.UnexpectedResponseFlag = true;
+			editContext!.Validate();
+		}
 		StateHasChanged();
 	}
 
-	// private void HandleSignalRUpdatedCategory(Category updatedCategory)
-	// {
-	// 	if(Category.Id == updatedCategory.Id) Category.Name = Model!.Name = Model.NewName = updatedCategory.Name;
-	// 	StateHasChanged();
-	// }
+	private void HandleSignalRUpdatedInventoryEntry(InventoryEntry updatedInventoryEntry)
+	{
+		if (InventoryEntry.Id == updatedInventoryEntry.Id)
+		{
+			InventoryEntry.Name = Model!.Name = Model.NewName = updatedInventoryEntry.Name;
+			InventoryEntry.InventoryCategory = Model.InventoryCategory = updatedInventoryEntry.InventoryCategory!;
+		}
+		StateHasChanged();
+	}
 
-	// private void HandleSignalRNewInventoryCategory(InventoryEntryCategory newInventoryCategory)
-	// {
-	// 	if (newInventoryCategory.CategoryId == Category.Id) Model!.IsCurrentlyInventoryCategory = Model.IsInventoryCategory = true;
-	// 	StateHasChanged();
-	// }
-
-	// private void HandleSignalRDeletedInventoryCategory(int categoryIdOfDeletedInventoryCategory)
-	// {
-	// 	if (categoryIdOfDeletedInventoryCategory == Category.Id) Model!.IsCurrentlyInventoryCategory = Model.IsInventoryCategory = false;
-	// 	StateHasChanged();
-	// }
-
-	// private void HandleSignalRNewWeaponCategory(WeaponCategory newWeaponCategory)
-	// {
-	// 	if (newWeaponCategory.CategoryId == Category.Id) Model!.IsCurrentlyWeaponCategory = Model.IsWeaponCategory = true;
-	// 	StateHasChanged();
-	// }
-
-	// private void HandleSignalRDeletedWeaponCategory(int categoryIdOfDeletedWeaponCategory)
-	// {
-	// 	if (categoryIdOfDeletedWeaponCategory == Category.Id) Model!.IsCurrentlyWeaponCategory = Model.IsWeaponCategory = false;
-	// 	StateHasChanged();
-	// }
-
-	// private void HandleSignalRNewArmorCategory(ArmorCategory newArmorCategory)
-	// {
-	// 	if (newArmorCategory.CategoryId == Category.Id) Model!.IsCurrentlyArmorCategory = Model.IsArmorCategory = true;
-	// 	StateHasChanged();
-	// }
-
-	// private void HandleSignalRDeletedArmorCategory(int categoryIdOfDeletedArmorCategory)
-	// {
-	// 	if (categoryIdOfDeletedArmorCategory == Category.Id) Model!.IsCurrentlyArmorCategory = Model.IsArmorCategory = false;
-	// 	StateHasChanged();
-	// }
-
-	// public void Dispose()
-	// {
-	// 	hubService.OnUpdatedCategory -= HandleSignalRUpdatedCategory;
-
-	// 	hubService.OnNewInventoryCategory -= HandleSignalRNewInventoryCategory;
-	// 	hubService.OnDeletedInventoryCategory -= HandleSignalRDeletedInventoryCategory;
-
-	// 	hubService.OnNewWeaponCategory -= HandleSignalRNewWeaponCategory;
-	// 	hubService.OnDeletedWeaponCategory -= HandleSignalRDeletedWeaponCategory;
-
-	// 	hubService.OnNewArmorCategory -= HandleSignalRNewArmorCategory;
-	// 	hubService.OnDeletedArmorCategory -= HandleSignalRDeletedArmorCategory;
-	// }
+	public void Dispose()
+	{
+		hubService.OnUpdatedInventoryEntry -= HandleSignalRUpdatedInventoryEntry;
+	}
 }

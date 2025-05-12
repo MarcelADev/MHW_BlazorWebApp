@@ -56,18 +56,18 @@ namespace MyMHWApp4.Provider
             throw new UnexpectedResponseException(response.StatusCode.ToString());
         }
 
-        public async Task<bool> UpdateGameExtensionAsync(GameExtension updatedGameExtension)
+        public async Task UpdateGameExtensionAsync(GameExtension updatedGameExtension)
         {
             var response = await _httpClient.PutAsJsonAsync($"gameextensions/{updatedGameExtension.Id}", updatedGameExtension);
 
             if (response.StatusCode == HttpStatusCode.NotFound)
             {
                 logger.LogInformation($"Entity couldnt be updated, because it wasn't found: {updatedGameExtension.Name}");
-                return false;
+                throw new EntityWasNotFoundException();
             }
             if (response.StatusCode == HttpStatusCode.NoContent)
             {
-                return true;
+                return;
             }
 
             logger.LogWarning($"Unexpexted HTTP Response: {response.StatusCode.ToString()}");

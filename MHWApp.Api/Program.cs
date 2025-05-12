@@ -299,7 +299,7 @@ app.MapGet("/categories", async (AppDbContext dbContext, ClaimsPrincipal user) =
         .ToListAsync();
 
     return Results.Ok(categories);
-});
+}).RequireAuthorization(policy => policy.RequireRole("Master", "Admin"));
 
 app.MapGet("/categories/inventoryentries", async (AppDbContext dbContext, ClaimsPrincipal user) =>
 {
@@ -307,10 +307,27 @@ app.MapGet("/categories/inventoryentries", async (AppDbContext dbContext, Claims
     if (userIdClaim == null) return Results.Unauthorized();
 
     var inventoryCategories = await dbContext.InventoryEntryCategories
-        .Include(ic => ic.Category)
-        .ToListAsync();
+    .Include(ic => ic.Category)
+    .ToListAsync();
 
-    return Results.Ok(inventoryCategories);
+    var inventoryCategoryDTOList = inventoryCategories
+        .Select(ic => 
+        {
+            var category = ic.Category!;
+
+            category.InventoryEntryCategory = null;
+            category.ArmorCategory = null;
+            category.WeaponCategory = null;
+            category.GameExtension = null;
+
+            return new InventoryCategoryDTO
+            {
+                InventoryEntryCategory = ic,
+                Category = category!
+            };
+        }).ToList();
+
+    return Results.Ok(inventoryCategoryDTOList);
 }).RequireAuthorization(policy => policy.RequireRole("Master", "Admin"));
 
 app.MapPost("/categories", async (AppDbContext dbContext, ClaimsPrincipal user, IHubContext<DataBaseUpdatesHub> hubContext, CategoryDTO categoryDTO) =>
@@ -433,7 +450,7 @@ app.MapPut("/categories/{id}", async (AppDbContext dbContext, ClaimsPrincipal us
 
     return Results.NoContent();
 
-}).RequireAuthorization();
+}).RequireAuthorization(policy => policy.RequireRole("Master", "Admin"));
 
 app.MapDelete("/categories/{id}", async (AppDbContext dbContext, ClaimsPrincipal user, IHubContext<DataBaseUpdatesHub> hubContext, int id) =>
 {
@@ -449,7 +466,7 @@ app.MapDelete("/categories/{id}", async (AppDbContext dbContext, ClaimsPrincipal
     await hubContext.Clients.All.SendAsync("ReceiveDeletedCategory", id);
 
     return Results.NoContent();
-}).RequireAuthorization();
+}).RequireAuthorization(policy => policy.RequireRole("Master", "Admin"));
 
 app.MapDelete("/categories/inventoryentries/{id}", async (AppDbContext dbContext, ClaimsPrincipal user, IHubContext<DataBaseUpdatesHub> hubContext, int id) =>
 {
@@ -467,7 +484,7 @@ app.MapDelete("/categories/inventoryentries/{id}", async (AppDbContext dbContext
     await hubContext.Clients.All.SendAsync("ReceiveDeletedInventoryCategory", categoryId);
 
     return Results.NoContent();
-}).RequireAuthorization();
+}).RequireAuthorization(policy => policy.RequireRole("Master", "Admin"));
 
 app.MapDelete("/categories/weapons/{id}", async (AppDbContext dbContext, ClaimsPrincipal user, IHubContext<DataBaseUpdatesHub> hubContext, int id) =>
 {
@@ -485,7 +502,7 @@ app.MapDelete("/categories/weapons/{id}", async (AppDbContext dbContext, ClaimsP
     await hubContext.Clients.All.SendAsync("ReceiveDeletedWeaponCategory", categoryId);
 
     return Results.NoContent();
-}).RequireAuthorization();
+}).RequireAuthorization(policy => policy.RequireRole("Master", "Admin"));
 
 app.MapDelete("/categories/armors/{id}", async (AppDbContext dbContext, ClaimsPrincipal user, IHubContext<DataBaseUpdatesHub> hubContext, int id) =>
 {
@@ -503,7 +520,7 @@ app.MapDelete("/categories/armors/{id}", async (AppDbContext dbContext, ClaimsPr
     await hubContext.Clients.All.SendAsync("ReceiveDeletedArmorCategory", categoryId);
 
     return Results.NoContent();
-}).RequireAuthorization();
+}).RequireAuthorization(policy => policy.RequireRole("Master", "Admin"));
 #endregion
 
 #region Endpoint: Game Extension
@@ -516,7 +533,7 @@ app.MapGet("/gameextensions", async (AppDbContext dbContext, ClaimsPrincipal use
     var gameExtensions = await dbContext.GameExtensions.ToListAsync();
 
     return Results.Ok(gameExtensions);
-}).RequireAuthorization();
+}).RequireAuthorization(policy => policy.RequireRole("Master", "Admin"));
 
 app.MapPost("/gameextensions", async (AppDbContext dbContext, ClaimsPrincipal user, IHubContext<DataBaseUpdatesHub> hubContext, GameExtension newGameExtension) =>
 {
@@ -532,7 +549,7 @@ app.MapPost("/gameextensions", async (AppDbContext dbContext, ClaimsPrincipal us
     await hubContext.Clients.All.SendAsync("ReceiveNewGameExtension", newGameExtension);
 
     return Results.Created($"/gameextensions/{newGameExtension.Id}", newGameExtension);
-}).RequireAuthorization();
+}).RequireAuthorization(policy => policy.RequireRole("Master", "Admin"));
 
 app.MapPut("/gameextensions/{id}", async (AppDbContext dbContext, IHubContext<DataBaseUpdatesHub> hubContext, ClaimsPrincipal user, GameExtension updatedGameExtension, int id) => 
 {
@@ -549,7 +566,7 @@ app.MapPut("/gameextensions/{id}", async (AppDbContext dbContext, IHubContext<Da
 
     return Results.NoContent();
 
-}).RequireAuthorization();
+}).RequireAuthorization(policy => policy.RequireRole("Master", "Admin"));
 
 app.MapDelete("/gameextensions/{id}", async (AppDbContext dbContext, IHubContext<DataBaseUpdatesHub> hubContext, ClaimsPrincipal user, int id) =>
 {
@@ -565,27 +582,75 @@ app.MapDelete("/gameextensions/{id}", async (AppDbContext dbContext, IHubContext
     await hubContext.Clients.All.SendAsync("ReceiveDeletedGameExtension", id);
 
     return Results.NoContent();
-}).RequireAuthorization();
+}).RequireAuthorization(policy => policy.RequireRole("Master", "Admin"));
 
 #endregion
 
 #region Endpoint: Inventory Entry
 
-app.MapGet("inventoryEntry", async (AppDbContext dbContext) =>
-    {
-        var inventoryEntries = await dbContext.InventoryEntries.ToListAsync();
+app.MapGet("/inventoryEntries", async (AppDbContext dbContext, ClaimsPrincipal user) =>
+{
+    var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
+    if (userIdClaim == null) return Results.Unauthorized();
 
-        return Results.Ok(inventoryEntries); ;
-    }
-).RequireAuthorization(policy => policy.RequireRole("Manager", "Admin"));
+    var inventoryEntries = await dbContext.InventoryEntries
+        .Include(i => i.InventoryCategory)
+        .ToListAsync();
+    
+    return Results.Ok(inventoryEntries); ;
+}
+).RequireAuthorization(policy => policy.RequireRole("Master", "Admin"));
 
-app.MapPost("inventoryEntry", async (InventoryEntry newInventoryEntry, AppDbContext dbContext) =>
-    {
-        await dbContext.InventoryEntries.AddAsync(newInventoryEntry);
-        await dbContext.SaveChangesAsync();
-        return Results.Created($"/newSession/{newInventoryEntry.Id}", newInventoryEntry);
-    }
-).RequireAuthorization(policy => policy.RequireRole("Manager", "Admin"));
+app.MapPost("/inventoryEntries", async (AppDbContext dbContext, ClaimsPrincipal user, IHubContext<DataBaseUpdatesHub> hubContext, InventoryEntry newInventoryEntry) =>
+{
+    var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
+    if (userIdClaim == null) return Results.Unauthorized();
+
+    bool exists = await dbContext.InventoryEntries.AnyAsync(ie => ie.Name == newInventoryEntry.Name);
+    if (exists) return Results.StatusCode(HTTP_STATUSCODE_CONFLICT);
+
+    await dbContext.InventoryEntries.AddAsync(newInventoryEntry);
+    await dbContext.SaveChangesAsync();
+
+    await hubContext.Clients.All.SendAsync("ReceiveNewInventoryEntry", newInventoryEntry);
+
+    return Results.Created($"/inventoryEntries/{newInventoryEntry.Id}", newInventoryEntry);
+}
+).RequireAuthorization(policy => policy.RequireRole("Master", "Admin"));
+
+app.MapPut("/inventoryEntries/{id}", async (AppDbContext dbContext, ClaimsPrincipal user, IHubContext<DataBaseUpdatesHub> hubContext, InventoryEntry updatedInventoryEntry, int id) =>
+{
+    var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
+    if (userIdClaim == null) return Results.Unauthorized();
+
+    var existingInventoryEntry = await dbContext.InventoryEntries.FindAsync(id);
+    if (existingInventoryEntry == null) return Results.NotFound();
+
+    existingInventoryEntry.Name = updatedInventoryEntry.Name;
+    existingInventoryEntry.InventoryCategory = updatedInventoryEntry.InventoryCategory;
+    await dbContext.SaveChangesAsync();
+
+    await hubContext.Clients.All.SendAsync("ReceiveUpdatedInventoryEntry", existingInventoryEntry);
+
+    return Results.NoContent();
+
+}).RequireAuthorization(policy => policy.RequireRole("Master", "Admin"));
+
+app.MapDelete("/inventoryEntries/{id}", async (AppDbContext dbContext, IHubContext<DataBaseUpdatesHub> hubContext, ClaimsPrincipal user, int id) =>
+{
+    var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
+    if (userIdClaim == null) return Results.Unauthorized();
+
+    var inventoryEntry = await dbContext.InventoryEntries.FindAsync(id);
+    if (inventoryEntry == null) return Results.NotFound();
+
+    dbContext.InventoryEntries.Remove(inventoryEntry);
+    await dbContext.SaveChangesAsync();
+
+    await hubContext.Clients.All.SendAsync("ReceiveDeletedInventoryEntry", id);
+
+    return Results.NoContent();
+}).RequireAuthorization(policy => policy.RequireRole("Master", "Admin"));
 
 #endregion
 

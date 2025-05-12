@@ -7,10 +7,12 @@ namespace MyMHWApp4.HubConnections
     {
         HubConnection Connection { get; }
 
+        // ## GAME EXTENSION ##
         event Action<GameExtension>? OnNewGameExtension;
         event Action<GameExtension>? OnUpdatedGameExtension;
         event Action<int>? OnDeletedGameExtension;
 
+        // ## CATEGORY & SUB-CATEGORIES ##
         event Action<Category>? OnNewCategory;
         event Action<Category>? OnUpdatedCategory;
         event Action<int>? OnDeletedCategory;
@@ -23,5 +25,10 @@ namespace MyMHWApp4.HubConnections
 
         event Action<ArmorCategory>? OnNewArmorCategory;
         event Action<int>? OnDeletedArmorCategory;
+
+        // ## INVENTORY ENTRY ##
+        event Action<InventoryEntry>? OnNewInventoryEntry;
+        event Action<InventoryEntry>? OnUpdatedInventoryEntry;
+        event Action<int>? OnDeletedInventoryEntry;
     }
 }

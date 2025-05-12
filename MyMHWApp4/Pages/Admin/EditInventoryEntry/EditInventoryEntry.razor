@@ -1,9 +1,15 @@
 ﻿@page "/edit/inventoryentries"
+@using static MHWApp.Library.StaticVariables
+@using MHWApp.Library.Exceptions
 @using MHWApp.Library.Model
+@using MyMHWApp4.HubConnections
 @using MyMHWApp4.Pages.GeneralComponents
 @using Provider;
 @inject InventoryEntryProvider inventoryEntryProvider
-@inject CategoryProvider categoryProvider; 
+@inject CategoryProvider categoryProvider;
+@inject IDataBaseUpdatesHubConnection hubService
+@inject ILogger<EditInventoryEntry> logger
+@implements IDisposable
 
 <header class="container-center header">
     <h2>Inventory Entry</h2>
@@ -55,10 +61,10 @@
     else{
         @foreach (InventoryEntry entry in inventoryEntries!)
         {
-            @* <GameExtensionCard
-                GameExtension="extension"
-                RemoveGameExtension="HandleRemoveGameExtension">
-            </GameExtensionCard> *@
+            <InventoryEntryCard
+                @key="entry.Id"
+                InventoryEntry="entry">
+            </InventoryEntryCard>
         }
     }
 
@@ -91,6 +97,10 @@
         editContext = new(Model);
         editContext.OnFieldChanged += HandleFieldChanged;
 
+        hubService.OnNewInventoryEntry += HandleSignalRNewInventoryEntry;
+        hubService.OnUpdatedInventoryEntry += HandleSignalRUpdatedInventoryEntry;
+        hubService.OnDeletedInventoryEntry += HandleSignalRDeletedInventoryEntry;
+
         isLoading = false;
         StateHasChanged();
     }
@@ -108,27 +118,60 @@
 
     private async Task CreateInventoryEntry()
     {
-        // InventoryEntry newInventoryEntry = new InventoryEntry { Id = 0, Name = Model!.Name };
+        InventoryEntry newInventoryEntry = new InventoryEntry 
+        { 
+            Id = 0,
+            Name = Model!.Name,
+            InventoryCategoryId = Model.InventoryCategory.Id,
+            Order = ORDER_DEFAULT_VALUE
+        };
 
-        // try
-        // {
-        //     await gameExtensionProvider.CreateGameExtensionAsync(newGameExtension);
-        // }
-        // catch (EntityAlreadyExistsException)
-        // {
-        //     Model.EntityAlreadyExistsFlag = true;
-        //     editContext!.Validate();
-        // }
-        // catch (EntityWasNullException)
-        // {
-        //     Model.EntityWasNullFlag = true;
-        //     editContext!.Validate();
-        // }
-        // catch (UnexpectedResponseException)
-        // {
-        //     Model.UnexpectedResponseFlag = true;
-        //     editContext!.Validate();
-        // }
+        try
+        {
+            await inventoryEntryProvider.CreateInventoryEntryAsync(newInventoryEntry);
+        }
+        catch (EntityAlreadyExistsException)
+        {
+            Model.EntityAlreadyExistsFlag = true;
+            editContext!.Validate();
+        }
+        catch (EntityWasNullException)
+        {
+            Model.EntityWasNullFlag = true;
+            editContext!.Validate();
+        }
+        catch (UnexpectedResponseException)
+        {
+            Model.UnexpectedResponseFlag = true;
+            editContext!.Validate();
+        }
         StateHasChanged();
+    }
+
+    private void HandleSignalRNewInventoryEntry(InventoryEntry newInventoryEntry)
+    {
+        inventoryEntries!.Add(newInventoryEntry);
+        StateHasChanged();
+    }
+
+    private void HandleSignalRUpdatedInventoryEntry(InventoryEntry updatedInventoryEntry)
+    {
+        var existing = inventoryEntries!.Find(ie => ie.Id == updatedInventoryEntry.Id);
+        if (existing != null) existing.Name = updatedInventoryEntry.Name;
+        StateHasChanged();
+    }
+
+    private void HandleSignalRDeletedInventoryEntry(int deletedInventoryEntryId)
+    {
+        var existing = inventoryEntries!.Find(ge => ge.Id == deletedInventoryEntryId);
+        if (existing != null) inventoryEntries.Remove(existing);
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        hubService.OnNewInventoryEntry -= HandleSignalRNewInventoryEntry;
+        hubService.OnUpdatedInventoryEntry -= HandleSignalRUpdatedInventoryEntry;
+        hubService.OnDeletedInventoryEntry -= HandleSignalRDeletedInventoryEntry;
     }
 }
