@@ -11,5 +11,7 @@ namespace MHWApp.Library.Model
 
         [Required]
         public required int Order { get; set; }
+
+        public List<InventoryEntry> InventoryEntries { get; set; } = [];
     }
 }

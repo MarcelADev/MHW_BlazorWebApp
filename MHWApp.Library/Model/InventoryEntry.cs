@@ -6,14 +6,13 @@ namespace MHWApp.Library.Model
     {
         public required int Id { get; set; }
 
-        public required int InventoryCategoryId { get; set; }
-        public InventoryEntryCategory? InventoryCategory { get; set; }
-
         [Required]
         public required string Name { get; set; }
 
         [Required]
         public required int Order { get; set; }
+
+        public List<InventoryEntryCategory> InventoryEntryCategories { get; set; } = [];
 
         public List<Participator> Participators { get; set; } = [];
         public List<ParticipatorInventoryEntry> ParticipatorInventoryEntries { get; set; } = [];
