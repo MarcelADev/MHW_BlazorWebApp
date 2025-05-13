@@ -325,7 +325,11 @@ app.MapPost("/categories", async (AppDbContext dbContext, ClaimsPrincipal user, 
     await dbContext.SaveChangesAsync();
 
     await AddSubCategories(dbContext, categoryDTO);
-    categoryDTO.NewCategory.GameExtension = categoryDTO.GameExtension;
+    
+    if (categoryDTO.NewCategory.GameExtension == null)
+        categoryDTO.NewCategory.GameExtension = await dbContext.GameExtensions
+            .FirstOrDefaultAsync(ge => ge.Id == categoryDTO.NewCategory.GameExtensionId);
+    
 
     await hubContext.Clients.All.SendAsync("ReceiveNewCategory", categoryDTO.NewCategory);
 
@@ -595,6 +599,10 @@ app.MapPost("/inventoryEntries", async (AppDbContext dbContext, ClaimsPrincipal 
 
     await dbContext.InventoryEntries.AddAsync(newInventoryEntry);
     await dbContext.SaveChangesAsync();
+
+    if (newInventoryEntry.InventoryCategory == null)
+        newInventoryEntry.InventoryCategory = await dbContext.InventoryEntryCategories
+            .FirstOrDefaultAsync(ic => ic.Id == newInventoryEntry.InventoryCategoryId);
 
     await hubContext.Clients.All.SendAsync("ReceiveNewInventoryEntry", newInventoryEntry);
 

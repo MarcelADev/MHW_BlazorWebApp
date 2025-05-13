@@ -13,6 +13,5 @@ namespace MHWApp.Library.DTO
         public required bool IsInventoryEntry { get; set; }
         public required bool IsWeapon { get; set; }
         public required bool IsArmor { get; set; }
-        public required GameExtension GameExtension { get; set; }
     }
 }
