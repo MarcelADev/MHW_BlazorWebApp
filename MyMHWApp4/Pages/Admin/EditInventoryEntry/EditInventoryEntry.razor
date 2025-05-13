@@ -31,13 +31,14 @@
                     <InputText name="inventoryEntry-name" @bind-Value="Model!.Name" />
                 </div>
 
-                <SingleSelect
+                <MultiSelect Label="Select Categories"
+                Placeholder="Select"
                 T="InventoryEntryCategory"
                 Options="@inventoryCategories"
                 OptionNameMapper="(InventoryEntryCategory inventoryCategory) => inventoryCategory.Category.Name"
                 OptionValueMapper="(InventoryEntryCategory inventoryCategory) => inventoryCategory.Id"
-                @bind-Value="Model.InventoryCategory">
-                </SingleSelect>
+                ValueListChanged="HandleSelect">
+                </MultiSelect>
 
                 <div class=" form__field form__button">
                     <button type="submit" class="btn btn-primary">
@@ -62,8 +63,8 @@
         @foreach (InventoryEntry entry in inventoryEntries!)
         {
             <InventoryEntryCard
-                @key="entry.Id"
-                InventoryEntry="entry">
+            @key="entry.Id"
+            InventoryEntry="entry">
             </InventoryEntryCard>
         }
     }
@@ -92,8 +93,7 @@
         inventoryCategories = await categoryProvider.GetInventoryCategoriesAsync();
         if (inventoryCategories.Any()) inventoryCategories.Sort((x, y) => x.Category!.Name.CompareTo(y.Category!.Name));
 
-        Model ??= new InventoryEntryFormModel(inventoryEntries) { };
-        if (inventoryCategories.Any()) Model.InventoryCategory = inventoryCategories.First();
+        Model ??= new InventoryEntryFormModel(inventoryEntries, inventoryCategories.Any() ? inventoryCategories.First() : null!) { };
         editContext = new(Model);
         editContext.OnFieldChanged += HandleFieldChanged;
 
@@ -114,38 +114,43 @@
         }
     }
 
+    private void HandleSelect(List<InventoryEntryCategory> inventoryEntryCategories)
+    {
+        Model!.InventoryCategories = inventoryEntryCategories;
+    }
+
     private async Task Submit() => await CreateInventoryEntry();
 
     private async Task CreateInventoryEntry()
     {
-        // InventoryEntry newInventoryEntry = new InventoryEntry 
-        // { 
-        //     Id = 0,
-        //     Name = Model!.Name,
-        //     InventoryCategoryId = Model.InventoryCategory.Id,
-        //     Order = ORDER_DEFAULT_VALUE
-        // };
+        InventoryEntry newInventoryEntry = new InventoryEntry 
+        { 
+            Id = 0,
+            Name = Model!.Name,
+            InventoryEntryCategories = Model.InventoryCategories,
+            Order = ORDER_DEFAULT_VALUE
+        };
 
-        // try
-        // {
-        //     await inventoryEntryProvider.CreateInventoryEntryAsync(newInventoryEntry);
-        // }
-        // catch (EntityAlreadyExistsException)
-        // {
-        //     Model.EntityAlreadyExistsFlag = true;
-        //     editContext!.Validate();
-        // }
-        // catch (EntityWasNullException)
-        // {
-        //     Model.EntityWasNullFlag = true;
-        //     editContext!.Validate();
-        // }
-        // catch (UnexpectedResponseException)
-        // {
-        //     Model.UnexpectedResponseFlag = true;
-        //     editContext!.Validate();
-        // }
-        // StateHasChanged();
+        try
+        {
+            await inventoryEntryProvider.CreateInventoryEntryAsync(newInventoryEntry);
+        }
+        catch (EntityAlreadyExistsException)
+        {
+            Model.EntityAlreadyExistsFlag = true;
+            editContext!.Validate();
+        }
+        catch (EntityWasNullException)
+        {
+            Model.EntityWasNullFlag = true;
+            editContext!.Validate();
+        }
+        catch (UnexpectedResponseException)
+        {
+            Model.UnexpectedResponseFlag = true;
+            editContext!.Validate();
+        }
+        StateHasChanged();
     }
 
     private void HandleSignalRNewInventoryEntry(InventoryEntry newInventoryEntry)

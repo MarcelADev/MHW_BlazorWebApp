@@ -576,57 +576,74 @@ app.MapDelete("/gameextensions/{id}", async (AppDbContext dbContext, IHubContext
 
 #region Endpoint: Inventory Entry
 
-//app.MapGet("/inventoryEntries", async (AppDbContext dbContext, ClaimsPrincipal user) =>
-//{
-//    var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
-//    if (userIdClaim == null) return Results.Unauthorized();
+app.MapGet("/inventoryEntries", async (AppDbContext dbContext, ClaimsPrincipal user) =>
+{
+    var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
+    if (userIdClaim == null) return Results.Unauthorized();
 
-//    var inventoryEntries = await dbContext.InventoryEntries
-//        .Include(i => i.InventoryCategory!.Category)
-//        .ToListAsync();
+    var inventoryEntries = await dbContext.InventoryEntries
+        .Include(i => i.InventoryEntryCategories)
+            .ThenInclude(ic => ic.Category)
+        .ToListAsync();
+
+    return Results.Ok(inventoryEntries); ;
+}
+).RequireAuthorization(policy => policy.RequireRole("Master", "Admin"));
+
+app.MapPost("/inventoryEntries", async (AppDbContext dbContext, ClaimsPrincipal user, IHubContext<DataBaseUpdatesHub> hubContext, InventoryEntry newInventoryEntry) =>
+{
+    var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
+    if (userIdClaim == null) return Results.Unauthorized();
+
+    bool exists = await dbContext.InventoryEntries.AnyAsync(ie => ie.Name == newInventoryEntry.Name);
+    if (exists) return Results.StatusCode(HTTP_STATUSCODE_CONFLICT);
+
+    if (newInventoryEntry.InventoryEntryCategories != null && newInventoryEntry.InventoryEntryCategories.Any())
+    {
+        var validCategoryIds = newInventoryEntry.InventoryEntryCategories.Select(c => c.Id).ToList();
+
+        // Replace the incoming categories with tracked entities from DB
+        newInventoryEntry.InventoryEntryCategories = await dbContext.InventoryEntryCategories
+            .Where(iec => validCategoryIds.Contains(iec.Id))
+            .ToListAsync();
+    }
+
+    // NOTE: maybe reload the InventoryEntryCategories from the database to ensure they are full
+
+    await dbContext.InventoryEntries.AddAsync(newInventoryEntry);
+    await dbContext.SaveChangesAsync();
+
+    await hubContext.Clients.All.SendAsync("ReceiveNewInventoryEntry", newInventoryEntry);
+
+    return Results.Created($"/inventoryEntries/{newInventoryEntry.Id}", newInventoryEntry);
+}
+).RequireAuthorization(policy => policy.RequireRole("Master", "Admin"));
+
+app.MapPut("/inventoryEntries/{id}", async (AppDbContext dbContext, ClaimsPrincipal user, IHubContext<DataBaseUpdatesHub> hubContext, InventoryEntry updatedInventoryEntry, int id) =>
+{
+    var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
+    if (userIdClaim == null) return Results.Unauthorized();
+
+    var existingInventoryEntry = await dbContext.InventoryEntries
+        .Include(ie => ie.InventoryEntryCategories)
+        .FirstOrDefaultAsync(ie => ie.Id == id);
+    if (existingInventoryEntry == null) return Results.NotFound();
+
+    existingInventoryEntry.Name = updatedInventoryEntry.Name;
+
+    foreach(InventoryEntryCategory iec in existingInventoryEntry.InventoryEntryCategories)
+        if (!updatedInventoryEntry.InventoryEntryCategories.Contains(iec)) dbContext.InventoryEntryCategories.Remove(iec);
     
-//    return Results.Ok(inventoryEntries); ;
-//}
-//).RequireAuthorization(policy => policy.RequireRole("Master", "Admin"));
+    foreach (InventoryEntryCategory iec in updatedInventoryEntry.InventoryEntryCategories)
+        if (!existingInventoryEntry.InventoryEntryCategories.Contains(iec)) dbContext.InventoryEntryCategories.Add(iec);
 
-//app.MapPost("/inventoryEntries", async (AppDbContext dbContext, ClaimsPrincipal user, IHubContext<DataBaseUpdatesHub> hubContext, InventoryEntry newInventoryEntry) =>
-//{
-//    var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
-//    if (userIdClaim == null) return Results.Unauthorized();
+    await dbContext.SaveChangesAsync();
 
-//    bool exists = await dbContext.InventoryEntries.AnyAsync(ie => ie.Name == newInventoryEntry.Name);
-//    if (exists) return Results.StatusCode(HTTP_STATUSCODE_CONFLICT);
+    await hubContext.Clients.All.SendAsync("ReceiveUpdatedInventoryEntry", existingInventoryEntry);
 
-//    await dbContext.InventoryEntries.AddAsync(newInventoryEntry);
-//    await dbContext.SaveChangesAsync();
+    return Results.NoContent();
 
-//    if (newInventoryEntry.InventoryCategory == null)
-//        newInventoryEntry.InventoryCategory = await dbContext.InventoryEntryCategories
-//            .FirstOrDefaultAsync(ic => ic.Id == newInventoryEntry.InventoryCategoryId);
-
-//    await hubContext.Clients.All.SendAsync("ReceiveNewInventoryEntry", newInventoryEntry);
-
-//    return Results.Created($"/inventoryEntries/{newInventoryEntry.Id}", newInventoryEntry);
-//}
-//).RequireAuthorization(policy => policy.RequireRole("Master", "Admin"));
-
-//app.MapPut("/inventoryEntries/{id}", async (AppDbContext dbContext, ClaimsPrincipal user, IHubContext<DataBaseUpdatesHub> hubContext, InventoryEntry updatedInventoryEntry, int id) =>
-//{
-//    var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
-//    if (userIdClaim == null) return Results.Unauthorized();
-
-//    var existingInventoryEntry = await dbContext.InventoryEntries.FindAsync(id);
-//    if (existingInventoryEntry == null) return Results.NotFound();
-
-//    existingInventoryEntry.Name = updatedInventoryEntry.Name;
-//    existingInventoryEntry.InventoryCategory = updatedInventoryEntry.InventoryCategory;
-//    await dbContext.SaveChangesAsync();
-
-//    await hubContext.Clients.All.SendAsync("ReceiveUpdatedInventoryEntry", existingInventoryEntry);
-
-//    return Results.NoContent();
-
-//}).RequireAuthorization(policy => policy.RequireRole("Master", "Admin"));
+}).RequireAuthorization(policy => policy.RequireRole("Master", "Admin"));
 
 app.MapDelete("/inventoryEntries/{id}", async (AppDbContext dbContext, IHubContext<DataBaseUpdatesHub> hubContext, ClaimsPrincipal user, int id) =>
 {
