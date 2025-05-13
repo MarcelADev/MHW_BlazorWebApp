@@ -13,226 +13,177 @@
 @inject ILogger<CreateSession> Logger
 
 <header class="container-center header">
-    <h2>Create new Session</h2>
+	<h2>Create new Session</h2>
 </header>
 
 <main class="container-top">
 
-    <div class="form__container">
-        @if(!isLoading)
-        {
-            <EditForm EditContext="editContext" FormName="session" OnValidSubmit="Submit">
-                <DataAnnotationsValidator />
-                <ValidationSummary />
+	<div class="form__container">
+		@if (!isLoading)
+		{
+			<EditForm EditContext="editContext" FormName="session" OnValidSubmit="Submit">
+				<DataAnnotationsValidator />
+				<ValidationSummary />
 
-                <div class="form__field form__field-input">
-                    <label for="session-name">Name</label>
-                    <InputText name="session-name" @bind-Value="Model!.Name"/>
-                </div>
+				<div class="form__field form__field-input">
+					<label for="session-name">Name</label>
+					<InputText name="session-name" @bind-Value="Model!.Name" />
+				</div>
 
-                <div class="form__field form__field-input">
-                    <label for="session-max-days">Max Days</label>
-                    <InputNumber name="session-max-days" @bind-Value="Model!.MaxDays"/>
-                </div>
+				<div class="form__field form__field-input">
+					<label for="session-max-days">Max Days</label>
+					<InputNumber name="session-max-days" @bind-Value="Model!.MaxDays" />
+				</div>
 
-                <MultiSelect Label="Select Players"
-                Placeholder="Select"
-                T="Player"
-                Options="@players"
-                OptionNameMapper="(Player player) => player.UserName"
-                OptionValueMapper="(Player player) => player.Id"
-                ValueListChanged="HandleSelect">
-                </MultiSelect>
+				<MultiSelect Label="Select Players"
+					Placeholder="Select"
+					T="Player"
+					Options="@players"
+					OptionNameMapper="(Player player) => player.UserName"
+					OptionValueMapper="(Player player) => player.Id"
+					ValueListChanged="HandleSelect">
+				</MultiSelect>
 
-                <div class="form__field">
-                    <ParticipatorCard @bind-Value="Model!.UserParticipator" weaponTypes="weaponTypes" />
-                </div>
+				<div class="form__field">
+					<ParticipatorCard @bind-Value="Model!.UserParticipator" weaponTypes="weaponTypes" />
+				</div>
 
-                @for (var i = 0; i < Model!.Participators.Count; i++)
-                {
-                    var participator = Model!.Participators[i];
+				@for (var i = 0; i < Model!.Participators.Count; i++)
+				{
+					var participator = Model!.Participators[i];
 
-                    @if (Model!.PlayerIds.Contains(participator.PlayerId))
-                    {
-                        <div class="form__field">
-                            <ParticipatorCard @bind-Value="participator" weaponTypes="weaponTypes" />
-                        </div>
-                    }
-                }
+					@if (Model!.PlayerIds.Contains(participator.PlayerId))
+					{
+						<div class="form__field">
+							<ParticipatorCard @bind-Value="participator" weaponTypes="weaponTypes" />
+						</div>
+					}
+				}
 
-                <div class=" form__field form__button">
-                    <button type="submit" class="btn btn-primary">
-                        Create Session
-                    </button>
-                </div>
+				<div class=" form__field form__button">
+					<button type="submit" class="btn btn-primary">
+						Create Session
+					</button>
+				</div>
 
-            </EditForm>
-        }
-    </div>
+			</EditForm>
+		}
+	</div>
 
 </main>
 
 <footer class="footer"></footer>
 
 @code {
+	#region Baustelle
+	private bool isLoading = true;
+	private bool isFormValid = true;
+	private EditContext? editContext;
 
-    #region Baustelle
-    private bool isLoading = true;
-    private bool isFormValid = true;
-    private EditContext? editContext;
+	[SupplyParameterFromForm]
+	private SessionFormModel? Model { get; set; }
 
-    [SupplyParameterFromForm]
-    private SessionFormModel? Model { get; set; }
+	private List<Player> players = [];
+	private List<WeaponType> weaponTypes = [];
 
-    private List<Player> players = [];
-    private List<WeaponType> weaponTypes = [];
+	private IIdentity? user { get; set; } = null;
 
-    private IIdentity? user { get; set; } = null;
+	#endregion
 
-    #endregion
+	protected override async Task OnInitializedAsync()
+	{
+		players = await playerProvider.GetPlayersAsync();
+		weaponTypes = await weaponProvider.GetWeaponTypesAsync();
 
-    protected override async Task OnInitializedAsync()
-    {
-        players = await playerProvider.GetPlayersAsync();
-        weaponTypes = await weaponProvider.GetWeaponTypesAsync();
+		var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+		user = authState.User.Identity;
 
-        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        user = authState.User.Identity;
+		Model ??= new SessionFormModel()
+			{
+				UserParticipator = new Participator()
+				{
+					Id = 0,
+					SessionId = 0,
+					Player = new Player() { UserName = user?.Name },
+					PlayerId = 0,
+					WeaponType = weaponTypes.First(),
+					WeaponTypeId = weaponTypes.First().Id,
+				}
+			};
 
-        Model ??= new SessionFormModel()
-        {
-            UserParticipator = new Participator()
-            {
-                Id = 0,
-				SessionId = 0,
-                Player = new Player() { UserName = user?.Name },
-                PlayerId = 0,
-                WeaponType = weaponTypes.First(),
-                WeaponTypeId = weaponTypes.First().Id,
-            }
-        };
+		editContext = new(Model);
+		editContext.OnFieldChanged += HandleFieldChanged;
 
-        editContext = new(Model);
-        editContext.OnFieldChanged += HandleFieldChanged;
+		isLoading = false;
+		StateHasChanged();
+	}
 
-        isLoading = false;
-        StateHasChanged();
-    }
+	private void HandleFieldChanged(object? sender, FieldChangedEventArgs e)
+	{
+		if (editContext is not null)
+		{
+			isFormValid = !editContext.Validate();
+			StateHasChanged();
+		}
+	}
 
-    private void HandleFieldChanged(object? sender, FieldChangedEventArgs e)
-    {
-        if(editContext is not null)
-        {
-            isFormValid = !editContext.Validate();
-            StateHasChanged();
-        }
-    }
+	private void HandleSelect(List<Player> players)
+	{
+		Model!.PlayerIds = players.Select(p => p.Id).ToArray();
 
-    private void HandleSelect(List<Player> players)
-    {
-        Model!.PlayerIds = players.Select(p => p.Id).ToArray();
-
-        Model!.Participators.RemoveAll(pa => !Model!.PlayerIds.Contains(pa.PlayerId));
-        Model!.Participators.AddRange(
-        players
-        .FindAll(p => !Model.Participators.Select(pa => pa.PlayerId).Contains(p.Id))
-        .Select(p => new Participator()
-            {
+		Model!.Participators.RemoveAll(pa => !Model!.PlayerIds.Contains(pa.PlayerId));
+		Model!.Participators.AddRange(
+		players
+		.FindAll(p => !Model.Participators.Select(pa => pa.PlayerId).Contains(p.Id))
+		.Select(p => new Participator()
+			{
 				Id = 0,
-                SessionId = 0,
-                Player = p,
-                PlayerId = p.Id,
-                WeaponType = weaponTypes.First(),
-                WeaponTypeId = weaponTypes.First().Id,
-            })
-        );
-        Model!.Participators.Sort((lhs, rhs) => lhs.Player!.UserName!.CompareTo(rhs.Player!.UserName));
-    }
+				SessionId = 0,
+				Player = p,
+				PlayerId = p.Id,
+				WeaponType = weaponTypes.First(),
+				WeaponTypeId = weaponTypes.First().Id,
+			})
+		);
+		Model!.Participators.Sort((lhs, rhs) => lhs.Player!.UserName!.CompareTo(rhs.Player!.UserName));
+	}
 
-    private async Task Submit() => await CreateNewSession();
+	private async Task Submit() => await CreateNewSession();
 
-    private async Task CreateNewSession()
-    {
-        Logger.LogInformation($"Hi");
+	private async Task CreateNewSession()
+	{
+		Logger.LogInformation($"Hi");
 
-        Session newSession = new Session
-        {
-            Id = 0,
-            Name = Model!.Name,
-            DayCount = 1,
-            MaxDays = Model.MaxDays,
-            Date = DateUtils.GetDateString()
-        };
+		Session newSession = new Session
+			{
+				Id = 0,
+				Name = Model!.Name,
+				DayCount = 1,
+				MaxDays = Model.MaxDays,
+				Date = DateUtils.GetDateString()
+			};
 
-        var createdSession = await sessionProvider.CreateSessionAsync(newSession);
+		var createdSession = await sessionProvider.CreateSessionAsync(newSession);
 
-        foreach (var participator in Model.Participators)
-        {
-            bool isSelf = false;
+		foreach (var participator in Model.Participators)
+		{
+			bool isSelf = false;
 
-            if (participator.PlayerId == 0) isSelf = true;
+			if (participator.PlayerId == 0) isSelf = true;
 
-            participator.SessionId = createdSession.Id;
+			participator.SessionId = createdSession.Id;
 
-            await participatorProvider.CreateParticipatorAsync(participator, isSelf);
-        }
+			await participatorProvider.CreateParticipatorAsync(participator, isSelf);
+		}
 
-        navigationManager.NavigateTo("/session");
-    }
+		navigationManager.NavigateTo("/session");
+	}
 
-    public void Dispose()
-    {
-        if (editContext is not null)
-        {
-            editContext.OnFieldChanged -= HandleFieldChanged;
-        }
-    }
-    /*
-    private async Task OnConfirmButtonClicked()
-    {
-        errors = false;
-        errorList = [];
-
-        if (string.IsNullOrEmpty(inputName!.Value))
-        {
-            errors = true;
-            errorList.Add("Session Name required");
-            }
-
-        if (inputMaxDays!.Value < 1){
-            errors = true;
-            errorList.Add("Maximum Days must be minimum 1");
-            }
-
-        if (errors) return;
-
-        Session newSession = new Session
-        {
-            Id = 0,
-            Name = inputName.Value,
-            DayCount = 1,
-            MaxDays = inputMaxDays.Value,
-            Date = DateUtils.GetDateString()
-            };
-
-        var createdSession = await sessionProvider.CreateSessionAsync(newSession);
-
-        foreach(var data in weaponTypeDictionary)
-        {
-            bool isSelf = data.Key == -1;
-
-            Participator participator = new Participator
-            {
-                Id = 0,
-                PlayerId = data.Key,
-                SessionId = createdSession.Id,
-                WeaponTypeId = data.Value
-                };
-
-            await participatorProvider.CreateParticipatorAsync(participator, isSelf);
-            }
-
-        navigationManager.NavigateTo("/session");
-        }
-        */
+	public void Dispose()
+	{
+		if (editContext is not null)
+		{
+			editContext.OnFieldChanged -= HandleFieldChanged;
+		}
+	}
 }

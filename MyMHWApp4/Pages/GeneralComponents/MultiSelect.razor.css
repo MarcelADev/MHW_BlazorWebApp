@@ -10,12 +10,14 @@
 }
 
 .select__trigger {
+    position: relative;
     display: flex;
     align-items: center;
     border: 1px solid var(--neutral);
     border-radius: var(--border-radius);
     padding: 0.5rem;
     min-height: var(--input-height);
+    z-index: 1;
 }
 
 .select:hover {
@@ -36,6 +38,7 @@
     display: flex;
     gap: 0.5rem;
     flex-wrap: wrap;
+    margin-right: calc(0.5rem + 24px);
 }
 
 .select-chip {

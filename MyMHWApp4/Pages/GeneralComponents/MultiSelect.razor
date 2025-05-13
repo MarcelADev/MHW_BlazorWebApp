@@ -35,7 +35,7 @@ else
                     }
                     @foreach (var selected in ValueList)
                     {
-                        <button inert type="button" class="btn select-chip">
+                        <button inert type="button" class="btn btn-primary select-chip">
                             <span>
                                 @OptionNameMapper(selected)
                                 <span class="material-symbols-outlined">
@@ -72,7 +72,7 @@ else
             
             @foreach (var selected in ValueList)
             {
-                <button tabindex="-1" type="button" class="btn select-chip select-chip-clickable"
+                <button tabindex="-1" type="button" class="btn btn-primary select-chip select-chip-clickable"
                         @onclick="@((_) => HandleCustomChangeMultiple(selected))">
                     <span>
                         @OptionNameMapper(selected)
