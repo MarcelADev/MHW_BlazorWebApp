@@ -118,34 +118,34 @@
 
     private async Task CreateInventoryEntry()
     {
-        InventoryEntry newInventoryEntry = new InventoryEntry 
-        { 
-            Id = 0,
-            Name = Model!.Name,
-            InventoryCategoryId = Model.InventoryCategory.Id,
-            Order = ORDER_DEFAULT_VALUE
-        };
+        // InventoryEntry newInventoryEntry = new InventoryEntry 
+        // { 
+        //     Id = 0,
+        //     Name = Model!.Name,
+        //     InventoryCategoryId = Model.InventoryCategory.Id,
+        //     Order = ORDER_DEFAULT_VALUE
+        // };
 
-        try
-        {
-            await inventoryEntryProvider.CreateInventoryEntryAsync(newInventoryEntry);
-        }
-        catch (EntityAlreadyExistsException)
-        {
-            Model.EntityAlreadyExistsFlag = true;
-            editContext!.Validate();
-        }
-        catch (EntityWasNullException)
-        {
-            Model.EntityWasNullFlag = true;
-            editContext!.Validate();
-        }
-        catch (UnexpectedResponseException)
-        {
-            Model.UnexpectedResponseFlag = true;
-            editContext!.Validate();
-        }
-        StateHasChanged();
+        // try
+        // {
+        //     await inventoryEntryProvider.CreateInventoryEntryAsync(newInventoryEntry);
+        // }
+        // catch (EntityAlreadyExistsException)
+        // {
+        //     Model.EntityAlreadyExistsFlag = true;
+        //     editContext!.Validate();
+        // }
+        // catch (EntityWasNullException)
+        // {
+        //     Model.EntityWasNullFlag = true;
+        //     editContext!.Validate();
+        // }
+        // catch (UnexpectedResponseException)
+        // {
+        //     Model.UnexpectedResponseFlag = true;
+        //     editContext!.Validate();
+        // }
+        // StateHasChanged();
     }
 
     private void HandleSignalRNewInventoryEntry(InventoryEntry newInventoryEntry)

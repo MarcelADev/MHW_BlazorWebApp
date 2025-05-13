@@ -94,7 +94,7 @@
 		modalBodyText = $"Are you sure you want to remove {InventoryEntry.Name}?";
 
 		Model ??= new InventoryEntryCardFormModel(InventoryEntry);
-		Model.InventoryCategory = InventoryEntry.InventoryCategory!;
+		// Model.InventoryCategory = InventoryEntry.InventoryCategory!;
 		editContext = new(Model);
 
 		hubService.OnUpdatedInventoryEntry += HandleSignalRUpdatedInventoryEntry;
@@ -111,7 +111,7 @@
 		{
 			Id = InventoryEntry.Id,
 			Name = Model!.NewName,
-			InventoryCategoryId = Model.InventoryCategory.Id,
+			// InventoryCategoryId = Model.InventoryCategory.Id,
 			Order = ORDER_DEFAULT_VALUE
 		};
 
@@ -181,7 +181,7 @@
 		if (InventoryEntry.Id == updatedInventoryEntry.Id)
 		{
 			InventoryEntry.Name = Model!.Name = Model.NewName = updatedInventoryEntry.Name;
-			InventoryEntry.InventoryCategory = Model.InventoryCategory = updatedInventoryEntry.InventoryCategory!;
+			// InventoryEntry.InventoryCategory = Model.InventoryCategory = updatedInventoryEntry.InventoryCategory!;
 		}
 		StateHasChanged();
 	}
