@@ -9,7 +9,8 @@ namespace MyMHWApp4.Pages.Admin.EditCategory
         public string Name { get; set; }
         public string NewName { get; set; }
 
-        public InventoryEntryCategory InventoryCategory { get; set; }
+        public List<InventoryEntryCategory> CurrentInventoryCategories { get; set; } = [];
+        public List<InventoryEntryCategory> SelectedInventoryCategories { get; set; } = [];
 
         public bool EntityAlreadyExistsFlag { get; set; } = false;
         public bool EntityWasNullFlag { get; set; } = false;
@@ -20,6 +21,7 @@ namespace MyMHWApp4.Pages.Admin.EditCategory
         public InventoryEntryCardFormModel(InventoryEntry inventoryEntry)
         {
             Name = NewName = inventoryEntry.Name;
+            CurrentInventoryCategories = SelectedInventoryCategories = inventoryEntry.InventoryEntryCategories;
         }
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
@@ -43,7 +45,9 @@ namespace MyMHWApp4.Pages.Admin.EditCategory
             {
                 yield return new ValidationResult("Name must not be empty", [nameof(Name)]);
             }
-            if (Name.Equals(NewName))
+            if (Name.Equals(NewName) &&
+                CurrentInventoryCategories.All(iec => SelectedInventoryCategories.Contains(iec)) &&
+                SelectedInventoryCategories.All(iec => CurrentInventoryCategories.Contains(iec)))
             {
                 yield return new ValidationResult("Nothing was changed", [nameof(Name)]);
             }

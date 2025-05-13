@@ -45,12 +45,14 @@
 						<InputText id="inventoryEntryCard-name" @bind-Value="Model!.NewName" />
 					</div>
 
-					<SingleSelect T="InventoryEntryCategory"
-						Options="@inventoryEntryCategories"
-						OptionNameMapper="(InventoryEntryCategory inventoryCategory) => inventoryCategory.Category!.Name"
-						OptionValueMapper="(InventoryEntryCategory inventoryCategory) => inventoryCategory.Id"
-						@bind-Value="Model.InventoryCategory">
-					</SingleSelect>
+					<MultiSelect Label="Change Categories"
+								 Placeholder="Select"
+								 T="InventoryEntryCategory"
+								 Options="@allInventoryEntryCategories"
+								 OptionNameMapper="(InventoryEntryCategory inventoryCategory) => inventoryCategory.Category.Name"
+								 OptionValueMapper="(InventoryEntryCategory inventoryCategory) => inventoryCategory.Id"
+								 ValueListChanged="HandleSelect">
+					</MultiSelect>
 				}
 			</div>
 
@@ -76,7 +78,7 @@
 
 	private string? modalBodyText;
 
-	private List<InventoryEntryCategory>? inventoryEntryCategories;
+	private List<InventoryEntryCategory>? allInventoryEntryCategories;
 
 	public EditContext? editContext;
 
@@ -88,19 +90,23 @@
 
 	protected override async Task OnInitializedAsync()
 	{
-		inventoryEntryCategories = await categoryProvider.GetInventoryCategoriesAsync();
-		if (inventoryEntryCategories.Any()) inventoryEntryCategories.Sort((x, y) => x.Category!.Name.CompareTo(y.Category!.Name));
+		allInventoryEntryCategories = await categoryProvider.GetInventoryCategoriesAsync();
+		if (allInventoryEntryCategories.Any()) allInventoryEntryCategories.Sort((x, y) => x.Category!.Name.CompareTo(y.Category!.Name));
 
 		modalBodyText = $"Are you sure you want to remove {InventoryEntry.Name}?";
 
 		Model ??= new InventoryEntryCardFormModel(InventoryEntry);
-		// Model.InventoryCategory = InventoryEntry.InventoryCategory!;
 		editContext = new(Model);
 
 		hubService.OnUpdatedInventoryEntry += HandleSignalRUpdatedInventoryEntry;
 
 		isLoading = false;
 		StateHasChanged();
+	}
+
+	private void HandleSelect(List<InventoryEntryCategory> inventoryEntryCategories)
+	{
+		Model!.SelectedInventoryCategories = inventoryEntryCategories;
 	}
 
 	private async Task Submit() => await ChangeInventoryEntryNameAndOrCategory();
@@ -111,8 +117,8 @@
 		{
 			Id = InventoryEntry.Id,
 			Name = Model!.NewName,
-			// InventoryCategoryId = Model.InventoryCategory.Id,
-			Order = ORDER_DEFAULT_VALUE
+			Order = ORDER_DEFAULT_VALUE,
+			InventoryEntryCategories = Model.SelectedInventoryCategories
 		};
 
 		try
@@ -181,7 +187,7 @@
 		if (InventoryEntry.Id == updatedInventoryEntry.Id)
 		{
 			InventoryEntry.Name = Model!.Name = Model.NewName = updatedInventoryEntry.Name;
-			// InventoryEntry.InventoryCategory = Model.InventoryCategory = updatedInventoryEntry.InventoryCategory!;
+			InventoryEntry.InventoryEntryCategories = Model.SelectedInventoryCategories = updatedInventoryEntry.InventoryEntryCategories!;
 		}
 		StateHasChanged();
 	}

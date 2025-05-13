@@ -631,11 +631,23 @@ app.MapPut("/inventoryEntries/{id}", async (AppDbContext dbContext, ClaimsPrinci
 
     existingInventoryEntry.Name = updatedInventoryEntry.Name;
 
-    foreach(InventoryEntryCategory iec in existingInventoryEntry.InventoryEntryCategories)
-        if (!updatedInventoryEntry.InventoryEntryCategories.Contains(iec)) dbContext.InventoryEntryCategories.Remove(iec);
-    
-    foreach (InventoryEntryCategory iec in updatedInventoryEntry.InventoryEntryCategories)
-        if (!existingInventoryEntry.InventoryEntryCategories.Contains(iec)) dbContext.InventoryEntryCategories.Add(iec);
+    var updatedCategoryIds = updatedInventoryEntry.InventoryEntryCategories
+        .Select(c => c.Id)
+        .ToHashSet();
+
+    existingInventoryEntry.InventoryEntryCategories.RemoveAll(c => !updatedCategoryIds.Contains(c.Id));
+
+    var existingCategoryIds = existingInventoryEntry.InventoryEntryCategories.Select(c => c.Id).ToHashSet();
+    var missingCategoryIds = updatedCategoryIds.Except(existingCategoryIds);
+
+    foreach (var categoryId in missingCategoryIds)
+    {
+        var category = await dbContext.InventoryEntryCategories.FindAsync(categoryId);
+        if (category != null)
+        {
+            existingInventoryEntry.InventoryEntryCategories.Add(category);
+        }
+    }
 
     await dbContext.SaveChangesAsync();
 

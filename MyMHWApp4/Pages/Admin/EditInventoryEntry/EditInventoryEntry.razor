@@ -93,7 +93,7 @@
         inventoryCategories = await categoryProvider.GetInventoryCategoriesAsync();
         if (inventoryCategories.Any()) inventoryCategories.Sort((x, y) => x.Category!.Name.CompareTo(y.Category!.Name));
 
-        Model ??= new InventoryEntryFormModel(inventoryEntries, inventoryCategories.Any() ? inventoryCategories.First() : null!) { };
+        Model ??= new InventoryEntryFormModel(inventoryEntries) { };
         editContext = new(Model);
         editContext.OnFieldChanged += HandleFieldChanged;
 

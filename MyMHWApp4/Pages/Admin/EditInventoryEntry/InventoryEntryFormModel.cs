@@ -9,20 +9,15 @@ namespace MyMHWApp4.Pages.Admin.EditInventoryEntry
         public string Name { get; set; } = string.Empty;
         private List<InventoryEntry> _inventoryEntryList;
 
-        public InventoryEntryCategory? InventoryEntryCategory { get; set; }
-
         public List<InventoryEntryCategory> InventoryCategories { get; set; } = [];
-        public int[] InventoryCategoryIds { get; set; } = [];
 
         public bool EntityAlreadyExistsFlag { get; set; } = false;
         public bool EntityWasNullFlag { get; set; } = false;
         public bool UnexpectedResponseFlag { get; set; } = false;
 
-        public InventoryEntryFormModel(List<InventoryEntry> inventoryEntryList, InventoryEntryCategory inventoryEntryCategory)
+        public InventoryEntryFormModel(List<InventoryEntry> inventoryEntryList)
         {
             _inventoryEntryList = inventoryEntryList;
-            InventoryEntryCategory = inventoryEntryCategory;
-            if (inventoryEntryCategory != null) InventoryCategories.Add(inventoryEntryCategory);
         }
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
