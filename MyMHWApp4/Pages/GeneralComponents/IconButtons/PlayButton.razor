@@ -1,0 +1,15 @@
+﻿<button class="container-center" type="button" @onclick="OnPlayButtonClicked">
+	<span class="material-symbols-outlined">
+		play_arrow
+	</span>
+</button>
+
+@code {
+	[Parameter]
+	public required EventCallback PlayButtonClicked { get; set; }
+
+	private async Task OnPlayButtonClicked()
+	{
+		await PlayButtonClicked.InvokeAsync();
+	}
+}

@@ -123,6 +123,8 @@ code {
     --secondary-color: white;
     --secondary-color-dark: whitesmoke;
     --primary-color-alternative: gray;
+    --button-play-color: #00b100;
+    --button-play-dummy-color: #686868;
     --button-edit-color: #337eff;
     --button-confirm-color: #337eff;
     --button-confirm-color-disabled: gray;
@@ -235,6 +237,13 @@ input[type="checkbox"] {
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
+}
+
+.container-left-space-evenly {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-evenly;
 }
 
 .container-right-gap {

@@ -8,6 +8,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Pages\GeneralComponents\DropDownVu\**" />
+    <Content Remove="Pages\GeneralComponents\DropDownVu\**" />
+    <EmbeddedResource Remove="Pages\GeneralComponents\DropDownVu\**" />
+    <None Remove="Pages\GeneralComponents\DropDownVu\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Include="wwwroot\Images\CardPicture.jpg" />
   </ItemGroup>
 
@@ -33,11 +40,10 @@
 
   <ItemGroup>
     <Folder Include="Exceptions\" />
-    <Folder Include="Pages\GeneralComponents\DropDownVu\" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Update="Pages\GeneralComponents\MultiSelect.razor">
+    <Content Update="Pages\GeneralComponents\Select\MultiSelect.razor">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
     </Content>
   </ItemGroup>

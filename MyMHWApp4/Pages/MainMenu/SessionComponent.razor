@@ -1,0 +1,126 @@
+﻿@using MHWApp.Library.Model
+@using MyMHWApp4.Pages.GeneralComponents.IconButtons
+@using MyMHWApp4.Provider
+@inject NavigationManager navigationManager
+@inject ParticipatorProvider participatorProvider
+
+<button class="card-session" @onclick="ToggleSelection">
+
+	<div class="container-image">
+
+		<img src="Images/CardPicture.jpg" alt="Image not available" />
+
+	</div>
+
+	@if (isSelected)
+	{
+		<div class="container__iconbuttons">
+			@if(!toggleEdit)
+			{
+				<div class="container-left-space-evenly">
+					<PlayButton PlayButtonClicked="HandlePlayButtonClicked"></PlayButton>
+					<EditButton EditButtonClicked="HandleEditButtonClicked"></EditButton>
+					<DeleteButton DeleteButtonClicked="HandleDeleteButtonClicked"></DeleteButton>
+				</div>
+			}
+			else
+			{
+				<div class="container-left-space-evenly">
+					<PlayButtonDummy></PlayButtonDummy>
+					<ConfirmButton ConfirmButtonClicked="HandleConfirmButtonClicked"></ConfirmButton>
+					<CancelButton CancelButtonClicked="HandleCancelButtonClicked"></CancelButton>
+				</div>
+			}
+		</div>
+	}
+
+	<div class="container-data">
+
+		<h5>@Session.Name</h5>
+
+		<div class="container-property">
+
+			<div class="container-label">
+				<label>Weapon:</label>
+			</div>
+
+			@if (participator == null)
+			{
+				<p>Loading ...</p>
+			}
+			else
+			{
+				<p>@participator.WeaponType!.Name</p>
+			}
+		</div>
+
+		<div class="container-property">
+
+			<div class="container-label">
+				<label>Days:</label>
+			</div>
+			<p>@Session.DayCount/@Session.MaxDays</p>
+
+		</div>
+
+		<div class="container-property">
+			<div class="container-label">
+				<label>Date:</label>
+			</div>
+			<p>@Session.Date</p>
+		</div>
+	</div>
+</button>
+
+@code 
+{
+	private bool isSelected = false;
+	private bool toggleEdit = false;
+
+	[Parameter]
+	public required Session Session { get; set; }
+	Participator? participator;
+
+	protected override async Task OnInitializedAsync()
+	{
+		participator = await participatorProvider.GetParticipatorAsync(Session.Id);
+		await base.OnInitializedAsync();
+	}
+
+	private void ToggleSelection()
+	{
+		isSelected = !isSelected;
+	}
+
+	private void HandlePlayButtonClicked()
+	{
+		navigationManager.NavigateTo("/inventory");
+	}
+
+	private void HandleEditButtonClicked()
+	{
+		toggleEdit = !toggleEdit;
+		StateHasChanged();
+	}
+
+	private void HandleDeleteButtonClicked()
+	{
+
+	}
+
+	private void HandleConfirmButtonClicked()
+	{
+
+	}
+
+	private void HandleCancelButtonClicked()
+	{
+		toggleEdit = !toggleEdit;
+		StateHasChanged();
+	}
+
+	private void NavigateToInventory() 
+	{ 
+		navigationManager.NavigateTo("/inventory");
+	}
+}

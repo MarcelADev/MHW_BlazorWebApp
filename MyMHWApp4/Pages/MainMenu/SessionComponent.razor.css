@@ -66,3 +66,7 @@ label {
     width: 40%;
     text-align: left;
 }
+
+.container__iconbuttons {
+    margin-top: 0.5rem;
+}

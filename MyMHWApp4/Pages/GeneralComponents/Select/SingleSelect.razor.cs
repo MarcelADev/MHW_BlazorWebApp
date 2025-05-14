@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MyMHWApp4.Pages.GeneralComponents
+namespace MyMHWApp4.Pages.GeneralComponents.Select
 {
     public partial class SingleSelect<T> : ComponentBase
     {

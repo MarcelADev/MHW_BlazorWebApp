@@ -1,0 +1,11 @@
+﻿div {
+    border: 0;
+    background: var(--button-play-dummy-color);
+    color: white;
+    border-radius: 5px;
+    padding: 10px;
+}
+
+div:hover {
+    opacity: 0.9;
+}

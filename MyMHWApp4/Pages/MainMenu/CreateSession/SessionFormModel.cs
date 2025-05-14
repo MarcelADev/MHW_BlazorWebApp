@@ -2,7 +2,7 @@
 using MyMHWApp4.Utils;
 using System.ComponentModel.DataAnnotations;
 
-namespace MyMHWApp4.Pages.Session
+namespace MyMHWApp4.Pages.MainMenu.CreateSession
 {
     public record SessionFormModel : IValidatableObject
     {

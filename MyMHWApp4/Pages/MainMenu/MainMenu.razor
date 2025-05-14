@@ -1,4 +1,4 @@
-﻿@page "/session"
+﻿@page "/mainmenu"
 @using MHWApp.Library.Model
 @using MyMHWApp4.Provider
 @inject SessionProvider sessionProvider
@@ -41,6 +41,6 @@
 	}
 
 	private void NavigateToCreateSession(){
-		navigationManager.NavigateTo("/session/create");
+		navigationManager.NavigateTo("/mainmenu/createsession");
 	}
 }

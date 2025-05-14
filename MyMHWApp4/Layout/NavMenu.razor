@@ -29,6 +29,12 @@
                         <p class="userName"><b>@context.User.Identity?.Name</b></p>
                     </div>
 
+                    <div class="nav-item px-3">
+                        <NavLink class="nav-link" href="mainmenu/createsession">
+                            <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Create Session
+                        </NavLink>
+                    </div>
+
                     if(context.User.IsInRole(ADMIN_ROLE) || context.User.IsInRole(MASTER_ROLE))
                     {
                         <div class="nav-item px-3">
@@ -81,38 +87,40 @@
 
                 }
 
-                @if(gamePagesActive || adminPagesActive || masterPageActive)
+                @if(createSessionPageActive || gamePagesActive || adminPagesActive || masterPageActive)
                 {
                     <div class="nav-item px-3">
-                        <NavLink class="nav-link" href="session">
+                        <NavLink class="nav-link" href="mainmenu">
                             <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Return to Menu
                         </NavLink>
                     </div>
                 }
 
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="logout">
-                        <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Logout
-                    </NavLink>
-                </div>
-
+                @if(mainMenuActive)
+                {
+                    <div class="nav-item px-3">
+                        <NavLink class="nav-link" href="logout">
+                            <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Logout
+                        </NavLink>
+                    </div>
+                }
             </Authorized>
         </AuthorizeView>
     </nav>
 </div>
 
 @code {
-	private static string HOME = "Home";
+    private static string HOME = "Home";
 
     // Session
-    private static string SESSION_MENU = "Menu";
+    private static string MAIN_MENU = "Menu";
     private static string SESSION_CREATE = "Create Session";
 
     // Master
     private static string MASTER = "Master Page";
 
     // Game Pages
-	private static string INVENTORY = "Inventory";
+    private static string INVENTORY = "Inventory";
 
     // Admin Pages
     private static string ADMIN_CATEGORY = "Category";
@@ -126,9 +134,10 @@
     private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
 
     private bool mainMenuActive = true;
+    private bool createSessionPageActive = false;
     private bool gamePagesActive = false;
     private bool adminPagesActive = false;
-	private bool masterPageActive = false;
+    private bool masterPageActive = false;
 
     private void ToggleNavMenu()
     {
@@ -147,8 +156,8 @@
         CurrentUrl = url switch
         {
             "/" => HOME,
-            "/session" => SESSION_MENU,
-            "/session/create" => SESSION_CREATE,
+            "/mainmenu" => MAIN_MENU,
+            "/mainmenu/createsession" => SESSION_CREATE,
             "/master" => MASTER,
             "/inventory" => INVENTORY,
             "/edit/categories" => ADMIN,
@@ -157,14 +166,17 @@
             _ => "Unknown",
         };
 
-        mainMenuActive = gamePagesActive = adminPagesActive = masterPageActive = false;
+        mainMenuActive = createSessionPageActive = gamePagesActive = adminPagesActive = masterPageActive = false;
 
-        if (CurrentUrl == SESSION_MENU || 
-            CurrentUrl == SESSION_CREATE)
+        if (CurrentUrl == MAIN_MENU)
         { 
             mainMenuActive = true; 
         }
-		else if (CurrentUrl == MASTER)
+        else if (CurrentUrl == SESSION_CREATE)
+        {
+            createSessionPageActive = true;
+        }
+        else if (CurrentUrl == MASTER)
 		{
 			masterPageActive = true;
 		}
