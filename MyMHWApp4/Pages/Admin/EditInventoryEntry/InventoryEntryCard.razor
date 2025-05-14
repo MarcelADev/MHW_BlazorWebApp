@@ -49,8 +49,9 @@
 								 Placeholder="Select"
 								 T="InventoryEntryCategory"
 								 Options="@allInventoryEntryCategories"
-								 OptionNameMapper="(InventoryEntryCategory inventoryCategory) => inventoryCategory.Category.Name"
-								 OptionValueMapper="(InventoryEntryCategory inventoryCategory) => inventoryCategory.Id"
+								 OptionNameMapper="(InventoryEntryCategory iec) => iec.Category?.Name ?? string.Empty"
+								 OptionValueMapper="(InventoryEntryCategory iec) => iec.Id"
+								 ValueList="Model.SelectedInventoryCategories"
 								 ValueListChanged="HandleSelect">
 					</MultiSelect>
 				}
@@ -97,6 +98,7 @@
 
 		Model ??= new InventoryEntryCardFormModel(InventoryEntry);
 		editContext = new(Model);
+		editContext.OnFieldChanged += HandleFieldChanged;
 
 		hubService.OnUpdatedInventoryEntry += HandleSignalRUpdatedInventoryEntry;
 
@@ -104,9 +106,20 @@
 		StateHasChanged();
 	}
 
+	private void HandleFieldChanged(object? sender, FieldChangedEventArgs e)
+	{
+		if (editContext is not null)
+		{
+			isFormValid = !editContext.Validate();
+			StateHasChanged();
+		}
+	}
+
 	private void HandleSelect(List<InventoryEntryCategory> inventoryEntryCategories)
 	{
-		Model!.SelectedInventoryCategories = inventoryEntryCategories;
+		// Model!.SelectedInventoryCategories = inventoryEntryCategories.ToList();
+		isFormValid = !editContext!.Validate();
+		StateHasChanged();
 	}
 
 	private async Task Submit() => await ChangeInventoryEntryNameAndOrCategory();
@@ -187,7 +200,9 @@
 		if (InventoryEntry.Id == updatedInventoryEntry.Id)
 		{
 			InventoryEntry.Name = Model!.Name = Model.NewName = updatedInventoryEntry.Name;
-			InventoryEntry.InventoryEntryCategories = Model.SelectedInventoryCategories = updatedInventoryEntry.InventoryEntryCategories!;
+			InventoryEntry.InventoryEntryCategories = updatedInventoryEntry.InventoryEntryCategories.ToList();
+			Model.CurrentInventoryCategories = updatedInventoryEntry.InventoryEntryCategories.ToList();
+			Model.SelectedInventoryCategories = updatedInventoryEntry.InventoryEntryCategories.ToList();
 		}
 		StateHasChanged();
 	}

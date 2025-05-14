@@ -605,10 +605,9 @@ app.MapPost("/inventoryEntries", async (AppDbContext dbContext, ClaimsPrincipal 
         // Replace the incoming categories with tracked entities from DB
         newInventoryEntry.InventoryEntryCategories = await dbContext.InventoryEntryCategories
             .Where(iec => validCategoryIds.Contains(iec.Id))
+            .Include(iec => iec.Category)
             .ToListAsync();
     }
-
-    // NOTE: maybe reload the InventoryEntryCategories from the database to ensure they are full
 
     await dbContext.InventoryEntries.AddAsync(newInventoryEntry);
     await dbContext.SaveChangesAsync();
@@ -616,8 +615,7 @@ app.MapPost("/inventoryEntries", async (AppDbContext dbContext, ClaimsPrincipal 
     await hubContext.Clients.All.SendAsync("ReceiveNewInventoryEntry", newInventoryEntry);
 
     return Results.Created($"/inventoryEntries/{newInventoryEntry.Id}", newInventoryEntry);
-}
-).RequireAuthorization(policy => policy.RequireRole("Master", "Admin"));
+}).RequireAuthorization(policy => policy.RequireRole("Master", "Admin"));
 
 app.MapPut("/inventoryEntries/{id}", async (AppDbContext dbContext, ClaimsPrincipal user, IHubContext<DataBaseUpdatesHub> hubContext, InventoryEntry updatedInventoryEntry, int id) =>
 {
@@ -626,6 +624,7 @@ app.MapPut("/inventoryEntries/{id}", async (AppDbContext dbContext, ClaimsPrinci
 
     var existingInventoryEntry = await dbContext.InventoryEntries
         .Include(ie => ie.InventoryEntryCategories)
+            .ThenInclude(iec => iec.Category)
         .FirstOrDefaultAsync(ie => ie.Id == id);
     if (existingInventoryEntry == null) return Results.NotFound();
 
@@ -642,10 +641,13 @@ app.MapPut("/inventoryEntries/{id}", async (AppDbContext dbContext, ClaimsPrinci
 
     foreach (var categoryId in missingCategoryIds)
     {
-        var category = await dbContext.InventoryEntryCategories.FindAsync(categoryId);
-        if (category != null)
+        var inventoryEntryCategory = await dbContext.InventoryEntryCategories
+            .Include(c => c.Category)
+            .FirstOrDefaultAsync(c => c.Id == categoryId);
+
+        if (inventoryEntryCategory != null)
         {
-            existingInventoryEntry.InventoryEntryCategories.Add(category);
+            existingInventoryEntry.InventoryEntryCategories.Add(inventoryEntryCategory);
         }
     }
 

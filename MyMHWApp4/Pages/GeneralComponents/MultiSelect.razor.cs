@@ -97,7 +97,8 @@ namespace MyMHWApp4.Pages.GeneralComponents
 
         private bool IsSelected(T option)
         {
-            return ValueList.Contains(option);
+            var optionValue = OptionValueMapper(option);
+            return ValueList.Any(v => OptionValueMapper(v)?.Equals(optionValue) == true);
         }
     }
 }

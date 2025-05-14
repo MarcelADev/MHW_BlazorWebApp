@@ -2,9 +2,9 @@
 
 namespace MHWApp.Library.Model
 {
-    public class InventoryEntryCategory
+    public class InventoryEntryCategory : ModelBase<int>
     {
-        public required int Id { get; set; }
+        public override required int Id { get; set; }
 
         public required int CategoryId { get; set; }
         public Category? Category { get; set; }

@@ -21,7 +21,8 @@ namespace MyMHWApp4.Pages.Admin.EditCategory
         public InventoryEntryCardFormModel(InventoryEntry inventoryEntry)
         {
             Name = NewName = inventoryEntry.Name;
-            CurrentInventoryCategories = SelectedInventoryCategories = inventoryEntry.InventoryEntryCategories;
+            CurrentInventoryCategories = inventoryEntry.InventoryEntryCategories.ToList();
+            SelectedInventoryCategories = inventoryEntry.InventoryEntryCategories;
         }
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
