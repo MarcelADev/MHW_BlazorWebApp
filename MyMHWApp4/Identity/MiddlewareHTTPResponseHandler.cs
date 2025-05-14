@@ -7,7 +7,7 @@ namespace MyMHWApp4.Identity
     /// <summary>
     /// Handler to log out the user and redirect to the start page if a 401 Unauthorized response is received.
     /// </summary>
-    public class MiddlewareHTTPResponseHandler(NavigationManager navigationManager, IAccountManagement accountManagement) : DelegatingHandler
+    public class MiddlewareHttpResponseHandler(NavigationManager navigationManager, IAccountManagement accountManagement) : DelegatingHandler
     {
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {

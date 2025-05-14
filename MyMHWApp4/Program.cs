@@ -32,7 +32,7 @@ builder.Services.AddScoped(sp =>
 
 #region MiddlewareHTTPResponseHandler Service
 
-builder.Services.AddTransient<MiddlewareHTTPResponseHandler>();
+builder.Services.AddTransient<MiddlewareHttpResponseHandler>();
 
 #endregion
 
@@ -45,7 +45,7 @@ builder.Services.AddHttpClient(
 builder.Services.AddHttpClient(
     "AuthAndResp",
     opt => opt.BaseAddress = new Uri(builder.Configuration["BackendUrl"] ?? "https://localhost:5001"))
-    .AddHttpMessageHandler<MiddlewareHTTPResponseHandler>()
+    .AddHttpMessageHandler<MiddlewareHttpResponseHandler>()
     .AddHttpMessageHandler<CookieHandler>();
 
 #region SELFMADE SERVICES
