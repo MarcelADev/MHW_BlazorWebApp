@@ -68,13 +68,13 @@
 	{
 		<p>Loading ...</p>
 	}
-	else if(!categories.Any())
+	else if(!categories!.Any())
 	{
 		<p>List is empty</p>
 	}
 	else
 	{
-		@foreach(Category category in categories)
+		@foreach(Category category in categories!)
 		{
 			<CategoryCard
 			@key="category.Id"
@@ -106,8 +106,7 @@
 		extensions = await gameExtensionProvider.GetGameExtensionsAsync();
 		if (extensions.Any()) extensions.Sort((x, y) => x.Name.CompareTo(y.Name));
 
-		Model ??= new CategoryFormModel(categories) { };
-		if (extensions.Any()) Model.GameExtension = extensions.First();
+		Model ??= new CategoryFormModel(categories, extensions.Any() ? extensions.First() ?? null : null) { };
 		editContext = new(Model);
 		editContext.OnFieldChanged += HandleFieldChanged;
 
@@ -151,7 +150,7 @@
 				{ 
 					Id = 0,
 					Name = Model!.Name,
-					GameExtensionId = Model.GameExtension.Id
+					GameExtensionId = Model.GameExtension!.Id
 				},
 				IsInventoryEntry = Model.IsInventoryCategory,
 				IsWeapon = Model.IsWeaponCategory,
@@ -202,7 +201,7 @@
 
 	private void HandleSignalRNewInventoryCategory(InventoryEntryCategory newInventoryCategory)
 	{
-		var existing = categories.Find(ic => ic.Id == newInventoryCategory.CategoryId);
+		var existing = categories!.Find(ic => ic.Id == newInventoryCategory.CategoryId);
 		if (existing != null) existing.InventoryEntryCategory = newInventoryCategory;
 		StateHasChanged();
 	}
@@ -216,7 +215,7 @@
 
 	private void HandleSignalRNewWeaponCategory(WeaponCategory newWeaponCategory)
 	{
-		var existing = categories.Find(wc => wc.Id == newWeaponCategory.CategoryId);
+		var existing = categories!.Find(wc => wc.Id == newWeaponCategory.CategoryId);
 		if (existing != null) existing.WeaponCategory = newWeaponCategory;
 		StateHasChanged();
 	}
@@ -230,7 +229,7 @@
 
 	private void HandleSignalRNewArmorCategory(ArmorCategory newArmorCategory)
 	{
-		var existing = categories.Find(ac => ac.Id == newArmorCategory.CategoryId);
+		var existing = categories!.Find(ac => ac.Id == newArmorCategory.CategoryId);
 		if (existing != null) existing.ArmorCategory = newArmorCategory;
 		StateHasChanged();
 	}

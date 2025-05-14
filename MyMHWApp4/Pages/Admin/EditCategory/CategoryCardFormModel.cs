@@ -26,9 +26,13 @@ namespace MyMHWApp4.Pages.Admin.EditCategory
         public GameExtension CurrentGameExtension { get; set; }
         public GameExtension NewGameExtension { get; set; }
 
-        public CategoryCardFormModel(Category category)
+        public CategoryCardFormModel(Category category, GameExtension gameExtension)
         {
             Name = NewName = category.Name;
+
+            CurrentGameExtension = gameExtension;
+            NewGameExtension = gameExtension;
+
             IsCurrentlyInventoryCategory = IsInventoryCategory = category.InventoryEntryCategory != null;
             IsCurrentlyWeaponCategory = IsWeaponCategory = category.WeaponCategory != null;
             IsCurrentlyArmorCategory = IsArmorCategory = category.ArmorCategory != null;

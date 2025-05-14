@@ -164,12 +164,12 @@
 		Model!.NewName = Model.Name;
 	}
 
-	private async Task HandleDeleteButtonClicked()
+	private void HandleDeleteButtonClicked()
 	{
 		showModal = true;
 	}
 
-	private async Task HandleModalCloseOrCancelButtonClicked()
+	private void HandleModalCloseOrCancelButtonClicked()
 	{
 		showModal = false;
 	}
@@ -184,12 +184,12 @@
 		}
 		catch (EntityWasNotFoundException)
 		{
-			Model.EntityWasNullFlag = true;
+			Model!.EntityWasNullFlag = true;
 			editContext!.Validate();
 		}
 		catch (UnexpectedResponseException)
 		{
-			Model.UnexpectedResponseFlag = true;
+			Model!.UnexpectedResponseFlag = true;
 			editContext!.Validate();
 		}
 		StateHasChanged();

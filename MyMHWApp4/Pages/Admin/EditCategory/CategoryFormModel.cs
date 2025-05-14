@@ -18,11 +18,12 @@ namespace MyMHWApp4.Pages.Admin.EditCategory
         public bool EntityWasNullFlag { get; set; } = false;
         public bool UnexpectedResponseFlag { get; set; } = false;
 
-        public GameExtension GameExtension { get; set; }
+        public GameExtension? GameExtension { get; set; }
 
-        public CategoryFormModel(List<Category> categoryList)
+        public CategoryFormModel(List<Category> categoryList, GameExtension? gameExtension)
         {
             _categoryList = categoryList;
+            GameExtension = gameExtension;
         }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)

@@ -35,7 +35,7 @@
                 Placeholder="Select"
                 T="InventoryEntryCategory"
                 Options="@inventoryCategories"
-                OptionNameMapper="(InventoryEntryCategory inventoryCategory) => inventoryCategory.Category.Name"
+                OptionNameMapper="(InventoryEntryCategory iec) => iec.Category?.Name ?? string.Empty"
                 OptionValueMapper="(InventoryEntryCategory inventoryCategory) => inventoryCategory.Id"
                 ValueListChanged="HandleSelect">
                 </MultiSelect>

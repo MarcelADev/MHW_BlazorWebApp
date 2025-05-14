@@ -108,8 +108,7 @@
 
 		modalBodyText = $"Are you sure you want to remove {Category.Name}?";
 
-		Model ??= new CategoryCardFormModel(Category);
-		Model.CurrentGameExtension = Model.NewGameExtension = Category.GameExtension!;
+		Model ??= new CategoryCardFormModel(Category, Category.GameExtension!);
 		editContext = new(Model);
 
 		hubService.OnUpdatedCategory += HandleSignalRUpdatedCategory;
@@ -200,17 +199,17 @@
 		}
 		catch (EntityAlreadyExistsException)
 		{
-			Model.EntityAlreadyExistsFlag = true;
+			Model!.EntityAlreadyExistsFlag = true;
 			editContext!.Validate();
 		}
 		catch (EntityWasNullException)
 		{
-			Model.EntityWasNullFlag = true;
+			Model!.EntityWasNullFlag = true;
 			editContext!.Validate();
 		}
 		catch (UnexpectedResponseException)
 		{
-			Model.UnexpectedResponseFlag = true;
+			Model!.UnexpectedResponseFlag = true;
 			editContext!.Validate();
 		}
 		StateHasChanged();
@@ -226,12 +225,12 @@
 		}
 		catch(EntityWasNotFoundException)
 		{
-			Model.EntityWasNotFoundFlag = true;
+			Model!.EntityWasNotFoundFlag = true;
 			editContext!.Validate();
 		}
 		catch (UnexpectedResponseException)
 		{
-			Model.UnexpectedResponseFlag = true;
+			Model!.UnexpectedResponseFlag = true;
 			editContext!.Validate();
 		}
 
@@ -255,17 +254,17 @@
 		}
 		catch (EntityAlreadyExistsException)
 		{
-			Model.EntityAlreadyExistsFlag = true;
+			Model!.EntityAlreadyExistsFlag = true;
 			editContext!.Validate();
 		}
 		catch (EntityWasNullException)
 		{
-			Model.EntityWasNullFlag = true;
+			Model!.EntityWasNullFlag = true;
 			editContext!.Validate();
 		}
 		catch (UnexpectedResponseException)
 		{
-			Model.UnexpectedResponseFlag = true;
+			Model!.UnexpectedResponseFlag = true;
 			editContext!.Validate();
 		}
 		StateHasChanged();
@@ -281,12 +280,12 @@
 		}
 		catch (EntityWasNotFoundException)
 		{
-			Model.EntityWasNotFoundFlag = true;
+			Model!.EntityWasNotFoundFlag = true;
 			editContext!.Validate();
 		}
 		catch (UnexpectedResponseException)
 		{
-			Model.UnexpectedResponseFlag = true;
+			Model!.UnexpectedResponseFlag = true;
 			editContext!.Validate();
 		}
 
@@ -310,17 +309,17 @@
 		}
 		catch (EntityAlreadyExistsException)
 		{
-			Model.EntityAlreadyExistsFlag = true;
+			Model!.EntityAlreadyExistsFlag = true;
 			editContext!.Validate();
 		}
 		catch (EntityWasNullException)
 		{
-			Model.EntityWasNullFlag = true;
+			Model!.EntityWasNullFlag = true;
 			editContext!.Validate();
 		}
 		catch (UnexpectedResponseException)
 		{
-			Model.UnexpectedResponseFlag = true;
+			Model!.UnexpectedResponseFlag = true;
 			editContext!.Validate();
 		}
 		StateHasChanged();
@@ -336,12 +335,12 @@
 		}
 		catch (EntityWasNotFoundException)
 		{
-			Model.EntityWasNotFoundFlag = true;
+			Model!.EntityWasNotFoundFlag = true;
 			editContext!.Validate();
 		}
 		catch (UnexpectedResponseException)
 		{
-			Model.UnexpectedResponseFlag = true;
+			Model!.UnexpectedResponseFlag = true;
 			editContext!.Validate();
 		}
 
@@ -360,12 +359,12 @@
 		}
 		catch (EntityWasNotFoundException)
 		{
-			Model.EntityWasNotFoundFlag = true;
+			Model!.EntityWasNotFoundFlag = true;
 			editContext!.Validate();
 		}
 		catch (UnexpectedResponseException)
 		{
-			Model.UnexpectedResponseFlag = true;
+			Model!.UnexpectedResponseFlag = true;
 			editContext!.Validate();
 		}
 
@@ -387,12 +386,12 @@
 		Model.IsArmorCategory = Model.IsCurrentlyArmorCategory;
 	}
 
-	private async Task HandleDeleteButtonClicked()
+	private void HandleDeleteButtonClicked()
 	{
 		showModal = true;
 	}
 
-	private async Task HandleModalCloseOrCancelButtonClicked()
+	private void HandleModalCloseOrCancelButtonClicked()
 	{
 		showModal = false;
 	}
@@ -408,12 +407,12 @@
 		}
 		catch (EntityWasNotFoundException)
 		{
-			Model.EntityWasNullFlag = true;
+			Model!.EntityWasNullFlag = true;
 			editContext!.Validate();
 		}
 		catch (UnexpectedResponseException)
 		{
-			Model.UnexpectedResponseFlag = true;
+			Model!.UnexpectedResponseFlag = true;
 			editContext!.Validate();
 		}
 		StateHasChanged();

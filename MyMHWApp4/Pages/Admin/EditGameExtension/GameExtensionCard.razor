@@ -72,7 +72,7 @@
 	[Parameter]
 	public required GameExtension GameExtension { get; set; }
 
-	protected override async Task OnInitializedAsync()
+	protected override void OnInitialized()
 	{
 		modalBodyText = $"Are you sure you want to remove {GameExtension.Name}?";
 
@@ -119,12 +119,12 @@
 		toggleEdit = !toggleEdit;
 	}
 
-	private async Task HandleDeleteButtonClicked()
+	private void HandleDeleteButtonClicked()
 	{
 		showModal = true;
 	}
 
-	private async Task HandleModalCloseOrCancelButtonClicked()
+	private void HandleModalCloseOrCancelButtonClicked()
 	{
 		showModal = false;
 	}
@@ -139,12 +139,12 @@
 		}
 		catch (EntityWasNotFoundException)
 		{
-			Model.EntityWasNullFlag = true;
+			Model!.EntityWasNullFlag = true;
 			editContext!.Validate();
 		}
 		catch (UnexpectedResponseException)
 		{
-			Model.UnexpectedResponseFlag = true;
+			Model!.UnexpectedResponseFlag = true;
 			editContext!.Validate();
 		}
 		StateHasChanged();
