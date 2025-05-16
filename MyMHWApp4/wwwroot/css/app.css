@@ -123,12 +123,25 @@ code {
     --secondary-color: white;
     --secondary-color-dark: whitesmoke;
     --primary-color-alternative: gray;
+
     --button-play-color: #00b100;
+    --button-play-color: #209320;
+    --button-play-color: #007800;
+
     --button-play-dummy-color: #686868;
+
     --button-edit-color: #337eff;
-    --button-confirm-color: #337eff;
+    --button-edit-color: #5688da;
+    --button-edit-color: #4077d0;
+
+    --button-confirm-color: var(--button-edit-color);
+
     --button-confirm-color-disabled: gray;
+
     --button-delete-color: #EA3323;
+    --button-delete-color: #c65147;
+    --button-delete-color: #b12d21;
+
     --button-cancel-color: var(--button-delete-color);
     /*  %% WIDTH & HEIGHT %% */
     --full-width: 100%;
@@ -294,6 +307,26 @@ input[type="checkbox"] {
     border-radius: 8px;
     border: 0;
     color: var(--secondary-color);
+}
+
+.glow {
+    animation: glowPulse 1.0s infinite alternate;
+}
+
+@keyframes glowPulse {
+    0% {
+        text-shadow: 
+            0 0 10px rgba(0, 0, 0, 0.7), 
+            0 0 20px rgba(0, 0, 0, 0.5), 
+            0 0 30px rgba(0, 0, 0, 0.3);
+    }
+
+    100% {
+        text-shadow: 
+            0 0 30px rgba(0, 0, 0, 1), 
+            0 0 40px rgba(0, 0, 0, 0.8), 
+            0 0 50px rgba(0, 0, 0, 0.6);
+    }
 }
 
     .button:hover {

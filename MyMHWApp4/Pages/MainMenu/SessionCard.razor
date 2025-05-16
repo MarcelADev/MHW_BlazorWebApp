@@ -4,35 +4,29 @@
 @inject NavigationManager navigationManager
 @inject ParticipatorProvider participatorProvider
 
-<button class="card-session" @onclick="ToggleSelection">
+<button class="card-session" @onclick="HandleCardClicked">
 
 	<div class="container-image">
 
 		<img src="Images/CardPicture.jpg" alt="Image not available" />
 
-	</div>
-
-	@if (isSelected)
-	{
-		<div class="container__iconbuttons">
-			@if(!toggleEdit)
+		<div class="ovderlay__iconbuttons">
+			@if (!toggleMore)
 			{
-				<div class="container-left-space-evenly">
-					<PlayButton PlayButtonClicked="HandlePlayButtonClicked"></PlayButton>
-					<EditButton EditButtonClicked="HandleEditButtonClicked"></EditButton>
-					<DeleteButton DeleteButtonClicked="HandleDeleteButtonClicked"></DeleteButton>
+				<div class="container-top">
+					<MoreButton MoreButtonClicked="HandleMoreButtonClicked"></MoreButton>
 				</div>
 			}
 			else
 			{
-				<div class="container-left-space-evenly">
-					<PlayButtonDummy></PlayButtonDummy>
-					<ConfirmButton ConfirmButtonClicked="HandleConfirmButtonClicked"></ConfirmButton>
-					<CancelButton CancelButtonClicked="HandleCancelButtonClicked"></CancelButton>
+				<div class="container-top">
+					<MoreButton MoreButtonClicked="HandleMoreButtonClicked" Glow="true"></MoreButton>
+					<EditButton EditButtonClicked="HandleEditButtonClicked" AlternativeDesign="true" Glow="true"></EditButton>
+					<DeleteButton DeleteButtonClicked="HandleDeleteButtonClicked" AlternativeDesign="true" Glow="true"></DeleteButton>
 				</div>
 			}
 		</div>
-	}
+	</div>
 
 	<div class="container-data">
 
@@ -70,12 +64,12 @@
 			<p>@Session.Date</p>
 		</div>
 	</div>
+
 </button>
 
 @code 
 {
-	private bool isSelected = false;
-	private bool toggleEdit = false;
+	private bool toggleMore = false;
 
 	[Parameter]
 	public required Session Session { get; set; }
@@ -87,36 +81,24 @@
 		await base.OnInitializedAsync();
 	}
 
-	private void ToggleSelection()
+	private void HandleCardClicked()
 	{
-		isSelected = !isSelected;
+		// navigationManager.NavigateTo("/inventory");
 	}
 
-	private void HandlePlayButtonClicked()
+	private void HandleMoreButtonClicked()
 	{
-		navigationManager.NavigateTo("/inventory");
+		toggleMore = !toggleMore;
 	}
 
 	private void HandleEditButtonClicked()
 	{
-		toggleEdit = !toggleEdit;
 		StateHasChanged();
 	}
 
 	private void HandleDeleteButtonClicked()
 	{
 
-	}
-
-	private void HandleConfirmButtonClicked()
-	{
-
-	}
-
-	private void HandleCancelButtonClicked()
-	{
-		toggleEdit = !toggleEdit;
-		StateHasChanged();
 	}
 
 	private void NavigateToInventory() 

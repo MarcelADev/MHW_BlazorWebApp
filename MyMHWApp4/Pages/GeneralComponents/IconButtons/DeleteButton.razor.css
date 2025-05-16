@@ -6,6 +6,11 @@
     padding: 10px;
 }
 
+.alternative {
+    background: transparent;
+    color: white;
+}
+
 button:hover {
     opacity: 0.9;
 }

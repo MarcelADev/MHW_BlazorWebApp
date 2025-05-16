@@ -1,0 +1,19 @@
+﻿<button class="container-center" type="button" @onclick="OnMoreButtonClicked">
+	<span class="material-symbols-outlined @(Glow ? "glow" : "")">
+		@* more_horiz *@
+		more_vert
+	</span>
+</button>
+
+@code {
+	[Parameter]
+	public required EventCallback MoreButtonClicked { get; set; }
+
+	[Parameter]
+	public bool Glow { get; set; } = false;
+
+	private async Task OnMoreButtonClicked()
+	{
+		await MoreButtonClicked.InvokeAsync();
+	}
+}

@@ -1,0 +1,12 @@
+﻿button {
+    border: 0;
+    background: transparent;
+    color: white;
+    color: white;
+    border-radius: 5px;
+    padding: 10px;
+}
+
+button:hover {
+    opacity: 0.9;
+}
