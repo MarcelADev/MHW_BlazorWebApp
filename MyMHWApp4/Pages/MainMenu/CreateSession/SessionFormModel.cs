@@ -16,7 +16,6 @@ namespace MyMHWApp4.Pages.MainMenu.CreateSession
 
         public int[] PlayerIds { get; set; } = [];
         public List<Participator> Participators { get; set; } = [];
-        public List<Player> SelectedPlayers { get; set; } = [];
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {

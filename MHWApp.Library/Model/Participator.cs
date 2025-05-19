@@ -21,5 +21,20 @@
 
         public List<Armor> Armors { get; set; } = [];
         public List<ParticipatorArmor> ParticipatorArmors { get; set; } = [];
+
+        /// <summary>
+        /// Clones the Participator with only the required properties
+        /// </summary>
+        /// <returns></returns>
+        public Participator Clone()
+        {
+            return new Participator
+            {
+                Id = 0,
+                PlayerId = this.PlayerId,
+                SessionId = this.SessionId,
+                WeaponTypeId = this.WeaponTypeId,
+            };
+        }
     }
 }

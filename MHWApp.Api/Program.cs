@@ -192,17 +192,28 @@ app.MapGet("/sessions", async (AppDbContext dbContext, ClaimsPrincipal user) =>
     }
 ).RequireAuthorization(); ;
 
-app.MapPost("/sessions", async (AppDbContext dbContext, ClaimsPrincipal user, IHubContext<DataBaseUpdatesHub> hubContext, Session newSession) =>
+app.MapPost("/sessions", async (AppDbContext dbContext, ClaimsPrincipal user, IHubContext<DataBaseUpdatesHub> hubContext, CreateSessionDTO createSessionDTO) =>
     {
         var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
         if (userIdClaim == null) return Results.Unauthorized();
 
-        await dbContext.Sessions.AddAsync(newSession);
+        if (createSessionDTO.Participators is null || !createSessionDTO.Participators.Any()) return Results.BadRequest();
+
+        await dbContext.Sessions.AddAsync(createSessionDTO.NewSession);
         await dbContext.SaveChangesAsync();
 
-        await hubContext.Clients.All.SendAsync("ReceiveNewSession", newSession);
+        foreach(var participator in createSessionDTO.Participators)
+        {
+            if (participator.PlayerId == 0) participator.PlayerId = int.Parse(userIdClaim.Value);
+            participator.SessionId = createSessionDTO.NewSession.Id;
+            await dbContext.Participators.AddAsync(participator);
+        }
 
-        return Results.Created($"/sessions/{newSession.Id}", newSession);
+        await dbContext.SaveChangesAsync();
+
+        await hubContext.Clients.All.SendAsync("ReceiveNewSession", createSessionDTO.NewSession);
+
+        return Results.Created($"/sessions/{createSessionDTO.NewSession.Id}", createSessionDTO.NewSession);
     }
 );
 #endregion

@@ -24,9 +24,9 @@ namespace MyMHWApp4.Provider
             throw new UnexpectedResponseException(response.StatusCode.ToString());
         }
 
-        public async Task<Session> CreateSessionAsync(Session session)
+        public async Task CreateSessionAsync(CreateSessionDTO createSessionDTO)
         {
-            var response = await _httpClient.PostAsJsonAsync("sessions", session);
+            var response = await _httpClient.PostAsJsonAsync("sessions", createSessionDTO);
 
             if (response.StatusCode == HttpStatusCode.Created)
             {

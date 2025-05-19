@@ -1,4 +1,5 @@
 ﻿@page "/mainmenu/createsession"
+@using MHWApp.Library.DTO
 @using MHWApp.Library.Model
 @using MyMHWApp4.Pages.GeneralComponents.Select
 @using MyMHWApp4.Provider
@@ -36,12 +37,12 @@
 				</div>
 
 				<MultiSelect Label="Select Players"
-					Placeholder="Select"
-					T="Player"
-					Options="@players"
-					OptionNameMapper="(Player player) => player.UserName"
-					OptionValueMapper="(Player player) => player.Id"
-					ValueListChanged="HandleSelect">
+				Placeholder="Select"
+				T="Player"
+				Options="@players"
+				OptionNameMapper="(Player player) => player.UserName"
+				OptionValueMapper="(Player player) => player.Id"
+				ValueListChanged="HandleSelect">
 				</MultiSelect>
 
 				<div class="form__field">
@@ -75,7 +76,6 @@
 <footer class="footer"></footer>
 
 @code {
-	#region Baustelle
 	private bool isLoading = true;
 	private bool isFormValid = true;
 	private EditContext? editContext;
@@ -87,8 +87,6 @@
 	private List<WeaponType> weaponTypes = [];
 
 	private IIdentity? user { get; set; } = null;
-
-	#endregion
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -155,28 +153,23 @@
 		Logger.LogInformation($"Hi");
 
 		Session newSession = new Session
-			{
-				Id = 0,
-				Name = Model!.Name,
-				DayCount = 1,
-				MaxDays = Model.MaxDays,
-				Date = DateUtils.GetDateString()
-			};
-
-		
-
-		var createdSession = await sessionProvider.CreateSessionAsync(newSession);
-
-		foreach (var participator in Model.Participators)
 		{
-			bool isSelf = false;
+			Id = 0,
+			Name = Model!.Name,
+			DayCount = 1,
+			MaxDays = Model.MaxDays,
+			Date = DateUtils.GetDateString()
+		};
 
-			if (participator.PlayerId == 0) isSelf = true;
+		CreateSessionDTO createSessionDTO = new CreateSessionDTO
+		{
+			NewSession = newSession,
+			Participators = Model.Participators.Select(p => p.Clone()).ToList(),
+		};
 
-			participator.SessionId = createdSession.Id;
+		createSessionDTO.Participators.Add(Model.UserParticipator.Clone());
 
-			await participatorProvider.CreateParticipatorAsync(participator, isSelf);
-		}
+		await sessionProvider.CreateSessionAsync(createSessionDTO);
 
 		navigationManager.NavigateTo("/mainmenu");
 	}
