@@ -201,6 +201,7 @@ h4 {
 label, p, button, a {
     font-size: var(--standard-font-size);
     color: var(--primary-color);
+    margin: 0;
 }
 
 input:not([type="checkbox"]) {

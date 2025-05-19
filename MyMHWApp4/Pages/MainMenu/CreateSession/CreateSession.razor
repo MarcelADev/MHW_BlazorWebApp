@@ -1,6 +1,6 @@
 ﻿@page "/mainmenu/createsession"
 @using MHWApp.Library.Model
-@using MyMHWApp4.Pages.GeneralComponents
+@using MyMHWApp4.Pages.GeneralComponents.Select
 @using MyMHWApp4.Provider
 @using System.Security.Principal
 @using MyMHWApp4.Utils
@@ -163,6 +163,8 @@
 				Date = DateUtils.GetDateString()
 			};
 
+		
+
 		var createdSession = await sessionProvider.CreateSessionAsync(newSession);
 
 		foreach (var participator in Model.Participators)
@@ -176,14 +178,11 @@
 			await participatorProvider.CreateParticipatorAsync(participator, isSelf);
 		}
 
-		navigationManager.NavigateTo("/session");
+		navigationManager.NavigateTo("/mainmenu");
 	}
 
 	public void Dispose()
 	{
-		if (editContext is not null)
-		{
-			editContext.OnFieldChanged -= HandleFieldChanged;
-		}
+		if (editContext is not null) editContext.OnFieldChanged -= HandleFieldChanged;
 	}
 }

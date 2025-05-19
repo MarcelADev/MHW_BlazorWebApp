@@ -1,8 +1,11 @@
 ﻿@page "/mainmenu"
 @using MHWApp.Library.Model
+@using MyMHWApp4.HubConnections
 @using MyMHWApp4.Provider
 @inject SessionProvider sessionProvider
 @inject NavigationManager navigationManager
+@inject IDataBaseUpdatesHubConnection hubService
+@implements IDisposable
 
 <header class="container-center header">
 
@@ -12,9 +15,18 @@
 
 <main class="container-top">
 
-	@foreach(Session session in sessions)
+	@if (!isLoading)
 	{
-		<SessionCard Session="session"></SessionCard>
+		@foreach (Session session in sessions)
+		{
+			<SessionCard @key="session.Id" 
+						 Session="session">
+			</SessionCard>
+		}
+	}
+	else
+	{
+		<p>Loading ...</p>
 	}
 
 	<button class="button button-addsession theme-purple" @onclick="NavigateToCreateSession">
@@ -31,16 +43,31 @@
 <footer class="footer"></footer>
 
 @code {
+	private bool isLoading = true;
+
 	List<Session> sessions = [];
 
 	protected async override Task OnInitializedAsync()
 	{
 		sessions = await sessionProvider.GetSessionsAsync();
 
-		await base.OnInitializedAsync();
+		hubService.OnNewSession += HandleSignalRNewSession;
+
+		isLoading = false;
 	}
 
 	private void NavigateToCreateSession(){
 		navigationManager.NavigateTo("/mainmenu/createsession");
+	}
+
+	private void HandleSignalRNewSession(Session newSession)
+	{
+		sessions.Add(newSession);
+		StateHasChanged();
+	}
+
+	public void Dispose()
+	{
+		hubService.OnNewSession -= HandleSignalRNewSession;
 	}
 }

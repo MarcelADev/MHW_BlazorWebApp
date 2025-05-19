@@ -178,13 +178,11 @@ app.MapPost("/data-processing-2", ([FromBody] FormModel model) =>
 
 app.MapGet("/sessions", async (AppDbContext dbContext, ClaimsPrincipal user) =>
     {
-        var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);  // Standard claim for user ID in most scenarios.
-        if (userIdClaim == null)
-        {
-            return Results.Unauthorized();
-        }
+        var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
+        if (userIdClaim == null) return Results.Unauthorized();
 
         var playerId = int.Parse(userIdClaim.Value);
+
         var playerSessions = await dbContext.Sessions
             .Where(s =>
                 dbContext.Participators.Any(p => p.PlayerId == playerId && p.SessionId == s.Id))
@@ -192,13 +190,19 @@ app.MapGet("/sessions", async (AppDbContext dbContext, ClaimsPrincipal user) =>
 
         return Results.Ok(playerSessions);
     }
-);
+).RequireAuthorization(); ;
 
-app.MapPost("/sessions", async (Session newSession, AppDbContext dbContext, ClaimsPrincipal user) =>
+app.MapPost("/sessions", async (AppDbContext dbContext, ClaimsPrincipal user, IHubContext<DataBaseUpdatesHub> hubContext, Session newSession) =>
     {
+        var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
+        if (userIdClaim == null) return Results.Unauthorized();
+
         await dbContext.Sessions.AddAsync(newSession);
         await dbContext.SaveChangesAsync();
-        return Results.Created($"/newSession/{newSession.Id}", newSession);
+
+        await hubContext.Clients.All.SendAsync("ReceiveNewSession", newSession);
+
+        return Results.Created($"/sessions/{newSession.Id}", newSession);
     }
 );
 #endregion

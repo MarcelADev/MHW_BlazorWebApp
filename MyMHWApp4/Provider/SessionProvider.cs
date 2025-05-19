@@ -1,43 +1,49 @@
-﻿using MHWApp.Library.Model;
+﻿using MHWApp.Library.DTO;
+using MHWApp.Library.Exceptions;
+using MHWApp.Library.Model;
+using Microsoft.Extensions.Logging;
 using MyMHWApp4.Identity;
+using System.Net;
 using System.Net.Http.Json;
 
 namespace MyMHWApp4.Provider
 {
-    public class SessionProvider(IHttpClientFactory httpClientFactory)
+    public class SessionProvider(IHttpClientFactory httpClientFactory, ILogger<SessionProvider> logger)
     {
-        private readonly HttpClient _httpClient = httpClientFactory.CreateClient("Auth");
+        private readonly HttpClient _httpClient = httpClientFactory.CreateClient("AuthAndResp");
 
         public async Task<List<Session>> GetSessionsAsync()
         {
-            try
-            {
-                return await _httpClient.GetFromJsonAsync<List<Session>>("sessions");
-            }
-            catch (Exception ex)
-            {
-                return new List<Session>();
-            }
+            var request = new HttpRequestMessage(HttpMethod.Get, "sessions");
+            var response = await _httpClient.SendAsync(request);
+            var sessions = await response.Content.ReadFromJsonAsync<List<Session>>();
+
+            if (response.StatusCode == HttpStatusCode.OK) return sessions ?? throw new EntityWasNullException();
+
+            logger.LogWarning($"Unexpexted HTTP Response: {response.StatusCode.ToString()}");
+            throw new UnexpectedResponseException(response.StatusCode.ToString());
         }
 
-        public async Task<Session> CreateSessionAsync(Session newSession)
+        public async Task<Session> CreateSessionAsync(Session session)
         {
-            try
-            {
-                var response = await _httpClient.PostAsJsonAsync("sessions", newSession);
-                var createdSession = await response.Content.ReadFromJsonAsync<Session>();
+            var response = await _httpClient.PostAsJsonAsync("sessions", session);
 
-                if (response.IsSuccessStatusCode)
+            if (response.StatusCode == HttpStatusCode.Created)
+            {
+                var newSession = await response.Content.ReadFromJsonAsync<Session>();
+
+                if (newSession is null)
                 {
-                    return createdSession;
+                    logger.LogInformation($"Received 201 HTTP Statuscode, but the entity was null");
+                    throw new EntityWasNullException();
                 }
 
-                throw new Exception();
+                logger.LogInformation($"Entity was successfully created: {newSession.Name}");
+                return newSession;
             }
-            catch (Exception ex)
-            {
-                return null;
-            }
+
+            logger.LogWarning($"Unexpexted HTTP Response: {response.StatusCode.ToString()}");
+            throw new UnexpectedResponseException(response.StatusCode.ToString());
         }
     }
 }

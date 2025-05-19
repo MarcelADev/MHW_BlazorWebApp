@@ -7,6 +7,11 @@ namespace MyMHWApp4.HubConnections
     {
         HubConnection Connection { get; }
 
+        // ## SESSION ##
+        event Action<Session>? OnNewSession;
+        event Action<Session>? OnUpdatedSession;
+        event Action<int>? OnDeletedSession;
+
         // ## GAME EXTENSION ##
         event Action<GameExtension>? OnNewGameExtension;
         event Action<GameExtension>? OnUpdatedGameExtension;
