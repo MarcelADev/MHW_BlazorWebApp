@@ -28,10 +28,5 @@ namespace MyMHWApp4.Pages.MainMenu.CreateSession
                 yield return new ValidationResult("Max days must be greater than or equal to day count", [nameof(MaxDays)]);
             }
         }
-
-        public override string ToString()
-        {
-            return base.ToString();
-        }
     }
 }

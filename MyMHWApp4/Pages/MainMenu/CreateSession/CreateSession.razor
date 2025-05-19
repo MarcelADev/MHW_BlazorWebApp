@@ -46,7 +46,7 @@
 				</MultiSelect>
 
 				<div class="form__field">
-					<ParticipatorCard @bind-Value="Model!.UserParticipator" weaponTypes="weaponTypes" />
+					<ParticipatorCard @bind-Participator="Model!.UserParticipator" weaponTypes="weaponTypes" />
 				</div>
 
 				@for (var i = 0; i < Model!.Participators.Count; i++)
@@ -56,7 +56,8 @@
 					@if (Model!.PlayerIds.Contains(participator.PlayerId))
 					{
 						<div class="form__field">
-							<ParticipatorCard @bind-Value="participator" weaponTypes="weaponTypes" />
+							<ParticipatorCard @bind-Participator="participator" 
+											  weaponTypes="weaponTypes"/>
 						</div>
 					}
 				}

@@ -4,7 +4,7 @@
     {
         public static string GetDateString()
         {
-            return DateTime.Now.ToString("dd.NN.yyyy");
+            return DateTime.Now.ToString("dd.MM.yyyy");
         }
     }
 }
