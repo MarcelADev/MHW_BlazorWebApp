@@ -30,7 +30,7 @@ builder.Services.AddScoped(
 builder.Services.AddScoped(sp =>
     new HttpClient { BaseAddress = new Uri(builder.Configuration["FrontendUrl"] ?? "https://localhost:5002") });
 
-#region MiddlewareHTTPResponseHandler Service
+#region MiddlewareHttpResponseHandler Service
 
 builder.Services.AddTransient<MiddlewareHttpResponseHandler>();
 

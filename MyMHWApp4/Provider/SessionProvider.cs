@@ -39,7 +39,7 @@ namespace MyMHWApp4.Provider
                 }
 
                 logger.LogInformation($"Entity was successfully created: {newSession.Name}");
-                return newSession;
+                return;
             }
 
             logger.LogWarning($"Unexpexted HTTP Response: {response.StatusCode.ToString()}");

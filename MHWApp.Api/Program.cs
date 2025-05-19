@@ -13,6 +13,7 @@ using System.Text.Json.Serialization;
 using System.Net;
 using Microsoft.AspNetCore.SignalR;
 using System.Runtime.CompilerServices;
+using MHWApp.Api.Provider;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -82,6 +83,9 @@ builder.Services.AddSignalR()
         options.PayloadSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
         options.PayloadSerializerOptions.WriteIndented = true;
     });
+
+// SignalR uses this service automatically, behind the scenes
+builder.Services.AddSingleton<IUserIdProvider, NameIdentifierUserIdProvider>();
 
 builder.Services.AddResponseCompression(opts =>
 {
@@ -211,7 +215,15 @@ app.MapPost("/sessions", async (AppDbContext dbContext, ClaimsPrincipal user, IH
 
         await dbContext.SaveChangesAsync();
 
-        await hubContext.Clients.All.SendAsync("ReceiveNewSession", createSessionDTO.NewSession);
+        var userIds = createSessionDTO.Participators
+            .Select(p => p.PlayerId.ToString())
+            .Distinct();
+
+        foreach (var userId in userIds)
+        {
+            await hubContext.Clients.User(userId)
+                .SendAsync("ReceiveNewSession", createSessionDTO.NewSession);
+        }
 
         return Results.Created($"/sessions/{createSessionDTO.NewSession.Id}", createSessionDTO.NewSession);
     }
