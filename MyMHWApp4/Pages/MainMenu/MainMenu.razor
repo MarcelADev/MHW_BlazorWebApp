@@ -51,6 +51,8 @@
 	{
 		sessions = await sessionProvider.GetSessionsAsync();
 
+		hubService.OnDeletedParticipator += HandleSignalRDeletedParticipator;
+
 		hubService.OnNewSession += HandleSignalRNewSession;
 		hubService.OnDeletedSession += HandleSignalRDeletedSession;
 
@@ -67,15 +69,24 @@
 		StateHasChanged();
 	}
 
-	private void HandleSignalRDeletedSession(int deletedSessionId)
+	private void HandleSignalRDeletedParticipator(int deletedParticipatorId)
 	{
-		var deletedSessiion = sessions.Find(s => s.Id == deletedSessionId);
+		var deletedParticipator = sessions.Find(s => s.Id == deletedParticipatorId);
+		if (deletedParticipator != null) sessions.Remove(deletedParticipator);
+		StateHasChanged();
+	}
+
+	private void HandleSignalRDeletedSession(int sessionIdOfDeletedParticipator)
+	{
+		var deletedSessiion = sessions.Find(s => s.Id == sessionIdOfDeletedParticipator);
 		if (deletedSessiion != null) sessions.Remove(deletedSessiion);
 		StateHasChanged();
 	}
 
 	public void Dispose()
 	{
+		hubService.OnDeletedParticipator -= HandleSignalRDeletedParticipator;
+
 		hubService.OnNewSession -= HandleSignalRNewSession;
 		hubService.OnDeletedSession -= HandleSignalRDeletedSession;
 	}

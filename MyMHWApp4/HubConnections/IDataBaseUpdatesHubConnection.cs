@@ -12,6 +12,9 @@ namespace MyMHWApp4.HubConnections
         event Action<Session>? OnUpdatedSession;
         event Action<int>? OnDeletedSession;
 
+        // ## SESSION ##
+        event Action<int>? OnDeletedParticipator;
+
         // ## GAME EXTENSION ##
         event Action<GameExtension>? OnNewGameExtension;
         event Action<GameExtension>? OnUpdatedGameExtension;

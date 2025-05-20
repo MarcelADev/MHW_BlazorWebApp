@@ -12,6 +12,8 @@ namespace MyMHWApp4.HubConnections
         public event Action<Session>? OnUpdatedSession;
         public event Action<int>? OnDeletedSession;
 
+        public event Action<int>? OnDeletedParticipator;
+
         public event Action<GameExtension>? OnNewGameExtension;
         public event Action<GameExtension>? OnUpdatedGameExtension;
         public event Action<int>? OnDeletedGameExtension;
@@ -60,6 +62,12 @@ namespace MyMHWApp4.HubConnections
             Connection.On<int>("ReceiveDeletedSession", (deletedId) =>
             {
                 OnDeletedSession?.Invoke(deletedId);
+            });
+
+            // ## Participator ##
+            Connection.On<int>("ReceiveDeletedParticipator", (sessionIdOfDeletedParticipator) =>
+            {
+                OnDeletedSession?.Invoke(sessionIdOfDeletedParticipator);
             });
 
             // ## GAME EXTENSION ##

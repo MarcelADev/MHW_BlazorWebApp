@@ -318,6 +318,8 @@ app.MapDelete("/participators/{id}", async (AppDbContext dbContext, ClaimsPrinci
     dbContext.Participators.Remove(participator);
     await dbContext.SaveChangesAsync();
 
+    var userId = userIdClaim.Value;
+
     if (!dbContext.Participators.Any(p => p.SessionId == sessionId))
     {
         var session = await dbContext.Sessions.FindAsync(sessionId);
@@ -326,10 +328,12 @@ app.MapDelete("/participators/{id}", async (AppDbContext dbContext, ClaimsPrinci
             dbContext.Sessions.Remove(session);
             await dbContext.SaveChangesAsync();
 
-            var playerId = int.Parse(userIdClaim.Value);
-
-            await hubContext.Clients.All.SendAsync("ReceiveDeletedSession", sessionId);
+            await hubContext.Clients.User(userId).SendAsync("ReceiveDeletedSession", sessionId);
         }
+    }
+    else
+    {
+        await hubContext.Clients.User(userId).SendAsync("ReceiveDeletedParticipator", sessionId);
     }
 
     return Results.NoContent();
@@ -345,10 +349,10 @@ app.MapDelete("/participators/{id}", async (AppDbContext dbContext, ClaimsPrinci
 
 //        if (userIdClaim == null) return Results.Unauthorized();
 
-//        var playerId = int.Parse(userIdClaim.Value);
+//        var userId = int.Parse(userIdClaim.Value);
 
 //        var session = await dbContext.Sessions
-//        .FirstOrDefaultAsync(s => s.Id == sessionId && dbContext.Participators.Any(p => p.PlayerId == playerId && p.SessionId == sessionId));
+//        .FirstOrDefaultAsync(s => s.Id == sessionId && dbContext.Participators.Any(p => p.PlayerId == userId && p.SessionId == sessionId));
 
 //        if (session == null) return Results.Unauthorized();
 
