@@ -33,11 +33,11 @@ namespace MyMHWApp4.Pages.Admin.EditGameExtension
             }
             if (NewName.Trim() == "")
             {
-                yield return new ValidationResult("Name must not be empty", [nameof(Name)]);
+                yield return new ValidationResult("CurrentName must not be empty", [nameof(Name)]);
             }
             if (Name.Equals(NewName))
             {
-                yield return new ValidationResult("Name was not changed", [nameof(Name)]);
+                yield return new ValidationResult("CurrentName was not changed", [nameof(Name)]);
             }
         }
     }

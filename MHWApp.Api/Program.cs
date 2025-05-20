@@ -277,16 +277,28 @@ app.MapGet("/players", async (AppDbContext dbContext, ClaimsPrincipal user) =>
 
 #region Endpoint: Participator
 
-app.MapGet("/participators/{sessionId}", async (AppDbContext dbContext, ClaimsPrincipal user, int sessionId) =>
+app.MapGet("/participators/{sessionId}", async (AppDbContext dbContext, ClaimsPrincipal user, int sessionId, bool user_only) =>
 {
     var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
     if (userIdClaim == null) return Results.Unauthorized();
 
-    var playerId = int.Parse(userIdClaim.Value);
+    if (user_only)
+    {
+        var playerId = int.Parse(userIdClaim.Value);
 
-    var participator = await dbContext.Participators.Include(p => p.WeaponType).FirstOrDefaultAsync(p => p.PlayerId == playerId && p.SessionId == sessionId);
+        var participator = await dbContext.Participators.Include(p => p.WeaponType).FirstOrDefaultAsync(p => p.PlayerId == playerId && p.SessionId == sessionId);
 
-    return Results.Ok(participator);
+        return Results.Ok(participator);
+    }
+    else
+    {
+        var participators = await dbContext.Participators
+            .Where(p => p.SessionId == sessionId)
+            .Include(p => p.WeaponType)
+            .ToListAsync();
+
+        return Results.Ok(participators);
+    }
 }
 ).RequireAuthorization();
 
@@ -305,7 +317,7 @@ app.MapGet("/participators/{sessionId}", async (AppDbContext dbContext, ClaimsPr
 //}
 //).RequireAuthorization();
 
-app.MapDelete("/participators/{id}", async (AppDbContext dbContext, ClaimsPrincipal user, IHubContext<DataBaseUpdatesHub> hubContext, int id) =>
+app.MapDelete("/participators/{id}", async (AppDbContext dbContext, ClaimsPrincipal user, IHubContext<DataBaseUpdatesHub> hubContext, int id) =>    // TO DO: MAKE 2ND DELETE
 {
     var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
     if (userIdClaim == null) return Results.Unauthorized();

@@ -78,6 +78,11 @@
 
 </div>
 
+@if (showEditModal)
+{
+	
+}
+
 @if(showDeleteModal)
 {
 	<DeleteSessionModal CloseButtonClicked="HandleModalCloseButtonClicked"
@@ -91,6 +96,7 @@
 	private bool toggleMore = false;
 	private bool isLoading = true;
 	private bool showDeleteModal = false;
+	private bool showEditModal = false;
 	private bool isFormValid = false;
 
 	Participator? participator;

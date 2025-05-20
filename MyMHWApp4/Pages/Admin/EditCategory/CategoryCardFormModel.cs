@@ -57,7 +57,7 @@ namespace MyMHWApp4.Pages.Admin.EditCategory
             }
             if (NewName.Trim() == "")
             {
-                yield return new ValidationResult("Name must not be empty", [nameof(Name)]);
+                yield return new ValidationResult("CurrentName must not be empty", [nameof(Name)]);
             }
             if (Name.Equals(NewName) && 
                 IsInventoryCategory == IsCurrentlyInventoryCategory &&
