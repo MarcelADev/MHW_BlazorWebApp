@@ -1,4 +1,6 @@
-﻿<div class="modal-backdrop show"></div>
+﻿@using static MHWApp.Library.StaticVariables
+
+<div class="modal-backdrop show"></div>
 <div class="modal fade show" style="display:block" tabindex="-1">
 	<div class="modal-dialog">
 		<div class="modal-content">
@@ -11,12 +13,26 @@
 			<div class="modal-body">
 				<p>Removing your Participation deletes all your progress in this Session!</p>
 				<br>
-				<p>Deleting the entire session is permanent!</p>
+				<p>Deleting the entire session is permanent! (Only Admins can delete Sessions)</p>
 			</div>
 
 			<div class="modal-footer">
-				<button type="button" class="btn btn-danger">Remove your Participation</button>
-				<button type="button" class="btn btn-danger">Delete Session</button>
+				<button @onclick="OnRemoveParticipationButtonClicked" type="button" class="btn btn-danger">Remove your Participation</button>
+
+				<AuthorizeView>
+					<Authorized>
+						@{
+							bool canDelete = context.User.IsInRole(ADMIN_ROLE) || context.User.IsInRole(MASTER_ROLE);
+						}
+						<button @onclick="OnDeleteSessionButtonClicked"
+								disabled="@(!canDelete)"
+								class="btn @(canDelete ? "btn-danger" : "btn-dark")"
+								type="button">
+							Delete Session
+						</button>
+					</Authorized>
+				</AuthorizeView>
+
 			</div>
 
 		</div>

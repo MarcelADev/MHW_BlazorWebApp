@@ -1,9 +1,19 @@
-﻿@using MHWApp.Library.Model
+﻿@using MHWApp.Library.Exceptions
+@using MHWApp.Library.Model
 @using MyMHWApp4.Pages.GeneralComponents.IconButtons
 @using MyMHWApp4.Pages.GeneralComponents.Modals
 @using MyMHWApp4.Provider
 @inject NavigationManager navigationManager
 @inject ParticipatorProvider participatorProvider
+@inject SessionProvider sessionProvider
+
+@if (!isLoading)
+{
+	<EditForm EditContext="editContext" FormName="session">
+		<DataAnnotationsValidator />
+		<ValidationSummary />
+	</EditForm>
+}
 
 <div class="card-session">
 
@@ -81,15 +91,23 @@
 	private bool toggleMore = false;
 	private bool isLoading = true;
 	private bool showDeleteModal = false;
+	private bool isFormValid = false;
+
+	Participator? participator;
+	private EditContext? editContext;
 
 	[Parameter]
 	public required Session Session { get; set; }
 
-	Participator? participator;
+	[SupplyParameterFromForm]
+	private SessionCardFormModel? Model { get; set; }
 
 	protected override async Task OnInitializedAsync()
 	{
 		participator = await participatorProvider.GetParticipatorAsync(Session.Id);
+
+		Model ??= new SessionCardFormModel();
+		editContext = new (Model);
 
 		isLoading = false;
 	}
@@ -119,17 +137,43 @@
 		showDeleteModal = false;
 	}
 
-	private void HandleModalRemoveParticipationButtonClicked()
+	private async Task HandleModalRemoveParticipationButtonClicked()
 	{
-
+		try
+		{
+			await participatorProvider.RemoveParticipatorAsync(participator!.Id);
+		}
+		catch (EntityWasNotFoundException)
+		{
+			Model!.ParticipatorWasNotFoundFlag = true;
+			editContext!.Validate();
+		}
+		catch (UnexpectedResponseException)
+		{
+			Model!.UnexpectedResponseFlag = true;
+			editContext!.Validate();
+		}
 
 		showDeleteModal = false;
 		StateHasChanged();
 	}
 
-	private void HandleModalDeleteSessionButtonClicked()
+	private async Task HandleModalDeleteSessionButtonClicked()
 	{
-
+		try
+		{
+			await sessionProvider.RemoveSessionAsync(Session.Id);
+		}
+		catch (EntityWasNotFoundException)
+		{
+			Model!.SessionWasNotFoundFlag = true;
+			editContext!.Validate();
+		}
+		catch (UnexpectedResponseException)
+		{
+			Model!.UnexpectedResponseFlag = true;
+			editContext!.Validate();
+		}
 
 		showDeleteModal = false;
 		StateHasChanged();

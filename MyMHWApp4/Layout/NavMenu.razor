@@ -139,13 +139,22 @@
     private bool adminPagesActive = false;
     private bool masterPageActive = false;
 
+    protected override void OnInitialized()
+    {
+        // Subscribe to the LocationChanged event to update the URL dynamically
+        NavigationManager.LocationChanged += OnLocationChanged;
+
+        // Set the initial URL
+        UpdateCurrentUrl(new Uri(NavigationManager.Uri).AbsolutePath);
+    }
+
     private void ToggleNavMenu()
     {
         collapseNavMenu = !collapseNavMenu;
     }
 
     // This method is triggered when the URL changes
-    private void OnLocationChanged(object sender, LocationChangedEventArgs e)
+    private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
     {
         UpdateCurrentUrl(new Uri(e.Location).AbsolutePath);
     }
@@ -190,15 +199,6 @@
         }
 
         StateHasChanged();  // Trigger a re-render
-    }
-
-    protected override void OnInitialized()
-    {
-        // Subscribe to the LocationChanged event to update the URL dynamically
-        NavigationManager.LocationChanged += OnLocationChanged;
-
-        // Set the initial URL
-        UpdateCurrentUrl(new Uri(NavigationManager.Uri).AbsolutePath);
     }
 
     public void Dispose()

@@ -1,36 +1,54 @@
-﻿using MHWApp.Library.Model;
+﻿using MHWApp.Library.Exceptions;
+using MHWApp.Library.Model;
+using Microsoft.Extensions.Logging;
 using MyMHWApp4.Identity;
+using System.Net;
 using System.Net.Http.Json;
 
 namespace MyMHWApp4.Provider
 {
-    public class ParticipatorProvider(IHttpClientFactory httpClientFactory)
+    public class ParticipatorProvider(IHttpClientFactory httpClientFactory, ILogger<ParticipatorProvider> logger)
     {
-        private readonly HttpClient _httpClient = httpClientFactory.CreateClient("Auth");
+        private readonly HttpClient _httpClient = httpClientFactory.CreateClient("AuthAndResp");
 
         public async Task<Participator> GetParticipatorAsync(int sessionId)
         {
-            try
-            {
-                return await _httpClient.GetFromJsonAsync<Participator>($"participators/{sessionId}");
-            }
-            catch (Exception ex)
-            {
-                return null;
-            }
+            var request = new HttpRequestMessage(HttpMethod.Get, $"participators/{sessionId}");
+            var response = await _httpClient.SendAsync(request);
+            var participator = await response.Content.ReadFromJsonAsync<Participator>();
+
+            if (response.StatusCode == HttpStatusCode.OK) return participator ?? throw new EntityWasNullException();
+
+            logger.LogWarning($"Unexpexted HTTP Response: {response.StatusCode.ToString()}");
+            throw new UnexpectedResponseException(response.StatusCode.ToString());
         }
 
-        public async Task<bool> CreateParticipatorAsync(Participator newParticipator, bool isSelf)
+        //public async Task<bool> CreateParticipatorAsync(Participator newParticipator, bool isSelf)
+        //{
+        //    try
+        //    {
+        //        var response = await _httpClient.PostAsJsonAsync($"participators?isSelf={isSelf}", newParticipator);
+        //        return response.IsSuccessStatusCode;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return false;
+        //    }
+        //}
+
+        public async Task RemoveParticipatorAsync(int participatorId)
         {
-            try
+            var response = await _httpClient.DeleteAsync($"participators/{participatorId}");
+
+            if (response.StatusCode == HttpStatusCode.NotFound)
             {
-                var response = await _httpClient.PostAsJsonAsync($"participators?isSelf={isSelf}", newParticipator);
-                return response.IsSuccessStatusCode;
+                logger.LogInformation($"Participator couldnt be deleted, because it wasn't found: Id={participatorId}");
+                throw new EntityWasNotFoundException();
             }
-            catch (Exception ex)
-            {
-                return false;
-            }
+            if (response.StatusCode == HttpStatusCode.NoContent) return;
+
+            logger.LogWarning($"Unexpexted HTTP Response: {response.StatusCode.ToString()}");
+            throw new UnexpectedResponseException(response.StatusCode.ToString());
         }
     }
 }

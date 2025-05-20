@@ -1,5 +1,6 @@
 ﻿@page "/mainmenu/createsession"
 @using MHWApp.Library.DTO
+@using MHWApp.Library.Exceptions
 @using MHWApp.Library.Model
 @using MyMHWApp4.Pages.GeneralComponents.Select
 @using MyMHWApp4.Provider
@@ -170,9 +171,28 @@
 
 		createSessionDTO.Participators.Add(Model.UserParticipator.Clone());
 
-		await sessionProvider.CreateSessionAsync(createSessionDTO);
+		try
+		{
+			await sessionProvider.CreateSessionAsync(createSessionDTO);
 
-		navigationManager.NavigateTo("/mainmenu");
+			navigationManager.NavigateTo("/mainmenu");
+		}
+		catch (BadRequestException)
+		{
+			Model.BadRequestFlag = true;
+			editContext!.Validate();
+		}
+		catch (EntityWasNullException)
+		{
+			Model.EntityWasNullFlag = true;
+			editContext!.Validate();
+		}
+		catch (UnexpectedResponseException)
+		{
+			Model.UnexpectedResponseFlag = true;
+			editContext!.Validate();
+		}
+		StateHasChanged();
 	}
 
 	public void Dispose()

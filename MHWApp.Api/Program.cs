@@ -227,7 +227,32 @@ app.MapPost("/sessions", async (AppDbContext dbContext, ClaimsPrincipal user, IH
 
         return Results.Created($"/sessions/{createSessionDTO.NewSession.Id}", createSessionDTO.NewSession);
     }
-);
+).RequireAuthorization();
+
+app.MapDelete("/sessions/{id}", async (AppDbContext dbContext, ClaimsPrincipal user, IHubContext<DataBaseUpdatesHub> hubContext, int id) =>
+{
+    var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
+    if (userIdClaim == null) return Results.Unauthorized();
+
+    var session = await dbContext.Sessions.FindAsync(id);
+    if (session == null) return Results.NotFound();
+
+    var userIds = await dbContext.Participators
+        .Where(p => p.SessionId == id)
+        .Select(p => p.PlayerId.ToString())
+        .ToListAsync();
+
+    dbContext.Sessions.Remove(session);
+    await dbContext.SaveChangesAsync();
+
+    foreach (var userId in userIds)
+    {
+        await hubContext.Clients.User(userId)
+            .SendAsync("ReceiveDeletedSession", id);
+    }
+
+    return Results.NoContent();
+}).RequireAuthorization(policy => policy.RequireRole("Master", "Admin"));
 #endregion
 
 #region Endpoint: Player
@@ -255,10 +280,7 @@ app.MapGet("/players", async (AppDbContext dbContext, ClaimsPrincipal user) =>
 app.MapGet("/participators/{sessionId}", async (AppDbContext dbContext, ClaimsPrincipal user, int sessionId) =>
 {
     var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
-    if (userIdClaim == null)
-    {
-        return Results.Unauthorized();
-    }
+    if (userIdClaim == null) return Results.Unauthorized();
 
     var playerId = int.Parse(userIdClaim.Value);
 
@@ -266,27 +288,52 @@ app.MapGet("/participators/{sessionId}", async (AppDbContext dbContext, ClaimsPr
 
     return Results.Ok(participator);
 }
-);
+).RequireAuthorization();
 
-app.MapPost("/participators", async (AppDbContext dbContext, ClaimsPrincipal user, Participator participator, bool isSelf) =>
+//app.MapPost("/participators", async (AppDbContext dbContext, ClaimsPrincipal user, IHubContext<DataBaseUpdatesHub> hubContext, Participator participator) =>
+//{
+//    var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
+//    if (userIdClaim == null) return Results.Unauthorized();
+
+//    bool exists = await dbContext.Participators.AnyAsync(p => p.SessionId == participator.Id && p.PlayerId == participator.PlayerId);
+//    if (exists) return Results.StatusCode(HTTP_STATUSCODE_CONFLICT);
+
+//    await dbContext.Participators.AddAsync(participator);
+//    await dbContext.SaveChangesAsync();
+
+//    return Results.Created($"/participators/{participator.Id}", participator);  //No SignalR needed, as Participator is only seen by the user who created it
+//}
+//).RequireAuthorization();
+
+app.MapDelete("/participators/{id}", async (AppDbContext dbContext, ClaimsPrincipal user, IHubContext<DataBaseUpdatesHub> hubContext, int id) =>
 {
     var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
-    if (userIdClaim == null)
-    {
-        return Results.Unauthorized();
-    }
+    if (userIdClaim == null) return Results.Unauthorized();
 
-    if (isSelf)
-    {
-        var playerId = int.Parse(userIdClaim.Value);
-        participator.PlayerId = playerId;
-    }
+    var participator = await dbContext.Participators.FindAsync(id);
+    if (participator == null) return Results.NotFound();
 
-    await dbContext.Participators.AddAsync(participator);
+    var sessionId = participator.SessionId;
+
+    dbContext.Participators.Remove(participator);
     await dbContext.SaveChangesAsync();
-    return Results.Created($"/participators/{participator.Id}", participator);
-}
-).RequireAuthorization();
+
+    if (!dbContext.Participators.Any(p => p.SessionId == sessionId))
+    {
+        var session = await dbContext.Sessions.FindAsync(sessionId);
+        if (session != null)
+        {
+            dbContext.Sessions.Remove(session);
+            await dbContext.SaveChangesAsync();
+
+            var playerId = int.Parse(userIdClaim.Value);
+
+            await hubContext.Clients.All.SendAsync("ReceiveDeletedSession", sessionId);
+        }
+    }
+
+    return Results.NoContent();
+}).RequireAuthorization();
 
 #endregion
 

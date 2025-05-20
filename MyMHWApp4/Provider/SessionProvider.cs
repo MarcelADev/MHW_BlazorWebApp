@@ -28,6 +28,12 @@ namespace MyMHWApp4.Provider
         {
             var response = await _httpClient.PostAsJsonAsync("sessions", createSessionDTO);
 
+            // It is allowed to create a session with the same name => HttpStatusCode.Confliict is not expected
+            if (response.StatusCode == HttpStatusCode.BadRequest)
+            {
+                logger.LogInformation($"Bad Request! Most likely cause: No Participators in the DTO list");
+                throw new BadRequestException();
+            }
             if (response.StatusCode == HttpStatusCode.Created)
             {
                 var newSession = await response.Content.ReadFromJsonAsync<Session>();
@@ -41,6 +47,21 @@ namespace MyMHWApp4.Provider
                 logger.LogInformation($"Entity was successfully created: {newSession.Name}");
                 return;
             }
+
+            logger.LogWarning($"Unexpexted HTTP Response: {response.StatusCode.ToString()}");
+            throw new UnexpectedResponseException(response.StatusCode.ToString());
+        }
+
+        public async Task RemoveSessionAsync(int sessionId)
+        {
+            var response = await _httpClient.DeleteAsync($"sessions/{sessionId}");
+
+            if (response.StatusCode == HttpStatusCode.NotFound)
+            {
+                logger.LogInformation($"Session couldnt be deleted, because it wasn't found: Id={sessionId}");
+                throw new EntityWasNotFoundException();
+            }
+            if (response.StatusCode == HttpStatusCode.NoContent) return;
 
             logger.LogWarning($"Unexpexted HTTP Response: {response.StatusCode.ToString()}");
             throw new UnexpectedResponseException(response.StatusCode.ToString());

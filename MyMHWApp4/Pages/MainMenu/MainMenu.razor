@@ -52,6 +52,7 @@
 		sessions = await sessionProvider.GetSessionsAsync();
 
 		hubService.OnNewSession += HandleSignalRNewSession;
+		hubService.OnDeletedSession += HandleSignalRDeletedSession;
 
 		isLoading = false;
 	}
@@ -66,8 +67,16 @@
 		StateHasChanged();
 	}
 
+	private void HandleSignalRDeletedSession(int deletedSessionId)
+	{
+		var deletedSessiion = sessions.Find(s => s.Id == deletedSessionId);
+		if (deletedSessiion != null) sessions.Remove(deletedSessiion);
+		StateHasChanged();
+	}
+
 	public void Dispose()
 	{
 		hubService.OnNewSession -= HandleSignalRNewSession;
+		hubService.OnDeletedSession -= HandleSignalRDeletedSession;
 	}
 }
