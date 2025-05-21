@@ -7,12 +7,12 @@
 @inject ParticipatorProvider participatorProvider
 @inject SessionProvider sessionProvider
 
-@if (!isLoading)
+@if (errors)
 {
-	<EditForm EditContext="editContext" FormName="session">
-		<DataAnnotationsValidator />
-		<ValidationSummary />
-	</EditForm>
+	@foreach (var error in errorList)
+	{
+		<div class="alert alert-danger">@error</div>
+	}
 }
 
 <div class="card-session">
@@ -80,14 +80,14 @@
 
 @if (showEditModal)
 {
-	
+
 }
 
 @if(showDeleteModal)
 {
 	<DeleteSessionModal CloseButtonClicked="HandleModalCloseButtonClicked"
-		RemoveParticipationButtonClicked="HandleModalRemoveParticipationButtonClicked"
-		DeleteSessionButtonClicked="HandleModalDeleteSessionButtonClicked">
+	RemoveParticipationButtonClicked="HandleModalRemoveParticipationButtonClicked"
+	DeleteSessionButtonClicked="HandleModalDeleteSessionButtonClicked">
 	</DeleteSessionModal>
 }
 
@@ -97,23 +97,18 @@
 	private bool isLoading = true;
 	private bool showDeleteModal = false;
 	private bool showEditModal = false;
-	private bool isFormValid = false;
+
+	private bool errors;
+	private string[] errorList = [];
 
 	Participator? participator;
-	private EditContext? editContext;
 
 	[Parameter]
 	public required Session Session { get; set; }
 
-	[SupplyParameterFromForm]
-	private SessionCardFormModel? Model { get; set; }
-
 	protected override async Task OnInitializedAsync()
 	{
 		participator = await participatorProvider.GetParticipatorAsync(Session.Id);
-
-		Model ??= new SessionCardFormModel();
-		editContext = new (Model);
 
 		isLoading = false;
 	}
@@ -145,19 +140,22 @@
 
 	private async Task HandleModalRemoveParticipationButtonClicked()
 	{
+		errors = false;
+		errorList = [];
+
 		try
 		{
 			await participatorProvider.RemoveParticipatorAsync(participator!.Id);
 		}
 		catch (EntityWasNotFoundException)
 		{
-			Model!.ParticipatorWasNotFoundFlag = true;
-			editContext!.Validate();
+			errors = true;
+			errorList = ["Couldnt remove Participator because it wasn't found. Please reload page!"];
 		}
 		catch (UnexpectedResponseException)
 		{
-			Model!.UnexpectedResponseFlag = true;
-			editContext!.Validate();
+			errors = true;
+			errorList = ["Unexpected HTTP Response. Please contact Devs!"];
 		}
 
 		showDeleteModal = false;
@@ -166,19 +164,22 @@
 
 	private async Task HandleModalDeleteSessionButtonClicked()
 	{
+		errors = false;
+		errorList = [];
+
 		try
 		{
 			await sessionProvider.RemoveSessionAsync(Session.Id);
 		}
 		catch (EntityWasNotFoundException)
 		{
-			Model!.SessionWasNotFoundFlag = true;
-			editContext!.Validate();
+			errors = true;
+			errorList = ["Couldnt remove Session because it wasn't found. Please reload page!"];
 		}
 		catch (UnexpectedResponseException)
 		{
-			Model!.UnexpectedResponseFlag = true;
-			editContext!.Validate();
+			errors = true;
+			errorList = ["Unexpected HTTP Response. Please contact Devs!"];
 		}
 
 		showDeleteModal = false;
