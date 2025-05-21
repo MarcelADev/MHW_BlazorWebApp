@@ -10,30 +10,35 @@
 				<button @onclick="OnCloseButtonClicked" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 			</div>
 
-			<div class="modal-body">
-				<p>Removing your Participation deletes all your progress in this Session!</p>
-				<br>
-				<p>Deleting the entire session is permanent! (Only Admins can delete Sessions)</p>
-			</div>
+			<AuthorizeView>
+				<Authorized>
+					@{
+						bool isAdmin = context.User.IsInRole(ADMIN_ROLE) || context.User.IsInRole(MASTER_ROLE);
+					}
 
-			<div class="modal-footer">
-				<button @onclick="OnRemoveParticipationButtonClicked" type="button" class="btn btn-danger">Remove your Participation</button>
-
-				<AuthorizeView>
-					<Authorized>
-						@{
-							bool canDelete = context.User.IsInRole(ADMIN_ROLE) || context.User.IsInRole(MASTER_ROLE);
+					<div class="modal-body">
+						<p>Removing your Participation deletes all your progress in this Session!</p>
+						<br>
+						@if (isAdmin)
+						{
+							<p>Deleting the entire session is permanent!</p>
 						}
-						<button @onclick="OnDeleteSessionButtonClicked"
-								disabled="@(!canDelete)"
-								class="btn @(canDelete ? "btn-danger" : "btn-dark")"
-								type="button">
-							Delete Session
-						</button>
-					</Authorized>
-				</AuthorizeView>
+					</div>
 
-			</div>
+					<div class="modal-footer">
+						<button @onclick="OnRemoveParticipationButtonClicked" type="button" class="btn btn-danger">Remove your Participation</button>
+						
+						@if(isAdmin)
+						{
+							<button @onclick="OnDeleteSessionButtonClicked"
+									class="btn btn-danger"
+									type="button">
+								Delete Session
+							</button>
+						}
+					</div>
+				</Authorized>
+			</AuthorizeView>
 
 		</div>
 	</div>
