@@ -16,7 +16,7 @@ label {
 }
 
 .card-session {
-    width: 80%;
+    width: 100%;
     max-width: var(--standard-max-width);
     display: flex;
     flex-direction: column;
