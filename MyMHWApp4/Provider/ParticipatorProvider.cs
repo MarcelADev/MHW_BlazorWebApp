@@ -19,13 +19,13 @@ namespace MyMHWApp4.Provider
 
             if (response.StatusCode == HttpStatusCode.OK) return participator ?? throw new EntityWasNullException();
 
-            logger.LogWarning($"Unexpexted HTTP Response: {response.StatusCode.ToString()}");
+            logger.LogWarning($"Unexpected HTTP Response: {response.StatusCode.ToString()}");
             throw new UnexpectedResponseException(response.StatusCode.ToString());
         }
 
         public async Task<List<Participator>> GetParticipatorsAsync(int sessionId)
         {
-            var request = new HttpRequestMessage(HttpMethod.Get, $"participators/{sessionId}");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"participators/{sessionId}?user_only=false");
             var response = await _httpClient.SendAsync(request);
             var participators = await response.Content.ReadFromJsonAsync<List<Participator>>();
 
@@ -33,7 +33,7 @@ namespace MyMHWApp4.Provider
 
             if (response.StatusCode == HttpStatusCode.OK) return participators;
 
-            logger.LogWarning($"Unexpexted HTTP Response: {response.StatusCode.ToString()}");
+            logger.LogWarning($"Unexpected HTTP Response: {response.StatusCode.ToString()}");
             throw new UnexpectedResponseException(response.StatusCode.ToString());
         }
 

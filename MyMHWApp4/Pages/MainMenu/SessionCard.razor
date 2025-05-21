@@ -2,6 +2,7 @@
 @using MHWApp.Library.Model
 @using MyMHWApp4.Pages.GeneralComponents.IconButtons
 @using MyMHWApp4.Pages.GeneralComponents.Modals
+@using MyMHWApp4.Pages.GeneralComponents.Modals.EditSessionModal
 @using MyMHWApp4.Provider
 @inject NavigationManager navigationManager
 @inject ParticipatorProvider participatorProvider
@@ -76,12 +77,15 @@
 
 @if (showEditModal)
 {
+	<EditSessionModal Session="Session" 
+					  CloseButtonClicked="HandleEditModalCloseButtonClicked">
 
+	</EditSessionModal>
 }
 
 @if(showDeleteModal)
 {
-	<DeleteSessionModal CloseButtonClicked="HandleModalCloseButtonClicked"
+	<DeleteSessionModal CloseButtonClicked="HandleDeleteModalCloseButtonClicked"
 	RemoveParticipationButtonClicked="HandleModalRemoveParticipationButtonClicked"
 	DeleteSessionButtonClicked="HandleModalDeleteSessionButtonClicked">
 	</DeleteSessionModal>
@@ -116,7 +120,7 @@
 
 	private void HandleEditButtonClicked()
 	{
-		StateHasChanged();
+		showEditModal = true;
 	}
 
 	private void HandleDeleteButtonClicked()
@@ -129,9 +133,14 @@
 		navigationManager.NavigateTo("/inventory");
 	}
 
-	private void HandleModalCloseButtonClicked()
+	private void HandleDeleteModalCloseButtonClicked()
 	{
 		showDeleteModal = false;
+	}
+
+	private void HandleEditModalCloseButtonClicked()
+	{
+		showEditModal = false;
 	}
 
 	private async Task HandleModalRemoveParticipationButtonClicked()

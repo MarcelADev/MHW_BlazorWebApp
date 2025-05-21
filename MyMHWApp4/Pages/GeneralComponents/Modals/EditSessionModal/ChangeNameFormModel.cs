@@ -4,12 +4,12 @@ using System.Xml.Linq;
 
 namespace MyMHWApp4.Pages.GeneralComponents.Modals.EditSessionModal
 {
-    public class EditSessionModalFormModel : IValidatableObject
+    public class ChangeNameFormModel : IValidatableObject
     {
         public string CurrentName { get; set; }
         public string NewName { get; set; }
 
-        public EditSessionModalFormModel(string sessionName)
+        public ChangeNameFormModel(string sessionName)
         {
             CurrentName = NewName = sessionName;
         }
@@ -20,7 +20,6 @@ namespace MyMHWApp4.Pages.GeneralComponents.Modals.EditSessionModal
             {
                 yield return new ValidationResult("CurrentName must not be empty", [nameof(CurrentName)]);
             }
-            
         }
     }
 }

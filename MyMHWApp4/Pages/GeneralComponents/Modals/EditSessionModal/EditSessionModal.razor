@@ -3,117 +3,213 @@
 @using MyMHWApp4.Provider
 @using static MHWApp.Library.StaticVariables
 @inject ParticipatorProvider participatorProvider
+@inject PlayerProvider playerProvider
+@implements IDisposable
 
 <div class="modal-backdrop show"></div>
 <div class="modal fade show" style="display:block" tabindex="-1">
-	<div class="modal-dialog">
-		<div class="modal-content">
+    <div class="modal-dialog">
+        <div class="modal-content">
 
-			<div class="modal-header">
-				<h5 class="modal-title">Edit Session</h5>
-				<button @onclick="OnCloseButtonClicked" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-			</div>
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Session</h5>
+                <button @onclick="OnCloseButtonClicked" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
 
-			@if(!isLoading)
-			{
-				<EditForm EditContext="editContext" FormName="editSession" OnValidSubmit="Submit">
+            <div class="modal-body">
 
-					<DataAnnotationsValidator />	
-					<ValidationSummary />
+                @if (!isLoading)
+                {
+                    <EditForm EditContext="editContextChangeName" FormName="editSessionName" OnValidSubmit="SubmitNameChange">
+                        <DataAnnotationsValidator />
+                        <ValidationSummary />
 
-					<div class="form__field">
-						<label for="editSession-name">Name</label>
-						<InputText id="editSession-name" @bind-Value="Model!.NewName"></InputText>
-					</div>
+                        <div class="form__field">
+                            <label for="editSessionName-name">Name</label>
+                            <InputText id="editSessionName-name" @bind-Value="ChangeNameModel!.NewName"></InputText>
+                        </div>
 
-					<MultiSelect T="Participator"
-								 Options="participators"
-								 OptionNameMapper="(Participator p) => p.Player!.UserName"
-								 OptionValueMapper="(Participator p) => p.Id">
+                        <div class=" form__field form__button">
+                            <button type="submit" class="btn btn-primary">
+                                Save Changes
+                            </button>
+                        </div>
 
-					</MultiSelect> 
-					@* TO DO: FINISHH MULTI SELECT *@
+                    </EditForm>
 
-				</EditForm>
-			}
+                    <AuthorizeView>
+                        <Authorized Context="authContext">
+                            @{
+                                bool isAdmin = authContext.User.IsInRole(ADMIN_ROLE) || authContext.User.IsInRole(MASTER_ROLE);
+                            }
+                            @if(isAdmin)
+                            {
+                                <EditForm EditContext="editContextRemoveParticipator" FormName="removeParticipator" OnValidSubmit="SubmitRemoveParticipator">
+                                    <DataAnnotationsValidator />
+                                    <ValidationSummary />
 
+                                    <MultiSelect Label="Remove Participators"
+                                    Placeholder="Select"
+                                    T="Participator"
+                                    Options="participators"
+                                    OptionNameMapper="(Participator p) => p.Player!.UserName"
+                                    OptionValueMapper="(Participator p) => p.Id"
+                                    ValueList="RemoveParticipatorModel!.SelectedParticipators"
+                                    ValueListChanged="HandleRemoveSelect">
+                                    </MultiSelect>
 
-			@* <div class="modal-body">
-				<p>Removing your Participation deletes all your progress in this Session!</p>
-				<br>
-				<p>Deleting the entire session is permanent! (Only Admins can delete Sessions)</p>
-			</div>
+                                    <div class=" form__field form__button">
+                                        <button type="submit" class="btn btn-primary">
+                                            Save changes
+                                        </button>
+                                    </div>
 
-			<div class="modal-footer">
-				<button @onclick="OnRemoveParticipationButtonClicked" type="button" class="btn btn-danger">Remove your Participation</button>
+                                </EditForm>
 
-				<AuthorizeView>
-					<Authorized>
-						@{
-							bool canDelete = context.User.IsInRole(ADMIN_ROLE) || context.User.IsInRole(MASTER_ROLE);
-						}
-						<button @onclick="OnDeleteSessionButtonClicked"
-								disabled="@(!canDelete)"
-								class="btn @(canDelete ? "btn-danger" : "btn-dark")"
-								type="button">
-							Delete Session
-						</button>
-					</Authorized>
-				</AuthorizeView>
+                                <EditForm EditContext="editContextAddParticipator" FormName="addParticipator" OnValidSubmit="SubmitAddParticipator">
+                                    <DataAnnotationsValidator />
+                                    <ValidationSummary />
 
-			</div> *@
+                                    <MultiSelect Label="Add Participators"
+                                    Placeholder="Select"
+                                    T="Player"
+                                    Options="players"
+                                    OptionNameMapper="(Player p) => p.UserName"
+                                    OptionValueMapper="(Player p) => p.Id"
+                                    ValueList="AddParticipatorModel!.SelectedPlayers"
+                                    ValueListChanged="HandleAddSelect">
+                                    </MultiSelect>
 
-		</div>
-	</div>
+                                    <div class=" form__field form__button">
+                                        <button type="submit" class="btn btn-primary">
+                                            Save changes
+                                        </button>
+                                    </div>
+
+                                </EditForm>
+                            }
+
+                        </Authorized>
+                    </AuthorizeView>
+                }
+
+            </div>
+
+        </div>
+    </div>
 </div>
 
 @code{
-	private bool isLoading = true;
+    private bool isLoading = true;
+    private bool isFormValid = true;
 
-	private EditContext? editContext;
-	private List<Participator>? participators;
+    private EditContext? editContextChangeName;
+    private EditContext? editContextRemoveParticipator;
+    private EditContext? editContextAddParticipator;
 
-	[SupplyParameterFromForm]
-	private EditSessionModalFormModel? Model { get; set; }
+    private List<Participator>? participators;
+    private List<Player>? players;
 
-	[Parameter]
-	public required int SessionId { get; set; }
+    [SupplyParameterFromForm]
+    private ChangeNameFormModel? ChangeNameModel { get; set; }
 
-	[Parameter]
-	public required EventCallback CloseButtonClicked { get; set; }
+    [SupplyParameterFromForm]
+    private RemoveParticipatorFormModel? RemoveParticipatorModel { get; set; }
 
-	[Parameter]
-	public required EventCallback RemoveParticipationButtonClicked { get; set; }
+    [SupplyParameterFromForm]
+    private AddParticipatorFormModel? AddParticipatorModel { get; set; }
 
-	[Parameter]
-	public required EventCallback DeleteSessionButtonClicked { get; set; }
+    [Parameter]
+    public required Session Session { get; set; }
 
-	protected override async Task OnInitializedAsync()
-	{
-		participators = await participatorProvider.GetParticipatorsAsync(SessionId);
+    [Parameter]
+    public required EventCallback CloseButtonClicked { get; set; }
 
-		isLoading = false;
-	}
+    protected override async Task OnInitializedAsync()
+    {
+        participators = await participatorProvider.GetParticipatorsAsync(Session.Id);
+        players = (await playerProvider.GetPlayersAsync()).Where(p => !participators.Any(pa => pa.PlayerId == p.Id)).ToList();
 
-	private void Submit() => ChangeSession();
+        ChangeNameModel = new ChangeNameFormModel(Session.Name);
+        RemoveParticipatorModel = new RemoveParticipatorFormModel(participators);
+        AddParticipatorModel = new AddParticipatorFormModel(players);
 
-	private void ChangeSession()
-	{
-		
-	}
+        editContextChangeName = new(ChangeNameModel);
+        editContextChangeName.OnFieldChanged += HandleChangeNameFieldChanged;
 
-	private void OnCloseButtonClicked()
-	{
+        editContextRemoveParticipator = new(RemoveParticipatorModel);
+        editContextRemoveParticipator.OnFieldChanged += HandleRemoveParticipatorFieldChanged;
+
+        editContextAddParticipator = new(AddParticipatorModel);
+        editContextAddParticipator.OnFieldChanged += HandleAddParticipatorFieldChanged;
+
+        isLoading = false;
+        StateHasChanged();
+    }
+
+    private void HandleRemoveSelect(List<Participator> participators)
+    {
+        isFormValid = !editContextRemoveParticipator!.Validate();
+        StateHasChanged();
+    }
+
+    private void HandleAddSelect(List<Player> players)
+    {
+        isFormValid = !editContextAddParticipator!.Validate();
+        StateHasChanged();
+    }
+
+    private void HandleChangeNameFieldChanged(object? sender, FieldChangedEventArgs e)
+    {
+        if (editContextChangeName is not null)
+        {
+            isFormValid = !editContextChangeName.Validate();
+            StateHasChanged();
+        }
+    }
+
+    private void HandleRemoveParticipatorFieldChanged(object? sender, FieldChangedEventArgs e)
+    {
+        if (editContextRemoveParticipator is not null)
+        {
+            isFormValid = !editContextRemoveParticipator.Validate();
+            StateHasChanged();
+        }
+    }
+
+    private void HandleAddParticipatorFieldChanged(object? sender, FieldChangedEventArgs e)
+    {
+        if (editContextAddParticipator is not null)
+        {
+            isFormValid = !editContextAddParticipator.Validate();
+            StateHasChanged();
+        }
+    }
+
+    private void SubmitNameChange()
+    {
+
+    }
+
+    private void SubmitRemoveParticipator()
+    {
+        
+    }
+
+    private void SubmitAddParticipator()
+    {
+
+    }
+
+    private void OnCloseButtonClicked()
+    {
 		CloseButtonClicked.InvokeAsync();
 	}
 
-	private void OnRemoveParticipationButtonClicked()
-	{
-		RemoveParticipationButtonClicked.InvokeAsync();
-	}
-
-	private void OnDeleteSessionButtonClicked()
-	{
-		DeleteSessionButtonClicked.InvokeAsync();
-	}
+    public void Dispose()
+    {
+        if (editContextChangeName is not null) editContextChangeName.OnFieldChanged -= HandleChangeNameFieldChanged;
+        if (editContextRemoveParticipator is not null) editContextRemoveParticipator.OnFieldChanged -= HandleRemoveParticipatorFieldChanged;
+        if (editContextAddParticipator is not null) editContextAddParticipator.OnFieldChanged -= HandleAddParticipatorFieldChanged;
+    }
 }

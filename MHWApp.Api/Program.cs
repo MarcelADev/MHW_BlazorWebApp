@@ -295,6 +295,7 @@ app.MapGet("/participators/{sessionId}", async (AppDbContext dbContext, ClaimsPr
         var participators = await dbContext.Participators
             .Where(p => p.SessionId == sessionId)
             .Include(p => p.WeaponType)
+            .Include (p => p.Player)
             .ToListAsync();
 
         return Results.Ok(participators);
