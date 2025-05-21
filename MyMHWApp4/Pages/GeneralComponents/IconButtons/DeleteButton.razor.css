@@ -6,9 +6,12 @@
     padding: 10px;
 }
 
-.alternative {
+button.alternative {
     background: transparent;
-    color: white;
+}
+
+span.alternative {
+    color: black;
 }
 
 button:hover {

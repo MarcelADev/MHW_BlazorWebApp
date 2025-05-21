@@ -26,7 +26,6 @@ label {
     border-radius: 10px;
     box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.3);
     padding: 0;
-    padding-bottom: 10px;
 }
 
     .sessionCard:hover {
@@ -51,11 +50,9 @@ label {
         object-position: center; /* Centers the image */
     }
 
-.overlay__iconbuttons {
-    position: absolute;
-    top: 0.5rem;
-    right: 0.5rem;
+.container__iconbuttons {
     display: flex;
+    flex-direction: row;
     gap: 0.5rem;
     z-index: 10;
 }

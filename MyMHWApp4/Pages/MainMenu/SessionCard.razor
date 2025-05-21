@@ -21,22 +21,6 @@
 
 		<img src="Images/CardPicture.jpg" alt="Image not available" />
 
-		<div class="overlay__iconbuttons">
-			@if (!toggleMore)
-			{
-				<div class="container-top">
-					<MoreButton MoreButtonClicked="HandleMoreButtonClicked"></MoreButton>
-				</div>
-			}
-			else
-			{
-				<div class="container-top">
-					<MoreButton MoreButtonClicked="HandleMoreButtonClicked" Glow="true"></MoreButton>
-					<EditButton EditButtonClicked="HandleEditButtonClicked" AlternativeDesign="true" Glow="true"></EditButton>
-					<DeleteButton DeleteButtonClicked="HandleDeleteButtonClicked" AlternativeDesign="true" Glow="true"></DeleteButton>
-				</div>
-			}
-		</div>
 	</div>
 
 	<div class="data__container">
@@ -71,9 +55,21 @@
 			<p id="session-date">@Session.Date</p>
 		</div>
 
-		<button class="play__button" @onclick="HandlePlayButtonClicked">
-			Play
-		</button>
+		<div class="container-left-space-between">
+			<button class="play__button" @onclick="HandlePlayButtonClicked">
+				Play
+			</button>
+
+			<div class="container-left">
+				<MoreButton MoreButtonClicked="HandleMoreButtonClicked"></MoreButton>
+
+				@if (toggleMore)
+				{
+					<EditButton EditButtonClicked="HandleEditButtonClicked" AlternativeDesign="true"></EditButton>
+					<DeleteButton DeleteButtonClicked="HandleDeleteButtonClicked" AlternativeDesign="true"></DeleteButton>
+				}
+			</div>			
+		</div>
 	</div>
 
 </div>
