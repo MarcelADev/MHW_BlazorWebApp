@@ -62,7 +62,7 @@ label {
 
 .data__container {
     width: 100%;
-    padding: 5px 10px 5px 10px;
+    padding: 10px;
     background-color: inherit;
 }
 
@@ -70,7 +70,7 @@ label {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin: 0.5rem 0 1.2rem 0;
+    margin-bottom: 1rem;
 }
 
 .date__container{
@@ -78,8 +78,12 @@ label {
     align-items: center;
 }
 
-.property__container{
-    margin: 0 0 0.3rem 0;
+.property__container {
+    margin-bottom: 0.3rem;
+}
+
+.property__container-last {
+    margin-bottom: 1rem;
 }
 
 .black {
