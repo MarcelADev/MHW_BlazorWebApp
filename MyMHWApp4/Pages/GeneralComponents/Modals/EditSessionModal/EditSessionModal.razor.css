@@ -1,0 +1,10 @@
+﻿.purple {
+    background: #6457A6;
+    border: 1px solid #6457A6;
+}
+
+.inverted {
+    color: black;
+    background: white;
+    border: 1px solid black;
+}

@@ -12,89 +12,65 @@
         <div class="modal-content">
 
             <div class="modal-header">
-                <h5 class="modal-title">Edit Session</h5>
+                <h5 class="modal-title">Edit @Session.Name</h5>
                 <button @onclick="OnCloseButtonClicked" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
 
-            <div class="modal-body">
+            @if (!isLoading)
+            {
+                <AuthorizeView>
+                    <Authorized Context="authContext">
+                        @{
+                            bool isAdmin = authContext.User.IsInRole(ADMIN_ROLE) || authContext.User.IsInRole(MASTER_ROLE);
+                        }
+                        <EditForm EditContext="editContext" FormName="editSessionName" OnValidSubmit="Submit">
+                            <DataAnnotationsValidator />
+                            <ValidationSummary />
 
-                @if (!isLoading)
-                {
-                    <EditForm EditContext="editContextChangeName" FormName="editSessionName" OnValidSubmit="SubmitNameChange">
-                        <DataAnnotationsValidator />
-                        <ValidationSummary />
+                            <div class="modal-body">
+                                <div class="form__field">
+                                    <label for="editSessionName-name">Change Name</label>
+                                    <InputText id="editSessionName-name" @bind-Value="Model!.NewName"></InputText>
+                                </div>
 
-                        <div class="form__field">
-                            <label for="editSessionName-name">Name</label>
-                            <InputText id="editSessionName-name" @bind-Value="ChangeNameModel!.NewName"></InputText>
-                        </div>
-
-                        <div class=" form__field form__button">
-                            <button type="submit" class="btn btn-primary">
-                                Save Changes
-                            </button>
-                        </div>
-
-                    </EditForm>
-
-                    <AuthorizeView>
-                        <Authorized Context="authContext">
-                            @{
-                                bool isAdmin = authContext.User.IsInRole(ADMIN_ROLE) || authContext.User.IsInRole(MASTER_ROLE);
-                            }
-                            @if(isAdmin)
-                            {
-                                <EditForm EditContext="editContextRemoveParticipator" FormName="removeParticipator" OnValidSubmit="SubmitRemoveParticipator">
-                                    <DataAnnotationsValidator />
-                                    <ValidationSummary />
-
+                                @if (isAdmin)
+                                {
                                     <MultiSelect Label="Remove Participators"
-                                    Placeholder="Select"
-                                    T="Participator"
-                                    Options="participators"
-                                    OptionNameMapper="(Participator p) => p.Player!.UserName"
-                                    OptionValueMapper="(Participator p) => p.Id"
-                                    ValueList="RemoveParticipatorModel!.SelectedParticipators"
-                                    ValueListChanged="HandleRemoveSelect">
+                                                 Placeholder="Select"
+                                                 T="Participator"
+                                                 Options="participators"
+                                                 OptionNameMapper="(Participator p) => p.Player!.UserName"
+                                                 OptionValueMapper="(Participator p) => p.Id"
+                                                 ValueList="Model!.SelectedParticipators"
+                                                 ValueListChanged="HandleRemoveSelect">
                                     </MultiSelect>
-
-                                    <div class=" form__field form__button">
-                                        <button type="submit" class="btn btn-primary">
-                                            Save changes
-                                        </button>
-                                    </div>
-
-                                </EditForm>
-
-                                <EditForm EditContext="editContextAddParticipator" FormName="addParticipator" OnValidSubmit="SubmitAddParticipator">
-                                    <DataAnnotationsValidator />
-                                    <ValidationSummary />
 
                                     <MultiSelect Label="Add Participators"
-                                    Placeholder="Select"
-                                    T="Player"
-                                    Options="players"
-                                    OptionNameMapper="(Player p) => p.UserName"
-                                    OptionValueMapper="(Player p) => p.Id"
-                                    ValueList="AddParticipatorModel!.SelectedPlayers"
-                                    ValueListChanged="HandleAddSelect">
+                                                 Placeholder="Select"
+                                                 T="Player"
+                                                 Options="players"
+                                                 OptionNameMapper="(Player p) => p.UserName"
+                                                 OptionValueMapper="(Player p) => p.Id"
+                                                 ValueList="Model!.SelectedPlayers"
+                                                 ValueListChanged="HandleAddSelect">
                                     </MultiSelect>
+                                }
+                            </div>
 
-                                    <div class=" form__field form__button">
-                                        <button type="submit" class="btn btn-primary">
-                                            Save changes
-                                        </button>
-                                    </div>
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-primary inverted">
+                                    Reset Form
+                                </button>
 
-                                </EditForm>
-                            }
+                                <button type="submit" class="btn btn-primary purple">
+                                    Save changes
+                                </button>
+                            </div>
 
-                        </Authorized>
-                    </AuthorizeView>
-                }
-
-            </div>
-
+                        </EditForm>
+                    </Authorized>
+                </AuthorizeView>
+            }
         </div>
     </div>
 </div>
@@ -103,21 +79,13 @@
     private bool isLoading = true;
     private bool isFormValid = true;
 
-    private EditContext? editContextChangeName;
-    private EditContext? editContextRemoveParticipator;
-    private EditContext? editContextAddParticipator;
+    private EditContext? editContext;
 
     private List<Participator>? participators;
     private List<Player>? players;
 
     [SupplyParameterFromForm]
-    private ChangeNameFormModel? ChangeNameModel { get; set; }
-
-    [SupplyParameterFromForm]
-    private RemoveParticipatorFormModel? RemoveParticipatorModel { get; set; }
-
-    [SupplyParameterFromForm]
-    private AddParticipatorFormModel? AddParticipatorModel { get; set; }
+    private EditSessionFormModel? Model { get; set; }
 
     [Parameter]
     public required Session Session { get; set; }
@@ -130,86 +98,47 @@
         participators = await participatorProvider.GetParticipatorsAsync(Session.Id);
         players = (await playerProvider.GetPlayersAsync()).Where(p => !participators.Any(pa => pa.PlayerId == p.Id)).ToList();
 
-        ChangeNameModel = new ChangeNameFormModel(Session.Name);
-        RemoveParticipatorModel = new RemoveParticipatorFormModel(participators);
-        AddParticipatorModel = new AddParticipatorFormModel(players);
-
-        editContextChangeName = new(ChangeNameModel);
-        editContextChangeName.OnFieldChanged += HandleChangeNameFieldChanged;
-
-        editContextRemoveParticipator = new(RemoveParticipatorModel);
-        editContextRemoveParticipator.OnFieldChanged += HandleRemoveParticipatorFieldChanged;
-
-        editContextAddParticipator = new(AddParticipatorModel);
-        editContextAddParticipator.OnFieldChanged += HandleAddParticipatorFieldChanged;
+        Model = new EditSessionFormModel(Session.Name, players, participators);
+        editContext = new(Model);
+        editContext.OnFieldChanged += HandleFieldChanged;
 
         isLoading = false;
         StateHasChanged();
     }
 
+    private void OnCloseButtonClicked()
+    {
+        CloseButtonClicked.InvokeAsync();
+    }
+
     private void HandleRemoveSelect(List<Participator> participators)
     {
-        isFormValid = !editContextRemoveParticipator!.Validate();
+        isFormValid = !editContext!.Validate();
         StateHasChanged();
     }
 
     private void HandleAddSelect(List<Player> players)
     {
-        isFormValid = !editContextAddParticipator!.Validate();
+        isFormValid = !editContext!.Validate();
         StateHasChanged();
     }
 
-    private void HandleChangeNameFieldChanged(object? sender, FieldChangedEventArgs e)
+    private void HandleFieldChanged(object? sender, FieldChangedEventArgs e)
     {
-        if (editContextChangeName is not null)
+        if (editContext is not null)
         {
-            isFormValid = !editContextChangeName.Validate();
+            isFormValid = !editContext.Validate();
             StateHasChanged();
         }
     }
 
-    private void HandleRemoveParticipatorFieldChanged(object? sender, FieldChangedEventArgs e)
-    {
-        if (editContextRemoveParticipator is not null)
-        {
-            isFormValid = !editContextRemoveParticipator.Validate();
-            StateHasChanged();
-        }
-    }
-
-    private void HandleAddParticipatorFieldChanged(object? sender, FieldChangedEventArgs e)
-    {
-        if (editContextAddParticipator is not null)
-        {
-            isFormValid = !editContextAddParticipator.Validate();
-            StateHasChanged();
-        }
-    }
-
-    private void SubmitNameChange()
+    private void Submit()
     {
 
     }
-
-    private void SubmitRemoveParticipator()
-    {
-        
-    }
-
-    private void SubmitAddParticipator()
-    {
-
-    }
-
-    private void OnCloseButtonClicked()
-    {
-		CloseButtonClicked.InvokeAsync();
-	}
 
     public void Dispose()
     {
-        if (editContextChangeName is not null) editContextChangeName.OnFieldChanged -= HandleChangeNameFieldChanged;
-        if (editContextRemoveParticipator is not null) editContextRemoveParticipator.OnFieldChanged -= HandleRemoveParticipatorFieldChanged;
-        if (editContextAddParticipator is not null) editContextAddParticipator.OnFieldChanged -= HandleAddParticipatorFieldChanged;
+        if (editContext is not null) editContext.OnFieldChanged -= HandleFieldChanged;
     }
 }
