@@ -36,23 +36,23 @@
                                 @if (isAdmin)
                                 {
                                     <MultiSelect Label="Remove Participators"
-                                                 Placeholder="Select"
-                                                 T="Participator"
-                                                 Options="participators"
-                                                 OptionNameMapper="(Participator p) => p.Player!.UserName"
-                                                 OptionValueMapper="(Participator p) => p.Id"
-                                                 ValueList="Model!.SelectedParticipators"
-                                                 ValueListChanged="HandleRemoveSelect">
+                                    Placeholder="Select"
+                                    T="Participator"
+                                    Options="participators"
+                                    OptionNameMapper="(Participator p) => p.Player!.UserName"
+                                    OptionValueMapper="(Participator p) => p.Id"
+                                    ValueList="Model!.SelectedParticipators"
+                                    ValueListChanged="HandleRemoveSelect">
                                     </MultiSelect>
 
                                     <MultiSelect Label="Add Participators"
-                                                 Placeholder="Select"
-                                                 T="Player"
-                                                 Options="players"
-                                                 OptionNameMapper="(Player p) => p.UserName"
-                                                 OptionValueMapper="(Player p) => p.Id"
-                                                 ValueList="Model!.SelectedPlayers"
-                                                 ValueListChanged="HandleAddSelect">
+                                    Placeholder="Select"
+                                    T="Player"
+                                    Options="players"
+                                    OptionNameMapper="(Player p) => p.UserName"
+                                    OptionValueMapper="(Player p) => p.Id"
+                                    ValueList="Model!.SelectedPlayers"
+                                    ValueListChanged="HandleAddSelect">
                                     </MultiSelect>
                                 }
                             </div>
@@ -132,9 +132,11 @@
         }
     }
 
-    private void Submit()
-    {
+    private void Submit() => ChangeSession();
 
+    private void ChangeSession()
+    {
+        
     }
 
     public void Dispose()

@@ -14,6 +14,7 @@ using System.Net;
 using Microsoft.AspNetCore.SignalR;
 using System.Runtime.CompilerServices;
 using MHWApp.Api.Provider;
+using System.Linq;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -228,6 +229,68 @@ app.MapPost("/sessions", async (AppDbContext dbContext, ClaimsPrincipal user, IH
         return Results.Created($"/sessions/{createSessionDTO.NewSession.Id}", createSessionDTO.NewSession);
     }
 ).RequireAuthorization();
+
+app.MapPut("/sessions/{id}", async (AppDbContext dbContext, ClaimsPrincipal user, IHubContext hubContext, int id, UpdateSessionDTO updatedSessionDTO) =>
+{
+    var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
+    if (userIdClaim == null) return Results.Unauthorized();
+
+    var existingSession = await dbContext.Sessions.FindAsync(id);
+    if (existingSession == null) return Results.NotFound();
+
+    var isAdminOrMaster = user.IsInRole(ADMIN_ROLE) || user.IsInRole(MASTER_ROLE);
+
+    if (!string.IsNullOrWhiteSpace(updatedSessionDTO.UpdatedSession.Name)) existingSession.Name = updatedSessionDTO.UpdatedSession.Name;
+
+    if (isAdminOrMaster)
+    {
+        // Remove Participators
+        if (updatedSessionDTO.RemoveParticipators.Any())
+        {
+            var idsToRemove = updatedSessionDTO.RemoveParticipators.Select(p => p.Id).ToList();
+            var participatorsToRemove = await dbContext.Participators
+                .Where(p => idsToRemove.Contains(p.Id))
+                .ToListAsync();
+
+            dbContext.Participators.RemoveRange(participatorsToRemove);
+        }
+
+        // Add Participators
+        foreach (var participator in updatedSessionDTO.AddParticipators)
+        {
+            if (participator.PlayerId == 0)
+                participator.PlayerId = int.Parse(userIdClaim.Value);
+
+            participator.SessionId = id;
+            await dbContext.Participators.AddAsync(participator);
+        }
+    }
+
+    await dbContext.SaveChangesAsync();
+
+    if (isAdminOrMaster)
+    {
+        // Notify removed participators via SignalR
+        var notifyRemovedTasks = updatedSessionDTO.RemoveParticipators
+        .Where(p => p.PlayerId > 0)
+        .Select(p => hubContext.Clients.User(p.PlayerId.ToString()).SendAsync("ReceiveDeletedParticipator", id));
+
+        await Task.WhenAll(notifyRemovedTasks);
+    }
+
+    // Notify all remaining participators via SignalR
+    var participators = await dbContext.Participators
+                            .Where(p => p.SessionId == id)
+                            .ToListAsync();
+
+    var notifyRemainingTasks = participators
+    .Select(p => hubContext.Clients.User(p.PlayerId.ToString()).SendAsync("ReceiveUpdatedSession", id));
+
+    await Task.WhenAll(notifyRemainingTasks);
+
+    return Results.NoContent();
+
+}).RequireAuthorization();
 
 app.MapDelete("/sessions/{id}", async (AppDbContext dbContext, ClaimsPrincipal user, IHubContext<DataBaseUpdatesHub> hubContext, int id) =>
 {
