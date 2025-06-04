@@ -230,7 +230,7 @@ app.MapPost("/sessions", async (AppDbContext dbContext, ClaimsPrincipal user, IH
     }
 ).RequireAuthorization();
 
-app.MapPut("/sessions/{id}", async (AppDbContext dbContext, ClaimsPrincipal user, IHubContext hubContext, int id, UpdateSessionDTO updatedSessionDTO) =>
+app.MapPut("/sessions/{id}", async (AppDbContext dbContext, ClaimsPrincipal user, IHubContext<DataBaseUpdatesHub> hubContext, int id, UpdateSessionDTO updatedSessionDTO) =>
 {
     var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
     if (userIdClaim == null) return Results.Unauthorized();
@@ -278,7 +278,7 @@ app.MapPut("/sessions/{id}", async (AppDbContext dbContext, ClaimsPrincipal user
         await Task.WhenAll(notifyRemovedTasks);
     }
 
-    // Notify all remaining participators via SignalR
+    // Notify remaining and new participators via SignalR
     var participators = await dbContext.Participators
                             .Where(p => p.SessionId == id)
                             .ToListAsync();
@@ -349,7 +349,9 @@ app.MapGet("/participators/{sessionId}", async (AppDbContext dbContext, ClaimsPr
     {
         var playerId = int.Parse(userIdClaim.Value);
 
-        var participator = await dbContext.Participators.Include(p => p.WeaponType).FirstOrDefaultAsync(p => p.PlayerId == playerId && p.SessionId == sessionId);
+        var participator = await dbContext.Participators
+            .Include(p => p.WeaponType)
+            .FirstOrDefaultAsync(p => p.PlayerId == playerId && p.SessionId == sessionId);
 
         return Results.Ok(participator);
     }

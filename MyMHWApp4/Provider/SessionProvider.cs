@@ -52,6 +52,23 @@ namespace MyMHWApp4.Provider
             throw new UnexpectedResponseException(response.StatusCode.ToString());
         }
 
+        public async Task UpdateSessionAsync(UpdateSessionDTO dto)
+        {
+            var response = await _httpClient.PutAsJsonAsync($"sessions/{dto.UpdatedSession.Id}", dto);
+
+            if (response.StatusCode == HttpStatusCode.NotFound)
+            {
+                logger.LogInformation($"Entity couldn't be updated, because it wasn't found: {dto.UpdatedSession.Name}");
+                throw new EntityWasNotFoundException();
+            }
+            if (response.StatusCode == HttpStatusCode.NoContent)
+            {
+                return;
+            }
+
+            logger.LogWarning($"Unexpexted HTTP Response: {response.StatusCode.ToString()}");
+            throw new UnexpectedResponseException(response.StatusCode.ToString());
+        }
         public async Task RemoveSessionAsync(int sessionId)
         {
             var response = await _httpClient.DeleteAsync($"sessions/{sessionId}");

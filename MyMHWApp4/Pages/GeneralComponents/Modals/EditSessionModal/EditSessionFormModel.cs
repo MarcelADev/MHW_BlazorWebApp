@@ -9,8 +9,7 @@ namespace MyMHWApp4.Pages.GeneralComponents.Modals.EditSessionModal
         public string CurrentName { get; set; }
         public string NewName { get; set; }
 
-        public List<Player> CurrentPlayers { get; set; } = [];
-        public List<Player> SelectedPlayers { get; set; } = [];
+        public List<Player> SelectedNewPlayers { get; set; } = [];
 
         public List<Participator> CurrentParticipators { get; set; } = [];
         public List<Participator> SelectedParticipators { get; set; } = [];
@@ -19,11 +18,15 @@ namespace MyMHWApp4.Pages.GeneralComponents.Modals.EditSessionModal
         {
             CurrentName = NewName = sessionName;
 
-            CurrentPlayers = players.ToList();
-            SelectedPlayers = players;
+            foreach(Participator p in participators)
+            {
+                Participator participatorClone = p.Clone();
+                participatorClone.Id = p.Id;
+                participatorClone.Player = p.Player;
 
-            CurrentParticipators = participators.ToList();
-            SelectedParticipators = participators;
+                CurrentParticipators.Add(participatorClone);
+                SelectedParticipators.Add(participatorClone);
+            }
         }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
@@ -33,8 +36,7 @@ namespace MyMHWApp4.Pages.GeneralComponents.Modals.EditSessionModal
                 yield return new ValidationResult("CurrentName must not be empty", [nameof(CurrentName)]);
             }
             if (NewName == CurrentName &&
-                CurrentPlayers.All(cp => SelectedPlayers.Contains(cp)) &&
-                SelectedPlayers.All(cp => CurrentPlayers.Contains(cp)) &&
+                !SelectedNewPlayers.Any() &&
                 CurrentParticipators.All(cp => SelectedParticipators.Contains(cp)) &&
                 SelectedParticipators.All(cp => CurrentParticipators.Contains(cp)))
             {

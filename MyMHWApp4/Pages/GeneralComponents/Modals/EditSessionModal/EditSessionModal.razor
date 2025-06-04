@@ -1,4 +1,5 @@
-﻿@using MHWApp.Library.Model
+﻿@using MHWApp.Library.DTO
+@using MHWApp.Library.Model
 @using MyMHWApp4.Pages.GeneralComponents.Select
 @using MyMHWApp4.Provider
 @using static MHWApp.Library.StaticVariables
@@ -36,23 +37,23 @@
                                 @if (isAdmin)
                                 {
                                     <MultiSelect Label="Remove Participators"
-                                    Placeholder="Select"
-                                    T="Participator"
-                                    Options="participators"
-                                    OptionNameMapper="(Participator p) => p.Player!.UserName"
-                                    OptionValueMapper="(Participator p) => p.Id"
-                                    ValueList="Model!.SelectedParticipators"
-                                    ValueListChanged="HandleRemoveSelect">
+                                                 Placeholder="Select"
+                                                 T="Participator"
+                                                 Options="participators"
+                                                 OptionNameMapper="(Participator p) => p != null ? p.Player?.UserName : string.Empty"
+                                                 OptionValueMapper="(Participator p) => p.Id"
+                                                 ValueList="Model!.SelectedParticipators"
+                                                 ValueListChanged="HandleRemoveSelect">
                                     </MultiSelect>
 
                                     <MultiSelect Label="Add Participators"
-                                    Placeholder="Select"
-                                    T="Player"
-                                    Options="players"
-                                    OptionNameMapper="(Player p) => p.UserName"
-                                    OptionValueMapper="(Player p) => p.Id"
-                                    ValueList="Model!.SelectedPlayers"
-                                    ValueListChanged="HandleAddSelect">
+                                                 Placeholder="Select"
+                                                 T="Player"
+                                                 Options="players"
+                                                 OptionNameMapper="(Player p) => p.UserName"
+                                                 OptionValueMapper="(Player p) => p.Id"
+                                                 ValueList="Model!.SelectedNewPlayers"
+                                                 ValueListChanged="HandleAddSelect">
                                     </MultiSelect>
                                 }
                             </div>
@@ -136,7 +137,22 @@
 
     private void ChangeSession()
     {
-        
+        UpdateSessionDTO dto = new UpdateSessionDTO
+        {
+            UpdatedSession = new Session
+            {
+                Id = Session.Id,
+                Name = Model!.NewName,
+                Date = Session.Date,
+                DayCount = Session.DayCount,
+                MaxDays = Session.MaxDays
+            },
+            RemoveParticipators = Model.SelectedParticipators,
+            AddParticipators = []
+        };
+
+        foreach (Player player in Model.SelectedNewPlayers) 
+            dto.AddParticipators.Add(new Participator { Id = 0, PlayerId = player.Id, SessionId = Session.Id, WeaponTypeId = 1});   //TO DO WEAPON TYPE AUF DER PAGE
     }
 
     public void Dispose()
