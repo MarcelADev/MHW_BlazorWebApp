@@ -9,6 +9,12 @@ namespace MyMHWApp4.Pages.GeneralComponents.Modals.EditSessionModal
         public string CurrentName { get; set; }
         public string NewName { get; set; }
 
+        public int CurrentDayCount { get; set; }
+        public int NewDayCount { get; set; }
+
+        public int CurrentMaxDays { get; set; }
+        public int NewMaxDays { get; set; }
+
         public int[] PlayerIds { get; set; } = [];
 
         public List<Participator> RemoveParticipators { get; set; } = [];
@@ -17,9 +23,11 @@ namespace MyMHWApp4.Pages.GeneralComponents.Modals.EditSessionModal
         public bool EntityWasNullFlag { get; set; } = false;
         public bool UnexpectedResponseFlag { get; set; } = false;
 
-        public EditSessionFormModel(string sessionName)
+        public EditSessionFormModel(string sessionName, int dayCount, int maxDays)
         {
             CurrentName = NewName = sessionName;
+            CurrentDayCount = NewDayCount = dayCount;
+            CurrentMaxDays = NewMaxDays = maxDays;
         }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)

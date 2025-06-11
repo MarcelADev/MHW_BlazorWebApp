@@ -28,14 +28,27 @@
                         @{
                             bool isAdmin = authContext.User.IsInRole(ADMIN_ROLE) || authContext.User.IsInRole(MASTER_ROLE);
                         }
-                        <EditForm EditContext="editContext" FormName="editSessionName" OnValidSubmit="Submit">
+                        <EditForm EditContext="editContext" FormName="editSession" OnValidSubmit="Submit">
                             <DataAnnotationsValidator />
                             <ValidationSummary />
 
                             <div class="modal-body">
                                 <div class="form__field">
-                                    <label for="editSessionName-name">Change Name</label>
-                                    <InputText id="editSessionName-name" @bind-Value="Model!.NewName"></InputText>
+                                    <label for="editSession-name">Change Name</label>
+                                    <InputText id="editSession-name" @bind-Value="Model!.NewName"></InputText>
+                                </div>
+
+                                <div class="form__field">
+                                    <label>Change Day Counters</label>
+                                    <div class="days__container">
+                                        <div class="days__input">
+                                            <InputNumber id="editSession-dayCount" @bind-Value="Model!.NewDayCount"></InputNumber>
+                                        </div>
+                                        <label class="slash">/</label>
+                                        <div class="days__input">
+                                            <InputNumber id="editSession-maxDays" @bind-Value="Model!.NewMaxDays" class="days__input"></InputNumber>
+                                        </div>
+                                    </div>
                                 </div>
 
                                 @if (isAdmin)
@@ -117,7 +130,7 @@
         players = (await playerProvider.GetPlayersAsync()).Where(p => !participators.Any(pa => pa.PlayerId == p.Id)).ToList();
         weaponTypes = await weaponProvider.GetWeaponTypesAsync();
 
-        Model = new EditSessionFormModel(Session.Name);
+        Model = new EditSessionFormModel(Session.Name, Session.DayCount, Session.MaxDays);
         editContext = new(Model);
         editContext.OnFieldChanged += HandleFieldChanged;
 
@@ -128,6 +141,11 @@
     private void OnCloseButtonClicked()
     {
         CloseModal.InvokeAsync();
+    }
+
+    private void OnResetFormButtonClicked()
+    {
+        Model!.NewName = Model.CurrentName;
     }
 
     private void HandleRemoveSelect(List<Participator> participators)

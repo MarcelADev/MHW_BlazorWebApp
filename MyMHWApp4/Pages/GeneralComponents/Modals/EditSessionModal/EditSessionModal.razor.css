@@ -8,3 +8,19 @@
     background: white;
     border: 1px solid black;
 }
+
+.days__container {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 1rem;
+}
+
+.days__input {
+    width: 20%;
+}
+
+.slash {
+    font-size: 2rem;
+    font-weight: 200;
+}
