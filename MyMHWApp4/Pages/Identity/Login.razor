@@ -1,106 +1,120 @@
 ﻿@page "/login"
 @using MyMHWApp4.Identity
 @using MyMHWApp4.Pages.GeneralComponents
+@using System.ComponentModel.DataAnnotations;
 @inject IAccountManagement Acct
 
 <PageTitle>Login</PageTitle>
 
 <AuthorizeView>
-    <Authorized>
-        <LoginRedirect></LoginRedirect>
-    </Authorized>
-    <NotAuthorized>
+	<Authorized>
+		<LoginRedirect></LoginRedirect>
+	</Authorized>
+	<NotAuthorized Context="authContext">
 
-        <div class="theme-purple">
+		<div class="theme-purple">
 
-            <header class="container-center header">
+			<header class="container-center header">
 
-                <h2>Login</h2
+				<h2>Login</h2>
 
-            </header>
+			</header>
 
-            <main class="container-top main">
+			<main class="container-top main">
 
-                <div class="container-center inner-top">
+				<div class="container-top inner-bot">
+					<EditForm EditContext="editContext" FormName="login" OnValidSubmit="DoLoginAsync">
+						<DataAnnotationsValidator />
+						<ValidationSummary />
 
-                    @if (errors)
-                    {
-                        @foreach (var error in errorList)
-                        {
-                            <div class="alert alert-danger">@error</div>
-                        }
-                    }
+						<div class="container-center inner-top">
 
-                </div>
+							@if (errorList.Length > 0)
+							{
+								@foreach (var error in errorList)
+								{
+									<div class="alert alert-danger">@error</div>
+								}
+							}
 
-                <div class="container-top inner-bot">
+						</div>
 
-                    <div class="container-property-identity">
-                        <label for="email">Email:</label>
-                        <br />
-                        <input required id="email" name="emailInput" placeholder="Enter your email address" type="email" @bind-value="email" />
-                    </div>
+						<div class="container-property-identity">
+							<label for="email">Email:</label>
+							<br />
+							<input required id="email" name="emailInput" placeholder="Enter your email address" type="email" autocomplete="on" @bind-value="Model!.Email" />
+						</div>
 
-                    <div class="container-property-identity">
-                        <label for="password">Password:</label>
-                        <br />
-                        <input required id="password" name="passwordInput" placeholder="Enter your password" type="password" @bind-value="password" />
-                    </div>
+						<div class="container-property-identity">
+							<label for="password">Password:</label>
+							<br />
+							<input required id="password" name="passwordInput" placeholder="Enter your password" type="password" autocomplete="on" @bind-value="Model!.Password" />
+						</div>
 
-                    <br/>
+						<br />
 
-                    <button class="button" @onclick="DoLoginAsync">Login</button>
+						<div class="container-property-actions">
+							<button class="button" type="submit">Login</button>
 
-                    <a class="link-return" href="">🠔 Return</a>
-
-                </div>
-
-            </main>
-        </div>
-    </NotAuthorized>
+							<a class="link-return" href="">🠔 Return</a>
+						</div>
+					</EditForm>
+				</div>
+			</main>
+		</div>
+	</NotAuthorized>
 </AuthorizeView>
 
 @code {
-    private bool success, errors;
-    private string email = string.Empty;
-    private string password = string.Empty;
-    private string[] errorList = [];
+	private string[] errorList = [];
 
-    private void HandleEmailChanged(string newEmail) { email = newEmail; StateHasChanged(); }
-    private void HandlePasswordChanged(string newPassword) { password = newPassword; StateHasChanged(); }
+	[SupplyParameterFromForm]
+	private LoginFormModel? Model { get; set; }
 
-    public async Task DoLoginAsync()
-    {
-        success = errors = false;
-        errorList = [];
+	private EditContext? editContext;
 
-        if (string.IsNullOrWhiteSpace(email))
-        {
-            errors = true;
-            errorList = ["Email is required."];
 
-            return;
-        }
+	protected override void OnInitialized()
+	{
+		Model ??= new();
+		editContext = new(Model);
+		editContext.OnFieldChanged += HandleFieldChanged;
+	}
 
-        if (string.IsNullOrWhiteSpace(password))
-        {
-            errors = true;
-            errorList = ["Password is required."];
+	private void HandleFieldChanged(object? sender, FieldChangedEventArgs e)
+	{
+		if (editContext is not null)
+		{
+			editContext.Validate();
+			StateHasChanged();
+		}
+	}
 
-            return;
-        }
+	public async Task DoLoginAsync()
+	{
+		var result = await Acct.LoginAsync(Model!.Email!, Model!.Password!);
 
-        var result = await Acct.LoginAsync(email, password);
+		if (!result.Succeeded)
+		{
+			errorList = result.ErrorList;
+		}
+	}
 
-        if (result.Succeeded)
-        {
-            success = true;
-            email = password = string.Empty;
-        }
-        else
-        {
-            errors = true;
-            errorList = result.ErrorList;
-        }
-    }
+	internal class LoginFormModel : IValidatableObject
+	{
+		public string Email { get; set; } = "";
+		public string Password { get; set; } = "";
+
+		public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+		{
+			if (Email.Trim() == "")
+			{
+				yield return new ValidationResult("Email is required.");
+			}
+			if (Password.Trim() == "")
+			{
+				yield return new ValidationResult("Password is required.");
+			}
+		}
+	}
 }
