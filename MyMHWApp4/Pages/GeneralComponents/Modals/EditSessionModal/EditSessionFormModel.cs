@@ -9,36 +9,36 @@ namespace MyMHWApp4.Pages.GeneralComponents.Modals.EditSessionModal
         public string CurrentName { get; set; }
         public string NewName { get; set; }
 
-        public List<Player> SelectedNewPlayers { get; set; } = [];
+        public int[] PlayerIds { get; set; } = [];
 
-        public List<Participator> CurrentParticipators { get; set; } = [];
-        public List<Participator> SelectedParticipators { get; set; } = [];
+        public List<Participator> RemoveParticipators { get; set; } = [];
+        public List<Participator> AddParticipators { get; set; } = [];
 
-        public EditSessionFormModel(string sessionName, List<Player> players, List<Participator> participators)
+        public bool EntityWasNullFlag { get; set; } = false;
+        public bool UnexpectedResponseFlag { get; set; } = false;
+
+        public EditSessionFormModel(string sessionName)
         {
             CurrentName = NewName = sessionName;
-
-            foreach(Participator p in participators)
-            {
-                Participator participatorClone = p.Clone();
-                participatorClone.Id = p.Id;
-                participatorClone.Player = p.Player;
-
-                CurrentParticipators.Add(participatorClone);
-                SelectedParticipators.Add(participatorClone);
-            }
         }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
+            if (EntityWasNullFlag)
+            {
+                yield return new ValidationResult("Contradictory HTTP Response. Please contact Server Provider!", [nameof(CurrentName)]);
+            }
+            if (UnexpectedResponseFlag)
+            {
+                yield return new ValidationResult("Unexpected HTTP Response. Please contact Devs!", [nameof(CurrentName)]);
+            }
             if (CurrentName.Trim() == "")
             {
                 yield return new ValidationResult("CurrentName must not be empty", [nameof(CurrentName)]);
             }
             if (NewName == CurrentName &&
-                !SelectedNewPlayers.Any() &&
-                CurrentParticipators.All(cp => SelectedParticipators.Contains(cp)) &&
-                SelectedParticipators.All(cp => CurrentParticipators.Contains(cp)))
+                !PlayerIds.Any() &&
+                !RemoveParticipators.Any())
             {
                 yield return new ValidationResult("Nothing was changed!");
             }

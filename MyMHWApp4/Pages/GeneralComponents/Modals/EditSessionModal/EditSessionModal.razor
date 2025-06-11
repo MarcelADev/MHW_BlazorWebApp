@@ -1,10 +1,14 @@
 ﻿@using MHWApp.Library.DTO
+@using MHWApp.Library.Exceptions
 @using MHWApp.Library.Model
 @using MyMHWApp4.Pages.GeneralComponents.Select
+@using MyMHWApp4.Pages.MainMenu.CreateSession
 @using MyMHWApp4.Provider
 @using static MHWApp.Library.StaticVariables
 @inject ParticipatorProvider participatorProvider
 @inject PlayerProvider playerProvider
+@inject WeaponProvider weaponProvider
+@inject SessionProvider sessionProvider
 @implements IDisposable
 
 <div class="modal-backdrop show"></div>
@@ -37,29 +41,41 @@
                                 @if (isAdmin)
                                 {
                                     <MultiSelect Label="Remove Participators"
-                                                 Placeholder="Select"
-                                                 T="Participator"
-                                                 Options="participators"
-                                                 OptionNameMapper="(Participator p) => p != null ? p.Player?.UserName : string.Empty"
-                                                 OptionValueMapper="(Participator p) => p.Id"
-                                                 ValueList="Model!.SelectedParticipators"
-                                                 ValueListChanged="HandleRemoveSelect">
+                                    Placeholder="Select"
+                                    T="Participator"
+                                    Options="participators"
+                                    OptionNameMapper="(Participator p) => p != null ? p.Player?.UserName : string.Empty"
+                                    OptionValueMapper="(Participator p) => p.Id"
+                                    ValueList="Model.RemoveParticipators"
+                                    ValueListChanged="HandleRemoveSelect">
                                     </MultiSelect>
 
                                     <MultiSelect Label="Add Participators"
-                                                 Placeholder="Select"
-                                                 T="Player"
-                                                 Options="players"
-                                                 OptionNameMapper="(Player p) => p.UserName"
-                                                 OptionValueMapper="(Player p) => p.Id"
-                                                 ValueList="Model!.SelectedNewPlayers"
-                                                 ValueListChanged="HandleAddSelect">
+                                    Placeholder="Select"
+                                    T="Player"
+                                    Options="players"
+                                    OptionNameMapper="(Player p) => p.UserName"
+                                    OptionValueMapper="(Player p) => p.Id"
+                                    ValueListChanged="HandleAddSelect">
                                     </MultiSelect>
+
+                                    @for (var i = 0; i < Model!.AddParticipators.Count; i++)
+                                    {
+                                        var participator = Model!.AddParticipators[i];
+
+                                        @if (Model!.PlayerIds.Contains(participator.PlayerId))
+                                        {
+                                            <div class="form__field">
+                                                <ParticipatorCard @bind-Participator="participator" 
+                                                weaponTypes="weaponTypes"/>
+                                            </div>
+                                        }
+                                    }
                                 }
                             </div>
 
                             <div class="modal-footer">
-                                <button type="submit" class="btn btn-primary inverted">
+                                <button type="button" class="btn btn-primary inverted">
                                     Reset Form
                                 </button>
 
@@ -84,6 +100,7 @@
 
     private List<Participator>? participators;
     private List<Player>? players;
+    private List<WeaponType> weaponTypes = [];
 
     [SupplyParameterFromForm]
     private EditSessionFormModel? Model { get; set; }
@@ -92,14 +109,15 @@
     public required Session Session { get; set; }
 
     [Parameter]
-    public required EventCallback CloseButtonClicked { get; set; }
+    public required EventCallback CloseModal { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         participators = await participatorProvider.GetParticipatorsAsync(Session.Id);
         players = (await playerProvider.GetPlayersAsync()).Where(p => !participators.Any(pa => pa.PlayerId == p.Id)).ToList();
+        weaponTypes = await weaponProvider.GetWeaponTypesAsync();
 
-        Model = new EditSessionFormModel(Session.Name, players, participators);
+        Model = new EditSessionFormModel(Session.Name);
         editContext = new(Model);
         editContext.OnFieldChanged += HandleFieldChanged;
 
@@ -109,7 +127,7 @@
 
     private void OnCloseButtonClicked()
     {
-        CloseButtonClicked.InvokeAsync();
+        CloseModal.InvokeAsync();
     }
 
     private void HandleRemoveSelect(List<Participator> participators)
@@ -120,7 +138,24 @@
 
     private void HandleAddSelect(List<Player> players)
     {
-        isFormValid = !editContext!.Validate();
+        Model!.PlayerIds = players.Select(p => p.Id).ToArray();
+
+        Model!.AddParticipators.RemoveAll(pa => !Model!.PlayerIds.Contains(pa.PlayerId));
+        Model!.AddParticipators.AddRange(
+        players
+        .FindAll(p => !Model.AddParticipators.Select(pa => pa.PlayerId).Contains(p.Id))
+        .Select(p => new Participator()
+            {
+                Id = 0,
+                SessionId = 0,
+                Player = p,
+                PlayerId = p.Id,
+                WeaponType = weaponTypes.First(),
+                WeaponTypeId = weaponTypes.First().Id,
+            })
+        );
+        Model!.AddParticipators.Sort((lhs, rhs) => lhs.Player!.UserName!.CompareTo(rhs.Player!.UserName));
+
         StateHasChanged();
     }
 
@@ -133,9 +168,9 @@
         }
     }
 
-    private void Submit() => ChangeSession();
+    private async Task Submit() => await ChangeSession();
 
-    private void ChangeSession()
+    private async Task ChangeSession()
     {
         UpdateSessionDTO dto = new UpdateSessionDTO
         {
@@ -147,12 +182,28 @@
                 DayCount = Session.DayCount,
                 MaxDays = Session.MaxDays
             },
-            RemoveParticipators = Model.SelectedParticipators,
+            RemoveParticipators = Model.RemoveParticipators,
             AddParticipators = []
         };
 
-        foreach (Player player in Model.SelectedNewPlayers) 
-            dto.AddParticipators.Add(new Participator { Id = 0, PlayerId = player.Id, SessionId = Session.Id, WeaponTypeId = 1});   //TO DO WEAPON TYPE AUF DER PAGE
+        foreach (var participator in Model.AddParticipators) dto.AddParticipators.Add(participator.Clone());
+
+        try
+        {
+            await sessionProvider.UpdateSessionAsync(dto);
+            await CloseModal.InvokeAsync();
+        }
+        catch (EntityWasNotFoundException)
+        {
+            Model.EntityWasNullFlag = true;
+            editContext!.Validate();
+        }
+        catch (UnexpectedResponseException)
+        {
+            Model.UnexpectedResponseFlag = true;
+            editContext!.Validate();
+        }
+        StateHasChanged();
     }
 
     public void Dispose()

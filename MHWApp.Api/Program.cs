@@ -258,9 +258,6 @@ app.MapPut("/sessions/{id}", async (AppDbContext dbContext, ClaimsPrincipal user
         // Add Participators
         foreach (var participator in updatedSessionDTO.AddParticipators)
         {
-            if (participator.PlayerId == 0)
-                participator.PlayerId = int.Parse(userIdClaim.Value);
-
             participator.SessionId = id;
             await dbContext.Participators.AddAsync(participator);
         }
@@ -284,7 +281,7 @@ app.MapPut("/sessions/{id}", async (AppDbContext dbContext, ClaimsPrincipal user
                             .ToListAsync();
 
     var notifyRemainingTasks = participators
-    .Select(p => hubContext.Clients.User(p.PlayerId.ToString()).SendAsync("ReceiveUpdatedSession", id));
+    .Select(p => hubContext.Clients.User(p.PlayerId.ToString()).SendAsync("ReceiveUpdatedSession", existingSession));
 
     await Task.WhenAll(notifyRemainingTasks);
 
