@@ -38,5 +38,10 @@ namespace MyMHWApp4.HubConnections
         event Action<InventoryEntry>? OnNewInventoryEntry;
         event Action<InventoryEntry>? OnUpdatedInventoryEntry;
         event Action<int>? OnDeletedInventoryEntry;
+
+        // ## ARMOR ##
+        event Action<Armor>? OnNewArmor;
+        event Action<Armor>? OnUpdatedArmor;
+        event Action<int>? OnDeletedArmor;
     }
 }

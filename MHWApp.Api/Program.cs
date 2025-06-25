@@ -479,6 +479,18 @@ app.MapGet("/categories/inventoryentries", async (AppDbContext dbContext, Claims
     return Results.Ok(inventoryCategories);
 }).RequireAuthorization(policy => policy.RequireRole("Master", "Admin"));
 
+app.MapGet("/categories/armors", async (AppDbContext dbContext, ClaimsPrincipal user) =>
+{
+    var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
+    if (userIdClaim == null) return Results.Unauthorized();
+
+    var armorCategories = await dbContext.ArmorCategories
+    .Include(ac => ac.Category)
+    .ToListAsync();
+
+    return Results.Ok(armorCategories);
+}).RequireAuthorization(policy => policy.RequireRole("Master", "Admin"));
+
 app.MapPost("/categories", async (AppDbContext dbContext, ClaimsPrincipal user, IHubContext<DataBaseUpdatesHub> hubContext, CategoryDTO categoryDTO) =>
 {
     var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
@@ -857,6 +869,106 @@ app.MapGet("/weapontypes", async (AppDbContext dbContext, ClaimsPrincipal user) 
 
     return Results.Ok(weaponTypes);
 }).RequireAuthorization();
+
+#endregion
+
+#region Endpoint: Armor
+
+app.MapGet("/armors", async (AppDbContext dbContext, ClaimsPrincipal user) =>
+{
+    var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
+    if (userIdClaim == null) return Results.Unauthorized();
+
+    var armors = await dbContext.Armors
+        .Include(i => i.ArmorCategory)
+            .ThenInclude(ac => ac.Category)
+        .ToListAsync();
+
+    return Results.Ok(armors); ;
+}
+).RequireAuthorization(policy => policy.RequireRole("Master", "Admin"));
+
+app.MapPost("/armors", async (AppDbContext dbContext, ClaimsPrincipal user, IHubContext<DataBaseUpdatesHub> hubContext, Armor newArmor) =>
+{
+    var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
+    if (userIdClaim == null) return Results.Unauthorized();
+
+    bool exists = await dbContext.Armors.AnyAsync(a => a.Name == newArmor.Name);
+    if (exists) return Results.StatusCode(HTTP_STATUSCODE_CONFLICT);
+
+    if (newArmor.ArmorCategory!= null)
+    {
+        // Replace the incoming categories with tracked entities from DB
+        newArmor.ArmorCategory = await dbContext.ArmorCategories
+            .Include(ac => ac.Category)
+            .FirstAsync(ac => ac.Id == newArmor.ArmorCategory.Id);
+    }
+
+    await dbContext.Armors.AddAsync(newArmor);
+    await dbContext.SaveChangesAsync();
+
+    await hubContext.Clients.All.SendAsync("ReceiveNewArmor", newArmor);
+
+    return Results.Created($"/inventoryEntries/{newArmor.Id}", newArmor);
+}).RequireAuthorization(policy => policy.RequireRole("Master", "Admin"));
+
+//app.MapPut("/inventoryEntries/{id}", async (AppDbContext dbContext, ClaimsPrincipal user, IHubContext<DataBaseUpdatesHub> hubContext, InventoryEntry updatedInventoryEntry, int id) =>
+//{
+//    var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
+//    if (userIdClaim == null) return Results.Unauthorized();
+
+//    var existingInventoryEntry = await dbContext.InventoryEntries
+//        .Include(ie => ie.InventoryEntryCategories)
+//            .ThenInclude(iec => iec.Category)
+//        .FirstOrDefaultAsync(ie => ie.Id == id);
+//    if (existingInventoryEntry == null) return Results.NotFound();
+
+//    existingInventoryEntry.Name = updatedInventoryEntry.Name;
+
+//    var updatedCategoryIds = updatedInventoryEntry.InventoryEntryCategories
+//        .Select(c => c.Id)
+//        .ToHashSet();
+
+//    existingInventoryEntry.InventoryEntryCategories.RemoveAll(c => !updatedCategoryIds.Contains(c.Id));
+
+//    var existingCategoryIds = existingInventoryEntry.InventoryEntryCategories.Select(c => c.Id).ToHashSet();
+//    var missingCategoryIds = updatedCategoryIds.Except(existingCategoryIds);
+
+//    foreach (var categoryId in missingCategoryIds)
+//    {
+//        var inventoryEntryCategory = await dbContext.InventoryEntryCategories
+//            .Include(c => c.Category)
+//            .FirstOrDefaultAsync(c => c.Id == categoryId);
+
+//        if (inventoryEntryCategory != null)
+//        {
+//            existingInventoryEntry.InventoryEntryCategories.Add(inventoryEntryCategory);
+//        }
+//    }
+
+//    await dbContext.SaveChangesAsync();
+
+//    await hubContext.Clients.All.SendAsync("ReceiveUpdatedInventoryEntry", existingInventoryEntry);
+
+//    return Results.NoContent();
+
+//}).RequireAuthorization(policy => policy.RequireRole("Master", "Admin"));
+
+//app.MapDelete("/inventoryEntries/{id}", async (AppDbContext dbContext, IHubContext<DataBaseUpdatesHub> hubContext, ClaimsPrincipal user, int id) =>
+//{
+//    var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
+//    if (userIdClaim == null) return Results.Unauthorized();
+
+//    var inventoryEntry = await dbContext.InventoryEntries.FindAsync(id);
+//    if (inventoryEntry == null) return Results.NotFound();
+
+//    dbContext.InventoryEntries.Remove(inventoryEntry);
+//    await dbContext.SaveChangesAsync();
+
+//    await hubContext.Clients.All.SendAsync("ReceiveDeletedInventoryEntry", id);
+
+//    return Results.NoContent();
+//}).RequireAuthorization(policy => policy.RequireRole("Master", "Admin"));
 
 #endregion
 

@@ -65,20 +65,26 @@
                 else if (adminPagesActive && (context.User.IsInRole(ADMIN_ROLE) || context.User.IsInRole(MASTER_ROLE)))
                 {
                     <div class="nav-item px-3">
-                        <NavLink class="nav-link" href="edit/categories">
-                            <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span>@ADMIN_CATEGORY
-                        </NavLink>
-                    </div>
-
-                    <div class="nav-item px-3">
                         <NavLink class="nav-link" href="edit/gameextensions">
                             <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span>@ADMIN_GAME_EXTENSION
                         </NavLink>
                     </div>
 
                     <div class="nav-item px-3">
+                        <NavLink class="nav-link" href="edit/categories">
+                            <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span>@ADMIN_CATEGORY
+                        </NavLink>
+                    </div>
+
+                    <div class="nav-item px-3">
                         <NavLink class="nav-link" href="edit/inventoryentries">
                             <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span>@ADMIN_INVENTORY_ENTRY
+                        </NavLink>
+                    </div>
+
+                    <div class="nav-item px-3">
+                        <NavLink class="nav-link" href="edit/armors">
+                            <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span>@ADMIN_ARMOR
                         </NavLink>
                     </div>
                 }
@@ -126,6 +132,7 @@
     private static string ADMIN_CATEGORY = "Category";
     private static string ADMIN_GAME_EXTENSION = "Game Extension";
     private static string ADMIN_INVENTORY_ENTRY = "Inventory Entry";
+    private static string ADMIN_ARMOR = "Armor";
     private static string ADMIN = "Admin";
 
     private bool collapseNavMenu = true;
@@ -172,6 +179,7 @@
             "/edit/categories" => ADMIN,
             "/edit/gameextensions" => ADMIN,
             "/edit/inventoryentries" => ADMIN,
+            "/edit/armors" => ADMIN,
             _ => "Unknown",
         };
 

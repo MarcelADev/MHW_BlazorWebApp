@@ -1,0 +1,181 @@
+﻿@page "/edit/armors"
+@using MHWApp.Library.Exceptions
+@using MHWApp.Library.Model
+@using MyMHWApp4.HubConnections
+@using MyMHWApp4.Pages.GeneralComponents.Select
+@using MyMHWApp4.Provider
+@using static MHWApp.Library.StaticVariables
+@inject ArmorProvider armorProvider
+@inject CategoryProvider categoryProvider
+@inject IDataBaseUpdatesHubConnection hubService
+
+<header class="container-center header">
+    <h2>Armor</h2>
+</header>
+
+<main class="container-top">
+
+    <div class="container-h3"><h3>Create</h3></div>
+
+    <div class="form__container">
+        @if(!isLoading)
+        {
+            <EditForm EditContext="editContext" FormName="armor" OnvalidSubmit="Submit">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+
+                <div class="form__field">
+                    <label for="armor-name">Name</label>
+                    <InputText name="armor-name" @bind-Value="Model!.Name" />
+                </div>
+
+                <SingleSelect Label="Select Category"
+                Placeholder="Select"
+                T="ArmorCategory"
+                Options="@armorCategories"
+                OptionNameMapper="(ArmorCategory ac) => ac.Category?.Name ?? string.Empty"
+                OptionValueMapper="(ArmorCategory armorCategory) => armorCategory.Id"
+                ValueChanged="HandleSelect">
+                </SingleSelect>
+
+                <div class=" form__field form__button">
+                    <button type="submit" class="btn btn-primary">
+                        Create Inventory Entry
+                    </button>
+                </div>
+
+            </EditForm>
+        }
+    </div>
+
+    <div class="container-h3 margin-h3"><h3>Edit</h3></div>
+
+    @if(isLoading){
+        <p>Loading ...</p>
+    }
+    else if (!armors!.Any())
+    {
+        <p>List is empty</p>
+    }
+    else{
+        @foreach (Armor armor in armors!)
+        {
+            @* <InventoryEntryCard
+            @key="armor.Id"
+            InventoryEntry="entry">
+            </InventoryEntryCard> *@
+        }
+    }
+
+</main>
+
+<footer class="footer"></footer>
+
+
+@code {
+    private bool isLoading = true;
+    private bool isFormValid = false;
+    private EditContext? editContext;
+
+    [SupplyParameterFromForm]
+    private ArmorFormModel? Model { get; set; }
+
+    List<Armor>? armors;
+    List<ArmorCategory>? armorCategories;
+
+    protected override async Task OnInitializedAsync()
+    {
+        armors = await armorProvider.GetArmorsAsync();
+        if (armors.Any()) armors.Sort((x, y) => x.Name.CompareTo(y.Name));
+
+        armorCategories = await categoryProvider.GetArmorCategoriesAsync();
+        if (armorCategories.Any()) armorCategories.Sort((x, y) => x.Category!.Name.CompareTo(y.Category!.Name));
+
+        Model ??= new ArmorFormModel(armors) { };
+        editContext = new(Model);
+        editContext.OnFieldChanged += HandleFieldChanged;
+
+        hubService.OnNewArmor += HandleSignalRNewArmor;
+        hubService.OnUpdatedArmor += HandleSignalRUpdatedArmor;
+        hubService.OnDeletedArmor += HandleSignalRDeletedArmor;
+
+        isLoading = false;
+        StateHasChanged();
+    }
+
+    private void HandleFieldChanged(object? sender, FieldChangedEventArgs e)
+    {
+        if (editContext is not null)
+        {
+            isFormValid = !editContext.Validate();
+            StateHasChanged();
+        }
+    }
+
+    private void HandleSelect(ArmorCategory armorCategory)
+    {
+        Model!.ArmorCategory = armorCategory;
+        StateHasChanged();
+    }
+
+    private async Task Submit() => await CreateArmor();
+
+    private async Task CreateArmor()
+    {
+        Armor newArmor = new Armor 
+        { 
+            Id = 0,
+            Name = Model!.Name,
+            ArmorCategoryId = Model.ArmorCategory.Id,
+            Order = ORDER_DEFAULT_VALUE
+        };
+
+        try
+        {
+            await armorProvider.CreateArmorAsync(newArmor);
+        }
+        catch (EntityAlreadyExistsException)
+        {
+            Model.EntityAlreadyExistsFlag = true;
+            editContext!.Validate();
+        }
+        catch (EntityWasNullException)
+        {
+            Model.EntityWasNullFlag = true;
+            editContext!.Validate();
+        }
+        catch (UnexpectedResponseException)
+        {
+            Model.UnexpectedResponseFlag = true;
+            editContext!.Validate();
+        }
+        StateHasChanged();
+    }
+
+    private void HandleSignalRNewArmor(Armor newArmor)
+    {
+        armors!.Add(newArmor);
+        StateHasChanged();
+    }
+
+    private void HandleSignalRUpdatedArmor(Armor updatedArmor)
+    {
+        var existing = armors!.Find(a => a.Id == updatedArmor.Id);
+        if (existing != null) existing.Name = updatedArmor.Name;
+        StateHasChanged();
+    }
+
+    private void HandleSignalRDeletedArmor(int deletedArmorId)
+    {
+        var existing = armors!.Find(a => a.Id == deletedArmorId);
+        if (existing != null) armors.Remove(existing);
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        hubService.OnNewArmor -= HandleSignalRNewArmor;
+        hubService.OnUpdatedArmor -= HandleSignalRUpdatedArmor;
+        hubService.OnDeletedArmor -= HandleSignalRDeletedArmor;
+    }
+}

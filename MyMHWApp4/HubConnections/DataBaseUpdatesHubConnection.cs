@@ -35,6 +35,10 @@ namespace MyMHWApp4.HubConnections
         public event Action<InventoryEntry>? OnUpdatedInventoryEntry;
         public event Action<int>? OnDeletedInventoryEntry;
 
+        public event Action<Armor>? OnNewArmor;
+        public event Action<Armor>? OnUpdatedArmor;
+        public event Action<int>? OnDeletedArmor;
+
         public DataBaseUpdatesHubConnection(IConfiguration configuration)
         {
             Connection = new HubConnectionBuilder()
@@ -148,6 +152,22 @@ namespace MyMHWApp4.HubConnections
             Connection.On<int>("ReceiveDeletedInventoryEntry", (deletedId) =>
             {
                 OnDeletedInventoryEntry?.Invoke(deletedId);
+            });
+
+            // ## Armor ##
+            Connection.On<Armor>("ReceiveNewArmor", (data) =>
+            {
+                OnNewArmor?.Invoke(data);
+            });
+
+            Connection.On<Armor>("ReceiveUpdatedArmor", (data) =>
+            {
+                OnUpdatedArmor?.Invoke(data);
+            });
+
+            Connection.On<int>("ReceiveDeletedArmor", (deletedId) =>
+            {
+                OnDeletedArmor?.Invoke(deletedId);
             });
         }
 
