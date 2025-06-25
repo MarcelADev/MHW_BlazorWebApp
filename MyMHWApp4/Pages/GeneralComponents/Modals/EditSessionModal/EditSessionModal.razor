@@ -75,6 +75,7 @@
                                             Options="players"
                                             OptionNameMapper="(Player p) => p.UserName"
                                             OptionValueMapper="(Player p) => p.Id"
+                                            ValueList="Model.PlayerValueList"
                                             ValueListChanged="HandleAddSelect">
                                             </MultiSelect>
                                         }
@@ -95,7 +96,7 @@
                                 </div>
 
                                 <div class="modal-footer">
-                                    <button type="button" class="btn btn-primary inverted">
+                                    <button type="button" class="btn btn-primary inverted" @onclick="OnResetFormButtonClicked">
                                         Reset Form
                                     </button>
 
@@ -162,6 +163,13 @@
         if (Model is null) return;
 
         Model!.NewName = Model.CurrentName;
+        Model.NewMaxDays = Model.CurrentMaxDays;
+        Model.NewDayCount = Model.CurrentDayCount;
+
+        Model.RemoveParticipators = [];
+        Model.AddParticipators = [];
+        Model.PlayerValueList = [];
+        StateHasChanged();
     }
 
     private void HandleRemoveSelect(List<Participator> participators)

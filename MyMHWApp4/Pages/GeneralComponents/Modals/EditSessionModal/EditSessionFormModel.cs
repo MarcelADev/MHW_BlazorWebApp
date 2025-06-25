@@ -19,6 +19,7 @@ namespace MyMHWApp4.Pages.GeneralComponents.Modals.EditSessionModal
 
         public List<Participator> RemoveParticipators { get; set; } = [];
         public List<Participator> AddParticipators { get; set; } = [];
+        public List<Player> PlayerValueList { get; set; } = [];
 
         public bool EntityWasNullFlag { get; set; } = false;
         public bool UnexpectedResponseFlag { get; set; } = false;
