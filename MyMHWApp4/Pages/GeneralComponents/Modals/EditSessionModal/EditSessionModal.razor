@@ -28,82 +28,84 @@
                         @{
                             bool isAdmin = authContext.User.IsInRole(ADMIN_ROLE) || authContext.User.IsInRole(MASTER_ROLE);
                         }
-                        <EditForm EditContext="editContext" FormName="editSession" OnValidSubmit="Submit">
-                            <DataAnnotationsValidator />
-                            <ValidationSummary />
+                        <div class="form__container">
+                            <EditForm EditContext="editContext" FormName="editSession" OnValidSubmit="Submit">
+                                <DataAnnotationsValidator />
+                                <ValidationSummary />
 
-                            <div class="modal-body">
-                                <div class="form__field">
-                                    <label for="editSession-name">Change Name</label>
-                                    <InputText id="editSession-name" @bind-Value="Model!.NewName"></InputText>
-                                </div>
+                                <div class="modal-body">
+                                    <div class="form__field">
+                                        <label for="editSession-name">Change Name</label>
+                                        <InputText id="editSession-name" @bind-Value="Model!.NewName"></InputText>
+                                    </div>
 
-                                <div class="form__field">
-                                    <label>Change Day Counters</label>
-                                    <div class="days__container">
-                                        <div class="days__input">
-                                            <InputNumber id="editSession-dayCount" @bind-Value="Model!.NewDayCount"></InputNumber>
-                                        </div>
-                                        <label class="slash">/</label>
-                                        <div class="days__input">
-                                            <InputNumber id="editSession-maxDays" @bind-Value="Model!.NewMaxDays" class="days__input"></InputNumber>
+                                    <div class="form__field">
+                                        <label>Change Day Counters</label>
+                                        <div class="days__container">
+                                            <div class="days__input">
+                                                <InputNumber id="editSession-dayCount" @bind-Value="Model!.NewDayCount"></InputNumber>
+                                            </div>
+                                            <label class="slash">/</label>
+                                            <div class="days__input">
+                                                <InputNumber id="editSession-maxDays" @bind-Value="Model!.NewMaxDays" class="days__input"></InputNumber>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
 
-                                @if (isAdmin)
-                                {
-                                    @if (!participatorsIsEmpty)
+                                    @if (isAdmin)
                                     {
-                                        <MultiSelect Label="Remove Participators"
-                                                     Placeholder="Select"
-                                                     T="Participator"
-                                                     Options="participators"
-                                                     OptionNameMapper="(Participator p) => p != null ? p.Player?.UserName : string.Empty"
-                                                     OptionValueMapper="(Participator p) => p.Id"
-                                                     ValueList="Model.RemoveParticipators"
-                                                     ValueListChanged="HandleRemoveSelect">
-                                        </MultiSelect>
-                                    }
-
-                                    @if (!playersIsEmpty)
-                                    {
-                                        <MultiSelect Label="Add Participators"
-                                                     Placeholder="Select"
-                                                     T="Player"
-                                                     Options="players"
-                                                     OptionNameMapper="(Player p) => p.UserName"
-                                                     OptionValueMapper="(Player p) => p.Id"
-                                                     ValueListChanged="HandleAddSelect">
-                                        </MultiSelect>
-                                    }
-
-                                    @for (var i = 0; i < Model!.AddParticipators.Count; i++)
-                                    {
-                                        var participator = Model!.AddParticipators[i];
-
-                                        @if (Model!.PlayerIds.Contains(participator.PlayerId))
+                                        @if (!participatorsIsEmpty)
                                         {
-                                            <div class="form__field">
-                                                <ParticipatorCard @bind-Participator="participator" 
-                                                weaponTypes="weaponTypes"/>
-                                            </div>
+                                            <MultiSelect Label="Remove Participators"
+                                                         Placeholder="Select"
+                                                         T="Participator"
+                                                         Options="participators"
+                                                         OptionNameMapper="(Participator p) => p != null ? p.Player?.UserName : string.Empty"
+                                                         OptionValueMapper="(Participator p) => p.Id"
+                                                         ValueList="Model.RemoveParticipators"
+                                                         ValueListChanged="HandleRemoveSelect">
+                                            </MultiSelect>
+                                        }
+
+                                        @if (!playersIsEmpty)
+                                        {
+                                            <MultiSelect Label="Add Participators"
+                                                         Placeholder="Select"
+                                                         T="Player"
+                                                         Options="players"
+                                                         OptionNameMapper="(Player p) => p.UserName"
+                                                         OptionValueMapper="(Player p) => p.Id"
+                                                         ValueListChanged="HandleAddSelect">
+                                            </MultiSelect>
+                                        }
+
+                                        @for (var i = 0; i < Model!.AddParticipators.Count; i++)
+                                        {
+                                            var participator = Model!.AddParticipators[i];
+
+                                            @if (Model!.PlayerIds.Contains(participator.PlayerId))
+                                            {
+                                                <div class="form__field">
+                                                    <ParticipatorCard @bind-Participator="participator" 
+                                                    weaponTypes="weaponTypes"/>
+                                                </div>
+                                            }
                                         }
                                     }
-                                }
-                            </div>
+                                </div>
 
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-primary inverted">
-                                    Reset Form
-                                </button>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-primary inverted">
+                                        Reset Form
+                                    </button>
 
-                                <button type="submit" class="btn btn-primary purple">
-                                    Save changes
-                                </button>
-                            </div>
+                                    <button type="submit" class="btn btn-primary purple">
+                                        Save changes
+                                    </button>
+                                </div>
 
-                        </EditForm>
+                            </EditForm>
+                        </div>
                     </Authorized>
                 </AuthorizeView>
             }

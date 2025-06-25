@@ -24,3 +24,7 @@
     font-size: 2rem;
     font-weight: 200;
 }
+
+.add-missing-border {
+    border-color: black;
+}
