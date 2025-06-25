@@ -52,6 +52,18 @@ namespace MyMHWApp4.Pages.GeneralComponents.Modals.EditSessionModal
             {
                 yield return new ValidationResult("Nothing was changed!");
             }
+            if (NewDayCount > NewMaxDays)
+            {
+                yield return new ValidationResult("Current Day can't be greaten then maximum amount of days!");
+            }
+            if (NewDayCount < 1)
+            {
+                yield return new ValidationResult("Current day must be greater then or equal 1 !");
+            }
+            if (NewMaxDays < 1)
+            {
+                yield return new ValidationResult("Maximum amount of days must be greater then or equal 1 !");
+            }
         }
     }
 }
