@@ -57,25 +57,25 @@
                                         @if (!participatorsIsEmpty)
                                         {
                                             <MultiSelect Label="Remove Participators"
-                                                         Placeholder="Select"
-                                                         T="Participator"
-                                                         Options="participators"
-                                                         OptionNameMapper="(Participator p) => p != null ? p.Player?.UserName : string.Empty"
-                                                         OptionValueMapper="(Participator p) => p.Id"
-                                                         ValueList="Model.RemoveParticipators"
-                                                         ValueListChanged="HandleRemoveSelect">
+                                            Placeholder="Select"
+                                            T="Participator"
+                                            Options="participators"
+                                            OptionNameMapper="(Participator p) => p != null ? p.Player?.UserName : string.Empty"
+                                            OptionValueMapper="(Participator p) => p.Id"
+                                            ValueList="Model.RemoveParticipators"
+                                            ValueListChanged="HandleRemoveSelect">
                                             </MultiSelect>
                                         }
 
                                         @if (!playersIsEmpty)
                                         {
                                             <MultiSelect Label="Add Participators"
-                                                         Placeholder="Select"
-                                                         T="Player"
-                                                         Options="players"
-                                                         OptionNameMapper="(Player p) => p.UserName"
-                                                         OptionValueMapper="(Player p) => p.Id"
-                                                         ValueListChanged="HandleAddSelect">
+                                            Placeholder="Select"
+                                            T="Player"
+                                            Options="players"
+                                            OptionNameMapper="(Player p) => p.UserName"
+                                            OptionValueMapper="(Player p) => p.Id"
+                                            ValueListChanged="HandleAddSelect">
                                             </MultiSelect>
                                         }
 
@@ -159,6 +159,8 @@
 
     private void OnResetFormButtonClicked()
     {
+        if (Model is null) return;
+
         Model!.NewName = Model.CurrentName;
     }
 
@@ -211,8 +213,8 @@
                 Id = Session.Id,
                 Name = Model!.NewName,
                 Date = Session.Date,
-                DayCount = Session.DayCount,
-                MaxDays = Session.MaxDays
+                DayCount = Model.NewDayCount,
+                MaxDays = Model.NewMaxDays
             },
             RemoveParticipators = Model.RemoveParticipators,
             AddParticipators = []

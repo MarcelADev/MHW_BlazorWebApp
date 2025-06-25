@@ -242,6 +242,19 @@ app.MapPut("/sessions/{id}", async (AppDbContext dbContext, ClaimsPrincipal user
 
     if (!string.IsNullOrWhiteSpace(updatedSessionDTO.UpdatedSession.Name)) existingSession.Name = updatedSessionDTO.UpdatedSession.Name;
 
+    if (updatedSessionDTO.UpdatedSession.MaxDays != existingSession.MaxDays &&
+        updatedSessionDTO.UpdatedSession.MaxDays >= 1)
+    {
+        existingSession.MaxDays = updatedSessionDTO.UpdatedSession.MaxDays;
+    }
+
+    if (updatedSessionDTO.UpdatedSession.DayCount != existingSession.DayCount &&
+        updatedSessionDTO.UpdatedSession.DayCount >= 1 &&
+        updatedSessionDTO.UpdatedSession.DayCount <= existingSession.MaxDays)
+    {
+        existingSession.DayCount = updatedSessionDTO.UpdatedSession.DayCount;
+    }
+
     if (isAdminOrMaster)
     {
         // Remove Participators

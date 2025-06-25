@@ -46,7 +46,9 @@ namespace MyMHWApp4.Pages.GeneralComponents.Modals.EditSessionModal
             }
             if (NewName == CurrentName &&
                 !PlayerIds.Any() &&
-                !RemoveParticipators.Any())
+                !RemoveParticipators.Any() &&
+                NewDayCount == CurrentDayCount &&
+                NewMaxDays == CurrentMaxDays)
             {
                 yield return new ValidationResult("Nothing was changed!");
             }
