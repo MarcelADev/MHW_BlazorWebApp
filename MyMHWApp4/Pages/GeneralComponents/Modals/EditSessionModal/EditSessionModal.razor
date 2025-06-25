@@ -42,13 +42,27 @@
                                     <div class="form__field">
                                         <label>Change Day Counters</label>
                                         <div class="days__container">
+
                                             <div class="days__input">
-                                                <InputNumber id="editSession-dayCount" @bind-Value="Model!.NewDayCount"></InputNumber>
+                                                <InputNumber @bind-Value="Model!.NewDayCount"
+                                                             AdditionalAttributes="@(new Dictionary<string, object>
+                                                             {
+                                                                 ["id"] = "editSession-dayCount",
+                                                                 ["min"] = "1",
+                                                             })" />
                                             </div>
+
                                             <label class="slash">/</label>
+
                                             <div class="days__input">
-                                                <InputNumber id="editSession-maxDays" @bind-Value="Model!.NewMaxDays" class="days__input"></InputNumber>
+                                                <InputNumber @bind-Value="Model!.NewMaxDays"
+                                                             AdditionalAttributes="@(new Dictionary<string, object>
+                                                             {
+                                                                 ["id"] = "editSession-maxDays",
+                                                                 ["min"] = "1"
+                                                             })" />
                                             </div>
+
                                         </div>
                                     </div>
 
