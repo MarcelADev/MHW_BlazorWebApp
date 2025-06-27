@@ -23,7 +23,17 @@
 			<div class="card">
 
 				<div class="container-left-space-between">
-					<p class="header-card">@InventoryEntry.Name</p>
+					<p class="header-card">
+						@if(InventoryEntry.CategoryInName)
+						{
+							var categoryEntry = InventoryEntry.InventoryEntryCategories.FirstOrDefault();
+							if (categoryEntry != null)
+							{
+								@categoryEntry.Category!.Name
+							}
+						}
+						@InventoryEntry.Name
+					</p>
 
 					<div class="container-right-gap">
 						@if (!toggleEdit)

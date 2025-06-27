@@ -59,6 +59,10 @@ namespace MyMHWApp4.Pages.Admin.EditCategory
             {
                 yield return new ValidationResult("Nothing was changed", [nameof(Name)]);
             }
+            if (SelectedCategoryInName && SelectedInventoryCategories.Count != 1)
+            {
+                yield return new ValidationResult("Function: \"Category in front of Name\" only available if exactly 1 category is chosen");
+            }
             if (CancelFlag)
             {
                 yield return new ValidationResult("Unexpected Error ocurred and the process got canceled!", [nameof(Name)]);
