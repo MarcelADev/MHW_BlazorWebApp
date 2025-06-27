@@ -912,63 +912,46 @@ app.MapPost("/armors", async (AppDbContext dbContext, ClaimsPrincipal user, IHub
     return Results.Created($"/inventoryEntries/{newArmor.Id}", newArmor);
 }).RequireAuthorization(policy => policy.RequireRole("Master", "Admin"));
 
-//app.MapPut("/inventoryEntries/{id}", async (AppDbContext dbContext, ClaimsPrincipal user, IHubContext<DataBaseUpdatesHub> hubContext, InventoryEntry updatedInventoryEntry, int id) =>
-//{
-//    var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
-//    if (userIdClaim == null) return Results.Unauthorized();
+app.MapPut("/armors/{id}", async (AppDbContext dbContext, ClaimsPrincipal user, IHubContext<DataBaseUpdatesHub> hubContext, Armor updatedArmor, int id) =>
+{
+    var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
+    if (userIdClaim == null) return Results.Unauthorized();
 
-//    var existingInventoryEntry = await dbContext.InventoryEntries
-//        .Include(ie => ie.InventoryEntryCategories)
-//            .ThenInclude(iec => iec.Category)
-//        .FirstOrDefaultAsync(ie => ie.Id == id);
-//    if (existingInventoryEntry == null) return Results.NotFound();
+    var existingArmor = await dbContext.Armors
+        .FirstOrDefaultAsync(a => a.Id == id);
+    if (existingArmor == null) return Results.NotFound();
 
-//    existingInventoryEntry.Name = updatedInventoryEntry.Name;
+    existingArmor.Name = updatedArmor.Name;
+    existingArmor.ArmorCategoryId = updatedArmor.ArmorCategoryId;
 
-//    var updatedCategoryIds = updatedInventoryEntry.InventoryEntryCategories
-//        .Select(c => c.Id)
-//        .ToHashSet();
+    await dbContext.SaveChangesAsync();
 
-//    existingInventoryEntry.InventoryEntryCategories.RemoveAll(c => !updatedCategoryIds.Contains(c.Id));
+    existingArmor = await dbContext.Armors
+        .Include(a => a.ArmorCategory)
+            .ThenInclude(ac => ac.Category)
+        .FirstOrDefaultAsync(a => a.Id == id);
 
-//    var existingCategoryIds = existingInventoryEntry.InventoryEntryCategories.Select(c => c.Id).ToHashSet();
-//    var missingCategoryIds = updatedCategoryIds.Except(existingCategoryIds);
+    await hubContext.Clients.All.SendAsync("ReceiveUpdatedArmor", existingArmor);
 
-//    foreach (var categoryId in missingCategoryIds)
-//    {
-//        var inventoryEntryCategory = await dbContext.InventoryEntryCategories
-//            .Include(c => c.Category)
-//            .FirstOrDefaultAsync(c => c.Id == categoryId);
+    return Results.NoContent();
 
-//        if (inventoryEntryCategory != null)
-//        {
-//            existingInventoryEntry.InventoryEntryCategories.Add(inventoryEntryCategory);
-//        }
-//    }
+}).RequireAuthorization(policy => policy.RequireRole("Master", "Admin"));
 
-//    await dbContext.SaveChangesAsync();
+app.MapDelete("/armors/{id}", async (AppDbContext dbContext, IHubContext<DataBaseUpdatesHub> hubContext, ClaimsPrincipal user, int id) =>
+{
+    var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
+    if (userIdClaim == null) return Results.Unauthorized();
 
-//    await hubContext.Clients.All.SendAsync("ReceiveUpdatedInventoryEntry", existingInventoryEntry);
+    var armor = await dbContext.Armors.FindAsync(id);
+    if (armor == null) return Results.NotFound();
 
-//    return Results.NoContent();
+    dbContext.Armors.Remove(armor);
+    await dbContext.SaveChangesAsync();
 
-//}).RequireAuthorization(policy => policy.RequireRole("Master", "Admin"));
+    await hubContext.Clients.All.SendAsync("ReceiveDeletedArmor", id);
 
-//app.MapDelete("/inventoryEntries/{id}", async (AppDbContext dbContext, IHubContext<DataBaseUpdatesHub> hubContext, ClaimsPrincipal user, int id) =>
-//{
-//    var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
-//    if (userIdClaim == null) return Results.Unauthorized();
-
-//    var inventoryEntry = await dbContext.InventoryEntries.FindAsync(id);
-//    if (inventoryEntry == null) return Results.NotFound();
-
-//    dbContext.InventoryEntries.Remove(inventoryEntry);
-//    await dbContext.SaveChangesAsync();
-
-//    await hubContext.Clients.All.SendAsync("ReceiveDeletedInventoryEntry", id);
-
-//    return Results.NoContent();
-//}).RequireAuthorization(policy => policy.RequireRole("Master", "Admin"));
+    return Results.NoContent();
+}).RequireAuthorization(policy => policy.RequireRole("Master", "Admin"));
 
 #endregion
 

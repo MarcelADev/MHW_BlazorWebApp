@@ -97,13 +97,16 @@ namespace MyMHWApp4.Pages.GeneralComponents.Select
 
         private void HandleCustomChange(T option)
         {
-            Value = option;
-            ValueChanged.InvokeAsync(Value);
+            if (!Equals(Value, option))
+            {
+                Value = option;
+                ValueChanged.InvokeAsync(Value);
+            }
         }
 
         private bool IsSelected(T option)
         {
-            return Value!.Equals(option);
+            return Value is not null && Value.Equals(option);
         }
     }
 }

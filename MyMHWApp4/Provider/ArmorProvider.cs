@@ -50,40 +50,40 @@ namespace MyMHWApp4.Provider
             throw new UnexpectedResponseException(response.StatusCode.ToString());
         }
 
-        //public async Task<bool> UpdateInventoryEntryAsync(InventoryEntry updatedInventoryEntry)
-        //{
-        //    var response = await _httpClient.PutAsJsonAsync($"armors/{updatedInventoryEntry.Id}", updatedInventoryEntry);
+        public async Task UpdateArmorAsync(Armor updatedArmor)
+        {
+            var response = await _httpClient.PutAsJsonAsync($"armors/{updatedArmor.Id}", updatedArmor);
 
-        //    if (response.StatusCode == HttpStatusCode.NotFound)
-        //    {
-        //        logger.LogInformation($"Entity couldn't be updated, because it wasn't found: {updatedInventoryEntry.Name}");
-        //        return false;
-        //    }
-        //    if (response.StatusCode == HttpStatusCode.NoContent)
-        //    {
-        //        return true;
-        //    }
+            if (response.StatusCode == HttpStatusCode.NotFound)
+            {
+                logger.LogInformation($"Entity couldn't be updated, because it wasn't found: {updatedArmor.Name}");
+                throw new EntityWasNotFoundException();
+            }
+            if (response.StatusCode == HttpStatusCode.NoContent)
+            {
+                return;
+            }
 
-        //    logger.LogWarning($"Unexpexted HTTP Response: {response.StatusCode.ToString()}");
-        //    throw new UnexpectedResponseException(response.StatusCode.ToString());
-        //}
+            logger.LogWarning($"Unexpexted HTTP Response: {response.StatusCode.ToString()}");
+            throw new UnexpectedResponseException(response.StatusCode.ToString());
+        }
 
-        //public async Task RemoveInventoryEntryAsync(int inventoryEntryId)
-        //{
-        //    var response = await _httpClient.DeleteAsync($"armors/{inventoryEntryId}");
+        public async Task RemoveArmorAsync(int armorId)
+        {
+            var response = await _httpClient.DeleteAsync($"armors/{armorId}");
 
-        //    if (response.StatusCode == HttpStatusCode.NotFound)
-        //    {
-        //        logger.LogInformation($"Category couldnt be deleted, because it wasn't found: Id={inventoryEntryId}");
-        //        throw new EntityWasNotFoundException();
-        //    }
-        //    if (response.StatusCode == HttpStatusCode.NoContent)
-        //    {
-        //        return;
-        //    }
+            if (response.StatusCode == HttpStatusCode.NotFound)
+            {
+                logger.LogInformation($"Armor couldnt be deleted, because it wasn't found: Id={armorId}");
+                throw new EntityWasNotFoundException();
+            }
+            if (response.StatusCode == HttpStatusCode.NoContent)
+            {
+                return;
+            }
 
-        //    logger.LogWarning($"Unexpexted HTTP Response: {response.StatusCode.ToString()}");
-        //    throw new UnexpectedResponseException(response.StatusCode.ToString());
-        //}
+            logger.LogWarning($"Unexpexted HTTP Response: {response.StatusCode.ToString()}");
+            throw new UnexpectedResponseException(response.StatusCode.ToString());
+        }
     }
 }

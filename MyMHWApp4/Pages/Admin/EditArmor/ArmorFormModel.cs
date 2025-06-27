@@ -44,6 +44,10 @@ namespace MyMHWApp4.Pages.Admin.EditArmor
                     if(armor.Name.Equals(Name)) { yield return new ValidationResult("Armor already exists", [nameof(Name)]); }
                 }
             }
+            if (ArmorCategory is null)
+            {
+                yield return new ValidationResult("You must choose a category!", [nameof(Name)]);
+            }
         }
     }
 }

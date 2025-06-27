@@ -30,17 +30,17 @@
                 </div>
 
                 <SingleSelect Label="Select Category"
-                Placeholder="Select"
-                T="ArmorCategory"
-                Options="@armorCategories"
-                OptionNameMapper="(ArmorCategory ac) => ac.Category?.Name ?? string.Empty"
-                OptionValueMapper="(ArmorCategory armorCategory) => armorCategory.Id"
-                ValueChanged="HandleSelect">
+                              Placeholder="Select"
+                              T="ArmorCategory"
+                              Options="@armorCategories"
+                              OptionNameMapper="(ArmorCategory ac) => ac.Category?.Name ?? string.Empty"
+                              OptionValueMapper="(ArmorCategory armorCategory) => armorCategory.Id"
+                              @bind-Value="Model.ArmorCategory">
                 </SingleSelect>
 
                 <div class=" form__field form__button">
                     <button type="submit" class="btn btn-primary">
-                        Create Inventory Entry
+                        Create Armor
                     </button>
                 </div>
 
@@ -60,10 +60,8 @@
     else{
         @foreach (Armor armor in armors!)
         {
-            @* <InventoryEntryCard
-            @key="armor.Id"
-            InventoryEntry="entry">
-            </InventoryEntryCard> *@
+            <ArmorCard @key="armor.Id"
+                       Armor="armor"/>
         }
     }
 
@@ -110,12 +108,6 @@
             isFormValid = !editContext.Validate();
             StateHasChanged();
         }
-    }
-
-    private void HandleSelect(ArmorCategory armorCategory)
-    {
-        Model!.ArmorCategory = armorCategory;
-        StateHasChanged();
     }
 
     private async Task Submit() => await CreateArmor();

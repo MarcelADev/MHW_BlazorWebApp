@@ -1,0 +1,212 @@
+﻿@using MHWApp.Library
+@using MHWApp.Library.Exceptions
+@using MHWApp.Library.Model
+@using MyMHWApp4.HubConnections
+@using MyMHWApp4.Pages.Admin.EditCategory
+@using MyMHWApp4.Pages.GeneralComponents
+@using MyMHWApp4.Pages.GeneralComponents.IconButtons
+@using MyMHWApp4.Pages.GeneralComponents.Modals
+@using MyMHWApp4.Pages.GeneralComponents.Select
+@using MyMHWApp4.Provider
+@using static MHWApp.Library.StaticVariables
+@inject ArmorProvider armorProvider
+@inject CategoryProvider categoryProvider
+@inject IDataBaseUpdatesHubConnection hubService
+@implements IDisposable
+
+@if(!isLoading)
+{
+	<div class="form__container">
+		<EditForm EditContext="editContext" FormName="armorCard" OnValidSubmit="Submit">
+			<DataAnnotationsValidator />
+			<ValidationSummary />
+
+			<div class="card">
+
+				<div class="container-left-space-between">
+					<p class="header-card">@Armor.Name</p>
+
+					<div class="container-right-gap">
+						@if (!toggleEdit)
+						{
+							<EditButton EditButtonClicked="HandleEditButtonClicked"></EditButton>
+							<DeleteButton DeleteButtonClicked="HandleDeleteButtonClicked"></DeleteButton>
+						}
+						else
+						{
+							<ConfirmButton />
+							<CancelButton CancelButtonClicked="HandleCancelButtonClicked"></CancelButton>
+						}
+					</div>
+				</div>
+
+				@if (toggleEdit)
+				{
+					<div class="form__field">
+						<label for="armorCard-name">Change Name:</label>
+						<InputText id="armorCard-name" @bind-Value="Model!.NewName" />
+					</div>
+
+					<SingleSelect Label="Change Categories"
+								  Placeholder="Select"
+								  T="ArmorCategory"
+								  Options="@armorCategories"
+								  OptionNameMapper="(ArmorCategory ac) => ac.Category?.Name ?? string.Empty"
+								  OptionValueMapper="(ArmorCategory ac) => ac.Id"
+								  @bind-Value="Model.SelectedArmorCategory"/>
+				}
+			</div>
+
+		</EditForm>
+	</div>
+}
+
+@if(showModal){
+	<Modal Title="Confirm Delete"
+		   BodyText="@modalBodyText"
+		   CloseButtonClicked="HandleModalCloseOrCancelButtonClicked"
+		   SecondaryButtonClicked="HandleModalCloseOrCancelButtonClicked"
+		   PrimaryButtonClicked="HandleModalConfirmButtonClicked">
+	</Modal>
+}
+
+@code {
+	private bool isLoading = true;
+	private bool isFormValid = true;
+	private bool toggleEdit = false;
+	private bool showModal = false;
+
+	private string? modalBodyText;
+
+	private List<ArmorCategory>? armorCategories;
+
+	public EditContext? editContext;
+
+	[SupplyParameterFromForm]
+	public ArmorCardFormModel? Model { get; set; }
+
+	[Parameter]
+	public required Armor Armor { get; set; }
+
+	protected override async Task OnInitializedAsync()
+	{
+		armorCategories = await categoryProvider.GetArmorCategoriesAsync();
+		if (armorCategories.Any()) armorCategories.Sort((x, y) => x.Category!.Name.CompareTo(y.Category!.Name));
+
+		modalBodyText = $"Are you sure you want to remove {Armor.Name}?";
+
+		Model ??= new ArmorCardFormModel(Armor);
+		editContext = new(Model);
+		editContext.OnFieldChanged += HandleFieldChanged;
+
+		hubService.OnUpdatedArmor += HandleSignalRUpdatedArmor;
+
+		isLoading = false;
+		StateHasChanged();
+	}
+
+	private void HandleFieldChanged(object? sender, FieldChangedEventArgs e)
+	{
+		if (editContext is not null)
+		{
+			isFormValid = !editContext.Validate();
+			StateHasChanged();
+		}
+	}
+
+	private void HandleSelect(List<InventoryEntryCategory> inventoryEntryCategories)
+	{
+		isFormValid = !editContext!.Validate();
+		StateHasChanged();
+	}
+
+	private async Task Submit() => await ChangeArmorNameAndOrCategory();
+
+	private async Task ChangeArmorNameAndOrCategory()
+	{
+		Armor armor = new Armor
+		{
+			Id = Armor.Id,
+			Name = Model!.NewName,
+			Order = ORDER_DEFAULT_VALUE,
+			ArmorCategoryId = Model.SelectedArmorCategory.Id
+		};
+
+		try
+		{
+			await armorProvider.UpdateArmorAsync(armor);
+		}
+		catch (EntityWasNotFoundException)
+		{
+			Model.EntityWasNotFoundFlag = true;
+			editContext!.Validate();
+		}
+		catch (UnexpectedResponseException)
+		{
+			Model.UnexpectedResponseFlag = true;
+			editContext!.Validate();
+		}
+
+		toggleEdit = !toggleEdit;
+		StateHasChanged();
+	}
+
+	private void HandleEditButtonClicked()
+	{
+		toggleEdit = !toggleEdit;
+	}
+
+	private void HandleCancelButtonClicked()
+	{
+		toggleEdit = !toggleEdit;
+		Model!.NewName = Model.Name;
+	}
+
+	private void HandleDeleteButtonClicked()
+	{
+		showModal = true;
+	}
+
+	private void HandleModalCloseOrCancelButtonClicked()
+	{
+		showModal = false;
+	}
+
+	private async Task HandleModalConfirmButtonClicked()
+	{
+		showModal = false;
+
+		try
+		{
+			await armorProvider.RemoveArmorAsync(Armor.Id);
+		}
+		catch (EntityWasNotFoundException)
+		{
+			Model!.EntityWasNullFlag = true;
+			editContext!.Validate();
+		}
+		catch (UnexpectedResponseException)
+		{
+			Model!.UnexpectedResponseFlag = true;
+			editContext!.Validate();
+		}
+		StateHasChanged();
+	}
+
+	private void HandleSignalRUpdatedArmor(Armor armor)
+	{
+		if (Armor.Id == armor.Id)
+		{
+			Armor.Name = Model!.Name = Model.NewName = armor.Name;
+			Armor.ArmorCategory = armor.ArmorCategory!;
+			Model.CurrentArmorCategory = armor.ArmorCategory!;
+			Model.SelectedArmorCategory= armor.ArmorCategory!;
+		}
+		StateHasChanged();
+	}
+
+	public void Dispose()
+	{
+		hubService.OnUpdatedArmor-= HandleSignalRUpdatedArmor;
+	}
+}
