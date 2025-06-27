@@ -9,6 +9,9 @@ namespace MyMHWApp4.Pages.Admin.EditCategory
         public string Name { get; set; }
         public string NewName { get; set; }
 
+        public bool CurrentCategoryInName { get; set; }
+        public bool SelectedCategoryInName { get; set; }
+
         public List<InventoryEntryCategory> CurrentInventoryCategories { get; set; } = [];
         public List<InventoryEntryCategory> SelectedInventoryCategories { get; set; } = [];
 
@@ -21,6 +24,9 @@ namespace MyMHWApp4.Pages.Admin.EditCategory
         public InventoryEntryCardFormModel(InventoryEntry inventoryEntry)
         {
             Name = NewName = inventoryEntry.Name;
+
+            CurrentCategoryInName = SelectedCategoryInName = inventoryEntry.CategoryInName;
+
             CurrentInventoryCategories = inventoryEntry.InventoryEntryCategories.ToList();
             SelectedInventoryCategories = inventoryEntry.InventoryEntryCategories;
         }
@@ -48,7 +54,8 @@ namespace MyMHWApp4.Pages.Admin.EditCategory
             }
             if (Name.Equals(NewName) &&
                 CurrentInventoryCategories.All(iec => SelectedInventoryCategories.Contains(iec)) &&
-                SelectedInventoryCategories.All(iec => CurrentInventoryCategories.Contains(iec)))
+                SelectedInventoryCategories.All(iec => CurrentInventoryCategories.Contains(iec)) &&
+                SelectedCategoryInName == CurrentCategoryInName)
             {
                 yield return new ValidationResult("Nothing was changed", [nameof(Name)]);
             }

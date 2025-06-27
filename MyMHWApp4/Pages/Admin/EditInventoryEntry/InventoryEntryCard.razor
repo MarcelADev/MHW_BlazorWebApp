@@ -46,6 +46,11 @@
 						<InputText id="inventoryEntryCard-name" @bind-Value="Model!.NewName" />
 					</div>
 
+					<div class="form__field-checkbox">
+						<InputCheckbox id="inventoryEntryCard-categoryInName" @bind-Value="Model.SelectedCategoryInName" />
+						<label for="inventoryEntryCard-categoryInName">Category in front of Name</label>
+					</div>
+
 					<MultiSelect Label="Change Categories"
 								 Placeholder="Select"
 								 T="InventoryEntryCategory"

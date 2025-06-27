@@ -31,6 +31,11 @@
                     <InputText name="inventoryEntry-name" @bind-Value="Model!.Name" />
                 </div>
 
+                <div class="form__field-checkbox">
+                    <InputCheckbox id="inventoryEntry-categoryInName" @bind-Value="Model.CategoryInName" />
+                    <label for="inventoryEntry-categoryInName">Category in front of Name</label>
+                </div>
+
                 <MultiSelect Label="Select Categories"
                 Placeholder="Select"
                 T="InventoryEntryCategory"
@@ -62,10 +67,8 @@
     else{
         @foreach (InventoryEntry entry in inventoryEntries!)
         {
-            <InventoryEntryCard
-            @key="entry.Id"
-            InventoryEntry="entry">
-            </InventoryEntryCard>
+            <InventoryEntryCard @key="entry.Id"
+                                InventoryEntry="entry"/>
         }
     }
 
@@ -129,7 +132,8 @@
             Id = 0,
             Name = Model!.Name,
             InventoryEntryCategories = Model.InventoryCategories,
-            Order = ORDER_DEFAULT_VALUE
+            Order = ORDER_DEFAULT_VALUE,
+            CategoryInName = Model.CategoryInName
         };
 
         try

@@ -7,6 +7,7 @@ namespace MyMHWApp4.Pages.Admin.EditInventoryEntry
     public record InventoryEntryFormModel : IValidatableObject
     {
         public string Name { get; set; } = string.Empty;
+        public bool CategoryInName { get; set; }
         private List<InventoryEntry> _inventoryEntryList;
 
         public List<InventoryEntryCategory> InventoryCategories { get; set; } = [];
