@@ -24,6 +24,8 @@ namespace MHWApp.Library.Model
         [Required]
         public required int Order { get; set; }
 
+        public bool CategoryInName { get; set; } = false;
+
         public List<Participator> Participators { get; set; } = [];     // Weapon and Participator have the many to many relationship
         public List<ParticipatorWeapon> ParticipatorWeapons { get; set; } = [];     // Joint table of Weapon and Participator
 

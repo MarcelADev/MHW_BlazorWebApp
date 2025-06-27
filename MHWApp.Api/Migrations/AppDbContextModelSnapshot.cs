@@ -65,6 +65,9 @@ namespace MHWApp.Api.Migrations
                     b.Property<int>("ArmorCategoryId")
                         .HasColumnType("INTEGER");
 
+                    b.Property<bool>("CategoryInName")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -138,6 +141,9 @@ namespace MHWApp.Api.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("CategoryInName")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
@@ -292,6 +298,9 @@ namespace MHWApp.Api.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("CategoryInName")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
