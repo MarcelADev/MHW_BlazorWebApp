@@ -197,7 +197,7 @@ app.MapGet("/sessions", async (AppDbContext dbContext, ClaimsPrincipal user) =>
     }
 ).RequireAuthorization(); ;
 
-app.MapPost("/sessions", async (AppDbContext dbContext, ClaimsPrincipal user, IHubContext<DataBaseUpdatesHub> hubContext, CreateSessionDTO createSessionDTO) =>
+app.MapPost("/sessions", async (AppDbContext dbContext, ClaimsPrincipal user, IHubContext<DataBaseUpdatesHub> hubContext, SessionCreateDTO createSessionDTO) =>
     {
         var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
         if (userIdClaim == null) return Results.Unauthorized();
@@ -230,7 +230,7 @@ app.MapPost("/sessions", async (AppDbContext dbContext, ClaimsPrincipal user, IH
     }
 ).RequireAuthorization();
 
-app.MapPut("/sessions/{id}", async (AppDbContext dbContext, ClaimsPrincipal user, IHubContext<DataBaseUpdatesHub> hubContext, int id, UpdateSessionDTO updatedSessionDTO) =>
+app.MapPut("/sessions/{id}", async (AppDbContext dbContext, ClaimsPrincipal user, IHubContext<DataBaseUpdatesHub> hubContext, int id, SessionUpdateDTO updatedSessionDTO) =>
 {
     var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
     if (userIdClaim == null) return Results.Unauthorized();
@@ -491,7 +491,7 @@ app.MapGet("/categories/armors", async (AppDbContext dbContext, ClaimsPrincipal 
     return Results.Ok(armorCategories);
 }).RequireAuthorization(policy => policy.RequireRole("Master", "Admin"));
 
-app.MapPost("/categories", async (AppDbContext dbContext, ClaimsPrincipal user, IHubContext<DataBaseUpdatesHub> hubContext, CategoryDTO categoryDTO) =>
+app.MapPost("/categories", async (AppDbContext dbContext, ClaimsPrincipal user, IHubContext<DataBaseUpdatesHub> hubContext, CategoryCreateDTO categoryDTO) =>
 {
     var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
     if (userIdClaim == null) return Results.Unauthorized();
@@ -514,7 +514,7 @@ app.MapPost("/categories", async (AppDbContext dbContext, ClaimsPrincipal user, 
     return Results.Created($"/categories/{categoryDTO.NewCategory.Id}", categoryDTO.NewCategory);
 }).RequireAuthorization(policy => policy.RequireRole("Master", "Admin"));
 
-async Task AddSubCategories(AppDbContext dbContext, CategoryDTO categoryDTO)
+async Task AddSubCategories(AppDbContext dbContext, CategoryCreateDTO categoryDTO)
 {
     if (categoryDTO.IsInventoryEntry)
     {
@@ -761,31 +761,51 @@ app.MapGet("/inventoryEntries", async (AppDbContext dbContext, ClaimsPrincipal u
 
     var inventoryEntries = await dbContext.InventoryEntries
         .Include(i => i.InventoryEntryCategories)
-            .ThenInclude(ic => ic.Category)
+            .ThenInclude(iec => iec.Category)
+        .Include(i => i.NamePrefix)
+            .ThenInclude(iec => iec!.Category)
         .ToListAsync();
 
     return Results.Ok(inventoryEntries); ;
 }
 ).RequireAuthorization(policy => policy.RequireRole("Master", "Admin"));
 
-app.MapPost("/inventoryEntries", async (AppDbContext dbContext, ClaimsPrincipal user, IHubContext<DataBaseUpdatesHub> hubContext, InventoryEntry newInventoryEntry) =>
+app.MapPost("/inventoryEntries", async (AppDbContext dbContext, ClaimsPrincipal user, IHubContext<DataBaseUpdatesHub> hubContext, InventoryEntryCreateDTO newInventoryEntryDTO) =>
 {
     var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
     if (userIdClaim == null) return Results.Unauthorized();
 
-    bool exists = await dbContext.InventoryEntries.AnyAsync(ie => ie.Name == newInventoryEntry.Name);
+    bool exists = await dbContext.InventoryEntries.AnyAsync(ie => ie.Name == newInventoryEntryDTO.Name);
     if (exists) return Results.StatusCode(HTTP_STATUSCODE_CONFLICT);
 
-    if (newInventoryEntry.InventoryEntryCategories != null && newInventoryEntry.InventoryEntryCategories.Any())
-    {
-        var validCategoryIds = newInventoryEntry.InventoryEntryCategories.Select(c => c.Id).ToList();
+    if (newInventoryEntryDTO.InventoryEntryCategoryIds == null || !newInventoryEntryDTO.InventoryEntryCategoryIds.Any())
+        return Results.BadRequest("At least one category must be assigned.");
 
-        // Replace the incoming categories with tracked entities from DB
-        newInventoryEntry.InventoryEntryCategories = await dbContext.InventoryEntryCategories
-            .Where(iec => validCategoryIds.Contains(iec.Id))
-            .Include(iec => iec.Category)
-            .ToListAsync();
+    if (newInventoryEntryDTO.NamePrefixId.HasValue)
+    {
+        bool prefixExists = await dbContext.InventoryEntryCategories
+            .AnyAsync(c => c.Id == newInventoryEntryDTO.NamePrefixId.Value);
+        if (!prefixExists) return Results.BadRequest("Provided NamePrefixId does not exist.");
+
+        bool prefixIsInChosenCategories = newInventoryEntryDTO.InventoryEntryCategoryIds
+            .Contains(newInventoryEntryDTO.NamePrefixId.Value);
+        if (!prefixIsInChosenCategories) return Results.BadRequest("NamePrefixId wasn't in the selected Categories");
     }
+
+    var newInventoryEntry = new InventoryEntry
+    {
+        Id = 0,
+        Name = newInventoryEntryDTO.Name,
+        Order = newInventoryEntryDTO.Order,
+        InventoryEntryCategories = await dbContext.InventoryEntryCategories
+                                        .Where((InventoryEntryCategory iec) => newInventoryEntryDTO.InventoryEntryCategoryIds!
+                                        .Contains(iec.Id))
+                                        .ToListAsync(),
+        NamePrefixId = newInventoryEntryDTO.NamePrefixId,
+        NamePrefix = newInventoryEntryDTO.NamePrefixId.HasValue ?
+                        await dbContext.InventoryEntryCategories.FirstOrDefaultAsync(iec => iec.Id == newInventoryEntryDTO.NamePrefixId)
+                        : null
+    };    
 
     await dbContext.InventoryEntries.AddAsync(newInventoryEntry);
     await dbContext.SaveChangesAsync();

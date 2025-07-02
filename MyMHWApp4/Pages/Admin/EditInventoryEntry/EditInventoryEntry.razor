@@ -2,6 +2,7 @@
 @using static MHWApp.Library.StaticVariables
 @using MHWApp.Library.Exceptions
 @using MHWApp.Library.Model
+@using MHWApp.Library.DTO
 @using MyMHWApp4.HubConnections
 @using MyMHWApp4.Pages.GeneralComponents.Select
 @using Provider;
@@ -32,9 +33,20 @@
                 </div>
 
                 <div class="form__field-checkbox">
-                    <InputCheckbox id="inventoryEntry-categoryInName" @bind-Value="Model.CategoryInName" />
-                    <label for="inventoryEntry-categoryInName">Category in front of Name</label>
+                    <InputCheckbox id="inventoryEntry-categoryInName" @bind-Value="Model.UseNamePrefix" />
+                    <label for="inventoryEntry-categoryInName">Use Category Prefix</label>
                 </div>
+
+                @if(Model.UseNamePrefix)
+                {
+                    <SingleSelect Label="Choose Prefix"
+                    Placeholder="Select"
+                    T="InventoryEntryCategory"
+                    Options="Model.InventoryCategories"
+                    OptionNameMapper="(InventoryEntryCategory iec) => iec.Category?.Name ?? string.Empty"
+                    OptionValueMapper="(InventoryEntryCategory iec) => iec.Id"
+                    @bind-Value="Model.NamePrefix" />
+                }
 
                 <MultiSelect Label="Select Categories"
                 Placeholder="Select"
@@ -42,8 +54,7 @@
                 Options="@inventoryCategories"
                 OptionNameMapper="(InventoryEntryCategory iec) => iec.Category?.Name ?? string.Empty"
                 OptionValueMapper="(InventoryEntryCategory inventoryCategory) => inventoryCategory.Id"
-                ValueListChanged="HandleSelect">
-                </MultiSelect>
+                ValueListChanged="HandleSelect" />
 
                 <div class=" form__field form__button">
                     <button type="submit" class="btn btn-primary">
@@ -68,7 +79,7 @@
         @foreach (InventoryEntry entry in inventoryEntries!)
         {
             <InventoryEntryCard @key="entry.Id"
-                                InventoryEntry="entry"/>
+            InventoryEntry="entry"/>
         }
     }
 
@@ -127,22 +138,27 @@
 
     private async Task CreateInventoryEntry()
     {
-        InventoryEntry newInventoryEntry = new InventoryEntry 
-        { 
-            Id = 0,
+        InventoryEntryCreateDTO dto = new InventoryEntryCreateDTO
+        {
             Name = Model!.Name,
-            InventoryEntryCategories = Model.InventoryCategories,
             Order = ORDER_DEFAULT_VALUE,
-            CategoryInName = Model.CategoryInName
+            InventoryEntryCategoryIds = Model.InventoryCategories.Select(c => c.Id).ToList(),
+            NamePrefixId = Model.UseNamePrefix ? Model.NamePrefix?.Id : null
         };
 
         try
         {
-            await inventoryEntryProvider.CreateInventoryEntryAsync(newInventoryEntry);
+            await inventoryEntryProvider.CreateInventoryEntryAsync(dto);
         }
         catch (EntityAlreadyExistsException)
         {
             Model.EntityAlreadyExistsFlag = true;
+            editContext!.Validate();
+        }
+        catch (BadRequestException e)
+        {
+            Model.BadRequestException = e;
+            Model.BadRequestFlag = true;
             editContext!.Validate();
         }
         catch (EntityWasNullException)

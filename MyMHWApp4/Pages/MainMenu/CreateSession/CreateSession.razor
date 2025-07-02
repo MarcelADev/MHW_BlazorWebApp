@@ -161,7 +161,7 @@
 			Date = DateUtils.GetDateString()
 		};
 
-		CreateSessionDTO createSessionDTO = new CreateSessionDTO
+		SessionCreateDTO createSessionDTO = new SessionCreateDTO
 		{
 			NewSession = newSession,
 			Participators = Model.Participators.Select(p => p.Clone()).ToList(),

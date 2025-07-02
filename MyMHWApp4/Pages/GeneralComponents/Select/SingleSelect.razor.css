@@ -7,7 +7,12 @@
     position: relative;
     width: 100%;
     --focus: #0F6CBD;
+    z-index: 1;
 }
+
+    .select:focus-within {
+        z-index: 999;
+    }
 
 .select__trigger {
     display: flex;

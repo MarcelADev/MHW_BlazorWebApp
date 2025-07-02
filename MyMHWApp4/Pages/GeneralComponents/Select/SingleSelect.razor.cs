@@ -66,7 +66,14 @@ namespace MyMHWApp4.Pages.GeneralComponents.Select
 
         protected override void OnParametersSet()
         {
-            _optionType = OptionValueMapper(Options[0]).GetType();
+            if (Options.Count > 0)
+            {
+                _optionType = OptionValueMapper(Options[0]).GetType();
+            }
+            else
+            {
+                _optionType = null;
+            }
         }
 
         private void HandleNativeChange(ChangeEventArgs args)

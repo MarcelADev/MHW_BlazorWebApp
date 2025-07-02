@@ -9,8 +9,10 @@ namespace MyMHWApp4.Pages.Admin.EditCategory
         public string Name { get; set; }
         public string NewName { get; set; }
 
-        public bool CurrentCategoryInName { get; set; }
-        public bool SelectedCategoryInName { get; set; }
+        public bool UseNamePrefix { get; set; }
+
+        public InventoryEntryCategory? CurrentNamePrefix { get; set; }
+        public InventoryEntryCategory? SelectedNamePrefix { get; set; }
 
         public List<InventoryEntryCategory> CurrentInventoryCategories { get; set; } = [];
         public List<InventoryEntryCategory> SelectedInventoryCategories { get; set; } = [];
@@ -25,7 +27,9 @@ namespace MyMHWApp4.Pages.Admin.EditCategory
         {
             Name = NewName = inventoryEntry.Name;
 
-            CurrentCategoryInName = SelectedCategoryInName = inventoryEntry.CategoryInName;
+            UseNamePrefix = inventoryEntry.NamePrefix != null;
+
+            CurrentNamePrefix = SelectedNamePrefix = inventoryEntry.NamePrefix;
 
             CurrentInventoryCategories = inventoryEntry.InventoryEntryCategories.ToList();
             SelectedInventoryCategories = inventoryEntry.InventoryEntryCategories;
@@ -55,13 +59,9 @@ namespace MyMHWApp4.Pages.Admin.EditCategory
             if (Name.Equals(NewName) &&
                 CurrentInventoryCategories.All(iec => SelectedInventoryCategories.Contains(iec)) &&
                 SelectedInventoryCategories.All(iec => CurrentInventoryCategories.Contains(iec)) &&
-                SelectedCategoryInName == CurrentCategoryInName)
+                SelectedNamePrefix == CurrentNamePrefix)
             {
                 yield return new ValidationResult("Nothing was changed", [nameof(Name)]);
-            }
-            if (SelectedCategoryInName && SelectedInventoryCategories.Count != 1)
-            {
-                yield return new ValidationResult("Function: \"Category in front of Name\" only available if exactly 1 category is chosen");
             }
             if (CancelFlag)
             {

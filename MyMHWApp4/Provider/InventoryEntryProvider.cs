@@ -23,14 +23,19 @@ namespace MyMHWApp4.Provider
             throw new UnexpectedResponseException(response.StatusCode.ToString());
         }
 
-        public async Task CreateInventoryEntryAsync(InventoryEntry newInventoryEntry)
+        public async Task CreateInventoryEntryAsync(InventoryEntryCreateDTO newInventoryEntryDTO)
         {
-            var response = await _httpClient.PostAsJsonAsync("inventoryEntries", newInventoryEntry);
+            var response = await _httpClient.PostAsJsonAsync("inventoryEntries", newInventoryEntryDTO);
 
             if (response.StatusCode == HttpStatusCode.Conflict)
             {
-                logger.LogInformation($"Entity already exists: {newInventoryEntry.Name}");
+                logger.LogInformation($"Entity already exists: {newInventoryEntryDTO.Name}");
                 throw new EntityAlreadyExistsException();
+            }
+            if (response.StatusCode == HttpStatusCode.BadRequest)
+            {
+                string errorMessage = await response.Content.ReadAsStringAsync();
+                throw new BadRequestException(errorMessage);
             }
             if (response.StatusCode == HttpStatusCode.Created)
             {
@@ -42,7 +47,7 @@ namespace MyMHWApp4.Provider
                     throw new EntityWasNullException();
                 }
 
-                logger.LogInformation($"Entity was successfully created: {newInventoryEntry.Name}");
+                logger.LogInformation($"Entity was successfully created: {newInventoryEntryDTO.Name}");
                 return;
             }
 

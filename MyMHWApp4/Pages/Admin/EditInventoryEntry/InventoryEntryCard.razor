@@ -24,13 +24,9 @@
 
 				<div class="container-left-space-between">
 					<p class="header-card">
-						@if(InventoryEntry.CategoryInName)
+						@if(InventoryEntry.NamePrefixId != null && InventoryEntry.NamePrefix != null)
 						{
-							var categoryEntry = InventoryEntry.InventoryEntryCategories.FirstOrDefault();
-							if (categoryEntry != null)
-							{
-								@categoryEntry.Category!.Name
-							}
+							@($"{InventoryEntry.NamePrefix.Category!.Name} ")
 						}
 						@InventoryEntry.Name
 					</p>
@@ -57,9 +53,20 @@
 					</div>
 
 					<div class="form__field-checkbox">
-						<InputCheckbox id="inventoryEntryCard-categoryInName" @bind-Value="Model.SelectedCategoryInName" />
+						<InputCheckbox id="inventoryEntryCard-categoryInName" @bind-Value="Model.UseNamePrefix" />
 						<label for="inventoryEntryCard-categoryInName">Category in front of Name</label>
 					</div>
+
+					@if(Model.UseNamePrefix)
+					{
+						<SingleSelect Label="Use Category Prefix"
+									  Placeholder="Select"
+									  T="InventoryEntryCategory"
+									  Options="Model.SelectedInventoryCategories"
+									  OptionNameMapper="(InventoryEntryCategory iec) => iec.Category?.Name ?? string.Empty"
+									  OptionValueMapper="(InventoryEntryCategory iec) => iec.Id"
+									  @bind-Value="Model.SelectedNamePrefix"/>
+					}
 
 					<MultiSelect Label="Change Categories"
 								 Placeholder="Select"

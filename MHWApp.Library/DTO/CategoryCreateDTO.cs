@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace MHWApp.Library.DTO
 {
-    public class CategoryDTO
+    public class CategoryCreateDTO
     {
         public required Category NewCategory { get; set; }
         public required bool IsInventoryEntry { get; set; }

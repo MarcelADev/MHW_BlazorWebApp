@@ -51,7 +51,7 @@ namespace MyMHWApp4.Provider
         #endregion
 
         #region CREATE
-        public async Task CreateCategoryAsync(CategoryDTO categoryDTO)
+        public async Task CreateCategoryAsync(CategoryCreateDTO categoryDTO)
         {
             var response = await _httpClient.PostAsJsonAsync("categories", categoryDTO);
 

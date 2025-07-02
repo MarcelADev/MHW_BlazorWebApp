@@ -24,7 +24,7 @@ namespace MyMHWApp4.Provider
             throw new UnexpectedResponseException(response.StatusCode.ToString());
         }
 
-        public async Task CreateSessionAsync(CreateSessionDTO createSessionDTO)
+        public async Task CreateSessionAsync(SessionCreateDTO createSessionDTO)
         {
             var response = await _httpClient.PostAsJsonAsync("sessions", createSessionDTO);
 
@@ -52,7 +52,7 @@ namespace MyMHWApp4.Provider
             throw new UnexpectedResponseException(response.StatusCode.ToString());
         }
 
-        public async Task UpdateSessionAsync(UpdateSessionDTO dto)
+        public async Task UpdateSessionAsync(SessionUpdateDTO dto)
         {
             var response = await _httpClient.PutAsJsonAsync($"sessions/{dto.UpdatedSession.Id}", dto);
 

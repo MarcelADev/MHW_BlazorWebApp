@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace MHWApp.Library.DTO
 {
-    public class CreateSessionDTO
+    public class SessionCreateDTO
     {
         public required Session NewSession { get; set; }
         public required List<Participator> Participators { get; set; }

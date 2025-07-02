@@ -1,4 +1,5 @@
-﻿using MHWApp.Library.Model;
+﻿using MHWApp.Library.Exceptions;
+using MHWApp.Library.Model;
 using System.ComponentModel.DataAnnotations;
 using System.Xml.Linq;
 
@@ -7,14 +8,20 @@ namespace MyMHWApp4.Pages.Admin.EditInventoryEntry
     public record InventoryEntryFormModel : IValidatableObject
     {
         public string Name { get; set; } = string.Empty;
-        public bool CategoryInName { get; set; }
+        public bool UseNamePrefix { get; set; } = false;
+
+        public InventoryEntryCategory? NamePrefix { get; set; }
+
         private List<InventoryEntry> _inventoryEntryList;
 
         public List<InventoryEntryCategory> InventoryCategories { get; set; } = [];
 
         public bool EntityAlreadyExistsFlag { get; set; } = false;
         public bool EntityWasNullFlag { get; set; } = false;
+        public bool BadRequestFlag { get; set; } = false;
         public bool UnexpectedResponseFlag { get; set; } = false;
+
+        public BadRequestException? BadRequestException{ get; set; }
 
         public InventoryEntryFormModel(List<InventoryEntry> inventoryEntryList)
         {
@@ -25,6 +32,10 @@ namespace MyMHWApp4.Pages.Admin.EditInventoryEntry
             if (EntityAlreadyExistsFlag)
             {
                 yield return new ValidationResult("Database and Client are unsynchronized. Please reload page!", [nameof(Name)]);
+            }
+            if (BadRequestFlag)
+            {
+                yield return new ValidationResult(BadRequestException!.Message, [nameof(Name)]);
             }
             if (EntityWasNullFlag)
             {
