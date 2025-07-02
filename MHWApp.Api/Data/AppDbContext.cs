@@ -204,6 +204,13 @@ namespace MHWApp.Api.Data
                         .WithMany(ie => ie.ArmorCraftingIngredients)
                         .HasForeignKey(aci => aci.InventoryEntryId)
                 );
+
+            // one to many relationship of InventoryEntry and InventoryEntryCategory
+            modelBuilder.Entity<InventoryEntry>()
+                .HasOne(ie => ie.NamePrefix)
+                .WithMany() // no reverse navigation from InventoryEntryCategory
+                .HasForeignKey(ie => ie.NamePrefixId)
+                .OnDelete(DeleteBehavior.SetNull); // ← set NamePrefixId = null when category is deleted
             #endregion
 
             #region Armor

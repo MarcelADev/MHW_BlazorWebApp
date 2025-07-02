@@ -65,12 +65,12 @@ namespace MHWApp.Api.Migrations
                     b.Property<int>("ArmorCategoryId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<bool>("CategoryInName")
-                        .HasColumnType("INTEGER");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("TEXT");
+
+                    b.Property<int?>("NamePrefixId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("Order")
                         .HasColumnType("INTEGER");
@@ -78,6 +78,8 @@ namespace MHWApp.Api.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("ArmorCategoryId");
+
+                    b.HasIndex("NamePrefixId");
 
                     b.ToTable("Armors");
                 });
@@ -143,17 +145,19 @@ namespace MHWApp.Api.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<bool>("CategoryInName")
-                        .HasColumnType("INTEGER");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("TEXT");
+
+                    b.Property<int?>("NamePrefixId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("Order")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("NamePrefixId");
 
                     b.ToTable("InventoryEntries");
                 });
@@ -298,9 +302,6 @@ namespace MHWApp.Api.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("CategoryInName")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
@@ -638,7 +639,13 @@ namespace MHWApp.Api.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("MHWApp.Library.Model.ArmorCategory", "NamePrefix")
+                        .WithMany()
+                        .HasForeignKey("NamePrefixId");
+
                     b.Navigation("ArmorCategory");
+
+                    b.Navigation("NamePrefix");
                 });
 
             modelBuilder.Entity("MHWApp.Library.Model.ArmorCategory", b =>
@@ -661,6 +668,16 @@ namespace MHWApp.Api.Migrations
                         .IsRequired();
 
                     b.Navigation("GameExtension");
+                });
+
+            modelBuilder.Entity("MHWApp.Library.Model.InventoryEntry", b =>
+                {
+                    b.HasOne("MHWApp.Library.Model.InventoryEntryCategory", "NamePrefix")
+                        .WithMany()
+                        .HasForeignKey("NamePrefixId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("NamePrefix");
                 });
 
             modelBuilder.Entity("MHWApp.Library.Model.InventoryEntryCategory", b =>

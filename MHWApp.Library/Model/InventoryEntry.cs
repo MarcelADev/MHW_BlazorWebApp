@@ -12,7 +12,8 @@ namespace MHWApp.Library.Model
         [Required]
         public required int Order { get; set; }
 
-        public bool CategoryInName { get; set; } = false;
+        public int? NamePrefixId { get; set; }
+        public InventoryEntryCategory? NamePrefix { get; set; }
 
         public List<InventoryEntryCategory> InventoryEntryCategories { get; set; } = [];
 
