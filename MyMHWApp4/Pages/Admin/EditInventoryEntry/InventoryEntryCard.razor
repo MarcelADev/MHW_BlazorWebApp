@@ -54,12 +54,12 @@
 
 					<div class="form__field-checkbox">
 						<InputCheckbox id="inventoryEntryCard-categoryInName" @bind-Value="Model.UseNamePrefix" />
-						<label for="inventoryEntryCard-categoryInName">Category in front of Name</label>
+						<label for="inventoryEntryCard-categoryInName">Use Category Prefix</label>
 					</div>
 
 					@if(Model.UseNamePrefix)
 					{
-						<SingleSelect Label="Use Category Prefix"
+						<SingleSelect Label="Choose Category Prefix"
 									  Placeholder="Select"
 									  T="InventoryEntryCategory"
 									  Options="Model.SelectedInventoryCategories"
