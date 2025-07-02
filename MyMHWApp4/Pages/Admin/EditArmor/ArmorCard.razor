@@ -24,7 +24,13 @@
 			<div class="card">
 
 				<div class="container-left-space-between">
-					<p class="header-card">@Armor.Name</p>
+					<p class="header-card">
+						@if (Armor.NamePrefix)
+						{
+							@($"{Armor.ArmorCategory!.Category!.Name} ")
+						}
+						@Armor.Name
+					</p>
 
 					<div class="container-right-gap">
 						@if (!toggleEdit)
@@ -54,6 +60,11 @@
 								  OptionNameMapper="(ArmorCategory ac) => ac.Category?.Name ?? string.Empty"
 								  OptionValueMapper="(ArmorCategory ac) => ac.Id"
 								  @bind-Value="Model.SelectedArmorCategory"/>
+
+					<div class="form__field-checkbox">
+						<InputCheckbox id="armorCard-categoryInName" @bind-Value="Model.SelectedUseNamePrefix" />
+						<label for="armorCard-categoryInName">Use Category Prefix</label>
+					</div>
 				}
 			</div>
 
@@ -63,10 +74,10 @@
 
 @if(showModal){
 	<Modal Title="Confirm Delete"
-		   BodyText="@modalBodyText"
-		   CloseButtonClicked="HandleModalCloseOrCancelButtonClicked"
-		   SecondaryButtonClicked="HandleModalCloseOrCancelButtonClicked"
-		   PrimaryButtonClicked="HandleModalConfirmButtonClicked">
+	BodyText="@modalBodyText"
+	CloseButtonClicked="HandleModalCloseOrCancelButtonClicked"
+	SecondaryButtonClicked="HandleModalCloseOrCancelButtonClicked"
+	PrimaryButtonClicked="HandleModalConfirmButtonClicked">
 	</Modal>
 }
 
@@ -129,7 +140,8 @@
 			Id = Armor.Id,
 			Name = Model!.NewName,
 			Order = ORDER_DEFAULT_VALUE,
-			ArmorCategoryId = Model.SelectedArmorCategory.Id
+			ArmorCategoryId = Model.SelectedArmorCategory.Id,
+			NamePrefix = Model.SelectedUseNamePrefix
 		};
 
 		try
@@ -200,7 +212,8 @@
 			Armor.Name = Model!.Name = Model.NewName = armor.Name;
 			Armor.ArmorCategory = armor.ArmorCategory!;
 			Model.CurrentArmorCategory = armor.ArmorCategory!;
-			Model.SelectedArmorCategory= armor.ArmorCategory!;
+			Model.SelectedArmorCategory = armor.ArmorCategory!;
+			Armor.NamePrefix = Model.CurrentUseNamePrefix = Model.SelectedUseNamePrefix = armor.NamePrefix;
 		}
 		StateHasChanged();
 	}

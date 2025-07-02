@@ -1,4 +1,6 @@
-﻿using MHWApp.Library.Model;
+﻿using MHWApp.Library.Exceptions;
+using MHWApp.Library.Model;
+using MyMHWApp4.Pages.GeneralComponents.Select;
 using System.ComponentModel.DataAnnotations;
 using System.Xml.Linq;
 
@@ -11,9 +13,14 @@ namespace MyMHWApp4.Pages.Admin.EditArmor
 
         public ArmorCategory ArmorCategory { get; set; }
 
+        public bool UseNamePrefix { get; set; }
+
         public bool EntityAlreadyExistsFlag { get; set; } = false;
+        public bool BadRequestFlag { get; set; } = false;
         public bool EntityWasNullFlag { get; set; } = false;
         public bool UnexpectedResponseFlag { get; set; } = false;
+
+        public BadRequestException? BadRequestException { get; set; }
 
         public ArmorFormModel(List<Armor> armorList)
         {
@@ -24,6 +31,10 @@ namespace MyMHWApp4.Pages.Admin.EditArmor
             if (EntityAlreadyExistsFlag)
             {
                 yield return new ValidationResult("Database and Client are unsynchronized. Please reload page!", [nameof(Name)]);
+            }
+            if(BadRequestFlag)
+            {
+                yield return new ValidationResult(BadRequestException!.Message, [nameof(Name)]);
             }
             if (EntityWasNullFlag)
             {
@@ -37,11 +48,22 @@ namespace MyMHWApp4.Pages.Admin.EditArmor
             {
                 yield return new ValidationResult("CurrentName must not be empty", [nameof(Name)]);
             }
-            if(_armorList != null)
+            if (_armorList != null)
             {
-                foreach(Armor armor in _armorList)
+                string formArmorName = "";
+                if (ArmorCategory is not null && UseNamePrefix) formArmorName += ArmorCategory.Category!.Name + " ";
+                formArmorName += Name;
+
+                foreach (Armor armor in _armorList)
                 {
-                    if(armor.Name.Equals(Name)) { yield return new ValidationResult("Armor already exists", [nameof(Name)]); }
+                    string existingArmorName = "";
+                    if (armor.NamePrefix) existingArmorName += armor.ArmorCategory!.Category!.Name + " ";
+                    existingArmorName += armor.Name;
+
+                    if (existingArmorName.Equals(formArmorName, StringComparison.OrdinalIgnoreCase))
+                    {
+                        yield return new ValidationResult("Armor already exists", [nameof(Name)]);
+                    }
                 }
             }
             if (ArmorCategory is null)

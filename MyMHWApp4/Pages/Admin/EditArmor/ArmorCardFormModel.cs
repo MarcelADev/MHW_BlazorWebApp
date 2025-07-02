@@ -9,6 +9,9 @@ namespace MyMHWApp4.Pages.Admin.EditArmor
         public string Name { get; set; }
         public string NewName { get; set; }
 
+        public bool CurrentUseNamePrefix { get; set; }
+        public bool SelectedUseNamePrefix { get; set; }
+
         public ArmorCategory CurrentArmorCategory { get; set; }
         public ArmorCategory SelectedArmorCategory { get; set; }
 
@@ -23,6 +26,7 @@ namespace MyMHWApp4.Pages.Admin.EditArmor
             Name = NewName = armor.Name;
             CurrentArmorCategory = armor.ArmorCategory!;
             SelectedArmorCategory = armor.ArmorCategory!;
+            CurrentUseNamePrefix = SelectedUseNamePrefix = armor.NamePrefix;
         }
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
@@ -47,7 +51,8 @@ namespace MyMHWApp4.Pages.Admin.EditArmor
                 yield return new ValidationResult("CurrentName must not be empty", [nameof(Name)]);
             }
             if (Name.Equals(NewName) &&
-                CurrentArmorCategory.Id == SelectedArmorCategory.Id)
+                CurrentArmorCategory.Id == SelectedArmorCategory.Id &&
+                CurrentUseNamePrefix == SelectedUseNamePrefix)
             {
                 yield return new ValidationResult("Nothing was changed", [nameof(Name)]);
             }

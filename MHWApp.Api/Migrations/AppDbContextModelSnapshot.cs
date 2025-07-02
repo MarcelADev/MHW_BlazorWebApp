@@ -69,7 +69,7 @@ namespace MHWApp.Api.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int?>("NamePrefixId")
+                    b.Property<bool>("NamePrefix")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("Order")
@@ -78,8 +78,6 @@ namespace MHWApp.Api.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("ArmorCategoryId");
-
-                    b.HasIndex("NamePrefixId");
 
                     b.ToTable("Armors");
                 });
@@ -639,13 +637,7 @@ namespace MHWApp.Api.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MHWApp.Library.Model.ArmorCategory", "NamePrefix")
-                        .WithMany()
-                        .HasForeignKey("NamePrefixId");
-
                     b.Navigation("ArmorCategory");
-
-                    b.Navigation("NamePrefix");
                 });
 
             modelBuilder.Entity("MHWApp.Library.Model.ArmorCategory", b =>

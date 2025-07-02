@@ -900,11 +900,11 @@ app.MapGet("/armors", async (AppDbContext dbContext, ClaimsPrincipal user) =>
     if (userIdClaim == null) return Results.Unauthorized();
 
     var armors = await dbContext.Armors
-        .Include(i => i.ArmorCategory)
+        .Include(i => i.ArmorCategory!)
             .ThenInclude(ac => ac.Category)
         .ToListAsync();
 
-    return Results.Ok(armors); ;
+    return Results.Ok(armors);
 }
 ).RequireAuthorization(policy => policy.RequireRole("Master", "Admin"));
 
@@ -913,23 +913,33 @@ app.MapPost("/armors", async (AppDbContext dbContext, ClaimsPrincipal user, IHub
     var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
     if (userIdClaim == null) return Results.Unauthorized();
 
-    bool exists = await dbContext.Armors.AnyAsync(a => a.Name == newArmor.Name);
-    if (exists) return Results.StatusCode(HTTP_STATUSCODE_CONFLICT);
-
-    if (newArmor.ArmorCategory!= null)
+    if(newArmor.NamePrefix)
     {
-        // Replace the incoming categories with tracked entities from DB
-        newArmor.ArmorCategory = await dbContext.ArmorCategories
-            .Include(ac => ac.Category)
-            .FirstAsync(ac => ac.Id == newArmor.ArmorCategory.Id);
+        bool exists = await dbContext.Armors.AnyAsync(a => a.Name == newArmor.Name && a.NamePrefix == false);
+        if (exists) return Results.StatusCode(HTTP_STATUSCODE_CONFLICT);
     }
+    else
+    {
+        bool exists = await dbContext.Armors.AnyAsync(a => a.Name == newArmor.Name && 
+                                                           a.NamePrefix == true &&
+                                                           a.ArmorCategoryId == newArmor.ArmorCategoryId);
+        if (exists) return Results.StatusCode(HTTP_STATUSCODE_CONFLICT);
+    }
+
+    bool armorCategoryExists = await dbContext.ArmorCategories
+           .AnyAsync(ac => ac.Id == newArmor.ArmorCategoryId);
+    if (!armorCategoryExists) return Results.BadRequest("Provided ArmorCategoryId does not exist.");
+
+    newArmor.ArmorCategory = await dbContext.ArmorCategories
+        .Include(ac => ac.Category)
+        .FirstAsync(ac => ac.Id == newArmor.ArmorCategoryId);
 
     await dbContext.Armors.AddAsync(newArmor);
     await dbContext.SaveChangesAsync();
 
     await hubContext.Clients.All.SendAsync("ReceiveNewArmor", newArmor);
 
-    return Results.Created($"/inventoryEntries/{newArmor.Id}", newArmor);
+    return Results.Created($"/armors/{newArmor.Id}", newArmor);
 }).RequireAuthorization(policy => policy.RequireRole("Master", "Admin"));
 
 app.MapPut("/armors/{id}", async (AppDbContext dbContext, ClaimsPrincipal user, IHubContext<DataBaseUpdatesHub> hubContext, Armor updatedArmor, int id) =>
@@ -943,11 +953,12 @@ app.MapPut("/armors/{id}", async (AppDbContext dbContext, ClaimsPrincipal user, 
 
     existingArmor.Name = updatedArmor.Name;
     existingArmor.ArmorCategoryId = updatedArmor.ArmorCategoryId;
+    existingArmor.NamePrefix = updatedArmor.NamePrefix;
 
     await dbContext.SaveChangesAsync();
 
     existingArmor = await dbContext.Armors
-        .Include(a => a.ArmorCategory)
+        .Include(a => a.ArmorCategory!)
             .ThenInclude(ac => ac.Category)
         .FirstOrDefaultAsync(a => a.Id == id);
 

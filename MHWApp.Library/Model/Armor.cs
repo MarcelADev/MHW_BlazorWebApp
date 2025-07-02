@@ -15,8 +15,7 @@ namespace MHWApp.Library.Model
         [Required]
         public required int Order { get; set; }
 
-        public int? NamePrefixId { get; set; }
-        public ArmorCategory? NamePrefix { get; set; }
+        public bool NamePrefix { get; set; } = false;
 
         public List<Participator> Participators { get; set; } = [];
         public List<ParticipatorArmor> ParticipatorArmors { get; set; } = [];

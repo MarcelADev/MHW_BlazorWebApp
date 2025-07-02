@@ -32,6 +32,11 @@ namespace MyMHWApp4.Provider
                 logger.LogInformation($"Entity already exists: {newArmor.Name}");
                 throw new EntityAlreadyExistsException();
             }
+            if (response.StatusCode == HttpStatusCode.BadRequest)
+            {
+                string errorMessage = await response.Content.ReadAsStringAsync();
+                throw new BadRequestException(errorMessage);
+            }
             if (response.StatusCode == HttpStatusCode.Created)
             {
                 var armor = await response.Content.ReadFromJsonAsync<Armor>();
