@@ -63,23 +63,30 @@
 
                     <div class="multi-select-custom-style">
                         <MultiSelect Label="Common Inventory Entries"
-                                     Placeholder="Select"
-                                     T="string"
-                                     Options="@commonInventoryEntries"
-                                     OptionNameMapper="s => s"
-                                     OptionValueMapper="s=> s"
-                                     ValueListChanged="HandleSelect" />
+                        Placeholder="Select"
+                        T="string"
+                        Options="@commonInventoryEntries"
+                        OptionNameMapper="s => s"
+                        OptionValueMapper="s=> s"
+                        ValueListChanged="HandleSelect" />
                     </div>
 
                     <div class="form__field">
                         <label for="create-inventoryentry">Add Inventory Entry</label>
-                        <AddButton AddButtonClicked="HandleAddButtonClicked" />
-                        <InputText id="create-inventoryentry" @bind-Value="Model!.Boots" />
+                        <div class="container-left-space-between">
+                            <InputText id="create-inventoryentry" @bind-Value="Model!.UncommonInventoryEntryName" />
+                            <AddButton AddButtonClicked="HandleAddButtonClicked" />
+                        </div>
                     </div>
 
                     @foreach(string s in Model.SelectedCommonInventoryEntries)
                     {
                         <InventoryEntryCard Name="@($"{Model.Name} {s}")" />
+                    }
+
+                    @foreach (string s in uncommonInventoryentries)
+                    {
+                        <InventoryEntryCard Name="@s" />
                     }
 
                 </div>
@@ -104,6 +111,8 @@
         "Fang",
         "Tail",
     };
+
+    private List<string> uncommonInventoryentries = [];
 
     protected override async Task OnInitializedAsync()
     {
@@ -131,7 +140,13 @@
 
     private void HandleAddButtonClicked()
     {
-        
+        if(!Model.UncommonInventoryEntryName.Equals(string.Empty) &&
+            !uncommonInventoryentries.Contains(Model.UncommonInventoryEntryName))
+        {
+            uncommonInventoryentries.Add(Model.UncommonInventoryEntryName);
+            Model.UncommonInventoryEntryName = string.Empty;
+            StateHasChanged();
+        }
     }
 
     private async Task Submit()

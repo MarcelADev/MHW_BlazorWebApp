@@ -22,6 +22,8 @@ namespace MyMHWApp4.Pages.Admin.Create
 
         public List<string> SelectedCommonInventoryEntries = [];
 
+        public string UncommonInventoryEntryName { get; set; } = string.Empty;
+
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             if(Name.Equals(string.Empty))
