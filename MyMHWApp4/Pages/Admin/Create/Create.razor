@@ -1,0 +1,147 @@
+﻿@page "/admin/create"
+@using MyMHWApp4.Pages.GeneralComponents.IconButtons
+@using MyMHWApp4.Pages.GeneralComponents.Select
+@implements IDisposable
+
+<div class="form__container margin-top">
+    @if(!isLoading)
+    {
+        <EditForm EditContext="editContext" FormName="create" OnValidSubmit="Submit">
+            <DataAnnotationsValidator/>
+            <ValidationSummary/>
+
+            <div class="box">
+                <h3 class="h3__custom">Create Category</h3>
+
+                <div class="form__field">
+                    <label for="create-category-name">Name</label>
+                    <InputText class="muted" id="create-category-name" @bind-Value="Model!.Name" />
+                </div>
+
+                <div class="form__field">
+                    <InputCheckbox id="create-armorset-checkbox" @bind-value="addArmorSet" />
+                    <label for="create-armorset-checkbox">Add Armor Set</label>
+                </div>
+
+                <div class="form__field">
+                    <InputCheckbox id="create-inventoryentries-checkbox" @bind-value="addInventoryEntries" />
+                    <label for="create-inventoryentries-checkbox">Add Inventory Entries</label>
+                </div>
+
+            </div>
+
+            @if(addArmorSet)
+            {
+                <div class="box">
+                    <h3 class="h3__custom">Armor Set</h3>
+
+                    @if (!Model.Name.Equals(string.Empty))
+                    {
+                        <div class="form__field">
+                            <label for="create-category-name">Helmet</label>
+                            <InputText id="create-category-name" @bind-Value="Model!.Helmet" />
+                        </div>
+
+                        <div class="form__field">
+                            <label for="create-category-name">Mail</label>
+                            <InputText id="create-category-name" @bind-Value="Model!.Mail" />
+                        </div>
+
+                        <div class="form__field">
+                            <label for="create-category-name">Boots</label>
+                            <InputText id="create-category-name" @bind-Value="Model!.Boots" />
+                        </div>
+                    }
+
+                </div>
+            }
+
+            @if(addInventoryEntries)
+            {
+                <div class="box">
+                    <h3 class="h3__custom">Inventory Entries</h3>
+
+                    <div class="multi-select-custom-style">
+                        <MultiSelect Label="Common Inventory Entries"
+                                     Placeholder="Select"
+                                     T="string"
+                                     Options="@commonInventoryEntries"
+                                     OptionNameMapper="s => s"
+                                     OptionValueMapper="s=> s"
+                                     ValueListChanged="HandleSelect" />
+                    </div>
+
+                    <div class="form__field">
+                        <label for="create-inventoryentry">Add Inventory Entry</label>
+                        <AddButton AddButtonClicked="HandleAddButtonClicked" />
+                        <InputText id="create-inventoryentry" @bind-Value="Model!.Boots" />
+                    </div>
+
+                    @foreach(string s in Model.SelectedCommonInventoryEntries)
+                    {
+                        <InventoryEntryCard Name="@($"{Model.Name} {s}")" />
+                    }
+
+                </div>
+            }
+
+        </EditForm>
+    }
+</div>
+
+@code {
+    private bool isLoading = true;
+    private bool isFormValid = false;
+    private bool addArmorSet = false;
+    private bool addInventoryEntries = false;
+    private EditContext? editContext;
+
+    [SupplyParameterFromForm]
+    private CreateFormModel? Model { get; set; }
+
+    private List<string> commonInventoryEntries = new List<string>
+    {
+        "Fang",
+        "Tail",
+    };
+
+    protected override async Task OnInitializedAsync()
+    {
+        Model ??= new CreateFormModel();
+        editContext = new(Model);
+        editContext.OnFieldChanged += HandleFieldChanged;
+
+        isLoading = false;
+    }
+
+    private void HandleFieldChanged(object? sender, FieldChangedEventArgs e)
+    {
+        if (editContext is not null)
+        {
+            isFormValid = !editContext.Validate();
+            StateHasChanged();
+        }
+    }
+
+    private void HandleSelect(List<string> selectedCommonInventoryEntries)
+    {
+        Model!.SelectedCommonInventoryEntries = selectedCommonInventoryEntries;
+        StateHasChanged();
+    }
+
+    private void HandleAddButtonClicked()
+    {
+        
+    }
+
+    private async Task Submit()
+    {
+        throw new NotImplementedException();
+    }
+
+    public void Dispose()
+    {
+        if (editContext is not null)
+            editContext.OnFieldChanged -= HandleFieldChanged;
+    }
+}

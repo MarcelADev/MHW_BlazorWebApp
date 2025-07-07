@@ -1,0 +1,15 @@
+﻿<button class="container-center" type="button" @onclick="OnAddButtonClicked">
+	<span class="material-symbols-outlined">
+		add
+	</span>
+</button>
+
+@code {
+	[Parameter]
+	public required EventCallback AddButtonClicked { get; set; }
+
+	private async Task OnAddButtonClicked()
+	{
+		await AddButtonClicked.InvokeAsync();
+	}
+}

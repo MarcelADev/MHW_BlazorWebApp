@@ -1,0 +1,19 @@
+﻿@if(!isLoading)
+{
+	<div class="card">
+		<p class="card__header">@Name</p>
+	</div>
+}
+
+
+@code {
+	private bool isLoading = true;
+
+	[Parameter]
+	public required string Name { get; set; }
+
+	protected override async Task OnInitializedAsync()
+	{
+		isLoading = false;
+	}
+}

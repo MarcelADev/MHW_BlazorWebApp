@@ -1,0 +1,14 @@
+﻿button {
+    border: 0;
+    background: transparent;
+    border-radius: 5px;
+    padding: 10px;
+}
+
+span {
+    color: black;
+}
+
+button:hover {
+    opacity: 0.9;
+}

@@ -1,0 +1,27 @@
+﻿.box {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin-bottom: 1.5rem;
+    padding: 10px 15px;
+    border-radius: 8px;
+    border: 1px dashed black;
+}
+
+.h3__custom {
+    font-weight: 500;
+    font-size: 2rem;
+}
+
+.margin-top {
+    margin-top: 1rem;
+}
+
+label {
+    font-weight: 200;
+}
+
+.multi-select-custom-style label {
+    font-weight: 600;
+    color: darkslateblue;
+}

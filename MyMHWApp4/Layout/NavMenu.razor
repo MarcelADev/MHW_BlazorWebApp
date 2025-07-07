@@ -38,7 +38,7 @@
                     if(context.User.IsInRole(ADMIN_ROLE) || context.User.IsInRole(MASTER_ROLE))
                     {
                         <div class="nav-item px-3">
-                            <NavLink class="nav-link" href="edit/categories">
+                            <NavLink class="nav-link" href="admin/create">
                                 <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Admin Pages
                             </NavLink>
                         </div>
@@ -64,6 +64,12 @@
                 }
                 else if (adminPagesActive && (context.User.IsInRole(ADMIN_ROLE) || context.User.IsInRole(MASTER_ROLE)))
                 {
+                    <div class="nav-item px-3">
+                        <NavLink class="nav-link" href="admin/create">
+                            <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span>@ADMIN_CREATE
+                        </NavLink>
+                    </div>
+
                     <div class="nav-item px-3">
                         <NavLink class="nav-link" href="edit/gameextensions">
                             <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span>@ADMIN_GAME_EXTENSION
@@ -129,6 +135,7 @@
     private static string INVENTORY = "Inventory";
 
     // Admin Pages
+    private static string ADMIN_CREATE = "Create";
     private static string ADMIN_CATEGORY = "Category";
     private static string ADMIN_GAME_EXTENSION = "Game Extension";
     private static string ADMIN_INVENTORY_ENTRY = "Inventory Entry";
@@ -176,6 +183,7 @@
             "/mainmenu/createsession" => SESSION_CREATE,
             "/master" => MASTER,
             "/inventory" => INVENTORY,
+            "/admin/create" => ADMIN,
             "/edit/categories" => ADMIN,
             "/edit/gameextensions" => ADMIN,
             "/edit/inventoryentries" => ADMIN,
