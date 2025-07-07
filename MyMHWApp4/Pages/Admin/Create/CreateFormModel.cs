@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using MHWApp.Library.Model;
+using System.ComponentModel.DataAnnotations;
 
 namespace MyMHWApp4.Pages.Admin.Create
 {
@@ -19,6 +20,8 @@ namespace MyMHWApp4.Pages.Admin.Create
         public string Helmet { get; set; } = string.Empty;
         public string Mail { get; set; } = string.Empty;
         public string Boots { get; set; } = string.Empty;
+
+        public GameExtension? GeneralGameExtension { get; set; }
 
         public List<string> SelectedCommonInventoryEntries = [];
 

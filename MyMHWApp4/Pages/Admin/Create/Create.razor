@@ -1,6 +1,9 @@
 ﻿@page "/admin/create"
+@using MHWApp.Library.Model
 @using MyMHWApp4.Pages.GeneralComponents.IconButtons
 @using MyMHWApp4.Pages.GeneralComponents.Select
+@using MyMHWApp4.Provider
+@inject GameExtensionProvider gameExtensionProvider
 @implements IDisposable
 
 <div class="form__container margin-top">
@@ -27,6 +30,17 @@
                     <InputCheckbox id="create-inventoryentries-checkbox" @bind-value="addInventoryEntries" />
                     <label for="create-inventoryentries-checkbox">Add Inventory Entries</label>
                 </div>
+
+                @if(addArmorSet || addInventoryEntries)
+                {
+                    <SingleSelect Label="Choose general Game Extension"
+                                  Placeholder="Select"
+                                  T="GameExtension"
+                                  Options="gameExtensions"
+                                  OptionNameMapper="(GameExtension ge) => ge.Name"
+                                  OptionValueMapper="(GameExtension ge) => ge.Id"
+                                  @bind-value="Model.GeneralGameExtension" />
+                }
 
             </div>
 
@@ -79,6 +93,8 @@
                         </div>
                     </div>
 
+                    <label>List</label>
+
                     @foreach(string s in Model.SelectedCommonInventoryEntries)
                     {
                         <InventoryEntryCard Name="@($"{Model.Name} {s}")" />
@@ -111,11 +127,13 @@
         "Fang",
         "Tail",
     };
-
     private List<string> uncommonInventoryentries = [];
+    private List<GameExtension> gameExtensions = [];
 
     protected override async Task OnInitializedAsync()
     {
+        gameExtensions = await gameExtensionProvider.GetGameExtensionsAsync();
+
         Model ??= new CreateFormModel();
         editContext = new(Model);
         editContext.OnFieldChanged += HandleFieldChanged;
