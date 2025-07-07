@@ -7,6 +7,10 @@ namespace MHWApp.Library.Model
         public required int Id { get; set; }
 
         [Required]
+        public required int GameExtensionId { get; set; }
+        public GameExtension? GameExtension { get; set; }
+
+        [Required]
         public required string Name { get; set; }
 
         [Required]

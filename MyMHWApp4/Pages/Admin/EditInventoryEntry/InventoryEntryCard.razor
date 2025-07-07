@@ -140,7 +140,6 @@
 
 	private void HandleSelect(List<InventoryEntryCategory> inventoryEntryCategories)
 	{
-		// Model!.SelectedArmorCategory = inventoryEntryCategories.ToList();
 		isFormValid = !editContext!.Validate();
 		StateHasChanged();
 	}
@@ -154,7 +153,8 @@
 			Id = InventoryEntry.Id,
 			Name = Model!.NewName,
 			Order = ORDER_DEFAULT_VALUE,
-			InventoryEntryCategories = Model.SelectedInventoryCategories
+			InventoryEntryCategories = Model.SelectedInventoryCategories,
+			GameExtensionId = Model.SelectedGameExtension!.Id,
 		};
 
 		try

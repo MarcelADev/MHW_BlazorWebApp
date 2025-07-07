@@ -12,6 +12,9 @@ namespace MyMHWApp4.Pages.Admin.EditArmor
         public bool CurrentUseNamePrefix { get; set; }
         public bool SelectedUseNamePrefix { get; set; }
 
+        public GameExtension CurrentGameExtension { get; set; }
+        public GameExtension SelectedGameExtension { get; set; }
+
         public ArmorCategory CurrentArmorCategory { get; set; }
         public ArmorCategory SelectedArmorCategory { get; set; }
 
@@ -27,6 +30,7 @@ namespace MyMHWApp4.Pages.Admin.EditArmor
             CurrentArmorCategory = armor.ArmorCategory!;
             SelectedArmorCategory = armor.ArmorCategory!;
             CurrentUseNamePrefix = SelectedUseNamePrefix = armor.NamePrefix;
+            CurrentGameExtension = SelectedGameExtension = armor.GameExtension!;
         }
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
@@ -52,7 +56,8 @@ namespace MyMHWApp4.Pages.Admin.EditArmor
             }
             if (Name.Equals(NewName) &&
                 CurrentArmorCategory.Id == SelectedArmorCategory.Id &&
-                CurrentUseNamePrefix == SelectedUseNamePrefix)
+                CurrentUseNamePrefix == SelectedUseNamePrefix &&
+                CurrentGameExtension.Id == SelectedGameExtension.Id)
             {
                 yield return new ValidationResult("Nothing was changed", [nameof(Name)]);
             }

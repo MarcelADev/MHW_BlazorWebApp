@@ -461,7 +461,6 @@ app.MapGet("/categories", async (AppDbContext dbContext, ClaimsPrincipal user) =
         .Include(c => c.InventoryEntryCategory)
         .Include(c => c.WeaponCategory)
         .Include(c => c.ArmorCategory)
-        .Include(c => c.GameExtension)
         .ToListAsync();
 
     return Results.Ok(categories);
@@ -502,12 +501,7 @@ app.MapPost("/categories", async (AppDbContext dbContext, ClaimsPrincipal user, 
     await dbContext.Categories.AddAsync(categoryDTO.NewCategory);
     await dbContext.SaveChangesAsync();
 
-    await AddSubCategories(dbContext, categoryDTO);
-    
-    if (categoryDTO.NewCategory.GameExtension == null)
-        categoryDTO.NewCategory.GameExtension = await dbContext.GameExtensions
-            .FirstOrDefaultAsync(ge => ge.Id == categoryDTO.NewCategory.GameExtensionId);
-    
+    await AddSubCategories(dbContext, categoryDTO);    
 
     await hubContext.Clients.All.SendAsync("ReceiveNewCategory", categoryDTO.NewCategory);
 
@@ -609,7 +603,6 @@ app.MapPut("/categories/{id}", async (AppDbContext dbContext, ClaimsPrincipal us
     if (existingCategory == null) return Results.NotFound();
 
     existingCategory.Name = updatedCategory.Name;
-    existingCategory.GameExtension = updatedCategory.GameExtension;
     await dbContext.SaveChangesAsync();
 
     await hubContext.Clients.All.SendAsync("ReceiveUpdatedCategory", existingCategory);
@@ -764,6 +757,7 @@ app.MapGet("/inventoryEntries", async (AppDbContext dbContext, ClaimsPrincipal u
             .ThenInclude(iec => iec.Category)
         .Include(i => i.NamePrefix)
             .ThenInclude(iec => iec!.Category)
+        .Include(i => i.GameExtension)
         .ToListAsync();
 
     return Results.Ok(inventoryEntries); ;
@@ -804,7 +798,8 @@ app.MapPost("/inventoryEntries", async (AppDbContext dbContext, ClaimsPrincipal 
         NamePrefixId = newInventoryEntryDTO.NamePrefixId,
         NamePrefix = newInventoryEntryDTO.NamePrefixId.HasValue ?
                         await dbContext.InventoryEntryCategories.FirstOrDefaultAsync(iec => iec.Id == newInventoryEntryDTO.NamePrefixId)
-                        : null
+                        : null,
+        GameExtensionId = newInventoryEntryDTO.GameExtensionId,
     };    
 
     await dbContext.InventoryEntries.AddAsync(newInventoryEntry);

@@ -59,13 +59,6 @@
 						<InputCheckbox id="categoryCard-armor" @bind-Value="Model.IsArmorCategory"></InputCheckbox>
 						<label for="categoryCard-armor">Armor Category</label>
 					</div>
-
-					<SingleSelect T="GameExtension"
-						Options="@extensions"
-						OptionNameMapper="(GameExtension gameExtension) => gameExtension.Name"
-						OptionValueMapper="(GameExtension gameExtension) => gameExtension.Id"
-						@bind-Value="Model.NewGameExtension">
-					</SingleSelect>
 				}
 			</div>
 
@@ -108,7 +101,7 @@
 
 		modalBodyText = $"Are you sure you want to remove {Category.Name}?";
 
-		Model ??= new CategoryCardFormModel(Category, Category.GameExtension!);
+		Model ??= new CategoryCardFormModel(Category);
 		editContext = new(Model);
 
 		hubService.OnUpdatedCategory += HandleSignalRUpdatedCategory;
@@ -172,9 +165,9 @@
 			}
 		}
 
-		if(!Category.Name.Equals(Model.NewName) || !(Category.GameExtensionId == Model.NewGameExtension.Id))
+		if(!Category.Name.Equals(Model.NewName))
 		{
-			cancel = await ChangeCategoryNameAndOrGameExtension();
+			cancel = await ChangeCategoryName();
 		}
 
 		if (cancel) Model.CancelFlag = true;
@@ -348,12 +341,11 @@
 		return true;
 	}
 
-	private async Task<bool> ChangeCategoryNameAndOrGameExtension()
+	private async Task<bool> ChangeCategoryName()
 	{
 		try
 		{
 			Category.Name = Model!.NewName;
-			Category.GameExtension = Model.NewGameExtension;
 			await categoryProvider.UpdateCategoryAsync(Category);
 			return false;
 		}
@@ -423,7 +415,6 @@
 		if(Category.Id == updatedCategory.Id)
 		{
 			Category.Name = Model!.Name = Model.NewName = updatedCategory.Name;
-			Category.GameExtension = Model.CurrentGameExtension = Model.NewGameExtension = updatedCategory.GameExtension!;
 		}
 		StateHasChanged();
 	}

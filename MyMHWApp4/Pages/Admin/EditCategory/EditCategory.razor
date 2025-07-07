@@ -45,13 +45,6 @@
 					<label for="category-armor">Armor Category</label>
 				</div>
 
-				<SingleSelect T="GameExtension"
-				Options="@extensions"
-				OptionNameMapper="(GameExtension gameExtension) => gameExtension.Name"
-				OptionValueMapper="(GameExtension gameExtension) => gameExtension.Id"
-				@bind-Value="Model.GameExtension">
-				</SingleSelect>
-
 				<div class="form__field form__button">
 					<button type="submit" class="btn btn-primary">
 						Create Category
@@ -106,7 +99,7 @@
 		extensions = await gameExtensionProvider.GetGameExtensionsAsync();
 		if (extensions.Any()) extensions.Sort((x, y) => x.Name.CompareTo(y.Name));
 
-		Model ??= new CategoryFormModel(categories, extensions.Any() ? extensions.First() ?? null : null) { };
+		Model ??= new CategoryFormModel(categories) { };
 		editContext = new(Model);
 		editContext.OnFieldChanged += HandleFieldChanged;
 
@@ -150,7 +143,6 @@
 				{ 
 					Id = 0,
 					Name = Model!.Name,
-					GameExtensionId = Model.GameExtension!.Id
 				},
 				IsInventoryEntry = Model.IsInventoryCategory,
 				IsWeapon = Model.IsWeaponCategory,

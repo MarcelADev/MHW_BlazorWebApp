@@ -6,6 +6,10 @@ namespace MHWApp.Library.Model
     {
         public required int Id { get; set; }
 
+        [Required]
+        public required int GameExtensionId { get; set; }
+        public GameExtension? GameExtension { get; set; }
+
         public required int WeaponCategoryId { get; set; }
         public WeaponCategory? WeaponCategory { get; set; }
 

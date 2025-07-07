@@ -11,7 +11,8 @@ namespace MyMHWApp4.Pages.Admin.EditArmor
         public string Name { get; set; } = string.Empty;
         private List<Armor> _armorList;
 
-        public ArmorCategory ArmorCategory { get; set; }
+        public GameExtension? GameExtension { get; set; }
+        public ArmorCategory? ArmorCategory { get; set; }
 
         public bool UseNamePrefix { get; set; }
 

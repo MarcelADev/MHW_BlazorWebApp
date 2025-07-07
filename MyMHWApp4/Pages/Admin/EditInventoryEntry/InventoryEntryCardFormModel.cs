@@ -14,6 +14,9 @@ namespace MyMHWApp4.Pages.Admin.EditCategory
         public InventoryEntryCategory? CurrentNamePrefix { get; set; }
         public InventoryEntryCategory? SelectedNamePrefix { get; set; }
 
+        public GameExtension? CurrentGameExtension { get; set; }
+        public GameExtension? SelectedGameExtension { get; set; }
+
         public List<InventoryEntryCategory> CurrentInventoryCategories { get; set; } = [];
         public List<InventoryEntryCategory> SelectedInventoryCategories { get; set; } = [];
 
@@ -33,6 +36,8 @@ namespace MyMHWApp4.Pages.Admin.EditCategory
 
             CurrentInventoryCategories = inventoryEntry.InventoryEntryCategories.ToList();
             SelectedInventoryCategories = inventoryEntry.InventoryEntryCategories;
+
+            CurrentGameExtension = SelectedGameExtension = inventoryEntry.GameExtension;
         }
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
@@ -59,7 +64,8 @@ namespace MyMHWApp4.Pages.Admin.EditCategory
             if (Name.Equals(NewName) &&
                 CurrentInventoryCategories.All(iec => SelectedInventoryCategories.Contains(iec)) &&
                 SelectedInventoryCategories.All(iec => CurrentInventoryCategories.Contains(iec)) &&
-                SelectedNamePrefix == CurrentNamePrefix)
+                SelectedNamePrefix == CurrentNamePrefix &&
+                CurrentGameExtension == SelectedGameExtension)
             {
                 yield return new ValidationResult("Nothing was changed", [nameof(Name)]);
             }

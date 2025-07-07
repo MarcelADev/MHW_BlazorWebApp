@@ -123,9 +123,10 @@
         { 
             Id = 0,
             Name = Model!.Name,
-            ArmorCategoryId = Model.ArmorCategory.Id,
+            ArmorCategoryId = Model.ArmorCategory!.Id,
             Order = ORDER_DEFAULT_VALUE,
-            NamePrefix = Model.UseNamePrefix
+            NamePrefix = Model.UseNamePrefix,
+            GameExtensionId = Model.GameExtension!.Id,
         };
 
         try

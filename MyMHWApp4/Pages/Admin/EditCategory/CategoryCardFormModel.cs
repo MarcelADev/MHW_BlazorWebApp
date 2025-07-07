@@ -23,15 +23,9 @@ namespace MyMHWApp4.Pages.Admin.EditCategory
         public bool UnexpectedResponseFlag { get; set; } = false;
         public bool CancelFlag { get; set; } = false;
 
-        public GameExtension CurrentGameExtension { get; set; }
-        public GameExtension NewGameExtension { get; set; }
-
-        public CategoryCardFormModel(Category category, GameExtension gameExtension)
+        public CategoryCardFormModel(Category category)
         {
             Name = NewName = category.Name;
-
-            CurrentGameExtension = gameExtension;
-            NewGameExtension = gameExtension;
 
             IsCurrentlyInventoryCategory = IsInventoryCategory = category.InventoryEntryCategory != null;
             IsCurrentlyWeaponCategory = IsWeaponCategory = category.WeaponCategory != null;
@@ -62,8 +56,7 @@ namespace MyMHWApp4.Pages.Admin.EditCategory
             if (Name.Equals(NewName) && 
                 IsInventoryCategory == IsCurrentlyInventoryCategory &&
                 IsWeaponCategory == IsCurrentlyWeaponCategory &&
-                IsArmorCategory == IsCurrentlyArmorCategory &&
-                CurrentGameExtension.Id == NewGameExtension.Id)
+                IsArmorCategory == IsCurrentlyArmorCategory)
             {
                 yield return new ValidationResult("Nothing was changed", [nameof(Name)]);
             }

@@ -111,12 +111,6 @@ namespace MHWApp.Api.Data
             #endregion
 
             #region Category
-            // one to many relationship of Category and Game Extension
-            modelBuilder.Entity<Category>()
-                .HasOne(c => c.GameExtension)
-                .WithMany()
-                .HasForeignKey(c => c.GameExtensionId);
-
             // one to one relationship of Category and InventoryEntryCategory
             modelBuilder.Entity<Category>()
                 .HasOne(c => c.InventoryEntryCategory)
@@ -157,6 +151,12 @@ namespace MHWApp.Api.Data
             #endregion
 
             #region Inventory Entry
+            // many to one relationship of Inventory Entry and Game Extension
+            modelBuilder.Entity<InventoryEntry>()
+                .HasOne(ie => ie.GameExtension)
+                .WithMany()
+                .HasForeignKey(ie => ie.GameExtensionId);
+
             // Many to Many Relationship of InventoryEntry and Participator
             modelBuilder.Entity<InventoryEntry>()
                 .HasMany(ie => ie.Participators)
@@ -214,6 +214,12 @@ namespace MHWApp.Api.Data
             #endregion
 
             #region Armor
+            // many to one relationship of Armor and Game Extension
+            modelBuilder.Entity<Armor>()
+                .HasOne(a => a.GameExtension)
+                .WithMany()
+                .HasForeignKey(a => a.GameExtensionId);
+
             // One to Many Relationship of Armor and ArmorCategory
             modelBuilder.Entity<Armor>()
                 .HasOne(a => a.ArmorCategory)
@@ -254,6 +260,12 @@ namespace MHWApp.Api.Data
             #endregion
 
             #region Weapon
+            // many to one relationship of Inventory Entry and Game Extension
+            modelBuilder.Entity<Weapon>()
+                .HasOne(w => w.GameExtension)
+                .WithMany()
+                .HasForeignKey(w => w.GameExtensionId);
+
             modelBuilder.Entity<Weapon>()
                 .HasOne(w => w.WeaponCategory)
                 .WithMany()

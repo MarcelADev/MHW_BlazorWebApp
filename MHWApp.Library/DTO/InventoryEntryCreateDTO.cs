@@ -10,6 +10,7 @@ namespace MHWApp.Library.DTO
     public class InventoryEntryCreateDTO
     {
         public string Name { get; set; } = string.Empty;
+        public int GameExtensionId { get; set; }
         public List<int> InventoryEntryCategoryIds { get; set; } = [];
 
         public int Order { get; set; }
