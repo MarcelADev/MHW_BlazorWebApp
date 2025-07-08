@@ -1,13 +1,16 @@
-﻿using Microsoft.AspNetCore.Components;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 
 namespace MyMHWApp4.Pages.GeneralComponents.Select
 {
     public partial class MultiSelect<T> : ComponentBase
     {
+        public string Id = $"mhw-{Guid.NewGuid():N}";
+
         /// <summary>
         /// Display this label string above the select.
         /// </summary>
@@ -61,23 +64,53 @@ namespace MyMHWApp4.Pages.GeneralComponents.Select
 
         private string os = "";
 
-        private Dictionary<string, object> selectAttributes = [];
+        private readonly Dictionary<string, object> selectAttributes = [];
 
         private string labelClass = string.Empty;
+
+        private IJSObjectReference? module;
 
         protected override async Task OnInitializedAsync()
         {
             os = await JSRuntime.InvokeAsync<string>("getOperatingSystem", []);
-            if (MutedLabel) labelClass = "muted";
+
+            if (MutedLabel)
+                labelClass = "muted";
             StateHasChanged();
+        }
+
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            if (firstRender)
+            {
+                module = await JSRuntime.InvokeAsync<IJSObjectReference>(
+                    "import",
+                    "./js/select.js"
+                );
+
+                await module.InvokeVoidAsync("addLabelHandlers", [$"{Id}-label"]);
+            }
+        }
+
+        async ValueTask IAsyncDisposable.DisposeAsync()
+        {
+            if (module is not null)
+            {
+                try
+                {
+                    await module.DisposeAsync();
+                }
+                catch (JSDisconnectedException) { }
+                GC.SuppressFinalize(this);
+            }
         }
 
         private void HandleNativeChange(ChangeEventArgs args)
         {
-            if (null == args || null == args.Value) return;
+            if (null == args || null == args.Value)
+                return;
 
             HandleNativeChangeMultiple(((string[])args.Value).Select(v => int.Parse(v)).ToArray());
-            
         }
 
         private void HandleNativeChangeMultiple(int[] ids)

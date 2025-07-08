@@ -2,6 +2,7 @@
 @inject IJSRuntime JSRuntime
 @inject ILogger<Select<T>> Logger
 @typeparam T
+@implements IAsyncDisposable
 
 @*Prefer native component on mobile devices.*@
 @if (os == "Android" || os == "iOS")
@@ -22,10 +23,10 @@ else
     <div class="anchor">
         @if (null != Label)
         {
-            <label class="@labelClass">@Label</label>
+            <label id="@Id-label" for="mhwapp-multi-select-@Id" class="@labelClass">@Label</label>
         }
 
-        <div class="select">
+        <div id="mhwapp-multi-select-@Id" class="select" aria-labelledby="@Id-label">
             <div class="select__trigger" tabindex="0">
                 <div aria-hidden="true" class="select-content">
 
