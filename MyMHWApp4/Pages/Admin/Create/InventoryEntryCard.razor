@@ -1,19 +1,126 @@
-﻿@if(!isLoading)
+﻿@using MHWApp.Library.Model
+@using MyMHWApp4.Pages.GeneralComponents.IconButtons
+@using MyMHWApp4.Pages.GeneralComponents.Select
+@using MyMHWApp4.Provider
+@inject GameExtensionProvider gameExtensionProvider
+@implements IDisposable
+
+@if(!isLoading)
 {
-	<div class="card">
-		<p class="card__header">@Name</p>
-	</div>
+	<EditForm FormName="edit-inventory-entry" EditContext="editContext" OnValidSubmit="Submit">
+		<DataAnnotationsValidator />
+		<ValidationSummary />
+
+		<div class="card">		
+
+			<div class="container-left-space-between">
+				<p class="card__create-inventory-entry-header">@Model.Name</p>
+
+				<div class="container-left">
+					@if(!isEditing)
+					{
+						<EditButton EditButtonClicked="HandleEditButtonClicked"
+									AlternativeDesign="true" />
+
+						<DeleteButton DeleteButtonClicked="HandleDeleteButtonClicked"
+									  AlternativeDesign="true" />
+					}
+					else
+					{
+						<ConfirmButton AlternativeDesign="true" />
+					}
+				</div>
+			</div>
+		
+			@if(!isEditing)
+			{
+				<label for="card__create-inventory-entry-gameextension">
+					Game Extension
+				</label>
+				<p id="card__create-inventory-entry-gameextension">
+					@(Model.GameExtension is null ? "None" : Model.GameExtension.Name)
+				</p>
+			}
+			else
+			{
+					<div class="form__field">
+						<label for="edit-inventory-entry-name">Name</label>
+						<InputText id="edit-inventory-entry-name" @bind-Value="FormModel!.SelectedName" />
+					</div>
+
+					<SingleSelect Label="Choose Game Extension" 
+								  Placeholder="Select"
+								  T="GameExtension"
+								  Options="gameExtensions"
+								  OptionNameMapper="(GameExtension ge) => ge.Name"
+								  OptionValueMapper="(GameExtension ge) => ge.Id"
+								  @bind-Value="FormModel.SelectedGameExtension"/>			
+			}
+
+		</div>
+	</EditForm>
 }
 
 
 @code {
 	private bool isLoading = true;
+	private bool isEditing = false;
+	private bool isFormValid = true;
+
+	private List<GameExtension> gameExtensions = [];
 
 	[Parameter]
-	public required string Name { get; set; }
+	public required InventoryEntryCardModel Model { get; set; }
+
+	[SupplyParameterFromForm]
+	public EditInventoryEntryFormModel? FormModel { get; set; }
+
+	private EditContext? editContext;
 
 	protected override async Task OnInitializedAsync()
 	{
+		gameExtensions = await gameExtensionProvider.GetGameExtensionsAsync();
+
+		FormModel = new EditInventoryEntryFormModel(Model);
+		editContext = new EditContext(FormModel);
+		editContext.OnFieldChanged += HandleFieldChanged;
+
 		isLoading = false;
+		StateHasChanged();
+	}
+
+	private void HandleEditButtonClicked()
+	{
+		isEditing = true;
+	}
+
+	private void HandleDeleteButtonClicked()
+	{
+
+	}
+
+	private void HandleFieldChanged(object? sender, FieldChangedEventArgs e)
+	{
+		if(editContext is not null)
+		{
+			isFormValid = editContext.Validate();
+		}
+	}
+
+	private void Submit()
+	{
+		Model.Name = FormModel!.SelectedName;
+		Model.GameExtension = FormModel.SelectedGameExtension;
+
+		isEditing = false;
+		StateHasChanged();
+	}
+
+	public void Dispose()
+	{
+		if(editContext is not null)
+		{
+			editContext.OnFieldChanged -= HandleFieldChanged;
+		}
 	}
 }

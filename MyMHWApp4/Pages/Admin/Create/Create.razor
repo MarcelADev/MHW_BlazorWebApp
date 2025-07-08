@@ -101,12 +101,12 @@
 
                         @foreach (string s in Model.SelectedCommonInventoryEntries)
                         {
-                            <InventoryEntryCard Name="@($"{Model.Name} {s}")" />
+                            <InventoryEntryCard @key="keyCounter++" Model="@(new InventoryEntryCardModel { Name = $"{Model.Name} {s}", GameExtension = Model.GeneralGameExtension })" />
                         }
 
                         @foreach (string s in uncommonInventoryentries)
                         {
-                            <InventoryEntryCard Name="@s" />
+                            <InventoryEntryCard @key="keyCounter++" Model="@(new InventoryEntryCardModel { Name = s, GameExtension = Model.GeneralGameExtension })" />
                         }
 
                         @if(!Model.SelectedCommonInventoryEntries.Any() && !uncommonInventoryentries.Any())
@@ -128,6 +128,8 @@
     private bool addArmorSet = false;
     private bool addInventoryEntries = false;
     private EditContext? editContext;
+
+    private int keyCounter = 1;
 
     [SupplyParameterFromForm]
     private CreateFormModel? Model { get; set; }
@@ -168,7 +170,7 @@
 
     private void HandleAddButtonClicked()
     {
-        if(!Model.UncommonInventoryEntryName.Equals(string.Empty) &&
+        if(!Model!.UncommonInventoryEntryName.Equals(string.Empty) &&
             !uncommonInventoryentries.Contains(Model.UncommonInventoryEntryName))
         {
             uncommonInventoryentries.Add(Model.UncommonInventoryEntryName);

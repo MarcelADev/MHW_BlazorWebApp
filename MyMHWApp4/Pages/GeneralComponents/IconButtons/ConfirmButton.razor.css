@@ -9,3 +9,11 @@
     button:hover {
         opacity: 0.9;
     }
+
+button.alternative {
+    background: transparent;
+}
+
+span.alternative {
+    color: black;
+}
