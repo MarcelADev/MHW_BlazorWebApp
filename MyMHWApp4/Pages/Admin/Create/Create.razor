@@ -39,7 +39,8 @@
                                   Options="gameExtensions"
                                   OptionNameMapper="(GameExtension ge) => ge.Name"
                                   OptionValueMapper="(GameExtension ge) => ge.Id"
-                                  @bind-value="Model.GeneralGameExtension" />
+                                  @bind-value="Model.GeneralGameExtension" 
+                                  MutedLabel="true"/>
                 }
 
             </div>
@@ -75,34 +76,43 @@
                 <div class="box">
                     <h3 class="h3__custom">Inventory Entries</h3>
 
-                    <div class="multi-select-custom-style">
-                        <MultiSelect Label="Common Inventory Entries"
-                        Placeholder="Select"
-                        T="string"
-                        Options="@commonInventoryEntries"
-                        OptionNameMapper="s => s"
-                        OptionValueMapper="s=> s"
-                        ValueListChanged="HandleSelect" />
-                    </div>
-
-                    <div class="form__field">
-                        <label for="create-inventoryentry">Add Inventory Entry</label>
-                        <div class="container-left-space-between">
-                            <InputText id="create-inventoryentry" @bind-Value="Model!.UncommonInventoryEntryName" />
-                            <AddButton AddButtonClicked="HandleAddButtonClicked" />
+                    @if (!Model.Name.Equals(string.Empty))
+                    {
+                        <div class="multi-select-custom-style">
+                            <MultiSelect Label="Common Inventory Entries"
+                                Placeholder="Select"
+                                T="string"
+                                Options="@commonInventoryEntries"
+                                OptionNameMapper="s => s"
+                                OptionValueMapper="s=> s"
+                                ValueListChanged="HandleSelect"
+                                MutedLabel="true"/>
                         </div>
-                    </div>
 
-                    <label>List</label>
+                        <div class="form__field">
+                            <label for="create-inventoryentry">Add Inventory Entry</label>
+                            <div class="container-left-space-between">
+                                <InputText id="create-inventoryentry" @bind-Value="Model!.UncommonInventoryEntryName" />
+                                <AddButton AddButtonClicked="HandleAddButtonClicked" />
+                            </div>
+                        </div>
 
-                    @foreach(string s in Model.SelectedCommonInventoryEntries)
-                    {
-                        <InventoryEntryCard Name="@($"{Model.Name} {s}")" />
-                    }
+                        <label>List</label>
 
-                    @foreach (string s in uncommonInventoryentries)
-                    {
-                        <InventoryEntryCard Name="@s" />
+                        @foreach (string s in Model.SelectedCommonInventoryEntries)
+                        {
+                            <InventoryEntryCard Name="@($"{Model.Name} {s}")" />
+                        }
+
+                        @foreach (string s in uncommonInventoryentries)
+                        {
+                            <InventoryEntryCard Name="@s" />
+                        }
+
+                        @if(!Model.SelectedCommonInventoryEntries.Any() && !uncommonInventoryentries.Any())
+                        {
+                            <p>No Inventory Entries</p>
+                        }
                     }
 
                 </div>

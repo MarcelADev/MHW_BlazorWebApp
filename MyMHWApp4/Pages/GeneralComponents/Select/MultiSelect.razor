@@ -8,7 +8,7 @@
 {
     @if (null != Label)
     {
-        <label for="select">@Label</label>
+        <label for="select" class="@labelClass">@Label</label>
     }
     <select name="select" @attributes="selectAttributes" @onchange="HandleNativeChange">
         @foreach (var option in Options)
@@ -22,7 +22,7 @@ else
     <div class="anchor">
         @if (null != Label)
         {
-            <label>@Label</label>
+            <label class="@labelClass">@Label</label>
         }
 
         <div class="select">

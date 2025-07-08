@@ -34,6 +34,12 @@ namespace MyMHWApp4.Pages.GeneralComponents.Select
         public EventCallback<T?> ValueChanged { get; set; }
 
         /// <summary>
+        /// This Option applies an alternate style to the label
+        /// </summary>
+        [Parameter]
+        public bool MutedLabel { get; set; } = false;
+
+        /// <summary>
         /// These options populate the select.
         /// </summary>
         [Parameter, EditorRequired]
@@ -59,9 +65,12 @@ namespace MyMHWApp4.Pages.GeneralComponents.Select
 
         private Dictionary<string, object> selectAttributes = [];
 
+        private string labelClass = string.Empty;
+
         protected override async Task OnInitializedAsync()
         {
             os = await JSRuntime.InvokeAsync<string>("getOperatingSystem", []);
+            if (MutedLabel) labelClass = "muted";
         }
 
         protected override void OnParametersSet()
