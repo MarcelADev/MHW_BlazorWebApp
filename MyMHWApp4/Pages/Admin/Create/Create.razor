@@ -107,15 +107,16 @@
                         {
                             model.GameExtension = FormModel.GeneralGameExtension;
                             <InventoryEntryCard @key="model.Key" 
-                            Model="model"
-                            RemoveFromList="HandleCommonInventoryEntryRemoved" />
+                                                Model="model"
+                                                RemoveFromList="HandleCommonInventoryEntryRemoved" />
                         }
 
                         @foreach (InventoryEntryCardModel model in uncommonInventoryentries)
                         {
-                            <InventoryEntryCard @key="keyCounter++" 
-                            Model="model" 
-                            RemoveFromList="HandleUncommonInventoryEntryRemoved" />
+                            model.GameExtension = FormModel.GeneralGameExtension;
+                            <InventoryEntryCard @key="model.Key"
+                                                Model="model" 
+                                                RemoveFromList="HandleUncommonInventoryEntryRemoved" />
                         }
 
                         @if(!FormModel.SelectedCommonInventoryEntries.Any() && !uncommonInventoryentries.Any())
