@@ -14,6 +14,7 @@ namespace MyMHWApp4.Pages.Admin.Create
                 Helmet = name + " Helmet";
                 Mail = name + " Mail";
                 Boots = name + " Boots";
+                OnUpdateCommonInventoryEntries();
             }
         }
 
@@ -23,14 +24,26 @@ namespace MyMHWApp4.Pages.Admin.Create
 
         public GameExtension? GeneralGameExtension { get; set; }
 
-        public List<string> SelectedCommonInventoryEntries = [];
+        public List<InventoryEntryCardModel> SelectedCommonInventoryEntries = [];
 
         public string UncommonInventoryEntryName { get; set; } = string.Empty;
 
+        public bool ShowValidationMessages { get; set; } = true;
+
+        public Action? UpdateCommonInventoryEntries { get; set; }
+
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
-            if(Name.Equals(string.Empty))
-                yield return new ValidationResult("Name must not be empty", [nameof(Name)]);
+            if (ShowValidationMessages)
+            {
+                if (Name.Equals(string.Empty))
+                    yield return new ValidationResult("Name must not be empty", [nameof(Name)]);
+            }
+        }
+
+        private void OnUpdateCommonInventoryEntries()
+        {
+            if (UpdateCommonInventoryEntries is not null) UpdateCommonInventoryEntries.Invoke();
         }
     }
 }
