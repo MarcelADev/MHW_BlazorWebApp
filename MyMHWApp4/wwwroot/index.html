@@ -34,6 +34,19 @@
     <script src="_framework/blazor.webassembly.js"></script>
     <script>navigator.serviceWorker.register('service-worker.js');</script>
     <script src="js/os-utils.js"></script>
+
+    <script>
+        window.startExitAnimation = (elementId, dotNetHelper) => {
+            const el = document.getElementById(elementId);
+            if (el) {
+                el.classList.add('exit');
+                setTimeout(() => {
+                    dotNetHelper.invokeMethodAsync("OnAnimationComplete");
+                }, 400);
+            }
+        };
+    </script>
+
 </body>
 
 </html>

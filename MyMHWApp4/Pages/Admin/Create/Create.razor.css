@@ -1,12 +1,40 @@
-﻿.box {
+﻿@keyframes slideDownFadeIn {
+    from {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideUpFadeOut {
+    from {
+        transform: translateY(0);
+        opacity: 1;
+    }
+
+    to {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+}
+
+.box {
     display: flex;
     flex-direction: column;
     width: 100%;
-    margin-bottom: 1.5rem;
-    padding: 10px 15px;
-    border-radius: 8px;
-    border: 1px dashed black;
+    margin: 0 0 1.5rem 5px;
+    padding: 0 0 0 15px;
+    border-left: 2px solid rgb(27, 110, 194);
+    animation: slideDownFadeIn 0.4s ease-out forwards;
 }
+
+    .box.exit {
+        animation: slideUpFadeOut 0.4s ease-in forwards;
+    }
 
 .h3__custom {
     font-weight: 500;
@@ -24,4 +52,8 @@ label {
 .multi-select-custom-style label {
     font-weight: 600;
     color: darkslateblue;
+}
+
+.form__field {
+    margin-top: 0;
 }

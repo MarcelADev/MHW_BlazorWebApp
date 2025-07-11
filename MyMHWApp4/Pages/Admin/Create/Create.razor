@@ -13,42 +13,34 @@
             <DataAnnotationsValidator/>
             <ValidationSummary/>
 
-            <div class="box">
-                <h3 class="h3__custom">Create Category</h3>
 
-                <div class="form__field">
-                    <label for="create-category-name">Name</label>
-                    <InputText class="muted" id="create-category-name" @bind-Value="FormModel!.Name" />
-                </div>
+            <h3 class="h3__custom">Create Category</h3>
 
-                <div class="form__field">
-                    <InputCheckbox id="create-armorset-checkbox" @bind-value="addArmorSet" />
-                    <label for="create-armorset-checkbox">Add Armor Set</label>
-                </div>
-
-                <div class="form__field">
-                    <InputCheckbox id="create-inventoryentries-checkbox" @bind-value="addInventoryEntries" />
-                    <label for="create-inventoryentries-checkbox">Add Inventory Entries</label>
-                </div>
-
-                @if(addArmorSet || addInventoryEntries)
-                {
-                    <SingleSelect Label="Choose general Game Extension"
-                    Placeholder="Select"
-                    T="GameExtension"
-                    Options="gameExtensions"
-                    OptionNameMapper="(GameExtension ge) => ge.Name"
-                    OptionValueMapper="(GameExtension ge) => ge.Id"
-                    @bind-value="FormModel.GeneralGameExtension" 
-                    MutedLabel="true"/>
-                }
-
+            <div class="form__field">
+                <label for="create-category-name">Name</label>
+                <InputText class="muted" id="create-category-name" @bind-Value="FormModel!.Name" />
             </div>
 
-            @if(addArmorSet)
+            @if (addArmorSet || addInventoryEntries)
             {
-                <div class="box">
-                    <h3 class="h3__custom">Armor Set</h3>
+                <SingleSelect Label="Choose general Game Extension"
+                Placeholder="Select"
+                T="GameExtension"
+                Options="gameExtensions"
+                OptionNameMapper="(GameExtension ge) => ge.Name"
+                OptionValueMapper="(GameExtension ge) => ge.Id"
+                @bind-value="FormModel.GeneralGameExtension"
+                MutedLabel="true" />
+            }
+
+            <div class="form__field">
+                <InputCheckbox id="create-armorset-checkbox" @bind-value="addArmorSet" />
+                <label for="create-armorset-checkbox">Add Armor Set</label>
+            </div>
+
+            @if (addArmorSet)
+            {
+                <div id="animatedBox" class="box @(isExiting ? "exit" : "")">
 
                     @if (!FormModel.Name.Equals(string.Empty))
                     {
@@ -74,6 +66,11 @@
 
                 </div>
             }
+
+            <div class="form__field">
+                <InputCheckbox id="create-inventoryentries-checkbox" @bind-value="addInventoryEntries" />
+                <label for="create-inventoryentries-checkbox">Add Inventory Entries</label>
+            </div>
 
             @if(addInventoryEntries)
             {
@@ -107,16 +104,16 @@
                         {
                             model.GameExtension = FormModel.GeneralGameExtension;
                             <InventoryEntryCard @key="model.Key" 
-                                                Model="model"
-                                                RemoveFromList="HandleCommonInventoryEntryRemoved" />
+                            Model="model"
+                            RemoveFromList="HandleCommonInventoryEntryRemoved" />
                         }
 
                         @foreach (InventoryEntryCardModel model in uncommonInventoryentries)
                         {
                             model.GameExtension = FormModel.GeneralGameExtension;
                             <InventoryEntryCard @key="model.Key"
-                                                Model="model" 
-                                                RemoveFromList="HandleUncommonInventoryEntryRemoved" />
+                            Model="model" 
+                            RemoveFromList="HandleUncommonInventoryEntryRemoved" />
                         }
 
                         @if(!FormModel.SelectedCommonInventoryEntries.Any() && !uncommonInventoryentries.Any())
@@ -147,6 +144,8 @@
     private bool isFormValid = false;
     private bool addArmorSet = false;
     private bool addInventoryEntries = false;
+    private bool isExiting = false;
+
     private EditContext? editContext;
 
     private int keyCounter = 1;
