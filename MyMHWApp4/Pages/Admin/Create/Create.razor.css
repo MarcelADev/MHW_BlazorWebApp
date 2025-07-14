@@ -32,6 +32,10 @@
     animation: slideDownFadeIn 0.4s ease-out forwards;
 }
 
+    .box.purple {
+        border-left: 2px solid rgb(100, 87, 166);
+    }
+
     .box.exit {
         animation: slideUpFadeOut 0.4s ease-in forwards;
     }

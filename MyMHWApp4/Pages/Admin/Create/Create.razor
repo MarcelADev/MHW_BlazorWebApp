@@ -1,5 +1,6 @@
 ﻿@page "/admin/create"
 @using MHWApp.Library.Model
+@using MyMHWApp4.Pages.GeneralComponents.CustomInput
 @using MyMHWApp4.Pages.GeneralComponents.IconButtons
 @using MyMHWApp4.Pages.GeneralComponents.Select
 @using MyMHWApp4.Provider
@@ -15,28 +16,28 @@
             <h3 class="h3__custom">Create Category</h3>
 
             <DataAnnotationsValidator />
-            <ValidationSummary />
 
             <div class="form__field">
                 <label for="create-category-name">Name</label>
-                <InputText class="muted" id="create-category-name" @bind-Value="FormModel!.Name" />
+                <CustomInputText class="muted" id="create-category-name" @bind-Value="FormModel!.Name" />
+                <ValidationMessage For="@(() => FormModel!.Name)" />
             </div>
 
             <SingleSelect Label="Choose general Game Extension"
-                          Placeholder="Select"
-                          T="GameExtension"
-                          Options="gameExtensions"
-                          OptionNameMapper="(GameExtension ge) => ge.Name"
-                          OptionValueMapper="(GameExtension ge) => ge.Id"
-                          @bind-value="FormModel.GeneralGameExtension"
-                          MutedLabel="true"
-                          Disabled="!addArmorSet && !addInventoryEntries" />
+            Placeholder="Select"
+            T="GameExtension"
+            Options="gameExtensions"
+            OptionNameMapper="(GameExtension ge) => ge.Name"
+            OptionValueMapper="(GameExtension ge) => ge.Id"
+            @bind-value="FormModel.GeneralGameExtension"
+            MutedLabel="true"
+            Disabled="!addArmorSet && !addInventoryEntries" />
 
             <div class="form__field">
                 <InputCheckbox id="create-armorset-checkbox"
-                               Value="addArmorSet"
-                               ValueChanged="ToggleArmorSet"
-                               ValueExpression="() => addArmorSet" />
+                Value="addArmorSet"
+                ValueChanged="ToggleArmorSet"
+                ValueExpression="() => addArmorSet" />
                 <label for="create-armorset-checkbox">Add Armor Set</label>
             </div>
 
@@ -47,18 +48,52 @@
                     @if (!FormModel.Name.Equals(string.Empty))
                     {
                         <div class="form__field">
+                            <InputCheckbox id="change-armorset-prefix-checkbox"
+                                           Value="FormModel.UseAlternativeArmorPrefix"
+                                           ValueChanged="ToggleArmorPrefix"
+                                           ValueExpression="() => FormModel.UseAlternativeArmorPrefix" />
+                            <label for="change-armorset-prefix-checkbox">Use alternative Prefix</label>
+                        </div>
+
+                        @if (showAlternativeArmorPrefix)
+                        {
+                            <div id="animatedBox3" class="box purple @(isExitingAlternativePrefix ? "exit" : "")">
+                                <div class="form__field">
+                                    <label for="change-armorset-prefix-textbox">Name</label>
+                                    <CustomInputText class="muted"
+                                                     id="change-armorset-prefix-textbox"
+                                                     @bind-Value="FormModel!.AlternativeArmorPrefix" />
+                                    <ValidationMessage For="@(() => FormModel!.AlternativeArmorPrefix)" />
+                                </div>
+                            </div>
+                        }
+
+                        <div class="form__field input-with-prefix">
                             <label for="create-category-helmet">Helmet</label>
-                            <InputText id="create-category-helmet" @bind-Value="FormModel!.Helmet" />
+                            <div class="input-prefix-container">
+                                <span class="prefix-text">@FormModel!.ArmorPrefix</span>
+                                <CustomInputText id="create-category-helmet" @bind-Value="FormModel!.HelmetSuffix" />
+                            </div>
+                            <ValidationMessage For="@(() => FormModel!.HelmetSuffix)" />
+
                         </div>
 
-                        <div class="form__field">
+                        <div class="form__field input-with-prefix">
                             <label for="create-category-mail">Mail</label>
-                            <InputText id="create-category-mail" @bind-Value="FormModel!.Mail" />
+                            <div class="input-prefix-container">
+                                <span class="prefix-text">@FormModel!.ArmorPrefix</span>
+                                <CustomInputText id="create-category-mail" @bind-Value="FormModel!.MailSuffix" />
+                            </div>
+                            <ValidationMessage For="@(() => FormModel!.MailSuffix)" />
                         </div>
 
-                        <div class="form__field">
-                            <label for="create-category-boots">Boots</label>
-                            <InputText id="create-category-boots" @bind-Value="FormModel!.Boots" />
+                        <div class="form__field input-with-prefix">
+                            <label for="create-category-greaves">Boots</label>
+                            <div class="input-prefix-container">
+                                <span class="prefix-text">@FormModel!.ArmorPrefix</span>
+                                <CustomInputText id="create-category-greaves" @bind-Value="FormModel!.GreavesSuffix" />
+                            </div>
+                            <ValidationMessage For="@(() => FormModel!.GreavesSuffix)" />
                         </div>
                     }
                     else
@@ -71,9 +106,9 @@
 
             <div class="form__field">
                 <InputCheckbox id="create-inventoryentries-checkbox"
-                               Value="addInventoryEntries"
-                               ValueChanged="ToggleInventoryEntries"
-                               ValueExpression="() => addInventoryEntries" />
+                Value="addInventoryEntries"
+                ValueChanged="ToggleInventoryEntries"
+                ValueExpression="() => addInventoryEntries" />
                 <label for="create-inventoryentries-checkbox">Add Inventory Entries</label>
             </div>
 
@@ -145,15 +180,15 @@
 
 @code {
     private bool isLoading = true;
-    private bool isFormValid = false;
 
     private bool addArmorSet = false;
     private bool showArmorSet = false;
-    private bool isExitingArmorSet = false;
 
     private bool addInventoryEntries = false;
     private bool showInventoryEntries = false;
-    private bool isExitingInventoryEntries = false;
+
+    private bool showAlternativeArmorPrefix = false;
+    private bool isExitingAlternativePrefix = false;
 
     private EditContext? editContext;
 
@@ -187,7 +222,6 @@
         FormModel ??= new CreateFormModel();
         FormModel.UpdateCommonInventoryEntries = HandleUpdateCommonInventoryEntries;
         editContext = new(FormModel);
-        editContext.OnFieldChanged += HandleFieldChanged;
 
         _dotNetRef = DotNetObjectReference.Create(this);
 
@@ -203,13 +237,11 @@
     {
         if (!value && showArmorSet)
         {
-            isExitingArmorSet = true;
             await StartExitAnimation("animatedBox", "ArmorSet");
         }
         else if (value)
         {
             showArmorSet = true;
-            isExitingArmorSet = false;
         }
         addArmorSet = value;
     }
@@ -218,15 +250,29 @@
     {
         if (!value && showInventoryEntries)
         {
-            isExitingInventoryEntries = true;
             await StartExitAnimation("animatedBox2", "InventoryEntries");
         }
         else if (value)
         {
             showInventoryEntries = true;
-            isExitingInventoryEntries = false;
         }
         addInventoryEntries = value;
+    }
+
+    private async Task ToggleArmorPrefix(bool value)
+    {
+        if (!value && showAlternativeArmorPrefix)
+        {
+            isExitingAlternativePrefix = true;
+            await StartExitAnimation("animatedBox3", "AlternativeArmorPrefix");
+        }
+        else if (value)
+        {
+            isExitingAlternativePrefix = false;
+            showAlternativeArmorPrefix = true;
+        }
+
+        FormModel!.UseAlternativeArmorPrefix = value;
     }
 
     [JSInvokable]
@@ -235,12 +281,15 @@
         if (section == "ArmorSet")
         {
             showArmorSet = false;
-            isExitingArmorSet = false;
         }
         else if (section == "InventoryEntries")
         {
             showInventoryEntries = false;
-            isExitingInventoryEntries = false;
+        }
+        else if (section == "AlternativeArmorPrefix")
+        {
+            isExitingAlternativePrefix = false;
+            showAlternativeArmorPrefix = false;
         }
 
         StateHasChanged();
@@ -248,17 +297,8 @@
 
     private void HandleUpdateCommonInventoryEntries()
     {
-        foreach (InventoryEntryCardModel model in FormModel.SelectedCommonInventoryEntries)
+        foreach (InventoryEntryCardModel model in FormModel!.SelectedCommonInventoryEntries)
             model.ExtendedName = FormModel.Name + " " + model.Name;
-    }
-
-    private void HandleFieldChanged(object? sender, FieldChangedEventArgs e)
-    {
-        if (editContext is not null)
-        {
-            isFormValid = !editContext.Validate();
-            StateHasChanged();
-        }
     }
 
     private void HandleSelect(List<InventoryEntryCardModel> selectedCommonInventoryEntries)
@@ -300,9 +340,6 @@
 
     public void Dispose()
     {
-        if (editContext is not null)
-            editContext.OnFieldChanged -= HandleFieldChanged;
-
         _dotNetRef?.Dispose();
     }
 }

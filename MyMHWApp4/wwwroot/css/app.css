@@ -211,6 +211,26 @@ input:not([type="checkbox"]) {
     font-size: var(--standard-font-size);
 }
 
+input[type="text"],
+input[type="password"],
+input[type="email"],
+textarea {
+    border: none; /* Remove default border */
+    border-bottom: 2px solid #ccc; /* Add light bottom border */
+    padding: 6px 0; /* Some vertical padding */
+    outline: none; /* Remove default outline */
+    transition: border-color 0.3s ease;
+    font-size: 16px;
+}
+
+    input[type="text"]:focus,
+    input[type="password"]:focus,
+    input[type="email"]:focus,
+    textarea:focus {
+        border-bottom-color: #2196F3; /* Change bottom border color on focus */
+        box-shadow: 0 2px 0 0 #2196F3; /* subtle blue shadow at bottom */
+    }
+
 input[type="checkbox"] {
     
 }
@@ -432,4 +452,30 @@ input[type="checkbox"] {
     width: 100%;
     display: flex;
     justify-content: center;
+}
+
+.input-prefix-container {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    border: 1px solid var(--neutral);
+    border-radius: var(--border-radius);
+    height: var(--input-height);
+    padding: 0 0.5rem;
+    background: white;
+}
+
+.prefix-text {
+    color: #555;
+    user-select: none; /* prevents selecting prefix */
+    white-space: nowrap;
+    font-weight: 600;
+}
+
+.input-prefix-container input.custom-input {
+    flex-grow: 1;
+    border: none;
+    outline: none;
+    height: 100%;
+    padding: 0.5rem;
 }

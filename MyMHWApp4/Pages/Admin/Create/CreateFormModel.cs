@@ -3,24 +3,34 @@ using System.ComponentModel.DataAnnotations;
 
 namespace MyMHWApp4.Pages.Admin.Create
 {
-    public class CreateFormModel : IValidatableObject
+    public class CreateFormModel
     {
         private string name = string.Empty;
+
+        [Required(ErrorMessage = "Name must not be empty")]
         public string Name { 
             get => name;
             set
             {
                 name = value;
-                Helmet = name + " Helmet";
-                Mail = name + " Mail";
-                Boots = name + " Boots";
                 OnUpdateCommonInventoryEntries();
             }
         }
 
-        public string Helmet { get; set; } = string.Empty;
-        public string Mail { get; set; } = string.Empty;
-        public string Boots { get; set; } = string.Empty;
+        public bool UseAlternativeArmorPrefix { get; set; } = false;
+
+        [Required(ErrorMessage = "Alternative Prefix must not be empty")]
+        public string AlternativeArmorPrefix { get; set; } = string.Empty;
+        public string ArmorPrefix => UseAlternativeArmorPrefix ? AlternativeArmorPrefix : Name;
+
+        [Required(ErrorMessage = "Helmet Suffix must not be empty")]
+        public string HelmetSuffix { get; set; } = "Helmet";
+
+        [Required(ErrorMessage = "Mail Suffix must not be empty")]
+        public string MailSuffix { get; set; } = "Mail";
+
+        [Required(ErrorMessage = "Greaves Suffix must not be empty")]
+        public string GreavesSuffix { get; set; } = "Greaves";
 
         public GameExtension? GeneralGameExtension { get; set; }
 
@@ -31,15 +41,6 @@ namespace MyMHWApp4.Pages.Admin.Create
         public bool ShowValidationMessages { get; set; } = true;
 
         public Action? UpdateCommonInventoryEntries { get; set; }
-
-        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
-        {
-            if (ShowValidationMessages)
-            {
-                if (Name.Equals(string.Empty))
-                    yield return new ValidationResult("Name must not be empty", [nameof(Name)]);
-            }
-        }
 
         private void OnUpdateCommonInventoryEntries()
         {

@@ -1,0 +1,10 @@
+﻿@inherits InputText
+
+<input @attributes="AdditionalAttributes"
+       class="@CssClass"
+       id="@Id"
+       value="@CurrentValueAsString"
+       @oninput="@(EventCallback.Factory.CreateBinder<string>(
+           this,
+           __value => CurrentValueAsString = __value,
+           CurrentValueAsString ?? ""))" />
