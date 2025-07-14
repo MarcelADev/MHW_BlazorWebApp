@@ -1,0 +1,8 @@
+﻿@inherits InputCheckbox
+
+<input type="checkbox"
+       @attributes="AdditionalAttributes"
+       id="@Id"
+       class="@CssClass"
+       checked="@CurrentValue"
+       @onchange="EventCallback.Factory.CreateBinder<bool>(this, __value => CurrentValue = __value, CurrentValue)" />

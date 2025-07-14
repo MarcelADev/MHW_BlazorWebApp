@@ -48,7 +48,8 @@
                     @if (!FormModel.Name.Equals(string.Empty))
                     {
                         <div class="form__field">
-                            <InputCheckbox id="change-armorset-prefix-checkbox"
+                            <CustomInputCheckbox id="change-armorset-prefix-checkbox"
+                                           Hierarchy="2"
                                            Value="FormModel.UseAlternativeArmorPrefix"
                                            ValueChanged="ToggleArmorPrefix"
                                            ValueExpression="() => FormModel.UseAlternativeArmorPrefix" />
