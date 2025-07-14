@@ -36,12 +36,12 @@
     <script src="js/os-utils.js"></script>
 
     <script>
-        window.startExitAnimation = (elementId, dotNetHelper) => {
+        window.startExitAnimation = (elementId, dotNetHelper, section) => {
             const el = document.getElementById(elementId);
             if (el) {
                 el.classList.add('exit');
                 setTimeout(() => {
-                    dotNetHelper.invokeMethodAsync("OnAnimationComplete");
+                    dotNetHelper.invokeMethodAsync("OnAnimationComplete", section);
                 }, 400);
             }
         };

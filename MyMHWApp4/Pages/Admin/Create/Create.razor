@@ -3,6 +3,7 @@
 @using MyMHWApp4.Pages.GeneralComponents.IconButtons
 @using MyMHWApp4.Pages.GeneralComponents.Select
 @using MyMHWApp4.Provider
+@inject IJSRuntime jsRuntime
 @inject GameExtensionProvider gameExtensionProvider
 @implements IDisposable
 
@@ -10,53 +11,54 @@
     @if(!isLoading)
     {
         <EditForm EditContext="editContext" FormName="create" OnValidSubmit="Submit">
-            <DataAnnotationsValidator/>
-            <ValidationSummary/>
-
 
             <h3 class="h3__custom">Create Category</h3>
+
+            <DataAnnotationsValidator />
+            <ValidationSummary />
 
             <div class="form__field">
                 <label for="create-category-name">Name</label>
                 <InputText class="muted" id="create-category-name" @bind-Value="FormModel!.Name" />
             </div>
 
-            @if (addArmorSet || addInventoryEntries)
-            {
-                <SingleSelect Label="Choose general Game Extension"
-                Placeholder="Select"
-                T="GameExtension"
-                Options="gameExtensions"
-                OptionNameMapper="(GameExtension ge) => ge.Name"
-                OptionValueMapper="(GameExtension ge) => ge.Id"
-                @bind-value="FormModel.GeneralGameExtension"
-                MutedLabel="true" />
-            }
+            <SingleSelect Label="Choose general Game Extension"
+                          Placeholder="Select"
+                          T="GameExtension"
+                          Options="gameExtensions"
+                          OptionNameMapper="(GameExtension ge) => ge.Name"
+                          OptionValueMapper="(GameExtension ge) => ge.Id"
+                          @bind-value="FormModel.GeneralGameExtension"
+                          MutedLabel="true"
+                          Disabled="!addArmorSet && !addInventoryEntries" />
 
             <div class="form__field">
-                <InputCheckbox id="create-armorset-checkbox" @bind-value="addArmorSet" />
+                <InputCheckbox id="create-armorset-checkbox"
+                               Value="addArmorSet"
+                               ValueChanged="ToggleArmorSet"
+                               ValueExpression="() => addArmorSet" />
                 <label for="create-armorset-checkbox">Add Armor Set</label>
             </div>
 
-            @if (addArmorSet)
+            @if (showArmorSet)
             {
-                <div id="animatedBox" class="box @(isExiting ? "exit" : "")">
+                <div id="animatedBox" class="box @(!addArmorSet ? "exit" : "")">
 
                     @if (!FormModel.Name.Equals(string.Empty))
                     {
                         <div class="form__field">
-                            <label for="create-category-name">Helmet</label>
-                            <InputText id="create-category-name" @bind-Value="FormModel!.Helmet" />
+                            <label for="create-category-helmet">Helmet</label>
+                            <InputText id="create-category-helmet" @bind-Value="FormModel!.Helmet" />
                         </div>
 
                         <div class="form__field">
-                            <label for="create-category-name">Mail</label>
-                            <InputText id="create-category-name" @bind-Value="FormModel!.Mail" />
+                            <label for="create-category-mail">Mail</label>
+                            <InputText id="create-category-mail" @bind-Value="FormModel!.Mail" />
                         </div>
 
                         <div class="form__field">
-                            <label for="create-category-name">Boots</label>
-                            <InputText id="create-category-name" @bind-Value="FormModel!.Boots" />
+                            <label for="create-category-boots">Boots</label>
+                            <InputText id="create-category-boots" @bind-Value="FormModel!.Boots" />
                         </div>
                     }
                     else
@@ -68,14 +70,16 @@
             }
 
             <div class="form__field">
-                <InputCheckbox id="create-inventoryentries-checkbox" @bind-value="addInventoryEntries" />
+                <InputCheckbox id="create-inventoryentries-checkbox"
+                               Value="addInventoryEntries"
+                               ValueChanged="ToggleInventoryEntries"
+                               ValueExpression="() => addInventoryEntries" />
                 <label for="create-inventoryentries-checkbox">Add Inventory Entries</label>
             </div>
 
-            @if(addInventoryEntries)
+            @if(showInventoryEntries)
             {
-                <div class="box">
-                    <h3 class="h3__custom">Inventory Entries</h3>
+                <div id="animatedBox2" class="box @(!addInventoryEntries ? "exit" : "")">
 
                     @if (!FormModel.Name.Equals(string.Empty))
                     {
@@ -142,9 +146,14 @@
 @code {
     private bool isLoading = true;
     private bool isFormValid = false;
+
     private bool addArmorSet = false;
+    private bool showArmorSet = false;
+    private bool isExitingArmorSet = false;
+
     private bool addInventoryEntries = false;
-    private bool isExiting = false;
+    private bool showInventoryEntries = false;
+    private bool isExitingInventoryEntries = false;
 
     private EditContext? editContext;
 
@@ -164,6 +173,8 @@
     private List<InventoryEntryCardModel> uncommonInventoryentries = [];
     private List<GameExtension> gameExtensions = [];
 
+    private DotNetObjectReference<Create>? _dotNetRef;
+
     protected override async Task OnInitializedAsync()
     {
         gameExtensions = await gameExtensionProvider.GetGameExtensionsAsync();
@@ -178,7 +189,61 @@
         editContext = new(FormModel);
         editContext.OnFieldChanged += HandleFieldChanged;
 
+        _dotNetRef = DotNetObjectReference.Create(this);
+
         isLoading = false;
+    }
+
+    private async Task StartExitAnimation(string elementId, string sectionName)
+    {
+        await jsRuntime.InvokeVoidAsync("startExitAnimation", elementId, _dotNetRef, sectionName);
+    }
+
+    private async Task ToggleArmorSet(bool value)
+    {
+        if (!value && showArmorSet)
+        {
+            isExitingArmorSet = true;
+            await StartExitAnimation("animatedBox", "ArmorSet");
+        }
+        else if (value)
+        {
+            showArmorSet = true;
+            isExitingArmorSet = false;
+        }
+        addArmorSet = value;
+    }
+
+    private async Task ToggleInventoryEntries(bool value)
+    {
+        if (!value && showInventoryEntries)
+        {
+            isExitingInventoryEntries = true;
+            await StartExitAnimation("animatedBox2", "InventoryEntries");
+        }
+        else if (value)
+        {
+            showInventoryEntries = true;
+            isExitingInventoryEntries = false;
+        }
+        addInventoryEntries = value;
+    }
+
+    [JSInvokable]
+    public void OnAnimationComplete(string section)
+    {
+        if (section == "ArmorSet")
+        {
+            showArmorSet = false;
+            isExitingArmorSet = false;
+        }
+        else if (section == "InventoryEntries")
+        {
+            showInventoryEntries = false;
+            isExitingInventoryEntries = false;
+        }
+
+        StateHasChanged();
     }
 
     private void HandleUpdateCommonInventoryEntries()
@@ -237,5 +302,7 @@
     {
         if (editContext is not null)
             editContext.OnFieldChanged -= HandleFieldChanged;
+
+        _dotNetRef?.Dispose();
     }
 }

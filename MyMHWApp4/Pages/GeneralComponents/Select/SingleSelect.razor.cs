@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
 
 namespace MyMHWApp4.Pages.GeneralComponents.Select
@@ -66,6 +67,14 @@ namespace MyMHWApp4.Pages.GeneralComponents.Select
 
         private IJSObjectReference? module;
 
+        private readonly Dictionary<string, object> labelAttributes = new();
+
+        /// <summary>
+        /// Disables interaction with the select.
+        /// </summary>
+        [Parameter]
+        public bool Disabled { get; set; } = false;
+
         protected override async Task OnInitializedAsync()
         {
             os = await JSRuntime.InvokeAsync<string>("getOperatingSystem", []);
@@ -108,6 +117,13 @@ namespace MyMHWApp4.Pages.GeneralComponents.Select
             else
             {
                 _optionType = null;
+            }
+
+            labelAttributes.Clear();
+
+            if (!Disabled)
+            {
+                labelAttributes["for"] = $"mhwapp-single-select-{Id}";
             }
         }
 

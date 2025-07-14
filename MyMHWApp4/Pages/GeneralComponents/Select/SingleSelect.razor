@@ -23,11 +23,17 @@ else
 	<div class="anchor">
 		@if (null != Label)
 		{
-			<label id="@Id-label" for="mhwapp-single-select-@Id" class="@labelClass">@Label</label>
+			<label id="@Id-label"
+				   class="@labelClass"
+				   @onclick:preventDefault ="@Disabled"
+				   @onclick:stopPropagation ="@Disabled"
+				   @attributes ="labelAttributes">
+				@Label
+			</label>
 		}
 
 		<div id="mhwapp-single-select-@Id" class="select" aria-labelledby="@Id-label">
-			<div class="select__trigger" tabindex="0">
+			<div class="select__trigger @(Disabled ? "disabled" : "")" tabindex="0">
 				<div aria-hidden="true" class="select-content">
 
 					@if (null != Value)
@@ -55,7 +61,9 @@ else
 								   class="select-option-label-hidden"
 								   id="select-@Id-@(OptionValueMapper(option))" 
 								   name="select-@(OptionValueMapper(option))"
-								   type="checkbox" @onchange="(_) => HandleCustomChange(option)" />
+								   type="checkbox"
+								   disabled="@Disabled"
+								   @onchange="Disabled ? null : (_) => HandleCustomChange(option)" />
 							@OptionNameMapper(option)
 						</label>
 						@if (IsSelected(option))
