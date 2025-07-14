@@ -454,28 +454,41 @@ input[type="checkbox"] {
     justify-content: center;
 }
 
-.input-prefix-container {
-    display: flex;
+.input-grid {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-rows: auto auto;
+    gap: 0.25rem 0; /* row-gap and column-gap */
     align-items: center;
-    gap: 0.5rem;
-    border: 1px solid var(--neutral);
-    border-radius: var(--border-radius);
-    height: var(--input-height);
-    padding: 0 0.5rem;
-    background: white;
 }
 
 .prefix-text {
-    color: #555;
-    user-select: none; /* prevents selecting prefix */
-    white-space: nowrap;
+    grid-row: 1 / 2;
+    grid-column: 1 / 2;
     font-weight: 600;
+    white-space: nowrap;
+    color: #555;
+    border: solid 1px rgb(209, 209, 209);
+    border-radius: var(--border-radius) 0 0 var(--border-radius);
+    border-right: 0;
+    padding: 0.5rem;
 }
 
-.input-prefix-container input.custom-input {
-    flex-grow: 1;
-    border: none;
-    outline: none;
-    height: 100%;
+.input-grid input.custom-input {
+    grid-row: 1 / 2;
+    grid-column: 2 / 3;
+    height: var(--input-height);
     padding: 0.5rem;
+    border: solid 1px rgb(209, 209, 209);
+    border-radius: var(--border-radius);
+    border-radius: 0 var(--border-radius) var(--border-radius) 0;
+    border-left: 0;
+    width: 100%;
+}
+
+.validation-message {
+    grid-row: 2 / 3;
+    grid-column: 2 / 3;
+    font-size: 0.875rem;
+    color: red;
 }

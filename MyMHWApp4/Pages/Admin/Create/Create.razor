@@ -69,14 +69,14 @@
                             </div>
                         }
 
-                        <div class="form__field input-with-prefix">
+                        <div class="form__field">
                             <label for="create-category-helmet">Helmet</label>
-                            <div class="input-prefix-container">
+
+                            <div class="input-grid">
                                 <span class="prefix-text">@FormModel!.ArmorPrefix</span>
                                 <CustomInputText id="create-category-helmet" @bind-Value="FormModel!.HelmetSuffix" />
+                                <ValidationMessage For="@(() => FormModel!.HelmetSuffix)" class="validation-message" />
                             </div>
-                            <ValidationMessage For="@(() => FormModel!.HelmetSuffix)" />
-
                         </div>
 
                         <div class="form__field input-with-prefix">
@@ -85,7 +85,7 @@
                                 <span class="prefix-text">@FormModel!.ArmorPrefix</span>
                                 <CustomInputText id="create-category-mail" @bind-Value="FormModel!.MailSuffix" />
                             </div>
-                            <ValidationMessage For="@(() => FormModel!.MailSuffix)" />
+                            <ValidationMessage For="@(() => FormModel!.MailSuffix)" class="validation-message" />
                         </div>
 
                         <div class="form__field input-with-prefix">
@@ -94,7 +94,7 @@
                                 <span class="prefix-text">@FormModel!.ArmorPrefix</span>
                                 <CustomInputText id="create-category-greaves" @bind-Value="FormModel!.GreavesSuffix" />
                             </div>
-                            <ValidationMessage For="@(() => FormModel!.GreavesSuffix)" />
+                            <ValidationMessage For="@(() => FormModel!.GreavesSuffix)" class="validation-message" />
                         </div>
                     }
                     else
