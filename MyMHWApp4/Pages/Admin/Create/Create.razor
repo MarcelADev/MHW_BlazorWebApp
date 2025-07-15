@@ -79,22 +79,24 @@
                             </div>
                         </div>
 
-                        <div class="form__field input-with-prefix">
+                        <div class="form__field">
                             <label for="create-category-mail">Mail</label>
-                            <div class="input-prefix-container">
+
+                            <div class="input-grid">
                                 <span class="prefix-text">@FormModel!.ArmorPrefix</span>
                                 <CustomInputText id="create-category-mail" @bind-Value="FormModel!.MailSuffix" />
+                                <ValidationMessage For="@(() => FormModel!.MailSuffix)" class="validation-message" />
                             </div>
-                            <ValidationMessage For="@(() => FormModel!.MailSuffix)" class="validation-message" />
                         </div>
 
-                        <div class="form__field input-with-prefix">
-                            <label for="create-category-greaves">Boots</label>
-                            <div class="input-prefix-container">
+                        <div class="form__field">
+                            <label for="create-category-greaves">Greaves</label>
+
+                            <div class="input-grid">
                                 <span class="prefix-text">@FormModel!.ArmorPrefix</span>
                                 <CustomInputText id="create-category-greaves" @bind-Value="FormModel!.GreavesSuffix" />
+                                <ValidationMessage For="@(() => FormModel!.GreavesSuffix)" class="validation-message" />
                             </div>
-                            <ValidationMessage For="@(() => FormModel!.GreavesSuffix)" class="validation-message" />
                         </div>
                     }
                     else
@@ -107,9 +109,9 @@
 
             <div class="form__field">
                 <InputCheckbox id="create-inventoryentries-checkbox"
-                Value="addInventoryEntries"
-                ValueChanged="ToggleInventoryEntries"
-                ValueExpression="() => addInventoryEntries" />
+                               Value="addInventoryEntries"
+                               ValueChanged="ToggleInventoryEntries"
+                               ValueExpression="() => addInventoryEntries" />
                 <label for="create-inventoryentries-checkbox">Add Inventory Entries</label>
             </div>
 
@@ -121,19 +123,19 @@
                     {
                         <div class="multi-select-custom-style">
                             <MultiSelect Label="Common Inventory Entries"
-                            Placeholder="Select"
-                            T="InventoryEntryCardModel"
-                            Options="@commonInventoryEntries"
-                            OptionNameMapper="(InventoryEntryCardModel iecm) => iecm.Name"
-                            OptionValueMapper="(InventoryEntryCardModel iecm) => iecm.Key"
-                            ValueListChanged="HandleSelect"
-                            MutedLabel="true"/>
+                                         Placeholder="Select"
+                                         T="InventoryEntryCardModel"
+                                         Options="@commonInventoryEntries"
+                                         OptionNameMapper="(InventoryEntryCardModel iecm) => iecm.Name"
+                                         OptionValueMapper="(InventoryEntryCardModel iecm) => iecm.Key"
+                                         ValueListChanged="HandleSelect"
+                                         MutedLabel="true"/>
                         </div>
 
                         <div class="form__field">
                             <label for="create-inventoryentry">Add Inventory Entry</label>
                             <div class="container-left-space-between">
-                                <InputText id="create-inventoryentry" @bind-Value="FormModel!.UncommonInventoryEntryName" />
+                                <CustomInputText id="create-inventoryentry" @bind-Value="FormModel!.UncommonInventoryEntryName" />
                                 <AddButton AddButtonClicked="HandleAddButtonClicked" />
                             </div>
                         </div>

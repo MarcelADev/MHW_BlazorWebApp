@@ -9,6 +9,8 @@ namespace MyMHWApp4.Pages.Admin.Create
         public string SelectedName { get; set; }
 
         public GameExtension? CurrentGameExtension;
+
+        [Required(ErrorMessage = "Name must not be empty")]
         public GameExtension? SelectedGameExtension;
 
         public bool ShowValidationMessages { get; set; } = true;
@@ -26,7 +28,10 @@ namespace MyMHWApp4.Pages.Admin.Create
             if (ShowValidationMessages)
             {
                 if (CurrentName.Equals(SelectedName) && object.Equals(CurrentGameExtension, SelectedGameExtension))
-                    yield return new ValidationResult("Nothing was changed", [nameof(CurrentName)]);
+                    yield return new ValidationResult("Nothing was changed", [nameof(SelectedName)]);
+
+                //if (SelectedName.Equals(string.Empty))
+                //    yield return new ValidationResult("Name must not be empty", [nameof(SelectedName)]);
             }
         }
     }

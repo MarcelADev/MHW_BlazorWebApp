@@ -2,6 +2,8 @@
 {
     using Microsoft.AspNetCore.Components;
     using Microsoft.AspNetCore.Components.Forms;
+    using Microsoft.AspNetCore.Components.Rendering;
+    using Microsoft.AspNetCore.Components.Web;
     using System.ComponentModel.DataAnnotations;
 
     public partial class CustomInputText : InputText, IDisposable
@@ -29,8 +31,7 @@
             if (EditContext is not null)
             {
                 EditContext.OnValidationStateChanged += HandleValidationStateChanged;
-                EditContext.OnFieldChanged += HandleFieldChanged;
-            }
+                EditContext.OnFieldChanged += HandleFieldChanged; }
         }
 
         private void HandleValidationStateChanged(object? sender, ValidationStateChangedEventArgs e)
