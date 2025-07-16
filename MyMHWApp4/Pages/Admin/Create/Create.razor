@@ -118,56 +118,15 @@
             @if(showInventoryEntries)
             {
                 <div id="animatedBox2" class="box @(!addInventoryEntries ? "exit" : "")">
-
                     @if (!FormModel.Name.Equals(string.Empty))
                     {
-                        <div class="multi-select-custom-style">
-                            <MultiSelect Label="Common Inventory Entries"
-                                         Placeholder="Select"
-                                         T="InventoryEntryCardModel"
-                                         Options="@commonInventoryEntries"
-                                         OptionNameMapper="(InventoryEntryCardModel iecm) => iecm.Name"
-                                         OptionValueMapper="(InventoryEntryCardModel iecm) => iecm.Key"
-                                         ValueListChanged="HandleSelect"
-                                         MutedLabel="true"/>
-                        </div>
-
-                        <div class="form__field">
-                            <label for="create-inventoryentry">Add Inventory Entry</label>
-                            <div class="container-left-space-between">
-                                <CustomInputText id="create-inventoryentry" @bind-Value="FormModel!.UncommonInventoryEntryName" />
-                                <AddButton AddButtonClicked="HandleAddButtonClicked" />
-                            </div>
-                        </div>
-
-                        <label>List</label>
-
-                        @foreach (InventoryEntryCardModel model in FormModel.SelectedCommonInventoryEntries)
-                        {
-                            model.GameExtension = FormModel.GeneralGameExtension;
-                            <InventoryEntryCard @key="model.Key" 
-                            Model="model"
-                            RemoveFromList="HandleCommonInventoryEntryRemoved" />
-                        }
-
-                        @foreach (InventoryEntryCardModel model in uncommonInventoryentries)
-                        {
-                            model.GameExtension = FormModel.GeneralGameExtension;
-                            <InventoryEntryCard @key="model.Key"
-                            Model="model" 
-                            RemoveFromList="HandleUncommonInventoryEntryRemoved" />
-                        }
-
-                        @if(!FormModel.SelectedCommonInventoryEntries.Any() && !uncommonInventoryentries.Any())
-                        {
-                            <p>No Inventory Entries</p>
-                        }
+                        <InventoryEntryList GetName="() => FormModel.Name"
+                                            SetName="value => FormModel.Name = value" />
                     }
                     else
                     {
                         <p>Category Name needed</p>
                     }
-
                 </div>
             }
 
@@ -195,20 +154,9 @@
 
     private EditContext? editContext;
 
-    private int keyCounter = 1;
-
     [SupplyParameterFromForm]
     private CreateFormModel? FormModel { get; set; }
 
-    private List<string> commonInventoryEntryNames = new List<string>
-    {
-        "Tail",
-        "Fang",
-        "Claw",
-    };
-
-    private List<InventoryEntryCardModel> commonInventoryEntries = [];
-    private List<InventoryEntryCardModel> uncommonInventoryentries = [];
     private List<GameExtension> gameExtensions = [];
 
     private DotNetObjectReference<Create>? _dotNetRef;
@@ -217,13 +165,7 @@
     {
         gameExtensions = await gameExtensionProvider.GetGameExtensionsAsync();
 
-        foreach (string s in commonInventoryEntryNames)
-        {
-            commonInventoryEntries.Add(new InventoryEntryCardModel { Key = keyCounter++, Name = s });
-        }
-
         FormModel ??= new CreateFormModel();
-        FormModel.UpdateCommonInventoryEntries = HandleUpdateCommonInventoryEntries;
         editContext = new(FormModel);
 
         _dotNetRef = DotNetObjectReference.Create(this);
@@ -295,44 +237,6 @@
             showAlternativeArmorPrefix = false;
         }
 
-        StateHasChanged();
-    }
-
-    private void HandleUpdateCommonInventoryEntries()
-    {
-        foreach (InventoryEntryCardModel model in FormModel!.SelectedCommonInventoryEntries)
-            model.ExtendedName = FormModel.Name + " " + model.Name;
-    }
-
-    private void HandleSelect(List<InventoryEntryCardModel> selectedCommonInventoryEntries)
-    {
-        FormModel!.SelectedCommonInventoryEntries = selectedCommonInventoryEntries;
-
-        foreach (InventoryEntryCardModel model in FormModel.SelectedCommonInventoryEntries)
-            model.ExtendedName = FormModel.Name + " " + model.Name;
-        StateHasChanged();
-    }
-
-    private void HandleAddButtonClicked()
-    {
-        if(!FormModel!.UncommonInventoryEntryName.Equals(string.Empty) &&
-            !uncommonInventoryentries.Any(iecm => iecm.Name == FormModel.UncommonInventoryEntryName))
-        {
-            uncommonInventoryentries.Add(new InventoryEntryCardModel { Key = keyCounter++, Name = FormModel.UncommonInventoryEntryName});
-            FormModel.UncommonInventoryEntryName = string.Empty;
-            StateHasChanged();
-        }
-    }
-
-    private void HandleCommonInventoryEntryRemoved(InventoryEntryCardModel model)
-    {
-        FormModel!.SelectedCommonInventoryEntries.RemoveAll(iecm => iecm.Key == model.Key);
-        StateHasChanged();
-    }
-
-    private void HandleUncommonInventoryEntryRemoved(InventoryEntryCardModel model)
-    {
-        uncommonInventoryentries.RemoveAll(iecm => iecm.Key == model.Key);
         StateHasChanged();
     }
 
