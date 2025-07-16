@@ -204,6 +204,10 @@ label, p, button, a {
     margin: 0;
 }
 
+label {
+    font-weight: 200;
+}
+
 input:not([type="checkbox"]) {
     width: 100%;
     padding: var(--input-padding);

@@ -19,7 +19,7 @@
 
             <div class="form__field">
                 <label for="create-category-name">Name</label>
-                <CustomInputText class="muted" id="create-category-name" @bind-Value="FormModel!.Name" />
+                <CustomInputText id="create-category-name" @bind-Value="FormModel!.Name" />
                 <ValidationMessage For="@(() => FormModel!.Name)" />
             </div>
 
@@ -61,8 +61,7 @@
                             <div id="animatedBox3" class="box purple @(isExitingAlternativePrefix ? "exit" : "")">
                                 <div class="form__field">
                                     <label for="change-armorset-prefix-textbox">Name</label>
-                                    <CustomInputText class="muted"
-                                                     id="change-armorset-prefix-textbox"
+                                    <CustomInputText id="change-armorset-prefix-textbox"
                                                      @bind-Value="FormModel!.AlternativeArmorPrefix" />
                                     <ValidationMessage For="@(() => FormModel!.AlternativeArmorPrefix)" />
                                 </div>
@@ -121,7 +120,9 @@
                     @if (!FormModel.Name.Equals(string.Empty))
                     {
                         <InventoryEntryList GetName="() => FormModel.Name"
-                                            SetName="value => FormModel.Name = value" />
+                                            SetName="value => FormModel.Name = value"
+                                            GetGeneralGameExtension="() => FormModel.GeneralGameExtension"
+                                            SetGeneralGameExtension="value => FormModel.GeneralGameExtension = value" />
                     }
                     else
                     {

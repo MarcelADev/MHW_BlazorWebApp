@@ -49,10 +49,6 @@
     margin-top: 1rem;
 }
 
-label {
-    font-weight: 200;
-}
-
 .multi-select-custom-style label {
     font-weight: 600;
     color: darkslateblue;

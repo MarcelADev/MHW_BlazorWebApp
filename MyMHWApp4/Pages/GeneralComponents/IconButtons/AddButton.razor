@@ -1,4 +1,4 @@
-﻿<button class="container-center" type="button" @onclick="OnAddButtonClicked">
+﻿<button class="container-center" type="@(IsSubmitButton ? "submit" : "button")" @onclick="OnAddButtonClicked">
 	<span class="material-symbols-outlined">
 		add_2
 	</span>
@@ -7,6 +7,9 @@
 @code {
 	[Parameter]
 	public required EventCallback AddButtonClicked { get; set; }
+
+	[Parameter]
+	public bool IsSubmitButton { get; set; } = false;
 
 	private async Task OnAddButtonClicked()
 	{

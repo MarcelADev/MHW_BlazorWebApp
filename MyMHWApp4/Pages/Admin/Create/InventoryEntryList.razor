@@ -1,6 +1,8 @@
-﻿@using MyMHWApp4.Pages.GeneralComponents.CustomInput
+﻿@using MHWApp.Library.Model
+@using MyMHWApp4.Pages.GeneralComponents.CustomInput
 @using MyMHWApp4.Pages.GeneralComponents.IconButtons
 @using MyMHWApp4.Pages.GeneralComponents.Select
+@implements IDisposable
 
 <div class="multi-select-custom-style">
     <MultiSelect Label="Common Inventory Entries"
@@ -13,16 +15,20 @@
                  MutedLabel="true"/>
 </div>
 
-<div class="form__field">
-    <label for="create-inventoryentry">Add Inventory Entry</label>
+<EditForm EditContext="editContext" FormName="inventory-entry-list" OnValidSubmit="Submit">
+    <DataAnnotationsValidator />
 
-    <div class="container-left-space-between">
-        <CustomInputText id="create-inventoryentry" @bind-Value="FormModel!.UncommonInventoryEntryName" />
-        <AddButton AddButtonClicked="HandleAddButtonClicked" />
+    <div class="form__field">
+        <label for="inventory-entry-list-add">Add Inventory Entry</label>
+
+        <div class="container-left-space-between">
+            <CustomInputText id="inventory-entry-list-add" @bind-Value="FormModel!.UncommonInventoryEntryName" />
+            <AddButton IsSubmitButton="true" />
+        </div>
+
+        <ValidationMessage For="@(() => FormModel!.UncommonInventoryEntryName)" class="validation-message" />
     </div>
-
-    <ValidationMessage For="@(() => FormModel!.UncommonInventoryEntryName)" class="validation-message" />
-</div>
+</EditForm>
 
 <label>List</label>
 
@@ -30,16 +36,16 @@
 {
     model.GameExtension = FormModel.GeneralGameExtension;
     <InventoryEntryCard @key="model.Key" 
-    Model="model"
-    RemoveFromList="HandleCommonInventoryEntryRemoved" />
+                        Model="model"
+                        RemoveFromList="HandleCommonInventoryEntryRemoved" />
 }
 
 @foreach (InventoryEntryCardModel model in FormModel.UncommonInventoryentries)
 {
     model.GameExtension = FormModel.GeneralGameExtension;
     <InventoryEntryCard @key="model.Key"
-    Model="model" 
-    RemoveFromList="HandleUncommonInventoryEntryRemoved" />
+                        Model="model" 
+                        RemoveFromList="HandleUncommonInventoryEntryRemoved" />
 }
 
 @if(!FormModel.SelectedCommonInventoryEntries.Any() && !FormModel.UncommonInventoryentries.Any())
@@ -48,19 +54,26 @@
 }
 
 @code {
+    private bool isFormValid = true;
     private int keyCounter = 1;
     private string nameSnapshot = string.Empty;
 
     private InventoryEntryListFormModel? FormModel;
+    private EditContext? editContext;
 
     [Parameter] 
     public required Func<string>? GetName { get; set; }
     [Parameter]
     public required Action<string>? SetName { get; set; }
 
+    [Parameter]
+    public required Func<GameExtension> GetGeneralGameExtension { get; set; }
+    [Parameter]
+    public required Action<GameExtension> SetGeneralGameExtension { get; set; }
+
     protected override async Task OnInitializedAsync()
     {
-        FormModel = new InventoryEntryListFormModel(GetName!, SetName!);
+        FormModel = new InventoryEntryListFormModel(GetName!, SetName!, GetGeneralGameExtension!, SetGeneralGameExtension!);
         foreach (string s in FormModel.CommonInventoryEntryNames)
         {
             FormModel.CommonInventoryEntries.Add(new InventoryEntryCardModel
@@ -69,8 +82,9 @@
                 Name = s
             });
         }
-
         FormModel.UpdateCommonInventoryEntries = HandleUpdateCommonInventoryEntries;
+
+        editContext = new(FormModel);
     }
 
     protected override async Task OnParametersSetAsync()
@@ -78,8 +92,8 @@
         var currentName = GetName?.Invoke();
         if (currentName != nameSnapshot)
         {
-            nameSnapshot = currentName;
-            FormModel.Name = nameSnapshot; // Refresh form model state
+            nameSnapshot = currentName!;
+            FormModel!.Name = nameSnapshot; // Refresh form model state
             StateHasChanged(); // Force UI update
         }
     }
@@ -99,16 +113,16 @@
         StateHasChanged();
     }
 
-    private void HandleAddButtonClicked()
+    /// <summary>
+    /// Adds a uncommon Inventory Entry
+    /// </summary>
+    private void Submit()
     {
-        // if(!FormModel!.UncommonInventoryEntryName.Equals(string.Empty) &&
-        //     !FormModel.UncommonInventoryentries.Any(ucie => ucie.Name == FormModel.UncommonInventoryEntryName) &&
-        //     !FormModel.SelectedCommonInventoryEntries.Any(scie => scie.ExtendedName == FormModel.UncommonInventoryEntryName))
-        // {
+        isFormValid = editContext!.Validate();
+
         FormModel!.UncommonInventoryentries.Add(new InventoryEntryCardModel { Key = keyCounter++, Name = FormModel.UncommonInventoryEntryName });
         FormModel.UncommonInventoryEntryName = string.Empty;
         StateHasChanged();
-        //}
     }
 
     private void HandleCommonInventoryEntryRemoved(InventoryEntryCardModel model)
@@ -121,5 +135,10 @@
     {
         FormModel!.UncommonInventoryentries.RemoveAll(iecm => iecm.Key == model.Key);
         StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        
     }
 }
