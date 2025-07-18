@@ -24,14 +24,14 @@
             </div>
 
             <SingleSelect Label="Choose general Game Extension"
-            Placeholder="Select"
-            T="GameExtension"
-            Options="gameExtensions"
-            OptionNameMapper="(GameExtension ge) => ge.Name"
-            OptionValueMapper="(GameExtension ge) => ge.Id"
-            @bind-value="FormModel.GeneralGameExtension"
-            MutedLabel="true"
-            Disabled="!addArmorSet && !addInventoryEntries" />
+                          Placeholder="Select"
+                          T="GameExtension"
+                          Options="gameExtensions"
+                          OptionNameMapper="(GameExtension ge) => ge.Name"
+                          OptionValueMapper="(GameExtension ge) => ge.Id"
+                          @bind-value="FormModel.GeneralGameExtension"
+                          MutedLabel="true"
+                          Disabled="!addArmorSet && !addInventoryEntries" />
 
             <div class="form__field">
                 <InputCheckbox id="create-armorset-checkbox"
