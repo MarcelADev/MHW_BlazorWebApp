@@ -15,6 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="wwwroot\css\SharedSelect.css" />
     <None Include="wwwroot\Images\CardPicture.jpg" />
   </ItemGroup>
 
