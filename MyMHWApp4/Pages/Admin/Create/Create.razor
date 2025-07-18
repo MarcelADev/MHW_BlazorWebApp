@@ -30,14 +30,13 @@
                           OptionNameMapper="(GameExtension ge) => ge.Name"
                           OptionValueMapper="(GameExtension ge) => ge.Id"
                           @bind-value="FormModel.GeneralGameExtension"
-                          MutedLabel="true"
                           Disabled="!addArmorSet && !addInventoryEntries" />
 
             <div class="form__field">
                 <InputCheckbox id="create-armorset-checkbox"
-                Value="addArmorSet"
-                ValueChanged="ToggleArmorSet"
-                ValueExpression="() => addArmorSet" />
+                               Value="addArmorSet"
+                               ValueChanged="ToggleArmorSet"
+                               ValueExpression="() => addArmorSet" />
                 <label for="create-armorset-checkbox">Add Armor Set</label>
             </div>
 

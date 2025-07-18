@@ -30,13 +30,12 @@
                 </div>
 
                 <SingleSelect Label="Select Category"
-                Placeholder="Select"
-                T="ArmorCategory"
-                Options="@armorCategories"
-                OptionNameMapper="(ArmorCategory ac) => ac.Category?.Name ?? string.Empty"
-                OptionValueMapper="(ArmorCategory armorCategory) => armorCategory.Id"
-                @bind-Value="Model.ArmorCategory">
-                </SingleSelect>
+                              Placeholder="Select"
+                              T="ArmorCategory"
+                              Options="@armorCategories"
+                              OptionNameMapper="(ArmorCategory ac) => ac.Category?.Name ?? string.Empty"
+                              OptionValueMapper="(ArmorCategory armorCategory) => armorCategory.Id"
+                              @bind-Value="Model.ArmorCategory" />
 
                 <div class="form__field-checkbox">
                     <InputCheckbox id="armor-categoryInName" @bind-Value="Model.UseNamePrefix" />

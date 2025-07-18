@@ -11,8 +11,7 @@
                  Options="@FormModel!.CommonInventoryEntries"
                  OptionNameMapper="(InventoryEntryCardModel iecm) => iecm.Name"
                  OptionValueMapper="(InventoryEntryCardModel iecm) => iecm.Key"
-                 ValueListChanged="HandleSelect"
-                 MutedLabel="true"/>
+                 ValueListChanged="HandleSelect"/>
 </div>
 
 <EditForm EditContext="editContext" FormName="inventory-entry-list" OnValidSubmit="Submit">

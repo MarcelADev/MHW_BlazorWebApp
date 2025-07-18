@@ -1,86 +1,86 @@
-﻿﻿@using MHWApp.Library.Model;
+﻿@using MHWApp.Library.Model
 @inject IJSRuntime JSRuntime
-@inject ILogger<Select<T>> Logger
+@inject ILogger<SingleSelect<T>> Logger
 @typeparam T
+@inherits BaseSelect<T>
 @implements IAsyncDisposable
 
-@*Prefer native component on mobile devices.*@
 @if (os == "Android" || os == "iOS")
 {
-	@if (null != Label)
-	{
-		<label for="select" class="@labelClass">@Label</label>
-	}
-	<select name="select" @attributes="selectAttributes" @onchange="HandleNativeChange">
-		@foreach (var option in Options)
-		{
-			<option value="@OptionValueMapper(option)">@OptionNameMapper(option)</option>
-		}
-	</select>
+    @if (!string.IsNullOrWhiteSpace(Label))
+    {
+        <label for="select">@Label</label>
+    }
+    <select name="select"
+            @attributes="selectAttributes"
+            @onchange="HandleNativeChange">
+        <option value="">@Placeholder</option>
+        @foreach (var option in Options)
+        {
+            <option value="@OptionValueMapper(option)" selected="@IsSelected(option, Value)">
+                @OptionNameMapper(option)
+            </option>
+        }
+    </select>
 }
 else
 {
-	<div class="anchor">
-		@if (null != Label)
-		{
-			<label id="@Id-label"
-				   class="@labelClass"
-				   @onclick:preventDefault ="@Disabled"
-				   @onclick:stopPropagation ="@Disabled"
-				   @attributes ="labelAttributes">
-				@Label
-			</label>
-		}
+    <div class="select__anchor">
+        @if (!string.IsNullOrWhiteSpace(Label))
+        {
+            <label id="@Id-label"
+                   @onclick:preventDefault="@Disabled"
+                   @onclick:stopPropagation="@Disabled"
+                   @attributes="labelAttributes">
+                @Label
+            </label>
+        }
 
-		<div id="mhwapp-single-select-@Id" class="select" aria-labelledby="@Id-label">
-			<div class="select__trigger @(Disabled ? "disabled" : "")" 
-				 tabindex="@(Disabled ? -1 : 0)"
-				 aria-disabled="@Disabled">
+        <div id="mhwapp-single-select-@Id"
+             class="select"
+             aria-labelledby="@Id-label">
 
-				<div aria-hidden="true" class="select-content">
+            <div class="select__trigger @(Disabled ? "disabled" : "")"
+                 tabindex="@(Disabled ? -1 : 0)"
+                 aria-disabled="@Disabled">
 
-					@if (null != Value)
-					{
-						@OptionNameMapper(Value)
-					}
-					else
-					{
-						@Placeholder
-					}
+                <div aria-hidden="true" class="select__content">
+                    @if (Value is not null)
+                    {
+                        @OptionNameMapper(Value)
+                    }
+                    else
+                    {
+                        @Placeholder
+                    }
+                </div>
 
-				</div>
-				<!-- Google Icon -->
-				<span class="material-symbols-outlined icon__color-black">
-					keyboard_arrow_down
-				</span>
-			</div>
+                <span class="material-symbols-outlined icon__color-black">keyboard_arrow_down</span>
+            </div>
 
-			<div class="select-dropdown" tabindex="@(Disabled ? -1 : 0)">
-				@foreach (var option in Options)
-				{
-					<div class="select-option">
-						<label class="select-option-label">
-							<input checked="@(IsSelected(option))"
-								   class="select-option-label-hidden"
-								   id="select-@Id-@(OptionValueMapper(option))" 
-								   name="select-@(OptionValueMapper(option))"
-								   type="checkbox"
-								   disabled="@Disabled"
-								   @onchange="Disabled ? null : (_) => HandleCustomChange(option)" />
-							@OptionNameMapper(option)
-						</label>
-						@if (IsSelected(option))
-						{
-							<!-- Google Icon -->
-							<span class="material-symbols-outlined icon__color-blue">
-								check
-							</span>
-						}
-					</div>
-				}
-			</div>
-		</div>
+            <div class="select__dropdown" tabindex="@(Disabled ? -1 : 0)">
+                @foreach (var option in Options)
+                {
+                    <div class="select__option">
+                        <label class="select__option-label">
+                            <input type="checkbox"
+                                   class="select__option-label-hidden"
+                                   checked="@IsSelected(option, Value)"
+                                   id="select-@Id-@(OptionValueMapper(option))"
+                                   name="select-@(OptionValueMapper(option))"
+                                   disabled="@Disabled"
+                                   @onchange="(_) => HandleCustomChange(option)" />
+                            @OptionNameMapper(option)
+                        </label>
+                        @if (IsSelected(option, Value))
+                        {
+                            <span class="material-symbols-outlined icon__color-blue">check</span>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
 
-		<div class="select_content-overlay"></div>
-	</div>
+        <div class="select__content-overlay"></div>
+    </div>
 }
