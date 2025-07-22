@@ -4,6 +4,17 @@
 @using MyMHWApp4.Pages.GeneralComponents.Select
 @implements IDisposable
 
+
+@foreach(string warning in warnings)
+{
+    <div class="alert alert-warning">@warning</div>
+}
+
+@foreach (string danger in dangers)
+{
+    <div class="alert alert-danger">@danger</div>
+}
+
 <div class="multi-select-custom-style">
     <MultiSelect Label="Common Inventory Entries"
                  Placeholder="Select"
@@ -57,6 +68,9 @@
     private int keyCounter = 1;
     private string nameSnapshot = string.Empty;
 
+    private List<string> warnings = [];
+    private List<string> dangers = [];
+
     private InventoryEntryListFormModel? FormModel;
     private EditContext? editContext;
 
@@ -70,7 +84,9 @@
     [Parameter]
     public required Action<GameExtension> SetGeneralGameExtension { get; set; }
 
-    protected override async Task OnInitializedAsync()
+    private string Message { get; set; } = string.Empty;
+
+    protected override void OnInitialized()
     {
         FormModel = new InventoryEntryListFormModel(GetName!, SetName!, GetGeneralGameExtension!, SetGeneralGameExtension!);
         foreach (string s in FormModel.CommonInventoryEntryNames)
@@ -86,13 +102,25 @@
         editContext = new(FormModel);
     }
 
-    protected override async Task OnParametersSetAsync()
+    protected override void OnParametersSet()
     {
         var currentName = GetName?.Invoke();
         if (currentName != nameSnapshot)
         {
             nameSnapshot = currentName!;
             FormModel!.Name = nameSnapshot; // Refresh form model state
+
+            foreach(InventoryEntryCardModel uncommon in FormModel.UncommonInventoryentries.ToList())
+            {
+                if (FormModel.SelectedCommonInventoryEntries
+                        .Any(scie => scie.ExtendedName
+                        .Equals(uncommon.Name)))
+                {
+                    _ = ShowDanger($"After changing Category Name, there were 2 instances of \"{uncommon.Name}\". The uncommon instance got removed!");
+                    FormModel.UncommonInventoryentries.Remove(uncommon);
+                }
+            }
+
             StateHasChanged(); // Force UI update
         }
     }
@@ -108,7 +136,39 @@
         FormModel!.SelectedCommonInventoryEntries = selectedCommonInventoryEntries;
 
         foreach (InventoryEntryCardModel model in FormModel.SelectedCommonInventoryEntries)
+        {
             model.ExtendedName = FormModel.Name + " " + model.Name;
+
+            if(FormModel.UncommonInventoryentries.Any(ucie => ucie.Name.Equals(model.ExtendedName)))
+            {
+                FormModel.UncommonInventoryentries.RemoveAll(ucie => ucie.Name.Equals(model.ExtendedName));
+
+                _ = ShowWarning($"{model.ExtendedName} was initially an uncommon Inventory Entry. It was changed into a common one");
+            }
+        }
+
+        StateHasChanged();
+    }
+
+    private async Task ShowWarning(string message)
+    {
+        warnings.Add(message);
+        StateHasChanged();
+
+        await Task.Delay(8000);
+
+        warnings.Remove(message);
+        StateHasChanged();
+    }
+
+    private async Task ShowDanger(string message)
+    {
+        dangers.Add(message);
+        StateHasChanged();
+
+        await Task.Delay(8000);
+
+        dangers.Remove(message);
         StateHasChanged();
     }
 
