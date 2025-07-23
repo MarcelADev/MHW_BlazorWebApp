@@ -72,6 +72,8 @@
 	private bool isEditing = false;
 	private bool isFormValid = true;
 
+	private Guid lastRemovalToken;
+
 	private List<GameExtension> gameExtensions = [];
 
 	[Parameter]
@@ -82,6 +84,12 @@
 
 	[Parameter]
 	public EventCallback<InventoryEntryCardModel> RemoveFromList { get; set; }
+
+	[Parameter]
+	public required Func<string,bool> CheckIfNewNameExists { get; set; }
+
+	[CascadingParameter] 
+	public Guid RemovalChangeToken { get; set; }
 
 	private EditContext? editContext;
 
@@ -116,6 +124,27 @@
 			FormModel.CurrentGameExtension = Model.GameExtension;
 			FormModel.SelectedGameExtension = Model.GameExtension;
 		}
+
+		if (isEditing && RemovalChangeToken != lastRemovalToken)
+		{
+			lastRemovalToken = RemovalChangeToken;
+
+			// Re-check custom validation: NameAlreadyExists
+			if (FormModel is not null && CheckIfNewNameExists.Invoke(FormModel.SelectedName))
+			{
+				FormModel.NameAlreadyExistsFlag = true;
+			}
+			else if (FormModel is not null)
+			{
+				FormModel.NameAlreadyExistsFlag = false;
+			}
+
+			// Built-in validation
+			if (editContext is not null)
+				isFormValid = editContext.Validate();
+
+			StateHasChanged();
+		}
 	}
 
 	private void HandleEditButtonClicked()
@@ -136,6 +165,9 @@
 		if (editContext is not null)
 		{
 			FormModel!.ShowValidationMessages = false;
+			FormModel.NameAlreadyExistsFlag = false;
+			FormModel.SelectedGameExtension = FormModel.CurrentGameExtension;
+			FormModel.SelectedName = FormModel.CurrentName;
 			isFormValid = editContext.Validate();
 		}
 
@@ -145,6 +177,8 @@
 
 	private void HandleFieldChanged(object? sender, FieldChangedEventArgs e)
 	{
+		FormModel!.NameAlreadyExistsFlag = false;
+
 		if(editContext is not null)
 		{
 			isFormValid = editContext.Validate();
@@ -153,6 +187,16 @@
 
 	private void Submit()
 	{
+		if(CheckIfNewNameExists.Invoke(FormModel!.SelectedName))
+		{
+			FormModel.NameAlreadyExistsFlag = true;
+
+			isFormValid = editContext!.Validate();
+
+			StateHasChanged();
+			return;
+		}
+
 		if (Model.ExtendedName.Equals(string.Empty)) Model.Name = FormModel!.CurrentName = FormModel.SelectedName;
 		else Model.ExtendedName = FormModel!.CurrentName = FormModel.SelectedName;
 

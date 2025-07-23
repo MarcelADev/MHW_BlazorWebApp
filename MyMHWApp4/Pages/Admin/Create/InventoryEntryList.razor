@@ -42,21 +42,25 @@
 
 <label>List</label>
 
-@foreach (InventoryEntryCardModel model in FormModel.SelectedCommonInventoryEntries)
-{
-    model.GameExtension = FormModel.GeneralGameExtension;
-    <InventoryEntryCard @key="model.Key" 
-                        Model="model"
-                        RemoveFromList="HandleCommonInventoryEntryRemoved" />
-}
+<CascadingValue Value="removalChangeToken">
+    @foreach (InventoryEntryCardModel model in FormModel.SelectedCommonInventoryEntries)
+    {
+        model.GameExtension = FormModel.GeneralGameExtension;
+        <InventoryEntryCard @key="model.Key" 
+                            Model="model"
+                            RemoveFromList="HandleCommonInventoryEntryRemoved"
+                            CheckIfNewNameExists="HandleCheckIfNewNameExists" />
+    }
 
-@foreach (InventoryEntryCardModel model in FormModel.UncommonInventoryentries)
-{
-    model.GameExtension = FormModel.GeneralGameExtension;
-    <InventoryEntryCard @key="model.Key"
-                        Model="model" 
-                        RemoveFromList="HandleUncommonInventoryEntryRemoved" />
-}
+    @foreach (InventoryEntryCardModel model in FormModel.UncommonInventoryentries)
+    {
+        model.GameExtension = FormModel.GeneralGameExtension;
+        <InventoryEntryCard @key="model.Key"
+                            Model="model" 
+                            RemoveFromList="HandleUncommonInventoryEntryRemoved"
+                            CheckIfNewNameExists="HandleCheckIfNewNameExists" />
+    }
+</CascadingValue>
 
 @if(!FormModel.SelectedCommonInventoryEntries.Any() && !FormModel.UncommonInventoryentries.Any())
 {
@@ -102,6 +106,13 @@
         editContext = new(FormModel);
     }
 
+    private Guid removalChangeToken = Guid.NewGuid();
+    private void NotifyCards()
+    {
+        removalChangeToken = Guid.NewGuid();
+        StateHasChanged();
+    }
+
     protected override void OnParametersSet()
     {
         var currentName = GetName?.Invoke();
@@ -118,6 +129,7 @@
                 {
                     _ = ShowDanger($"After changing Category Name, there were 2 instances of \"{uncommon.Name}\". The uncommon instance got removed!");
                     FormModel.UncommonInventoryentries.Remove(uncommon);
+                    NotifyCards();
                 }
             }
 
@@ -142,6 +154,8 @@
             if(FormModel.UncommonInventoryentries.Any(ucie => ucie.Name.Equals(model.ExtendedName)))
             {
                 FormModel.UncommonInventoryentries.RemoveAll(ucie => ucie.Name.Equals(model.ExtendedName));
+
+                NotifyCards();
 
                 _ = ShowWarning($"{model.ExtendedName} was initially an uncommon Inventory Entry. It was changed into a common one");
             }
@@ -187,13 +201,30 @@
     private void HandleCommonInventoryEntryRemoved(InventoryEntryCardModel model)
     {
         FormModel!.SelectedCommonInventoryEntries.RemoveAll(iecm => iecm.Key == model.Key);
+        NotifyCards();
         StateHasChanged();
     }
 
     private void HandleUncommonInventoryEntryRemoved(InventoryEntryCardModel model)
     {
         FormModel!.UncommonInventoryentries.RemoveAll(iecm => iecm.Key == model.Key);
+        NotifyCards();
         StateHasChanged();
+    }
+
+    private bool HandleCheckIfNewNameExists(string newName)
+    {
+        foreach(InventoryEntryCardModel model in FormModel!.SelectedCommonInventoryEntries)
+        {
+            if (model.ExtendedName.Equals(newName)) return true;
+        }
+
+        foreach(InventoryEntryCardModel model in FormModel.UncommonInventoryentries)
+        {
+            if (model.Name.Equals(newName)) return true;
+        }
+
+        return false;
     }
 
     public void Dispose()

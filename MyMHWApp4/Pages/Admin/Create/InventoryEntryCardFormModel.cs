@@ -15,6 +15,8 @@ namespace MyMHWApp4.Pages.Admin.Create
 
         public bool ShowValidationMessages { get; set; } = true;
 
+        public bool NameAlreadyExistsFlag { get; set; } = false;
+
         public InventoryEntryCardFormModel(InventoryEntryCardModel model)
         {
             if (model.ExtendedName.Equals(string.Empty)) CurrentName = SelectedName = model.Name;
@@ -30,8 +32,8 @@ namespace MyMHWApp4.Pages.Admin.Create
                 if (CurrentName.Equals(SelectedName) && object.Equals(CurrentGameExtension, SelectedGameExtension))
                     yield return new ValidationResult("Nothing was changed", [nameof(SelectedName)]);
 
-                //if (SelectedName.Equals(string.Empty))
-                //    yield return new ValidationResult("Name must not be empty", [nameof(SelectedName)]);
+                if (NameAlreadyExistsFlag)
+                    yield return new ValidationResult("This name already exists in the list", [nameof(SelectedName)]);
             }
         }
     }
