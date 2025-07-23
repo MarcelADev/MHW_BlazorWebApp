@@ -123,25 +123,18 @@ code {
     --secondary-color: white;
     --secondary-color-dark: whitesmoke;
     --primary-color-alternative: gray;
-
     --button-play-color: #00b100;
     --button-play-color: #209320;
     --button-play-color: #007800;
-
     --button-play-dummy-color: #686868;
-
     --button-edit-color: #337eff;
     --button-edit-color: #5688da;
     --button-edit-color: #4077d0;
-
     --button-confirm-color: var(--button-edit-color);
-
     --button-confirm-color-disabled: gray;
-
     --button-delete-color: #EA3323;
     --button-delete-color: #c65147;
     --button-delete-color: #b12d21;
-
     --button-cancel-color: var(--button-delete-color);
     /*  %% WIDTH & HEIGHT %% */
     --full-width: 100%;
@@ -157,54 +150,54 @@ code {
     /*  %% FONT %% */
     --thin: 100;
     --standard-font-size: 1.3rem;
+    /*new design architecture:*/
+    --standard-font-size__h2: 2.5rem;
+    --standard-font-size__h3: 1.4rem;
+    --standard-font-size__h4: 1.4rem;
+    --standard-font-size__label: 0.9rem;
+    --standard-font-size__p: 1rem;
+    --standard-font-size__button: var(--standard-font-size__p);
+    --standard-font-size__a: var(--standard-font-size__p);
+
+    --standard-font-weight__h1: 100;
+    --standard-font-weight__h2: var(--standard-font-weight__h1);
+    --standard-font-weight__h3: 300;
+    --standard-font-weight__h4: var(--standard-font-weight__h1);
 }
 
 /* ## GLOBAL STYLES ## */
 h1 {
-    font-weight: var(--thin);
+    font-weight: var(--standard-font-weight__h1);
     font-size: 4rem;
     color: var(--primary-color);
 }
 
 h2 {
-    font-weight: var(--thin);
-    font-size: 3.5rem;
+    font-weight: var(--standard-font-weight__h2);
+    font-size: var(--standard-font-size__h2);
     color: var(--primary-color);
 }
 
-.scalable { }
-
-@media (max-width: 500px) {
-    h2.scalable {
-        font-size: 3.2rem;
-    }
-}
-
-@media (max-width: 402px) {
-    h2.scalable {
-        font-size: 3rem;
-    }
-}
-
 h3 {
-    font-weight: var(--thin);
-    font-size: 2rem;
+    font-weight: var(--standard-font-weight__h3);
+    font-size: var(--standard-font-size__h3);
     color: var(--primary-color);
 }
 
 h4 {
-    font-weight: var(--thin);
-    font-size: 1.7rem;
+    font-weight: var(--standard-font-weight__h4);
+    font-size: var(--standard-font-size__h4);
     color: var(--primary-color);
 }
 
 label, p, button, a {
-    font-size: var(--standard-font-size);
+    font-size: var(--standard-font-size__p);
     color: var(--primary-color);
     margin: 0;
 }
 
 label {
+    font-size: var(--standard-font-size__label);
     font-weight: 200;
 }
 
@@ -212,7 +205,7 @@ input:not([type="checkbox"]) {
     width: 100%;
     padding: var(--input-padding);
     border: 1px solid var(--primary-color);
-    font-size: var(--standard-font-size);
+    font-size: var(--standard-font-size__p);
 }
 
 input[type="text"],
@@ -224,7 +217,7 @@ textarea {
     padding: 6px 0; /* Some vertical padding */
     outline: none; /* Remove default outline */
     transition: border-color 0.3s ease;
-    font-size: 16px;
+    font-size: var(--standard-font-size__p);
 }
 
     input[type="text"]:focus,
@@ -293,7 +286,8 @@ input[type="checkbox"] {
 }
 
 .header {
-    height: 15vh;
+    /*height: 15vh;*/
+    padding: 2rem 0 1rem 0
 }
 
 .main {
