@@ -1,0 +1,9 @@
+﻿@inherits CustomTextInputWithPrefix
+
+<div class="input-grid">
+    <span class="prefix-text">@Prefix</span>
+    <CustomInputText @bind-Value="Value"
+                     Id="@Id"
+                     AdditionalAttributes="AdditionalAttributes" />
+    <ValidationMessage For="@(() => Value)" class="validation-message" />
+</div>

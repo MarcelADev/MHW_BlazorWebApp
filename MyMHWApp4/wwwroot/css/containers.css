@@ -1,0 +1,83 @@
+﻿/* ## CONTAINERS ## */
+
+.container-main {
+    width: 100%;
+}
+
+.container-main-inner {
+    width: var(--standard-width);
+    max-width: var(--standard-max-width);
+}
+
+.container-top {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.container-center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.container-left {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.container-left-space-between {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.container-left-space-evenly {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-evenly;
+}
+
+.container-right-gap {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+    gap: var(--card-container-button-gap);
+}
+
+.header {
+    /*height: 15vh;*/
+    padding: 2rem 0 1rem 0
+}
+
+.main {
+    height: 85vh;
+    gap: 0.5rem;
+}
+
+.footer {
+    height: 5vh;
+}
+
+.container-h3,
+.container-h4 {
+    width: 100%;
+}
+
+.container-property {
+    margin-bottom: 10px;
+    width: 100%;
+    color: var(--primary-color);
+}
+
+.container-property-identity {
+    margin-bottom: 10px;
+    width: 100%;
+    color: var(--primary-color);
+}

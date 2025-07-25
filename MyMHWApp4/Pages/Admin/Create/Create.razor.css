@@ -40,11 +40,6 @@
         animation: slideUpFadeOut 0.4s ease-in forwards;
     }
 
-.h3__custom {
-    font-weight: 500;
-    font-size: 2rem;
-}
-
 .margin-top {
     margin-top: 1rem;
 }
@@ -52,8 +47,4 @@
 .multi-select-custom-style label {
     font-weight: 600;
     color: darkslateblue;
-}
-
-.form__field {
-    margin-top: 0;
 }

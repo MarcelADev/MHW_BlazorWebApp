@@ -8,23 +8,28 @@
 @inject GameExtensionProvider gameExtensionProvider
 @implements IDisposable
 
-<div class="form__container margin-top">
+<header class="container-left header">
+    <h2>Create Category</h2>
+</header>
+
+<div class="form__container">
     @if(!isLoading)
     {
         <EditForm EditContext="editContext" FormName="create" OnValidSubmit="Submit">
 
-            <h2>Create Category</h2>
+            @if (testFontSizes)
+            {
+                <br />
 
-            <br />
+                <h2>Test H2</h2>
+                <h3>Test H3</h3>
+                <h4>Test H4</h4>
 
-            <h2>Test H2</h2>
-            <h3>Test H3</h3>
-            <h4>Test H4</h4>
+                <label>Test Label</label>
+                <p>Test p</p>
 
-            <label>Test Label</label>
-            <p>Test p</p>
-
-            <br />
+                <br />
+            }
 
             <DataAnnotationsValidator />
 
@@ -34,14 +39,16 @@
                 <ValidationMessage For="@(() => FormModel!.Name)" />
             </div>
 
-            <SingleSelect Label="Choose general Game Extension"
-                          Placeholder="Select"
-                          T="GameExtension"
-                          Options="gameExtensions"
-                          OptionNameMapper="(GameExtension ge) => ge.Name"
-                          OptionValueMapper="(GameExtension ge) => ge.Id"
-                          @bind-value="FormModel.GeneralGameExtension"
-                          Disabled="!addArmorSet && !addInventoryEntries" />
+            <div class="form__field">
+                <SingleSelect Label="Choose general Game Extension"
+                              Placeholder="Select"
+                              T="GameExtension"
+                              Options="gameExtensions"
+                              OptionNameMapper="(GameExtension ge) => ge.Name"
+                              OptionValueMapper="(GameExtension ge) => ge.Id"
+                              @bind-value="FormModel.GeneralGameExtension"
+                              Disabled="!addArmorSet && !addInventoryEntries" />
+            </div>
 
             <div class="form__field">
                 <InputCheckbox id="create-armorset-checkbox"
@@ -107,6 +114,9 @@
                                 <ValidationMessage For="@(() => FormModel!.GreavesSuffix)" class="validation-message" />
                             </div>
                         </div>
+
+                        <CustomInputTextWithPrefix Prefix="Hallo" 
+                                                   />
                     }
                     else
                     {
@@ -152,6 +162,8 @@
 </div>
 
 @code {
+    private bool testFontSizes = false;
+
     private bool isLoading = true;
 
     private bool addArmorSet = false;

@@ -1,12 +1,21 @@
-﻿﻿.anchor {
-    position: relative;
-    width: 100%;
-}
-
-.select {
+﻿﻿.select {
     position: relative;
     width: 100%;
     --focus: #0F6CBD;
+    z-index: 1;
+}
+
+    .select:focus-within {
+        z-index: 999;
+    }
+
+    .select:hover {
+        cursor: pointer;
+    }
+
+.select__anchor {
+    position: relative;
+    width: 100%;
 }
 
 .select__trigger {
@@ -18,18 +27,19 @@
     min-height: var(--input-height);
 }
 
-.select:hover {
-    cursor: pointer;
-}
+    .select__trigger.disabled {
+        opacity: 0.5;
+        pointer-events: none;
+    }
 
-.select-content {
+.select__content {
     flex: 1;
     display: flex;
     gap: 0.5rem;
     flex-wrap: wrap;
 }
 
-.select_content-overlay {
+.select__content-overlay {
     position: absolute;
     padding: 0.5rem;
     bottom: 1px;
@@ -38,7 +48,7 @@
     flex-wrap: wrap;
 }
 
-.select-chip {
+.select__chip {
     border: none;
     border-radius: 100px;
     background-color: var(--focus);
@@ -48,17 +58,17 @@
     pointer-events: none;
 }
 
-    .select-chip span {
+    .select__chip span {
         display: flex;
         align-items: center;
         gap: 0.5rem;
     }
 
-.select-chip-clickable {
+.select__chip-clickable {
     pointer-events: all;
 }
 
-.select-dropdown {
+.select__dropdown {
     --hover: #C7C7C7;
     border: 1px solid var(--neutral);
     border-radius: var(--border-radius);
@@ -68,14 +78,14 @@
     right: 0;
     left: 0;
     width: 100%;
-    z-index: 10;
     transition-property: transform;
     transition-duration: 50ms;
     transform-origin: top;
-    transform: scaleY(0)
+    transform: scaleY(0);
+    z-index: 10;
 }
 
-.select:focus-within .select-dropdown {
+.select:focus-within .select__dropdown {
     transition-property: transform;
     transition-duration: 50ms;
     transform-origin: top;
@@ -104,37 +114,39 @@
     transform: scaleX(1)
 }
 
-.select-option {
+.select__option {
     display: flex;
     align-items: center;
     padding: 0.25rem 0.5rem;
 }
 
-    .select-option:hover {
+    .select__option:hover {
         cursor: pointer;
         background-color: var(--hover);
     }
 
-        .select-option:hover * {
+        .select__option:hover * {
             cursor: pointer;
         }
 
-    .select-option input {
+    .select__option input {
         width: initial;
     }
 
-    .select-option .ms-Icon {
+    .select__option .ms-Icon {
         color: var(--focus);
         font-weight: bold;
     }
 
-.select-option-label {
+.select__option-label {
     display: flex;
     gap: 0.5rem;
     align-items: center;
     width: 100%;
+    font-weight: var(--standard-font-weight__p);
+    font-size: var(--standard-font-size__p);
 }
 
-.select-option-label-hidden {
+.select__option-label-hidden {
     display: none;
 }

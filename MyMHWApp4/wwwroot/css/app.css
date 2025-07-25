@@ -151,9 +151,11 @@ code {
     --thin: 100;
     --standard-font-size: 1.3rem;
     /*new design architecture:*/
+    --standard-font-size__h1: 4rem;
     --standard-font-size__h2: 2.5rem;
     --standard-font-size__h3: 1.4rem;
     --standard-font-size__h4: 1.4rem;
+
     --standard-font-size__label: 0.9rem;
     --standard-font-size__p: 1rem;
     --standard-font-size__button: var(--standard-font-size__p);
@@ -163,165 +165,67 @@ code {
     --standard-font-weight__h2: var(--standard-font-weight__h1);
     --standard-font-weight__h3: 300;
     --standard-font-weight__h4: var(--standard-font-weight__h1);
+
+    --standard-font-weight__p: 400;
+    --standard-font-weight__label: 200;
+
+    --standard-padding__all: 5px;
 }
 
 /* ## GLOBAL STYLES ## */
+
+h1, h2, h3, h4 {
+    color: var(--primary-color);
+    margin: 0;
+}
+
 h1 {
     font-weight: var(--standard-font-weight__h1);
-    font-size: 4rem;
-    color: var(--primary-color);
+    font-size: var(--standard-font-size__h1);
 }
 
 h2 {
     font-weight: var(--standard-font-weight__h2);
     font-size: var(--standard-font-size__h2);
-    color: var(--primary-color);
 }
 
 h3 {
     font-weight: var(--standard-font-weight__h3);
     font-size: var(--standard-font-size__h3);
-    color: var(--primary-color);
 }
 
 h4 {
     font-weight: var(--standard-font-weight__h4);
     font-size: var(--standard-font-size__h4);
-    color: var(--primary-color);
 }
 
-label, p, button, a {
+p, button, a {
     font-size: var(--standard-font-size__p);
+    font-weight: var(--standard-font-weight__p);
     color: var(--primary-color);
     margin: 0;
 }
 
 label {
+    color: var(--primary-color);
+    margin: 0;
     font-size: var(--standard-font-size__label);
-    font-weight: 200;
+    font-weight: var(--standard-font-weight__label);
 }
 
+/* // Setting general styling rules and resetting input styling. They are styled within the scoped css of the custom inputs */
 input:not([type="checkbox"]) {
     width: 100%;
-    padding: var(--input-padding);
-    border: 1px solid var(--primary-color);
+    padding: var(--standard-padding__all);
+    outline: none;
+    border: none;
     font-size: var(--standard-font-size__p);
-}
-
-input[type="text"],
-input[type="password"],
-input[type="email"],
-textarea {
-    border: none; /* Remove default border */
-    border-bottom: 2px solid #ccc; /* Add light bottom border */
-    padding: 6px 0; /* Some vertical padding */
-    outline: none; /* Remove default outline */
-    transition: border-color 0.3s ease;
-    font-size: var(--standard-font-size__p);
-}
-
-    input[type="text"]:focus,
-    input[type="password"]:focus,
-    input[type="email"]:focus,
-    textarea:focus {
-        border-bottom-color: #2196F3; /* Change bottom border color on focus */
-        box-shadow: 0 2px 0 0 #2196F3; /* subtle blue shadow at bottom */
-    }
-
-input[type="checkbox"] {
-    
-}
-
-/* ## CONTAINERS ## */
-
-.container-main {
-    width: 100%;
-}
-
-.container-main-inner {
-    width: var(--standard-width);
-    max-width: var(--standard-max-width);
-}
-
-.container-top {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.container-center {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-}
-
-.container-left {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: flex-start;
-}
-
-.container-left-space-between {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.container-left-space-evenly {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-evenly;
-}
-
-.container-right-gap {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: flex-end;
-    gap: var(--card-container-button-gap);
-}
-
-.header {
-    /*height: 15vh;*/
-    padding: 2rem 0 1rem 0
-}
-
-.main {
-    height: 85vh;
-    gap: 0.5rem;
-}
-
-.footer {
-    height: 5vh;
-}
-
-.container-h3,
-.container-h4 {
-    width: 100%;
-}
-
-.container-property {
-    margin-bottom: 10px;
-    width: 100%;
-    color: var(--primary-color);
-}
-
-.container-property-identity {
-    margin-bottom: 10px;
-    width: 100%;
-    color: var(--primary-color);
 }
 
 /* ## GENERAL CLASSES ## */
 
 .button {
-    padding-inline: 20px;
-    padding-top: 8px;
-    padding-bottom: 8px;
+    padding: 8px 20px;
     background: var(--primary-color);
     border-radius: 8px;
     border: 0;
@@ -416,76 +320,4 @@ input[type="checkbox"] {
 
 .icon__color-blue {
     color: #5161b8;
-}
-
-/* ## FORMS ## */
-
-.form__container {
-    /*margin: 5%;*/
-    width: 100%;
-    --neutral: #d1d1d1;
-    --focus: #0F6CBD;
-    --border-radius: 4px;
-    --input-height: 2.5rem;
-    --box-shadow: rgba(0, 0, 0, 0.12) 0px 0px 2px 0px, rgba(0, 0, 0, 0.14) 0px 2px 4px 0px
-}
-
-.form__field {
-    margin: 1rem 0;
-    position: relative;
-}
-
-.form__field-checkbox {
-    margin: 1rem 0;
-    padding-left: 1rem;
-    position: relative;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: flex-start;
-    gap: 1rem;
-}
-
-.form__button {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-}
-
-.input-grid {
-    display: grid;
-    grid-template-columns: auto 1fr;
-    grid-template-rows: var(--input-height) auto;
-    gap: 0.25rem 0; /* row-gap and column-gap */
-    align-items: center;
-}
-
-.prefix-text {
-    grid-row: 1 / 2;
-    grid-column: 1 / 2;
-    font-weight: 600;
-    white-space: nowrap;
-    color: #555;
-    border: solid 1px rgb(209, 209, 209);
-    border-radius: var(--border-radius) 0 0 var(--border-radius);
-    border-right: 0;
-    padding: 0.5rem;
-    height: 100%;
-}
-
-.input-grid input.custom-input {
-    grid-row: 1 / 2;
-    grid-column: 2 / 3;
-    height: 100%;
-    border: solid 1px rgb(209, 209, 209);
-    border-radius: 0 var(--border-radius) var(--border-radius) 0;
-    border-left: 0;
-    width: 100%;
-}
-
-.validation-message {
-    grid-row: 2 / 3;
-    grid-column: 2 / 3;
-    font-size: 0.875rem;
-    /*color: red;*/
 }
