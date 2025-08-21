@@ -1,9 +1,11 @@
-﻿@page "/admin/create"
+﻿ @page "/admin/create"
+@using MHWApp.Library.DTO
 @using MHWApp.Library.Model
 @using MyMHWApp4.Pages.GeneralComponents.CustomInput
 @using MyMHWApp4.Pages.GeneralComponents.IconButtons
 @using MyMHWApp4.Pages.GeneralComponents.Select
 @using MyMHWApp4.Provider
+@using static MHWApp.Library.StaticVariables
 @inject IJSRuntime jsRuntime
 @inject GameExtensionProvider gameExtensionProvider
 @implements IDisposable
@@ -15,7 +17,10 @@
 <div class="form__container">
     @if(!isLoading)
     {
-        <EditForm EditContext="editContext" FormName="create" OnValidSubmit="Submit">
+        <EditForm EditContext="editContext" FormName="create" OnValidSubmit="Submit" OnInvalidSubmit="InvalidSubmit">
+
+            <ValidationSummary />
+            <DataAnnotationsValidator />
 
             @if (testFontSizes)
             {
@@ -31,8 +36,6 @@
                 <br />
             }
 
-            <DataAnnotationsValidator />
-
             <div class="form__field">
                 <label for="create-category-name">Name</label>
                 <CustomInputText id="create-category-name" @bind-Value="FormModel!.Name" />
@@ -46,21 +49,21 @@
                               Options="gameExtensions"
                               OptionNameMapper="(GameExtension ge) => ge.Name"
                               OptionValueMapper="(GameExtension ge) => ge.Id"
-                              @bind-value="FormModel.GeneralGameExtension"
-                              Disabled="!addArmorSet && !addInventoryEntries" />
+                              @bind-value="FormModel.GeneralGameExtension" />
             </div>
+            <ValidationMessage For="@(() => FormModel!.GeneralGameExtension)" />
 
             <div class="form__field">
                 <InputCheckbox id="create-armorset-checkbox"
-                               Value="addArmorSet"
+                               Value="FormModel.AddArmorSet"
                                ValueChanged="ToggleArmorSet"
-                               ValueExpression="() => addArmorSet" />
+                               ValueExpression="() => FormModel.AddArmorSet" />
                 <label for="create-armorset-checkbox">Add Armor Set</label>
             </div>
 
             @if (showArmorSet)
             {
-                <div id="animatedBox" class="box @(!addArmorSet ? "exit" : "")">
+                <div id="animatedBox" class="box @(!FormModel.AddArmorSet ? "exit" : "")">
 
                     @if (!FormModel.Name.Equals(string.Empty))
                     {
@@ -128,18 +131,19 @@
 
             <div class="form__field">
                 <InputCheckbox id="create-inventoryentries-checkbox"
-                               Value="addInventoryEntries"
+                               Value="FormModel.AddInventoryEntries"
                                ValueChanged="ToggleInventoryEntries"
-                               ValueExpression="() => addInventoryEntries" />
+                               ValueExpression="() => FormModel.AddInventoryEntries" />
                 <label for="create-inventoryentries-checkbox">Add Inventory Entries</label>
             </div>
 
             @if(showInventoryEntries)
             {
-                <div id="animatedBox2" class="box @(!addInventoryEntries ? "exit" : "")">
+                <div id="animatedBox2" class="box @(!FormModel.AddInventoryEntries ? "exit" : "")">
                     @if (!FormModel.Name.Equals(string.Empty))
                     {
-                        <InventoryEntryList GetName="() => FormModel.Name"
+                        <InventoryEntryList @ref="inventoryEntryList"
+                                            GetName="() => FormModel.Name"
                                             SetName="value => FormModel.Name = value"
                                             GetGeneralGameExtension="() => FormModel.GeneralGameExtension"
                                             SetGeneralGameExtension="value => FormModel.GeneralGameExtension = value" />
@@ -166,10 +170,7 @@
 
     private bool isLoading = true;
 
-    private bool addArmorSet = false;
     private bool showArmorSet = false;
-
-    private bool addInventoryEntries = false;
     private bool showInventoryEntries = false;
 
     private bool showAlternativeArmorPrefix = false;
@@ -183,6 +184,8 @@
     private List<GameExtension> gameExtensions = [];
 
     private DotNetObjectReference<Create>? _dotNetRef;
+
+    private InventoryEntryList? inventoryEntryList;
 
     protected override async Task OnInitializedAsync()
     {
@@ -211,7 +214,7 @@
         {
             showArmorSet = true;
         }
-        addArmorSet = value;
+        FormModel!.AddArmorSet = value;
     }
 
     private async Task ToggleInventoryEntries(bool value)
@@ -224,7 +227,7 @@
         {
             showInventoryEntries = true;
         }
-        addInventoryEntries = value;
+        FormModel!.AddInventoryEntries = value;
     }
 
     private async Task ToggleArmorPrefix(bool value)
@@ -265,7 +268,48 @@
 
     private async Task Submit()
     {
-        throw new NotImplementedException();
+        CreateDTO dTO = new()
+        {
+            Name = FormModel!.Name,
+        };
+
+        if (showInventoryEntries)
+        {
+            Dictionary<string, GameExtension> inventoryEntries = [];
+
+            foreach (InventoryEntryCardModel model in inventoryEntryList!.FormModel!.SelectedCommonInventoryEntries)
+            {
+                inventoryEntries.Add(model.ExtendedName == string.Empty ? model.Name : model.ExtendedName, model.GameExtension!);
+            }
+
+            foreach (InventoryEntryCardModel model in inventoryEntryList!.FormModel!.UncommonInventoryentries)
+            {
+                inventoryEntries.Add(model.ExtendedName == string.Empty ? model.Name : model.ExtendedName, model.GameExtension!);
+            }
+
+            dTO.InventoryEntries = inventoryEntries;
+        }
+
+        if(showArmorSet)
+        {
+            string armorPrefix = (FormModel!.UseAlternativeArmorPrefix ? FormModel.AlternativeArmorPrefix : FormModel.ArmorPrefix) + " ";
+
+            dTO.ArmorSet = new Dictionary<ARMOR_TYPE, string>
+            {
+                { ARMOR_TYPE.Head, armorPrefix + FormModel!.HelmetSuffix },
+                { ARMOR_TYPE.Chest, armorPrefix + FormModel!.MailSuffix },
+                { ARMOR_TYPE.Legs, armorPrefix + FormModel!.GreavesSuffix }
+            };
+        }
+    }
+
+    private void InvalidSubmit()
+    {
+        Console.WriteLine("%%%%%%%%%%%%%%%%%%%%");
+        Console.WriteLine();
+        Console.WriteLine("Invalid Submit");
+        Console.WriteLine();
+        Console.WriteLine("%%%%%%%%%%%%%%%%%%%%");
     }
 
     public void Dispose()

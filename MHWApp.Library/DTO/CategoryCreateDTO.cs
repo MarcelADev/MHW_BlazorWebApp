@@ -9,7 +9,7 @@ namespace MHWApp.Library.DTO
 {
     public class CategoryCreateDTO
     {
-        public required Category NewCategory { get; set; }
+        public required Model.Category NewCategory { get; set; }
         public required bool IsInventoryEntry { get; set; }
         public required bool IsWeapon { get; set; }
         public required bool IsArmor { get; set; }

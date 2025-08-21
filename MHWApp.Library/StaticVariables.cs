@@ -23,5 +23,12 @@ namespace MHWApp.Library
         public static int HTTP_STATUSCODE_CONFLICT = 409;
 
         #endregion
+
+        public enum ARMOR_TYPE
+        {
+            Head = 0,
+            Chest = 1,
+            Legs = 2
+        }
     }
 }
