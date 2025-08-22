@@ -3,7 +3,7 @@
 @using MHWApp.Library.Model
 @using MyMHWApp4.Pages.GeneralComponents.CustomInput
 @using MyMHWApp4.Pages.GeneralComponents.IconButtons
-@using MyMHWApp4.Pages.GeneralComponents.Select
+@using MyMHWApp4.Pages.GeneralComponents.Select.Component
 @using MyMHWApp4.Provider
 @using static MHWApp.Library.StaticVariables
 @inject IJSRuntime jsRuntime
@@ -43,7 +43,7 @@
             </div>
 
             <div class="form__field">
-                <SingleSelect Label="Choose general Game Extension"
+                <SingleSelectComponent Label="Choose general Game Extension"
                               Placeholder="Select"
                               T="GameExtension"
                               Options="gameExtensions"

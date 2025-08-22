@@ -6,7 +6,7 @@
 @using MyMHWApp4.Pages.GeneralComponents
 @using MyMHWApp4.Pages.GeneralComponents.IconButtons
 @using MyMHWApp4.Pages.GeneralComponents.Modals
-@using MyMHWApp4.Pages.GeneralComponents.Select
+@using MyMHWApp4.Pages.GeneralComponents.Select.Component
 @using MyMHWApp4.Provider
 @using static MHWApp.Library.StaticVariables
 @inject InventoryEntryProvider inventoryEntryProvider
@@ -59,7 +59,7 @@
 
 					@if(Model.UseNamePrefix)
 					{
-						<SingleSelect Label="Choose Category Prefix"
+						<SingleSelectComponent Label="Choose Category Prefix"
 									  Placeholder="Select"
 									  T="InventoryEntryCategory"
 									  Options="Model.SelectedInventoryCategories"
@@ -68,15 +68,14 @@
 									  @bind-Value="Model.SelectedNamePrefix"/>
 					}
 
-					<MultiSelect Label="Change Categories"
+					<MultiSelectComponent Label="Change Categories"
 								 Placeholder="Select"
 								 T="InventoryEntryCategory"
 								 Options="@allInventoryEntryCategories"
 								 OptionNameMapper="(InventoryEntryCategory iec) => iec.Category?.Name ?? string.Empty"
 								 OptionValueMapper="(InventoryEntryCategory iec) => iec.Id"
 								 ValueList="Model.SelectedInventoryCategories"
-								 ValueListChanged="HandleSelect">
-					</MultiSelect>
+								 ValueListChanged="HandleSelect" />
 				}
 			</div>
 

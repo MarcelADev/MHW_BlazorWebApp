@@ -1,15 +1,16 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.JSInterop;
+using System.Diagnostics.CodeAnalysis;
 
-namespace MyMHWApp4.Pages.GeneralComponents.Select
+namespace MyMHWApp4.Pages.GeneralComponents.Select.Input
 {
-    public abstract class BaseSelect<T> : ComponentBase, IAsyncDisposable
+    public abstract class SelectInputBase<T> : InputBase<T>, IAsyncDisposable
     {
-        public string Id = $"mhw-{Guid.NewGuid():N}";
+        public readonly string Id = $"mhw-{Guid.NewGuid():N}";
 
         protected string os = "";
         protected IJSObjectReference? module;
-        protected readonly Dictionary<string, object> selectAttributes = [];
         protected readonly Dictionary<string, object> labelAttributes = [];
 
         [Inject]
@@ -50,6 +51,32 @@ namespace MyMHWApp4.Pages.GeneralComponents.Select
         /// </summary>
         [Parameter]
         public bool Disabled { get; set; }
+
+        protected override bool TryParseValueFromString(string? value, [MaybeNullWhen(false)] out T result, [NotNullWhen(false)] out string? validationErrorMessage)
+        {
+            validationErrorMessage = null;
+
+            if (value is null)
+            {
+                result = default!;
+                return true;
+            }
+
+            // Find the matching option based on the mapped value
+            foreach (var option in Options)
+            {
+                var optionValue = OptionValueMapper(option)?.ToString();
+                if (optionValue == value)
+                {
+                    result = option;
+                    return true;
+                }
+            }
+
+            result = default!;
+            validationErrorMessage = $"The selected value '{value}' is not valid.";
+            return false;
+        }
 
         protected override async Task OnInitializedAsync()
         {

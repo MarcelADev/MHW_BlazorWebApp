@@ -44,7 +44,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Update="Pages\GeneralComponents\Select\MultiSelect.razor">
+    <Content Update="Pages\GeneralComponents\Select\Component\MultiSelectComponent.razor">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
     </Content>
   </ItemGroup>

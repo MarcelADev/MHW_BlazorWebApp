@@ -3,16 +3,14 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.Options;
 using Microsoft.JSInterop;
 
-namespace MyMHWApp4.Pages.GeneralComponents.Select
+namespace MyMHWApp4.Pages.GeneralComponents.Select.Input
 {
-    public partial class SingleSelect<T> : BaseSelect<T>
+    /// <summary>
+    /// SingleSelectInput is specifically designed for use within a Editform. It uses the built in features of InputBase<T> to handle the value and validation.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    public partial class SingleSelectInput<T> : SelectInputBase<T>
     {
-        [Parameter]
-        public T? Value { get; set; }
-
-        [Parameter]
-        public EventCallback<T?> ValueChanged { get; set; }
-
         private Type? _optionType;
 
         protected override void OnParametersSet()
@@ -35,23 +33,22 @@ namespace MyMHWApp4.Pages.GeneralComponents.Select
 
         private void HandleNativeChangeSingle(int id)
         {
-            Value = base.Options.Find(o => (int)OptionValueMapper(o) == id);
-            ValueChanged.InvokeAsync(Value);
+            var selected = Options.Find(o => (int)OptionValueMapper(o) == id);
+            if (!Equals(Value, selected))
+                CurrentValue = selected!;
         }
 
         private void HandleNativeChangeSingle(string id)
         {
-            Value = base.Options.Find(o => (string)OptionValueMapper(o) == id);
-            ValueChanged.InvokeAsync(Value);
+            var selected = Options.Find(o => (string)OptionValueMapper(o) == id);
+            if (!Equals(Value, selected))
+                CurrentValue = selected!;
         }
 
         private void HandleCustomChange(T option)
         {
             if (!Equals(Value, option))
-            {
-                Value = option;
-                ValueChanged.InvokeAsync(Value);
-            }
+                CurrentValue = option;
         }
     }
 }

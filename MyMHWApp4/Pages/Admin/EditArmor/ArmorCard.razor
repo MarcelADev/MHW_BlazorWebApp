@@ -6,7 +6,7 @@
 @using MyMHWApp4.Pages.GeneralComponents
 @using MyMHWApp4.Pages.GeneralComponents.IconButtons
 @using MyMHWApp4.Pages.GeneralComponents.Modals
-@using MyMHWApp4.Pages.GeneralComponents.Select
+@using MyMHWApp4.Pages.GeneralComponents.Select.Component
 @using MyMHWApp4.Provider
 @using static MHWApp.Library.StaticVariables
 @inject ArmorProvider armorProvider
@@ -53,7 +53,7 @@
 						<InputText id="armorCard-name" @bind-Value="Model!.NewName" />
 					</div>
 
-					<SingleSelect Label="Change Categories"
+					<SingleSelectComponent Label="Change Categories"
 								  Placeholder="Select"
 								  T="ArmorCategory"
 								  Options="@armorCategories"

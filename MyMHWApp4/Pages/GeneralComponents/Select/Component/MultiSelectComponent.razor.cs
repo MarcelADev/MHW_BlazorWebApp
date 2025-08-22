@@ -6,9 +6,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MyMHWApp4.Pages.GeneralComponents.Select
+namespace MyMHWApp4.Pages.GeneralComponents.Select.Component
 {
-    public partial class MultiSelect<T> : BaseSelect<T>
+    public partial class MultiSelectComponent<T> : SelectComponentBase<T>
     {
         [Parameter]
         public List<T> ValueList { get; set; } = [];

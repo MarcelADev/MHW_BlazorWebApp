@@ -150,3 +150,15 @@
 .select__option-label-hidden {
     display: none;
 }
+
+/* Show red border when invalid */
+.select.invalid .select__trigger {
+    border-bottom: 2px solid red;
+}
+
+/* Optional: Green border when valid */
+.select.valid .select__trigger {
+    border-bottom: 2px solid green;
+}
+
+/*maybe style validation message for selects if needed*/

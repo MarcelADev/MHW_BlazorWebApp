@@ -150,6 +150,7 @@ code {
     /*  %% FONT %% */
     --thin: 100;
     --standard-font-size: 1.3rem;
+
     /*new design architecture:*/
     --standard-font-size__h1: 4rem;
     --standard-font-size__h2: 2.5rem;

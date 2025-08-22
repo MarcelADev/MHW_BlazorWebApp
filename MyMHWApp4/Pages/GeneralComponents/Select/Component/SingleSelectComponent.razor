@@ -1,8 +1,8 @@
 ﻿@using MHWApp.Library.Model
 @inject IJSRuntime JSRuntime
-@inject ILogger<SingleSelect<T>> Logger
+@inject ILogger<SingleSelectComponent<T>> Logger
 @typeparam T
-@inherits BaseSelect<T>
+@inherits SelectComponentBase<T>
 @implements IAsyncDisposable
 
 @if (os == "Android" || os == "iOS")

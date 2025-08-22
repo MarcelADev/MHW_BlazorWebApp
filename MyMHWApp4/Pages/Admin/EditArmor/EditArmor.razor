@@ -2,7 +2,7 @@
 @using MHWApp.Library.Exceptions
 @using MHWApp.Library.Model
 @using MyMHWApp4.HubConnections
-@using MyMHWApp4.Pages.GeneralComponents.Select
+@using MyMHWApp4.Pages.GeneralComponents.Select.Component
 @using MyMHWApp4.Provider
 @using static MHWApp.Library.StaticVariables
 @inject ArmorProvider armorProvider
@@ -29,7 +29,7 @@
                     <InputText name="armor-name" @bind-Value="Model!.Name" />
                 </div>
 
-                <SingleSelect Label="Select Category"
+                <SingleSelectComponent Label="Select Category"
                               Placeholder="Select"
                               T="ArmorCategory"
                               Options="@armorCategories"
