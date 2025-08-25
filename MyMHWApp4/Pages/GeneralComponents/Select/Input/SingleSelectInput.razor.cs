@@ -35,20 +35,48 @@ namespace MyMHWApp4.Pages.GeneralComponents.Select.Input
         {
             var selected = Options.Find(o => (int)OptionValueMapper(o) == id);
             if (!Equals(Value, selected))
+            {
                 CurrentValue = selected!;
+
+                // Explicitly notify the EditContext that the field changed
+                EditContext?.NotifyFieldChanged(FieldIdentifier);
+            }
         }
 
         private void HandleNativeChangeSingle(string id)
         {
             var selected = Options.Find(o => (string)OptionValueMapper(o) == id);
             if (!Equals(Value, selected))
+            {
                 CurrentValue = selected!;
+
+                // Explicitly notify the EditContext that the field changed
+                EditContext?.NotifyFieldChanged(FieldIdentifier);
+            }
         }
 
         private void HandleCustomChange(T option)
         {
             if (!Equals(Value, option))
+            {
                 CurrentValue = option;
+
+                // Explicitly notify the EditContext that the field changed
+                EditContext?.NotifyFieldChanged(FieldIdentifier);
+            }
+        }
+
+        private string GetCSSClassesForSelect()
+        {
+            string cssClasses = "select";
+
+            if (CssClass.Contains("input-validation-error"))
+                cssClasses += " invalid";
+
+            else if (CssClass.Contains("valid"))
+                cssClasses += " valid";
+
+            return cssClasses;
         }
     }
 }

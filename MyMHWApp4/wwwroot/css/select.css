@@ -160,5 +160,3 @@
 .select.valid .select__trigger {
     border-bottom: 2px solid green;
 }
-
-/*maybe style validation message for selects if needed*/

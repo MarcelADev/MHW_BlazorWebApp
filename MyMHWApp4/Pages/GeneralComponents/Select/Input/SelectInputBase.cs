@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.JSInterop;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq.Expressions;
 
 namespace MyMHWApp4.Pages.GeneralComponents.Select.Input
 {
@@ -12,6 +13,8 @@ namespace MyMHWApp4.Pages.GeneralComponents.Select.Input
         protected string os = "";
         protected IJSObjectReference? module;
         protected readonly Dictionary<string, object> labelAttributes = [];
+
+        protected bool hasValidationError => EditContext?.GetValidationMessages(FieldIdentifier).Any() == true;
 
         [Inject]
         protected IJSRuntime JSRuntime { get; set; } = default!;
@@ -78,6 +81,14 @@ namespace MyMHWApp4.Pages.GeneralComponents.Select.Input
             return false;
         }
 
+        protected override string? FormatValueAsString(T? value)
+        {
+            if (value is null)
+                return null;
+
+            return OptionValueMapper(value)?.ToString();
+        }
+
         protected override async Task OnInitializedAsync()
         {
             os = await JSRuntime.InvokeAsync<string>("getOperatingSystem", []);
@@ -90,6 +101,11 @@ namespace MyMHWApp4.Pages.GeneralComponents.Select.Input
 
             if (!Disabled)
                 labelAttributes["for"] = $"mhwapp-single-select-{Id}";
+
+            if (ValueExpression is not null)
+            {
+                FieldIdentifier = FieldIdentifier.Create(ValueExpression);
+            }
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)

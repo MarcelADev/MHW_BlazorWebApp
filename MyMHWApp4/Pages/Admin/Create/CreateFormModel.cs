@@ -1,15 +1,17 @@
 ﻿using MHWApp.Library.Model;
+using Microsoft.Extensions.Options;
 using MyMHWApp4.Utils;
 using System.ComponentModel.DataAnnotations;
 
 namespace MyMHWApp4.Pages.Admin.Create
 {
-    public class CreateFormModel
+    public class CreateFormModel : IValidatableObject
     {
         [Required(ErrorMessage = "Name must not be empty")]
         public string Name { get; set; } = string.Empty;
 
-        public bool AddArmorSet { get; set; } = false;
+        public bool AddArmorSet { get; 
+            set; } = false;
         public bool AddInventoryEntries { get; set; } = false;
         public bool RequiresGameExtension => AddArmorSet || AddInventoryEntries;
 
@@ -29,9 +31,15 @@ namespace MyMHWApp4.Pages.Admin.Create
         [RequiredIf("AddArmorSet", true, ErrorMessage = "Greaves Suffix must not be empty")]
         public string GreavesSuffix { get; set; } = "Greaves";
 
-        [RequiredIf("RequiresGameExtension", true, ErrorMessage = "Game extension is needed for armorset and/or inventory entries")]
+        //[RequiredIf("RequiresGameExtension", true, ErrorMessage = "Game extension is needed for armor set and/or inventory entries")]
         public GameExtension? GeneralGameExtension { get; set; }
 
         public bool ShowValidationMessages { get; set; } = true;
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            if ((AddArmorSet || AddInventoryEntries) && GeneralGameExtension is null)
+                yield return new ValidationResult("Game extension is needed for armor set and/or inventory entries", [nameof(GeneralGameExtension)]);
+        }
     }
 }

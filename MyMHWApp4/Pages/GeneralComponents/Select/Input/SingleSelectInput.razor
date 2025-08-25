@@ -37,7 +37,7 @@ else
         }
 
         <div id="mhwapp-single-select-@Id"
-             class="select @CssClass"
+             class="@($"select {(hasValidationError ? "invalid" : "valid")}")"
              aria-labelledby="@Id-label"
              @attributes="AdditionalAttributes">
 
@@ -83,5 +83,11 @@ else
         </div>
 
         <div class="select__content-overlay"></div>
+
+        <input type="text"
+               hidden
+               class="@CssClass"
+               @bind="CurrentValueAsString"
+               @attributes="AdditionalAttributes" />
     </div>
 }

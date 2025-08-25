@@ -4,6 +4,7 @@
 @using MyMHWApp4.Pages.GeneralComponents.CustomInput
 @using MyMHWApp4.Pages.GeneralComponents.IconButtons
 @using MyMHWApp4.Pages.GeneralComponents.Select.Component
+@using MyMHWApp4.Pages.GeneralComponents.Select.Input
 @using MyMHWApp4.Provider
 @using static MHWApp.Library.StaticVariables
 @inject IJSRuntime jsRuntime
@@ -43,15 +44,18 @@
             </div>
 
             <div class="form__field">
-                <SingleSelectComponent Label="Choose general Game Extension"
-                              Placeholder="Select"
-                              T="GameExtension"
-                              Options="gameExtensions"
-                              OptionNameMapper="(GameExtension ge) => ge.Name"
-                              OptionValueMapper="(GameExtension ge) => ge.Id"
-                              @bind-value="FormModel.GeneralGameExtension" />
+                <SingleSelectInput Label="Choose general Game Extension"
+                                   Placeholder="Select"
+                                   T="GameExtension"
+                                   Options="gameExtensions"
+                                   OptionNameMapper="(GameExtension ge) => ge.Name"
+                                   OptionValueMapper="(GameExtension ge) => ge.Id"
+                                   Value="FormModel.GeneralGameExtension"
+                                   ValueExpression="(() => FormModel.GeneralGameExtension)" />
+                <ValidationMessage For="@(() => FormModel!.GeneralGameExtension)" />
             </div>
-            <ValidationMessage For="@(() => FormModel!.GeneralGameExtension)" />
+
+            <p>Selected GameExtension: @FormModel.GeneralGameExtension?.Name ?? "none"</p>
 
             <div class="form__field">
                 <InputCheckbox id="create-armorset-checkbox"
@@ -187,16 +191,32 @@
 
     private InventoryEntryList? inventoryEntryList;
 
+    private ValidationMessageStore? _messageStore;
+
     protected override async Task OnInitializedAsync()
     {
         gameExtensions = await gameExtensionProvider.GetGameExtensionsAsync();
 
         FormModel ??= new CreateFormModel();
         editContext = new(FormModel);
+        editContext.OnFieldChanged += OnFieldChanged;
 
         _dotNetRef = DotNetObjectReference.Create(this);
 
+        _messageStore = new ValidationMessageStore(editContext);
+
         isLoading = false;
+    }
+
+    private void OnFieldChanged(object? sender, FieldChangedEventArgs e)
+    {
+        // if (editContext is null || FormModel is null)
+        //     return;
+
+        // if (e.FieldIdentifier.FieldName is nameof(FormModel.AddArmorSet) or nameof(FormModel.AddInventoryEntries))
+        // {
+        //     Utils.ManualModelValidator.ValidateModel(editContext, FormModel, _messageStore!);
+        // }
     }
 
     private async Task StartExitAnimation(string elementId, string sectionName)
@@ -215,6 +235,9 @@
             showArmorSet = true;
         }
         FormModel!.AddArmorSet = value;
+
+        // Run validation after updating model
+        Utils.ManualModelValidator.ValidateModel(editContext!, FormModel!, _messageStore!);
     }
 
     private async Task ToggleInventoryEntries(bool value)
@@ -315,5 +338,8 @@
     public void Dispose()
     {
         _dotNetRef?.Dispose();
+        
+        if (editContext is not null)
+            editContext.OnFieldChanged -= OnFieldChanged;
     }
 }
