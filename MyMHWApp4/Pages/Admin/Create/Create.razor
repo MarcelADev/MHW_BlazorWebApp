@@ -21,7 +21,6 @@
         <EditForm EditContext="editContext" FormName="create" OnValidSubmit="Submit" OnInvalidSubmit="InvalidSubmit">
 
             <ValidationSummary />
-            <DataAnnotationsValidator />
 
             @if (testFontSizes)
             {
@@ -121,9 +120,6 @@
                                 <ValidationMessage For="@(() => FormModel!.GreavesSuffix)" class="validation-message" />
                             </div>
                         </div>
-
-                        <CustomInputTextWithPrefix Prefix="Hallo" 
-                                                   />
                     }
                     else
                     {
@@ -199,7 +195,7 @@
 
         FormModel ??= new CreateFormModel();
         editContext = new(FormModel);
-        editContext.OnFieldChanged += OnFieldChanged;
+        editContext.OnFieldChanged += HandleFieldChanged;
 
         _dotNetRef = DotNetObjectReference.Create(this);
 
@@ -208,15 +204,16 @@
         isLoading = false;
     }
 
-    private void OnFieldChanged(object? sender, FieldChangedEventArgs e)
+    private void HandleFieldChanged(object? sender, FieldChangedEventArgs e)
     {
-        // if (editContext is null || FormModel is null)
-        //     return;
+        if (editContext is null || FormModel is null)
+             return;
 
-        // if (e.FieldIdentifier.FieldName is nameof(FormModel.AddArmorSet) or nameof(FormModel.AddInventoryEntries))
-        // {
-        //     Utils.ManualModelValidator.ValidateModel(editContext, FormModel, _messageStore!);
-        // }
+        // Trigger validation when name textbox got a change
+        if (e.FieldIdentifier.FieldName is nameof(FormModel.Name))
+        {
+            Utils.ManualModelValidator.ValidateModel(editContext, FormModel, _messageStore!);
+        }
     }
 
     private async Task StartExitAnimation(string elementId, string sectionName)
@@ -237,7 +234,7 @@
         FormModel!.AddArmorSet = value;
 
         // Run validation after updating model
-        Utils.ManualModelValidator.ValidateModel(editContext!, FormModel!, _messageStore!);
+        Utils.ManualModelValidator.ValidateModel(editContext!, FormModel!, _messageStore!, onlyModified: true);
     }
 
     private async Task ToggleInventoryEntries(bool value)
@@ -251,6 +248,9 @@
             showInventoryEntries = true;
         }
         FormModel!.AddInventoryEntries = value;
+
+        // Run validation after updating model
+        Utils.ManualModelValidator.ValidateModel(editContext!, FormModel!, _messageStore!, onlyModified: true);
     }
 
     private async Task ToggleArmorPrefix(bool value)
@@ -291,6 +291,17 @@
 
     private async Task Submit()
     {
+        // Run validation after updating model
+        Utils.ManualModelValidator.ValidateModel(editContext!, FormModel!, _messageStore!, onlyModified: false);
+
+        bool hasValidationErrors = editContext!.GetValidationMessages().Any();
+
+        if (hasValidationErrors)
+        {
+            Console.WriteLine("Not a valid Submit bruh");
+            return;
+		}
+
         CreateDTO dTO = new()
         {
             Name = FormModel!.Name,
@@ -340,6 +351,6 @@
         _dotNetRef?.Dispose();
         
         if (editContext is not null)
-            editContext.OnFieldChanged -= OnFieldChanged;
+            editContext.OnFieldChanged -= HandleFieldChanged;
     }
 }

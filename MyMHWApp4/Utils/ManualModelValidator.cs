@@ -5,7 +5,7 @@ namespace MyMHWApp4.Utils
 {
     public class ManualModelValidator
     {
-        public static void ValidateModel(EditContext editContext, object model, ValidationMessageStore messageStore)
+        public static void ValidateModel(EditContext editContext, object model, ValidationMessageStore messageStore, bool onlyModified = true)
         {
             messageStore.Clear();
 
@@ -30,7 +30,10 @@ namespace MyMHWApp4.Utils
             {
                 foreach (var memberName in validationResult.MemberNames)
                 {
-                    messageStore.Add(editContext.Field(memberName), validationResult.ErrorMessage ?? "");
+                    var field = editContext.Field(memberName);
+
+                    if (!onlyModified || editContext.IsModified(field))
+                        messageStore.Add(editContext.Field(memberName), validationResult.ErrorMessage ?? "");
                 }
             }
 

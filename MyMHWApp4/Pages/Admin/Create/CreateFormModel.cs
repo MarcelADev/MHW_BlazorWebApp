@@ -10,8 +10,7 @@ namespace MyMHWApp4.Pages.Admin.Create
         [Required(ErrorMessage = "Name must not be empty")]
         public string Name { get; set; } = string.Empty;
 
-        public bool AddArmorSet { get; 
-            set; } = false;
+        public bool AddArmorSet { get; set; } = false;
         public bool AddInventoryEntries { get; set; } = false;
         public bool RequiresGameExtension => AddArmorSet || AddInventoryEntries;
 
@@ -38,7 +37,8 @@ namespace MyMHWApp4.Pages.Admin.Create
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
-            if ((AddArmorSet || AddInventoryEntries) && GeneralGameExtension is null)
+            if ((AddArmorSet || AddInventoryEntries) && 
+                GeneralGameExtension is null)
                 yield return new ValidationResult("Game extension is needed for armor set and/or inventory entries", [nameof(GeneralGameExtension)]);
         }
     }

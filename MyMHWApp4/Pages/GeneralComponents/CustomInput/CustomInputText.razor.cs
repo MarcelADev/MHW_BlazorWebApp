@@ -21,7 +21,8 @@
             bool isModified = EditContext.IsModified(FieldIdentifier);
 
             // Apply styling only if field has been interacted with
-            return isModified ? (hasError ? "invalid" : "valid") : string.Empty;
+            //return isModified ? (hasError ? "invalid" : "valid") : string.Empty;
+            return hasError ? "invalid" : string.Empty;
         }
 
         protected override void OnInitialized()
