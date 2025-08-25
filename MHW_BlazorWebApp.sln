@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.12.35506.116
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MHWApp.Client", "MyMHWApp4\MHWApp.Client.csproj", "{DB5B779B-0984-4234-8DF8-D886FE960133}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MHWApp.Api", "MHWApp.Api\MHWApp.Api.csproj", "{F2CE7E64-68E5-4F32-A206-F27E946C845F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MHWApp.Library", "MHWApp.Library\MHWApp.Library.csproj", "{6D386AAB-284B-475B-867A-8AD5E7830739}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebhookCICD.Api", "WebhookCICD.Api\WebhookCICD.Api.csproj", "{BFC2256D-5D99-4F1F-9B3F-6FF6620AE65B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MHWApp.Client", "MHWApp.Client\MHWApp.Client.csproj", "{8CE387EC-6562-86CA-C09E-BF9CFD7BD0E1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,10 +17,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{DB5B779B-0984-4234-8DF8-D886FE960133}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DB5B779B-0984-4234-8DF8-D886FE960133}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DB5B779B-0984-4234-8DF8-D886FE960133}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DB5B779B-0984-4234-8DF8-D886FE960133}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F2CE7E64-68E5-4F32-A206-F27E946C845F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F2CE7E64-68E5-4F32-A206-F27E946C845F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F2CE7E64-68E5-4F32-A206-F27E946C845F}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -33,6 +29,10 @@ Global
 		{BFC2256D-5D99-4F1F-9B3F-6FF6620AE65B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BFC2256D-5D99-4F1F-9B3F-6FF6620AE65B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BFC2256D-5D99-4F1F-9B3F-6FF6620AE65B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8CE387EC-6562-86CA-C09E-BF9CFD7BD0E1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8CE387EC-6562-86CA-C09E-BF9CFD7BD0E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8CE387EC-6562-86CA-C09E-BF9CFD7BD0E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8CE387EC-6562-86CA-C09E-BF9CFD7BD0E1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
