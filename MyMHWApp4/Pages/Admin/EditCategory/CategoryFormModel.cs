@@ -1,7 +1,7 @@
 ﻿using MHWApp.Library.Model;
 using System.ComponentModel.DataAnnotations;
 
-namespace MyMHWApp4.Pages.Admin.EditCategory
+namespace MHWApp.Client.Pages.Admin.EditCategory
 {
     public class CategoryFormModel : IValidatableObject
     {

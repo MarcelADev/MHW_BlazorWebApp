@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Xml.Linq;
 
-namespace MyMHWApp4.Pages.Admin.EditGameExtension
+namespace MHWApp.Client.Pages.Admin.EditGameExtension
 {
     public record GameExtensionCardFormModel : IValidatableObject
     {

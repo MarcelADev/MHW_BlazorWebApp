@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.SignalR.Client;
 
-namespace MyMHWApp4.HubConnections
+namespace MHWApp.Client.HubConnections
 {
     public class ChatHubConnection : IChatHubConnection
     {

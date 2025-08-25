@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 
-namespace MyMHWApp4.Pages.GeneralComponents.Select.Component
+namespace MHWApp.Client.Pages.GeneralComponents.Select.Component
 {
     public abstract class SelectComponentBase<T> : ComponentBase, IAsyncDisposable
     {

@@ -1,11 +1,11 @@
 ﻿using MHWApp.Library.Exceptions;
 using MHWApp.Library.Model;
 using Microsoft.Extensions.Logging;
-using MyMHWApp4.Identity;
+using MHWApp.Client.Identity;
 using System.Net;
 using System.Net.Http.Json;
 
-namespace MyMHWApp4.Provider
+namespace MHWApp.Client.Provider
 {
     public class ParticipatorProvider(IHttpClientFactory httpClientFactory, ILogger<ParticipatorProvider> logger)
     {

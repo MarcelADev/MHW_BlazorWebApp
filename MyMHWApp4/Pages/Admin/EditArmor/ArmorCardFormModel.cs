@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Xml.Linq;
 
-namespace MyMHWApp4.Pages.Admin.EditArmor
+namespace MHWApp.Client.Pages.Admin.EditArmor
 {
     public record ArmorCardFormModel : IValidatableObject
     {

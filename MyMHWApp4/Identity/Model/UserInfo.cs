@@ -1,4 +1,4 @@
-﻿namespace MyMHWApp4.Identity.Model
+﻿namespace MHWApp.Client.Identity.Model
 {
     /// <summary>
     /// User info from identity endpoint to establish claims.

@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.Options;
 using Microsoft.JSInterop;
 
-namespace MyMHWApp4.Pages.GeneralComponents.Select.Component
+namespace MHWApp.Client.Pages.GeneralComponents.Select.Component
 {
     public partial class SingleSelectComponent<T> : SelectComponentBase<T>
     {

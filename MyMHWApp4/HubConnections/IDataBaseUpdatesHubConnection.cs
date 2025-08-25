@@ -1,7 +1,7 @@
 ﻿using MHWApp.Library.Model;
 using Microsoft.AspNetCore.SignalR.Client;
 
-namespace MyMHWApp4.HubConnections
+namespace MHWApp.Client.HubConnections
 {
     public interface IDataBaseUpdatesHubConnection
     {

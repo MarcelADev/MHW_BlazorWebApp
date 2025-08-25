@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.SignalR.Client;
 
-namespace MyMHWApp4.Services
+namespace MHWApp.Client.Services
 {
     public class SessionUpdateService
     {

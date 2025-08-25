@@ -1,7 +1,7 @@
 ﻿using MHWApp.Library.Model;
 using System.ComponentModel.DataAnnotations;
 
-namespace MyMHWApp4.Pages.Admin.Create
+namespace MHWApp.Client.Pages.Admin.Create
 {
     public class InventoryEntryCardFormModel : IValidatableObject
     {

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace MyMHWApp4.Utils
+namespace MHWApp.Client.Utils
 {
     public class RequiredIfAttribute : ValidationAttribute
     {

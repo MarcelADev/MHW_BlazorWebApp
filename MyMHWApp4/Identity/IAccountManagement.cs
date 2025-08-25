@@ -1,6 +1,6 @@
-﻿using MyMHWApp4.Identity.Model;
+﻿using MHWApp.Client.Identity.Model;
 
-namespace MyMHWApp4.Identity
+namespace MHWApp.Client.Identity
 {
     /// <summary>
     /// Account management services.

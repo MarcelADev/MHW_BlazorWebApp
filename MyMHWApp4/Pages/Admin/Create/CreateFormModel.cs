@@ -1,9 +1,9 @@
 ﻿using MHWApp.Library.Model;
 using Microsoft.Extensions.Options;
-using MyMHWApp4.Utils;
+using MHWApp.Client.Utils;
 using System.ComponentModel.DataAnnotations;
 
-namespace MyMHWApp4.Pages.Admin.Create
+namespace MHWApp.Client.Pages.Admin.Create
 {
     public class CreateFormModel : IValidatableObject
     {

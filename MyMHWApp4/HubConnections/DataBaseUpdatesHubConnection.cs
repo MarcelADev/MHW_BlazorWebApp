@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.EntityFrameworkCore.Storage;
 
-namespace MyMHWApp4.HubConnections
+namespace MHWApp.Client.HubConnections
 {
     public class DataBaseUpdatesHubConnection : IDataBaseUpdatesHubConnection
     {

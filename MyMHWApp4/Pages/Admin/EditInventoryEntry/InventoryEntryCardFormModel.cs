@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Xml.Linq;
 
-namespace MyMHWApp4.Pages.Admin.EditCategory
+namespace MHWApp.Client.Pages.Admin.EditCategory
 {
     public record InventoryEntryCardFormModel : IValidatableObject
     {

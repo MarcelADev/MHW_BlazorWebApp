@@ -1,4 +1,4 @@
-﻿namespace MyMHWApp4.Utils
+﻿namespace MHWApp.Client.Utils
 {
     public static class DateUtils
     {

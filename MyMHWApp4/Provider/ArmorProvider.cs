@@ -5,7 +5,7 @@ using System.Net;
 using MHWApp.Library.Exceptions;
 using MHWApp.Library.DTO;
 
-namespace MyMHWApp4.Provider
+namespace MHWApp.Client.Provider
 {
     public class ArmorProvider(IHttpClientFactory httpClientFactory, ILogger<ArmorProvider> logger)
     {

@@ -1,6 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 
-namespace MyMHWApp4.Extensions
+namespace MHWApp.Client.Extensions
 {
     public static class StringExtension
     {

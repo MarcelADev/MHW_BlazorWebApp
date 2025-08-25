@@ -1,4 +1,4 @@
-﻿namespace MyMHWApp4.Identity.Model
+﻿namespace MHWApp.Client.Identity.Model
 {
     /// <summary>
     /// Response for login and registration.

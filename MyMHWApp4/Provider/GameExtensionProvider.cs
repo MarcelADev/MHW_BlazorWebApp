@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging;
 using static MHWApp.Library.StaticVariables;
 using MHWApp.Library.Exceptions;
 
-namespace MyMHWApp4.Provider
+namespace MHWApp.Client.Provider
 {
     public class GameExtensionProvider(IHttpClientFactory httpClientFactory, ILogger<GameExtensionProvider> logger)
     {

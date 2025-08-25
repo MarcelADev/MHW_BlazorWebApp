@@ -2,11 +2,11 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.AspNetCore.SignalR.Client;
-using MyMHWApp4;
-using MyMHWApp4.HubConnections;
-using MyMHWApp4.Identity;
-using MyMHWApp4.Provider;
-using MyMHWApp4.Services;
+using MHWApp.Client;
+using MHWApp.Client.HubConnections;
+using MHWApp.Client.Identity;
+using MHWApp.Client.Provider;
+using MHWApp.Client.Services;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 

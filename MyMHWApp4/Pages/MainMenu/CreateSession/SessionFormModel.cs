@@ -1,8 +1,8 @@
 ﻿using MHWApp.Library.Model;
-using MyMHWApp4.Utils;
+using MHWApp.Client.Utils;
 using System.ComponentModel.DataAnnotations;
 
-namespace MyMHWApp4.Pages.MainMenu.CreateSession
+namespace MHWApp.Client.Pages.MainMenu.CreateSession
 {
     public record SessionFormModel : IValidatableObject
     {

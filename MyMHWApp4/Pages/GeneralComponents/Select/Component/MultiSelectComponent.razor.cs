@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MyMHWApp4.Pages.GeneralComponents.Select.Component
+namespace MHWApp.Client.Pages.GeneralComponents.Select.Component
 {
     public partial class MultiSelectComponent<T> : SelectComponentBase<T>
     {

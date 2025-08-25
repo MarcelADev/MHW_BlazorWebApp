@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.WebAssembly.Http;
 
-namespace MyMHWApp4.Identity
+namespace MHWApp.Client.Identity
 {
     /// <summary>
     /// Handler to log out the user and redirect to the start page if a 401 Unauthorized response is received.

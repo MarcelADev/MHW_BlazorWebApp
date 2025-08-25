@@ -4,7 +4,7 @@ using Microsoft.JSInterop;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
 
-namespace MyMHWApp4.Pages.GeneralComponents.Select.Input
+namespace MHWApp.Client.Pages.GeneralComponents.Select.Input
 {
     public abstract class SelectInputBase<T> : InputBase<T>, IAsyncDisposable
     {

@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components.WebAssembly.Http;
 
-namespace MyMHWApp4.Identity
+namespace MHWApp.Client.Identity
 {
     /// <summary>
     /// Handler to ensure cookie credentials are automatically sent over with each request.

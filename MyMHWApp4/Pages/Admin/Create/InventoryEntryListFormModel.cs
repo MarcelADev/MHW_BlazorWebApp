@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Components;
 using System.ComponentModel.DataAnnotations;
 
-namespace MyMHWApp4.Pages.Admin.Create
+namespace MHWApp.Client.Pages.Admin.Create
 {
     public class InventoryEntryListFormModel : IValidatableObject
     {

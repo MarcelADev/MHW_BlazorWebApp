@@ -2,7 +2,7 @@
 using System.Net.Http.Json;
 using System.Net.Http;
 
-namespace MyMHWApp4.Provider
+namespace MHWApp.Client.Provider
 {
     public class WeaponProvider(IHttpClientFactory httpClientFactory)
     {

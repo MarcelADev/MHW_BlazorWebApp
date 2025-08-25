@@ -1,8 +1,8 @@
 ﻿using MHWApp.Library.Model;
-using MyMHWApp4.Identity;
+using MHWApp.Client.Identity;
 using System.Net.Http.Json;
 
-namespace MyMHWApp4.Provider
+namespace MHWApp.Client.Provider
 {
     public class PlayerProvider(IHttpClientFactory httpClientFactory)
     {

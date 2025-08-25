@@ -1,6 +1,6 @@
 {
-  "name": "MyMHWApp4",
-  "short_name": "MyMHWApp4",
+  "name": "MHWApp.Client",
+  "short_name": "MHWApp.Client",
   "id": "./",
   "start_url": "./",
   "display": "standalone",

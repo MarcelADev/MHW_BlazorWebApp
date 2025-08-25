@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.Options;
 using Microsoft.JSInterop;
 
-namespace MyMHWApp4.Pages.GeneralComponents.Select.Input
+namespace MHWApp.Client.Pages.GeneralComponents.Select.Input
 {
     /// <summary>
     /// SingleSelectInput is specifically designed for use within a Editform. It uses the built in features of InputBase<T> to handle the value and validation.

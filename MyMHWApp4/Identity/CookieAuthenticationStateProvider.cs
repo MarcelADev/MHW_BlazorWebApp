@@ -1,12 +1,12 @@
 ﻿using Microsoft.AspNetCore.Components.Authorization;
-using MyMHWApp4.Identity.Model;
+using MHWApp.Client.Identity.Model;
 using System.Net.Http.Json;
 using System.Security.Claims;
 using System.Text.Json;
 using System.Text;
 using System.Net.Http;
 
-namespace MyMHWApp4.Identity
+namespace MHWApp.Client.Identity
 {
     /// <summary>
     /// Handles state for cookie-based auth.

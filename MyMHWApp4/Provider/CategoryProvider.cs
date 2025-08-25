@@ -6,7 +6,7 @@ using System.Net;
 using MHWApp.Library.Exceptions;
 using Microsoft.Extensions.Logging;
 
-namespace MyMHWApp4.Provider
+namespace MHWApp.Client.Provider
 {
     public class CategoryProvider(IHttpClientFactory httpClientFactory, ILogger<CategoryProvider> logger)
     {

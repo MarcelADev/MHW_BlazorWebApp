@@ -3,7 +3,7 @@ using MHWApp.Library.Model;
 using System.ComponentModel.DataAnnotations;
 using System.Xml.Linq;
 
-namespace MyMHWApp4.Pages.Admin.EditInventoryEntry
+namespace MHWApp.Client.Pages.Admin.EditInventoryEntry
 {
     public record InventoryEntryFormModel : IValidatableObject
     {

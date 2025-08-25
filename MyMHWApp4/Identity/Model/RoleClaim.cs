@@ -1,4 +1,4 @@
-﻿namespace MyMHWApp4.Identity.Model
+﻿namespace MHWApp.Client.Identity.Model
 {
     public class RoleClaim
     {

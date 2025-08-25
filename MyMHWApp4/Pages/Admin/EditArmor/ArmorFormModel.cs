@@ -1,10 +1,10 @@
 ﻿using MHWApp.Library.Exceptions;
 using MHWApp.Library.Model;
-using MyMHWApp4.Pages.GeneralComponents.Select;
+using MHWApp.Client.Pages.GeneralComponents.Select;
 using System.ComponentModel.DataAnnotations;
 using System.Xml.Linq;
 
-namespace MyMHWApp4.Pages.Admin.EditArmor
+namespace MHWApp.Client.Pages.Admin.EditArmor
 {
     public record ArmorFormModel : IValidatableObject
     {
