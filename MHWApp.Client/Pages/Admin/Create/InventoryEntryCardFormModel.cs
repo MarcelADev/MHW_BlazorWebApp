@@ -10,7 +10,7 @@ namespace MHWApp.Client.Pages.Admin.Create
 
         public GameExtension? CurrentGameExtension;
 
-        [Required(ErrorMessage = "Name must not be empty")]
+        [Required(ErrorMessage = "You must choose a game extension")]
         public GameExtension? SelectedGameExtension;
 
         public bool ShowValidationMessages { get; set; } = true;

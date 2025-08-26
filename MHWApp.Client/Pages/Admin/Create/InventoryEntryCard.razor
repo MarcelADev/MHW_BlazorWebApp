@@ -1,7 +1,7 @@
 ﻿@using MHWApp.Library.Model
 @using MHWApp.Client.Pages.GeneralComponents.CustomInput
 @using MHWApp.Client.Pages.GeneralComponents.IconButtons
-@using MHWApp.Client.Pages.GeneralComponents.Select.Component
+@using MHWApp.Client.Pages.GeneralComponents.Select.Input
 @using MHWApp.Client.Provider
 @using System.ComponentModel
 @inject GameExtensionProvider gameExtensionProvider
@@ -53,7 +53,7 @@
 					<ValidationMessage For="@(() => FormModel.SelectedName)" />
 				</div>
 
-				<SingleSelectComponent Label="Choose Game Extension" 
+				<SingleSelectInput Label="Choose Game Extension" 
 							  Placeholder="Select"
 							  T="GameExtension"
 							  Options="gameExtensions"

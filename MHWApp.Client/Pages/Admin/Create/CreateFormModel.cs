@@ -23,7 +23,6 @@ namespace MHWApp.Client.Pages.Admin.Create
         public string MailSuffix { get; set; } = "Mail";
         public string GreavesSuffix { get; set; } = "Greaves";
 
-        //[RequiredIf("RequiresGameExtension", true, ErrorMessage = "Game extension is needed for armor set and/or inventory entries")]
         public GameExtension? GeneralGameExtension { get; set; }
 
         public bool ShowValidationMessages { get; set; } = true;

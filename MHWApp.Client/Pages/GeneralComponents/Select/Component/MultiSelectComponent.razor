@@ -38,7 +38,7 @@ else
         }
 
         <div id="mhwapp-multi-select-@Id"
-             class="select"
+             class="@($"select{GetCSSClassesForMultiSelect()}")"
              aria-labelledby="@Id-label">
 
             <div class="select__trigger @(Disabled ? "disabled" : "")"

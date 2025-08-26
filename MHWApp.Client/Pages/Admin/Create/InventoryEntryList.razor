@@ -1,7 +1,7 @@
-﻿@using MHWApp.Library.Model
+﻿@using MHWApp.Client.Pages.GeneralComponents.Select.Component
+@using MHWApp.Library.Model
 @using MHWApp.Client.Pages.GeneralComponents.CustomInput
 @using MHWApp.Client.Pages.GeneralComponents.IconButtons
-@using MHWApp.Client.Pages.GeneralComponents.Select
 @implements IDisposable
 
 
@@ -16,7 +16,7 @@
 }
 
 <div class="multi-select-custom-style">
-    <MultiSelect Label="Common Inventory Entries"
+    <MultiSelectComponent Label="Common Inventory Entries"
                  Placeholder="Select"
                  T="InventoryEntryCardModel"
                  Options="@FormModel!.CommonInventoryEntries"
