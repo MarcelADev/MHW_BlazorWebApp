@@ -9,7 +9,7 @@ namespace MHWApp.Client.Utils
         {
             messageStore.Clear();
 
-            var validationResults = new HashSet<ValidationResult>();
+            var validationResults = new HashSet<ValidationResult>(new ValidationResultComparer());
             var validationContext = new ValidationContext(model);
 
             // Validate data annotations

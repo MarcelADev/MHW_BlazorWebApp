@@ -22,20 +22,6 @@
 
             <ValidationSummary />
 
-            @if (testFontSizes)
-            {
-                <br />
-
-                <h2>Test H2</h2>
-                <h3>Test H3</h3>
-                <h4>Test H4</h4>
-
-                <label>Test Label</label>
-                <p>Test p</p>
-
-                <br />
-            }
-
             <div class="form__field">
                 <label for="create-category-name">Name</label>
                 <CustomInputText id="create-category-name" @bind-Value="FormModel!.Name" />
@@ -49,12 +35,9 @@
                                    Options="gameExtensions"
                                    OptionNameMapper="(GameExtension ge) => ge.Name"
                                    OptionValueMapper="(GameExtension ge) => ge.Id"
-                                   Value="FormModel.GeneralGameExtension"
-                                   ValueExpression="(() => FormModel.GeneralGameExtension)" />
+                                   @bind-Value="FormModel.GeneralGameExtension" />
                 <ValidationMessage For="@(() => FormModel!.GeneralGameExtension)" />
             </div>
-
-            <p>Selected GameExtension: @FormModel.GeneralGameExtension?.Name ?? "none"</p>
 
             <div class="form__field">
                 <InputCheckbox id="create-armorset-checkbox"
@@ -166,8 +149,6 @@
 </div>
 
 @code {
-    private bool testFontSizes = false;
-
     private bool isLoading = true;
 
     private bool showArmorSet = false;
@@ -175,6 +156,8 @@
 
     private bool showAlternativeArmorPrefix = false;
     private bool isExitingAlternativePrefix = false;
+
+    private bool validateOnlyModified = true;
 
     private EditContext? editContext;
 
@@ -207,12 +190,37 @@
     private void HandleFieldChanged(object? sender, FieldChangedEventArgs e)
     {
         if (editContext is null || FormModel is null)
-             return;
+            return;
 
         // Trigger validation when name textbox got a change
         if (e.FieldIdentifier.FieldName is nameof(FormModel.Name))
         {
-            Utils.ManualModelValidator.ValidateModel(editContext, FormModel, _messageStore!);
+            Utils.ManualModelValidator.ValidateModel(editContext, FormModel, _messageStore!, onlyModified: validateOnlyModified);
+        }
+        // Trigger validation when game extension select got a change
+        else if (e.FieldIdentifier.FieldName is nameof(FormModel.GeneralGameExtension))
+        {
+            Utils.ManualModelValidator.ValidateModel(editContext, FormModel, _messageStore!, onlyModified: validateOnlyModified);
+        }
+        // Trigger validation when alternative prefix textbox got a change
+        else if (e.FieldIdentifier.FieldName is nameof(FormModel.AlternativeArmorPrefix))
+        {
+            Utils.ManualModelValidator.ValidateModel(editContext, FormModel, _messageStore!, onlyModified: validateOnlyModified);
+        }
+        // Trigger validation when helmet textbox got a change
+        else if (e.FieldIdentifier.FieldName is nameof(FormModel.HelmetSuffix))
+        {
+            Utils.ManualModelValidator.ValidateModel(editContext, FormModel, _messageStore!, onlyModified: validateOnlyModified);
+        }
+        // Trigger validation when mail textbox got a change
+        else if (e.FieldIdentifier.FieldName is nameof(FormModel.MailSuffix))
+        {
+            Utils.ManualModelValidator.ValidateModel(editContext, FormModel, _messageStore!, onlyModified: validateOnlyModified);
+        }
+        // Trigger validation when greaves textbox got a change
+        else if (e.FieldIdentifier.FieldName is nameof(FormModel.GreavesSuffix))
+        {
+            Utils.ManualModelValidator.ValidateModel(editContext, FormModel, _messageStore!, onlyModified: validateOnlyModified);
         }
     }
 
@@ -234,7 +242,7 @@
         FormModel!.AddArmorSet = value;
 
         // Run validation after updating model
-        Utils.ManualModelValidator.ValidateModel(editContext!, FormModel!, _messageStore!, onlyModified: true);
+        Utils.ManualModelValidator.ValidateModel(editContext!, FormModel!, _messageStore!, onlyModified: validateOnlyModified);
     }
 
     private async Task ToggleInventoryEntries(bool value)
@@ -250,7 +258,7 @@
         FormModel!.AddInventoryEntries = value;
 
         // Run validation after updating model
-        Utils.ManualModelValidator.ValidateModel(editContext!, FormModel!, _messageStore!, onlyModified: true);
+        Utils.ManualModelValidator.ValidateModel(editContext!, FormModel!, _messageStore!, onlyModified: validateOnlyModified);
     }
 
     private async Task ToggleArmorPrefix(bool value)
@@ -259,11 +267,15 @@
         {
             isExitingAlternativePrefix = true;
             await StartExitAnimation("animatedBox3", "AlternativeArmorPrefix");
+
+            FormModel!.AlternativeArmorPrefix = string.Empty;
         }
         else if (value)
         {
             isExitingAlternativePrefix = false;
             showAlternativeArmorPrefix = true;
+
+            FormModel!.AlternativeArmorPrefix = FormModel.Name;
         }
 
         FormModel!.UseAlternativeArmorPrefix = value;
@@ -298,9 +310,15 @@
 
         if (hasValidationErrors)
         {
+            validateOnlyModified = false;
+
             Console.WriteLine("Not a valid Submit bruh");
             return;
-		}
+        }
+        else
+        {
+            validateOnlyModified = true;
+        }
 
         CreateDTO dTO = new()
         {

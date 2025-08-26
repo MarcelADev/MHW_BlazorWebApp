@@ -17,12 +17,13 @@
             if (EditContext == null)
                 return string.Empty;
 
-            bool hasError = EditContext.GetValidationMessages(FieldIdentifier).Any();
-            bool isModified = EditContext.IsModified(FieldIdentifier);
+            if (EditContext.GetValidationMessages(FieldIdentifier).Any())
+                return "invalid";
 
-            // Apply styling only if field has been interacted with
-            //return isModified ? (hasError ? "invalid" : "valid") : string.Empty;
-            return hasError ? "invalid" : string.Empty;
+            if (!EditContext.IsModified(FieldIdentifier))
+                return string.Empty;
+
+            return "valid";
         }
 
         protected override void OnInitialized()

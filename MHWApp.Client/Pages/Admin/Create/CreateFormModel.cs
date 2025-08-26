@@ -15,19 +15,12 @@ namespace MHWApp.Client.Pages.Admin.Create
         public bool RequiresGameExtension => AddArmorSet || AddInventoryEntries;
 
         public bool UseAlternativeArmorPrefix { get; set; } = false;
-
-        [RequiredIf("UseAlternativeArmorPrefix", true, ErrorMessage = "Alternative Prefix must not be empty")]
         public string AlternativeArmorPrefix { get; set; } = string.Empty;
         public string ArmorPrefix => UseAlternativeArmorPrefix ? AlternativeArmorPrefix : Name;
 
 
-        [RequiredIf("AddArmorSet", true, ErrorMessage = "Helmet Suffix must not be empty")]
         public string HelmetSuffix { get; set; } = "Helmet";
-
-        [RequiredIf("AddArmorSet", true, ErrorMessage = "Mail Suffix must not be empty")]
         public string MailSuffix { get; set; } = "Mail";
-
-        [RequiredIf("AddArmorSet", true, ErrorMessage = "Greaves Suffix must not be empty")]
         public string GreavesSuffix { get; set; } = "Greaves";
 
         //[RequiredIf("RequiresGameExtension", true, ErrorMessage = "Game extension is needed for armor set and/or inventory entries")]
@@ -40,6 +33,22 @@ namespace MHWApp.Client.Pages.Admin.Create
             if ((AddArmorSet || AddInventoryEntries) && 
                 GeneralGameExtension is null)
                 yield return new ValidationResult("Game extension is needed for armor set and/or inventory entries", [nameof(GeneralGameExtension)]);
+
+            if (AddArmorSet)
+            {
+                if (UseAlternativeArmorPrefix &&
+                    AlternativeArmorPrefix == string.Empty)
+                    yield return new ValidationResult("Alternative armor prefix can't be empty", [nameof(AlternativeArmorPrefix)]);
+
+                if (HelmetSuffix == string.Empty)
+                    yield return new ValidationResult("Helmet name can't be empty (prefix doesn't count)", [nameof(HelmetSuffix)]);
+
+                if (MailSuffix == string.Empty)
+                    yield return new ValidationResult("Mail name can't be empty (prefix doesn't count)", [nameof(MailSuffix)]);
+
+                if (GreavesSuffix == string.Empty)
+                    yield return new ValidationResult("Boots name can't be empty (prefix doesn't count)", [nameof(GreavesSuffix)]);
+            }            
         }
     }
 }

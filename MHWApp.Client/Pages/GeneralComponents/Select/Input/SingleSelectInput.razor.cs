@@ -31,51 +31,62 @@ namespace MHWApp.Client.Pages.GeneralComponents.Select.Input
                 HandleNativeChangeSingle((string)args.Value);
         }
 
-        private void HandleNativeChangeSingle(int id)
+        private async Task HandleNativeChangeSingle(int id)
         {
             var selected = Options.Find(o => (int)OptionValueMapper(o) == id);
             if (!Equals(Value, selected))
             {
                 CurrentValue = selected!;
 
+                // tells the parent to update the bound value
+                await ValueChanged.InvokeAsync(CurrentValue);
+
                 // Explicitly notify the EditContext that the field changed
                 EditContext?.NotifyFieldChanged(FieldIdentifier);
             }
         }
 
-        private void HandleNativeChangeSingle(string id)
+        private async Task HandleNativeChangeSingle(string id)
         {
             var selected = Options.Find(o => (string)OptionValueMapper(o) == id);
             if (!Equals(Value, selected))
             {
                 CurrentValue = selected!;
 
+                // tells the parent to update the bound value
+                await ValueChanged.InvokeAsync(CurrentValue);
+
                 // Explicitly notify the EditContext that the field changed
                 EditContext?.NotifyFieldChanged(FieldIdentifier);
             }
         }
 
-        private void HandleCustomChange(T option)
+        private async Task HandleCustomChange(T option)
         {
             if (!Equals(Value, option))
             {
                 CurrentValue = option;
 
+                // tells the parent to update the bound value
+                await ValueChanged.InvokeAsync(CurrentValue);
+
                 // Explicitly notify the EditContext that the field changed
                 EditContext?.NotifyFieldChanged(FieldIdentifier);
             }
         }
 
-        private string GetCSSClassesForSelect()
+        private string GetCSSClassesForSingleSelect()
         {
-            string cssClasses = "select";
+            string cssClasses = string.Empty;
 
-            if (CssClass.Contains("input-validation-error"))
+            if (hasValidationError)
                 cssClasses += " invalid";
+
+            else if (!EditContext.IsModified(FieldIdentifier)) return cssClasses;
 
             else if (CssClass.Contains("valid"))
                 cssClasses += " valid";
-
+    
             return cssClasses;
         }
     }

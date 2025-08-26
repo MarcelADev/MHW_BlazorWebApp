@@ -37,7 +37,7 @@ else
         }
 
         <div id="mhwapp-single-select-@Id"
-             class="@($"select {(hasValidationError ? "invalid" : "valid")}")"
+             class="@($"select{GetCSSClassesForSingleSelect()}")"
              aria-labelledby="@Id-label"
              @attributes="AdditionalAttributes">
 
