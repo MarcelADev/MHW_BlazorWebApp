@@ -27,8 +27,13 @@ namespace MHWApp.Client.Pages.Admin.Create
 
         public bool ShowValidationMessages { get; set; } = true;
 
+        public bool EntityAlreadyExistsFlag { get; set; } = false;
+
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
+            if (EntityAlreadyExistsFlag)
+                yield return new ValidationResult("Category already exists!", [nameof(Name)]);
+
             if ((AddArmorSet || AddInventoryEntries) && 
                 GeneralGameExtension is null)
                 yield return new ValidationResult("Game extension is needed for armor set and/or inventory entries", [nameof(GeneralGameExtension)]);

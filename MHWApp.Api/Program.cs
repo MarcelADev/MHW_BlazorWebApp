@@ -452,7 +452,7 @@ app.MapDelete("/participators/{id}", async (AppDbContext dbContext, ClaimsPrinci
 #endregion
 
 #region Endpoint: Category + Armor + InventoryEntry
-app.MapPost("/categoriesArmorInventoryEntry", async (AppDbContext dbContext, ClaimsPrincipal user, IHubContext<DataBaseUpdatesHub> hubContext, CreateCategoryArmorInventoryEntryDTO dto) =>
+app.MapPost("/categoriesArmorsInventoryEntries", async (AppDbContext dbContext, ClaimsPrincipal user, IHubContext<DataBaseUpdatesHub> hubContext, CreateCategoryArmorInventoryEntryDTO dto) =>
 {
     var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
     if (userIdClaim == null) return Results.Unauthorized();

@@ -1,4 +1,5 @@
 ﻿using MHWApp.Library.DTO.Create.Category_Armor_InventoryEntry;
+using MHWApp.Library.Exceptions;
 using System.Net;
 using System.Net.Http.Json;
 
@@ -12,11 +13,12 @@ namespace MHWApp.Client.Provider
 
         public async Task CreateCategoryArmorInventoryEntryAsync(CreateCategoryArmorInventoryEntryDTO dto)
         {
-            var response = await _httpClient.PostAsJsonAsync("categoriesArmorInventoryEntry", dto);
+            var response = await _httpClient.PostAsJsonAsync("categoriesArmorsInventoryEntries", dto);
 
             if (response.StatusCode == HttpStatusCode.Conflict)
             {
-                
+                logger.LogInformation($"Category already exists: {dto.Name}");
+                throw new EntityAlreadyExistsException();
             }
             if (response.StatusCode == HttpStatusCode.Created)
             {

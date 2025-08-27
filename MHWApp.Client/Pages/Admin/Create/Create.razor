@@ -7,6 +7,7 @@
 @using MHWApp.Library
 @using MHWApp.Library.DTO.Create
 @using MHWApp.Library.DTO.Create.Category_Armor_InventoryEntry
+@using MHWApp.Library.Exceptions
 @using MHWApp.Library.Model
 @using static MHWApp.Library.StaticVariables
 @inject IJSRuntime jsRuntime
@@ -198,6 +199,8 @@
         // Trigger validation when name textbox got a change
         if (e.FieldIdentifier.FieldName is nameof(FormModel.Name))
         {
+            if (FormModel.EntityAlreadyExistsFlag) FormModel.EntityAlreadyExistsFlag = false;
+
             Utils.ManualModelValidator.ValidateModel(editContext, FormModel, _messageStore!, onlyModified: validateOnlyModified);
         }
         // Trigger validation when game extension select got a change
@@ -378,7 +381,15 @@
             }
         }
 
-        await multiProvider.CreateCategoryArmorInventoryEntryAsync(dto);
+        try
+        {
+            await multiProvider.CreateCategoryArmorInventoryEntryAsync(dto);
+        }
+        catch (EntityAlreadyExistsException e)
+        {
+            FormModel.EntityAlreadyExistsFlag = true;
+            Utils.ManualModelValidator.ValidateModel(editContext!, FormModel!, _messageStore!, onlyModified: false);
+        }
     }
 
     private void InvalidSubmit()
