@@ -1,6 +1,7 @@
 ﻿.custom-input {
     border: none;
     border: 1px solid rgb(209, 209, 209);
+    border-radius: var(--standard-border-radius__all);
     transition: border-bottom 0.3s ease;
 }
 

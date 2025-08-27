@@ -26,13 +26,17 @@ namespace MHWApp.Client.Pages.Admin.Create
         public GameExtension? GeneralGameExtension { get; set; }
 
         public bool ShowValidationMessages { get; set; } = true;
-
+        
         public bool EntityAlreadyExistsFlag { get; set; } = false;
+        public bool UnexpectedResponseFlag { get; set; } = false;
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             if (EntityAlreadyExistsFlag)
                 yield return new ValidationResult("Category already exists!", [nameof(Name)]);
+
+            if (UnexpectedResponseFlag)
+                yield return new ValidationResult("Unexpected server response. Please reload page!", [nameof(Name)]);
 
             if ((AddArmorSet || AddInventoryEntries) && 
                 GeneralGameExtension is null)

@@ -3,7 +3,6 @@
     width: 100%;
     --neutral: #d1d1d1;
     --focus: #0F6CBD;
-    --border-radius: 4px;
     --input-height: 2.5rem;
     --box-shadow: rgba(0, 0, 0, 0.12) 0px 0px 2px 0px, rgba(0, 0, 0, 0.14) 0px 2px 4px 0px
 }
@@ -45,7 +44,7 @@
     white-space: nowrap;
     color: #555;
     border: solid 1px rgb(209, 209, 209);
-    border-radius: var(--border-radius) 0 0 var(--border-radius);
+    border-radius: var(--standard-border-radius__all) 0 0 var(--standard-border-radius__all);
     border-right: 0;
     padding: 0.5rem;
     height: 100%;
@@ -56,7 +55,7 @@
     grid-column: 2 / 3;
     height: 100%;
     border: solid 1px rgb(209, 209, 209);
-    border-radius: 0 var(--border-radius) var(--border-radius) 0;
+    border-radius: 0 var(--standard-border-radius__all) var(--standard-border-radius__all) 0;
     border-left: 0;
     width: 100%;
 }

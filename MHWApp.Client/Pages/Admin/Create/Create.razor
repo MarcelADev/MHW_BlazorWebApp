@@ -15,142 +15,152 @@
 @inject CategoryArmorInventoryEntryProvider multiProvider
 @implements IDisposable
 
-<header class="container-left header">
-    <h2>Create Category</h2>
-</header>
+<section>
 
-<div class="form__container">
-    @if(!isLoading)
-    {
-        <EditForm EditContext="editContext" FormName="create" OnValidSubmit="Submit" OnInvalidSubmit="InvalidSubmit">
+    <header class="container-left header">
+        <h2>Create Category</h2>
+    </header>
 
-            <ValidationSummary />
+    <div class="form__container">
+        @if(!isLoading)
+        {
+            <EditForm EditContext="editContext" FormName="create" OnValidSubmit="Submit" OnInvalidSubmit="InvalidSubmit">
 
-            <div class="form__field">
-                <label for="create-category-name">Name</label>
-                <CustomInputText id="create-category-name" @bind-Value="FormModel!.Name" />
-                <ValidationMessage For="@(() => FormModel!.Name)" />
-            </div>
+                <ValidationSummary />
 
-            <div class="form__field">
-                <SingleSelectInput Label="Choose general Game Extension"
-                                   Placeholder="Select"
-                                   T="GameExtension"
-                                   Options="gameExtensions"
-                                   OptionNameMapper="(GameExtension ge) => ge.Name"
-                                   OptionValueMapper="(GameExtension ge) => ge.Id"
-                                   @bind-Value="FormModel.GeneralGameExtension" />
-                <ValidationMessage For="@(() => FormModel!.GeneralGameExtension)" />
-            </div>
+                <div class="form__field">
+                    <label for="create-category-name">Name</label>
+                    <CustomInputText id="create-category-name" @bind-Value="FormModel!.Name" />
+                    <ValidationMessage For="@(() => FormModel!.Name)" />
+                </div>
 
-            <div class="form__field">
-                <InputCheckbox id="create-armorset-checkbox"
-                               Value="FormModel.AddArmorSet"
-                               ValueChanged="ToggleArmorSet"
-                               ValueExpression="() => FormModel.AddArmorSet" />
-                <label for="create-armorset-checkbox">Add Armor Set</label>
-            </div>
+                <div class="form__field">
+                    <SingleSelectInput Label="Choose general Game Extension"
+                                       Placeholder="Select"
+                                       T="GameExtension"
+                                       Options="gameExtensions"
+                                       OptionNameMapper="(GameExtension ge) => ge.Name"
+                                       OptionValueMapper="(GameExtension ge) => ge.Id"
+                                       @bind-Value="FormModel.GeneralGameExtension" />
+                    <ValidationMessage For="@(() => FormModel!.GeneralGameExtension)" />
+                </div>
 
-            @if (showArmorSet)
-            {
-                <div id="animatedBox" class="box @(!FormModel.AddArmorSet ? "exit" : "")">
+                <div class="form__field">
+                    <InputCheckbox id="create-armorset-checkbox"
+                                   Value="FormModel.AddArmorSet"
+                                   ValueChanged="ToggleArmorSet"
+                                   ValueExpression="() => FormModel.AddArmorSet" />
+                    <label for="create-armorset-checkbox">Add Armor Set</label>
+                </div>
 
-                    @if (!FormModel.Name.Equals(string.Empty))
-                    {
-                        <div class="form__field">
-                            <CustomInputCheckbox id="change-armorset-prefix-checkbox"
-                                           Hierarchy="2"
-                                           Value="FormModel.UseAlternativeArmorPrefix"
-                                           ValueChanged="ToggleArmorPrefix"
-                                           ValueExpression="() => FormModel.UseAlternativeArmorPrefix" />
-                            <label for="change-armorset-prefix-checkbox">Use alternative Prefix</label>
-                        </div>
+                @if (showArmorSet)
+                {
+                    <div id="animatedBox" class="box @(!FormModel.AddArmorSet ? "exit" : "")">
 
-                        @if (showAlternativeArmorPrefix)
+                        @if (!FormModel.Name.Equals(string.Empty))
                         {
-                            <div id="animatedBox3" class="box purple @(isExitingAlternativePrefix ? "exit" : "")">
-                                <div class="form__field">
-                                    <label for="change-armorset-prefix-textbox">Name</label>
-                                    <CustomInputText id="change-armorset-prefix-textbox"
-                                                     @bind-Value="FormModel!.AlternativeArmorPrefix" />
-                                    <ValidationMessage For="@(() => FormModel!.AlternativeArmorPrefix)" />
+                            <div class="form__field">
+                                <CustomInputCheckbox id="change-armorset-prefix-checkbox"
+                                               Hierarchy="2"
+                                               Value="FormModel.UseAlternativeArmorPrefix"
+                                               ValueChanged="ToggleArmorPrefix"
+                                               ValueExpression="() => FormModel.UseAlternativeArmorPrefix" />
+                                <label for="change-armorset-prefix-checkbox">Use alternative Prefix</label>
+                            </div>
+
+                            @if (showAlternativeArmorPrefix)
+                            {
+                                <div id="animatedBox3" class="box purple @(isExitingAlternativePrefix ? "exit" : "")">
+                                    <div class="form__field">
+                                        <label for="change-armorset-prefix-textbox">Name</label>
+                                        <CustomInputText id="change-armorset-prefix-textbox"
+                                                         @bind-Value="FormModel!.AlternativeArmorPrefix" />
+                                        <ValidationMessage For="@(() => FormModel!.AlternativeArmorPrefix)" />
+                                    </div>
+                                </div>
+                            }
+
+                            <div class="form__field">
+                                <label for="create-category-helmet">Helmet</label>
+
+                                <div class="input-grid">
+                                    <span class="prefix-text">@FormModel!.ArmorPrefix</span>
+                                    <CustomInputText id="create-category-helmet" @bind-Value="FormModel!.HelmetSuffix" />
+                                    <ValidationMessage For="@(() => FormModel!.HelmetSuffix)" class="validation-message" />
+                                </div>
+                            </div>
+
+                            <div class="form__field">
+                                <label for="create-category-mail">Mail</label>
+
+                                <div class="input-grid">
+                                    <span class="prefix-text">@FormModel!.ArmorPrefix</span>
+                                    <CustomInputText id="create-category-mail" @bind-Value="FormModel!.MailSuffix" />
+                                    <ValidationMessage For="@(() => FormModel!.MailSuffix)" class="validation-message" />
+                                </div>
+                            </div>
+
+                            <div class="form__field">
+                                <label for="create-category-greaves">Greaves</label>
+
+                                <div class="input-grid">
+                                    <span class="prefix-text">@FormModel!.ArmorPrefix</span>
+                                    <CustomInputText id="create-category-greaves" @bind-Value="FormModel!.GreavesSuffix" />
+                                    <ValidationMessage For="@(() => FormModel!.GreavesSuffix)" class="validation-message" />
                                 </div>
                             </div>
                         }
+                        else
+                        {
+                            <p>Category Name needed</p>
+                        }
 
-                        <div class="form__field">
-                            <label for="create-category-helmet">Helmet</label>
+                    </div>
+                }
 
-                            <div class="input-grid">
-                                <span class="prefix-text">@FormModel!.ArmorPrefix</span>
-                                <CustomInputText id="create-category-helmet" @bind-Value="FormModel!.HelmetSuffix" />
-                                <ValidationMessage For="@(() => FormModel!.HelmetSuffix)" class="validation-message" />
-                            </div>
-                        </div>
-
-                        <div class="form__field">
-                            <label for="create-category-mail">Mail</label>
-
-                            <div class="input-grid">
-                                <span class="prefix-text">@FormModel!.ArmorPrefix</span>
-                                <CustomInputText id="create-category-mail" @bind-Value="FormModel!.MailSuffix" />
-                                <ValidationMessage For="@(() => FormModel!.MailSuffix)" class="validation-message" />
-                            </div>
-                        </div>
-
-                        <div class="form__field">
-                            <label for="create-category-greaves">Greaves</label>
-
-                            <div class="input-grid">
-                                <span class="prefix-text">@FormModel!.ArmorPrefix</span>
-                                <CustomInputText id="create-category-greaves" @bind-Value="FormModel!.GreavesSuffix" />
-                                <ValidationMessage For="@(() => FormModel!.GreavesSuffix)" class="validation-message" />
-                            </div>
-                        </div>
-                    }
-                    else
-                    {
-                        <p>Category Name needed</p>
-                    }
-
+                <div class="form__field">
+                    <InputCheckbox id="create-inventoryentries-checkbox"
+                                   Value="FormModel.AddInventoryEntries"
+                                   ValueChanged="ToggleInventoryEntries"
+                                   ValueExpression="() => FormModel.AddInventoryEntries" />
+                    <label for="create-inventoryentries-checkbox">Add Inventory Entries</label>
                 </div>
-            }
 
-            <div class="form__field">
-                <InputCheckbox id="create-inventoryentries-checkbox"
-                               Value="FormModel.AddInventoryEntries"
-                               ValueChanged="ToggleInventoryEntries"
-                               ValueExpression="() => FormModel.AddInventoryEntries" />
-                <label for="create-inventoryentries-checkbox">Add Inventory Entries</label>
-            </div>
+                @if(showInventoryEntries)
+                {
+                    <div id="animatedBox2" class="box @(!FormModel.AddInventoryEntries ? "exit" : "")">
+                        @if (!FormModel.Name.Equals(string.Empty))
+                        {
+                            <InventoryEntryList @ref="inventoryEntryList"
+                                                GetName="() => FormModel.Name"
+                                                SetName="value => FormModel.Name = value"
+                                                GetGeneralGameExtension="() => FormModel.GeneralGameExtension"
+                                                SetGeneralGameExtension="value => FormModel.GeneralGameExtension = value" />
+                        }
+                        else
+                        {
+                            <p>Category Name needed</p>
+                        }
+                    </div>
+                }
 
-            @if(showInventoryEntries)
-            {
-                <div id="animatedBox2" class="box @(!FormModel.AddInventoryEntries ? "exit" : "")">
-                    @if (!FormModel.Name.Equals(string.Empty))
-                    {
-                        <InventoryEntryList @ref="inventoryEntryList"
-                                            GetName="() => FormModel.Name"
-                                            SetName="value => FormModel.Name = value"
-                                            GetGeneralGameExtension="() => FormModel.GeneralGameExtension"
-                                            SetGeneralGameExtension="value => FormModel.GeneralGameExtension = value" />
-                    }
-                    else
-                    {
-                        <p>Category Name needed</p>
-                    }
+                <div class=" form__field form__button">
+                    <button type="submit" class="btn btn-primary">
+                        Create
+                    </button>
                 </div>
-            }
 
-            <div class=" form__field form__button">
-                <button type="submit" class="btn btn-primary">
-                    Create
-                </button>
-            </div>
+            </EditForm>
+        }
+    </div>
 
-        </EditForm>
-    }
-</div>
+</section>
+
+<section>
+    <header class="container-left header">
+        <h2>Edit Category</h2>
+    </header>
+</section>
 
 @code {
     private bool isLoading = true;
@@ -196,8 +206,13 @@
         if (editContext is null || FormModel is null)
             return;
 
+        if (FormModel.UnexpectedResponseFlag)
+        {
+            FormModel.UnexpectedResponseFlag = false;
+            Utils.ManualModelValidator.ValidateModel(editContext, FormModel, _messageStore!, onlyModified: validateOnlyModified);
+        }
         // Trigger validation when name textbox got a change
-        if (e.FieldIdentifier.FieldName is nameof(FormModel.Name))
+        else if (e.FieldIdentifier.FieldName is nameof(FormModel.Name))
         {
             if (FormModel.EntityAlreadyExistsFlag) FormModel.EntityAlreadyExistsFlag = false;
 
@@ -327,9 +342,9 @@
         }
 
         CreateCategoryArmorInventoryEntryDTO dto = new()
-        {
-            Name = FormModel!.Name,
-        };
+            {
+                Name = FormModel!.Name,
+            };
 
         if (showArmorSet)
         {
@@ -340,22 +355,22 @@
             dto.ArmorSet = [];
 
             dto.ArmorSet.Add(new ArmorModel
-            {
-                Name = armorPrefix + FormModel!.HelmetSuffix,
-                ArmorType = ArmorType.Head
-            });
+                {
+                    Name = armorPrefix + FormModel!.HelmetSuffix,
+                    ArmorType = ArmorType.Head
+                });
 
             dto.ArmorSet.Add(new ArmorModel
-            {
-                Name = armorPrefix + FormModel!.MailSuffix,
-                ArmorType = ArmorType.Chest
-            });
+                {
+                    Name = armorPrefix + FormModel!.MailSuffix,
+                    ArmorType = ArmorType.Chest
+                });
 
             dto.ArmorSet.Add(new ArmorModel
-            {
-                Name = armorPrefix + FormModel!.GreavesSuffix,
-                ArmorType = ArmorType.Legs
-            });
+                {
+                    Name = armorPrefix + FormModel!.GreavesSuffix,
+                    ArmorType = ArmorType.Legs
+                });
         }
 
         if (showInventoryEntries)
@@ -365,19 +380,19 @@
             foreach (InventoryEntryCardModel model in inventoryEntryList!.FormModel!.SelectedCommonInventoryEntries)
             {
                 dto.InventoryEntries.Add(new InventoryEntryModel
-                {
-                    Name = model.ExtendedName == string.Empty ? model.Name : model.ExtendedName,
-                    GameExtension = model.GameExtension!
-                });
+                    {
+                        Name = model.ExtendedName == string.Empty ? model.Name : model.ExtendedName,
+                        GameExtension = model.GameExtension!
+                    });
             }
 
             foreach (InventoryEntryCardModel model in inventoryEntryList!.FormModel!.UncommonInventoryentries)
             {
                 dto.InventoryEntries.Add(new InventoryEntryModel
-                {
-                    Name = model.ExtendedName == string.Empty ? model.Name : model.ExtendedName,
-                    GameExtension = model.GameExtension!
-                });
+                    {
+                        Name = model.ExtendedName == string.Empty ? model.Name : model.ExtendedName,
+                        GameExtension = model.GameExtension!
+                    });
             }
         }
 
@@ -385,9 +400,14 @@
         {
             await multiProvider.CreateCategoryArmorInventoryEntryAsync(dto);
         }
-        catch (EntityAlreadyExistsException e)
+        catch (EntityAlreadyExistsException)
         {
             FormModel.EntityAlreadyExistsFlag = true;
+            Utils.ManualModelValidator.ValidateModel(editContext!, FormModel!, _messageStore!, onlyModified: false);
+        }
+        catch (UnexpectedResponseException)
+        {
+            FormModel.UnexpectedResponseFlag = true;
             Utils.ManualModelValidator.ValidateModel(editContext!, FormModel!, _messageStore!, onlyModified: false);
         }
     }

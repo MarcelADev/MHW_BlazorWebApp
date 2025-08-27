@@ -1,5 +1,6 @@
 ﻿using MHWApp.Library.DTO.Create.Category_Armor_InventoryEntry;
 using MHWApp.Library.Exceptions;
+using MHWApp.Library.Model;
 using System.Net;
 using System.Net.Http.Json;
 
@@ -17,13 +18,16 @@ namespace MHWApp.Client.Provider
 
             if (response.StatusCode == HttpStatusCode.Conflict)
             {
-                logger.LogInformation($"Category already exists: {dto.Name}");
+                logger.LogInformation("Category already exists: {Category name}", dto.Name);
                 throw new EntityAlreadyExistsException();
             }
-            if (response.StatusCode == HttpStatusCode.Created)
+            if (response.StatusCode == HttpStatusCode.NoContent)
             {
-
+                logger.LogInformation("Category was successfully created: {Category name}", dto.Name);
+                return;
             }
+
+            throw new UnexpectedResponseException(response.StatusCode.ToString());
         }
 
         #endregion

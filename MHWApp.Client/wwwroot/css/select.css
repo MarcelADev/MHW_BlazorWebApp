@@ -22,7 +22,7 @@
     display: flex;
     align-items: center;
     border: 1px solid var(--neutral);
-    border-radius: var(--border-radius);
+    border-radius: var(--standard-border-radius__all);
     padding: 0.5rem;
     min-height: var(--input-height);
 }
@@ -71,7 +71,7 @@
 .select__dropdown {
     --hover: #C7C7C7;
     border: 1px solid var(--neutral);
-    border-radius: var(--border-radius);
+    border-radius: var(--standard-border-radius__all);
     box-shadow: var(--box-shadow);
     background-color: white;
     position: absolute;
@@ -94,13 +94,13 @@
 
 .select::after {
     position: absolute;
-    left: calc(var(--border-radius) / 2);
+    left: calc(var(--standard-border-radius__all) / 2);
     right: 0px;
     bottom: 0px;
-    border-radius: var(--border-radius);
+    border-radius: var(--standard-border-radius__all);
     box-sizing: border-box;
-    height: var(--border-radius);
-    width: calc(100% - var(--border-radius));
+    height: var(--standard-border-radius__all);
+    width: calc(100% - var(--standard-border-radius__all));
     content: "";
     background-image: linear-gradient(0deg, var(--focus) 0%, var(--focus) 50%, transparent 50%, transparent 100%);
     transition-property: transform;

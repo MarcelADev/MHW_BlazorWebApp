@@ -171,6 +171,8 @@ code {
     --standard-font-weight__label: 200;
 
     --standard-padding__all: 5px;
+
+    --standard-border-radius__all: 4px;
 }
 
 /* ## GLOBAL STYLES ## */

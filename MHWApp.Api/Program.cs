@@ -203,7 +203,7 @@ app.MapPost("/sessions", async (AppDbContext dbContext, ClaimsPrincipal user, IH
         var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
         if (userIdClaim == null) return Results.Unauthorized();
 
-        if (createSessionDTO.Participators is null || !createSessionDTO.Participators.Any()) return Results.BadRequest();
+        if (createSessionDTO.Participators is null || createSessionDTO.Participators.Count == 0) return Results.BadRequest();
 
         await dbContext.Sessions.AddAsync(createSessionDTO.NewSession);
         await dbContext.SaveChangesAsync();
@@ -259,7 +259,7 @@ app.MapPut("/sessions/{id}", async (AppDbContext dbContext, ClaimsPrincipal user
     if (isAdminOrMaster)
     {
         // Remove Participators
-        if (updatedSessionDTO.RemoveParticipators.Any())
+        if (updatedSessionDTO.RemoveParticipators.Count > 0)
         {
             var idsToRemove = updatedSessionDTO.RemoveParticipators.Select(p => p.Id).ToList();
             var participatorsToRemove = await dbContext.Participators
@@ -460,7 +460,7 @@ app.MapPost("/categoriesArmorsInventoryEntries", async (AppDbContext dbContext, 
     bool categoryExists = await dbContext.Categories.AnyAsync(c => c.Name == dto.Name);
     if (categoryExists) return Results.StatusCode(HTTP_STATUSCODE_CONFLICT);
 
-    Category newCategory = new Category
+    Category newCategory = new()
     {
         Id = 0,
         Name = dto.Name
@@ -468,6 +468,8 @@ app.MapPost("/categoriesArmorsInventoryEntries", async (AppDbContext dbContext, 
 
     await dbContext.Categories.AddAsync(newCategory);
     await dbContext.SaveChangesAsync();
+
+    await hubContext.Clients.All.SendAsync("ReceiveNewCategory", newCategory);
 
     bool addArmorSet = dto.ArmorSet is not null && dto.ArmorSet.Count == 3 && dto.GeneralGameExtensionId is not null;
 
@@ -487,7 +489,7 @@ app.MapPost("/categoriesArmorsInventoryEntries", async (AppDbContext dbContext, 
     
     if (addArmorSet)
     {
-        ArmorCategory newArmorCategory = new ArmorCategory
+        ArmorCategory newArmorCategory = new()
         {
             Id = 0,
             CategoryId = newCategory.Id,
@@ -496,9 +498,11 @@ app.MapPost("/categoriesArmorsInventoryEntries", async (AppDbContext dbContext, 
         await dbContext.ArmorCategories.AddAsync(newArmorCategory);
         await dbContext.SaveChangesAsync();
 
+        await hubContext.Clients.All.SendAsync("ReceiveNewArmorCategory", newArmorCategory);
+
         foreach (var armorModel in dto.ArmorSet!)
         {
-            Armor armor = new Armor
+            Armor armor = new()
             {
                 Id = 0,
                 Name = armorModel.Name,
@@ -507,22 +511,29 @@ app.MapPost("/categoriesArmorsInventoryEntries", async (AppDbContext dbContext, 
                 GameExtensionId = (int)dto.GeneralGameExtensionId!,
                 Order = ORDER_DEFAULT_VALUE
             };
+
             await dbContext.Armors.AddAsync(armor);
+            await dbContext.SaveChangesAsync();
+
+            await hubContext.Clients.All.SendAsync("ReceiveNewArmor", armor);
         }
     }
 
-    bool addInventoryEntries = dto.InventoryEntries is not null && dto.InventoryEntries.Any();
+    bool addInventoryEntries = dto.InventoryEntries is not null && dto.InventoryEntries.Count > 0;
 
     if (addInventoryEntries)
     {
-        InventoryEntryCategory newInventoryEntryCategory = new InventoryEntryCategory
+        InventoryEntryCategory newInventoryEntryCategory = new()
         {
             Id = 0,
             CategoryId = newCategory.Id,
             Order = ORDER_DEFAULT_VALUE
         };
+
         await dbContext.InventoryEntryCategories.AddAsync(newInventoryEntryCategory);
         await dbContext.SaveChangesAsync();
+
+        await hubContext.Clients.All.SendAsync("ReceiveNewInventoryCategory", newInventoryEntryCategory);
 
         foreach (InventoryEntryModel inventoryEntryModel in dto.InventoryEntries!)
         {
@@ -530,29 +541,31 @@ app.MapPost("/categoriesArmorsInventoryEntries", async (AppDbContext dbContext, 
             {
                 var existingInventoryEntry = await dbContext.InventoryEntries.FirstAsync(ie => ie.Name == inventoryEntryModel.Name);
                 existingInventoryEntry.InventoryEntryCategories.Add(newInventoryEntryCategory);
+
+                await dbContext.SaveChangesAsync();
+
+                await hubContext.Clients.All.SendAsync("ReceiveUpdatedInventoryEntry", existingInventoryEntry);
             }
             else
             { 
-                InventoryEntry inventoryEntry = new InventoryEntry
+                InventoryEntry inventoryEntry = new()
                 {
                     Id = 0,
                     Name = inventoryEntryModel.Name,
                     GameExtensionId = inventoryEntryModel.GameExtension.Id,
-                    InventoryEntryCategories = new List<InventoryEntryCategory> { newInventoryEntryCategory },
+                    InventoryEntryCategories = [newInventoryEntryCategory],
                     Order = ORDER_DEFAULT_VALUE
                 };
 
                 await dbContext.InventoryEntries.AddAsync(inventoryEntry);
+                await dbContext.SaveChangesAsync();
+
+                await hubContext.Clients.All.SendAsync("ReceiveNewInventoryEntry", inventoryEntry);
             }
         }
     }
 
-    // Save all remaining db changes 
-    if(addArmorSet || addInventoryEntries) await dbContext.SaveChangesAsync();
-
-    await hubContext.Clients.All.SendAsync("ReceiveNewCategory", newCategory);
-
-    return Results.Created($"/categories/{newCategory.Id}", newCategory);
+    return Results.NoContent();
 }).RequireAuthorization(policy => policy.RequireRole("Master", "Admin"));
 #endregion
 
@@ -614,7 +627,7 @@ app.MapPost("/categories", async (AppDbContext dbContext, ClaimsPrincipal user, 
     return Results.Created($"/categories/{categoryDTO.NewCategory.Id}", categoryDTO.NewCategory);
 }).RequireAuthorization(policy => policy.RequireRole("Master", "Admin"));
 
-async Task AddSubCategories(AppDbContext dbContext, CategoryCreateDTO categoryDTO)
+async static Task AddSubCategories(AppDbContext dbContext, CategoryCreateDTO categoryDTO)
 {
     if (categoryDTO.IsInventoryEntry)
     {
@@ -878,7 +891,7 @@ app.MapPost("/inventoryEntries", async (AppDbContext dbContext, ClaimsPrincipal 
     bool exists = await dbContext.InventoryEntries.AnyAsync(ie => ie.Name == newInventoryEntryDTO.Name);
     if (exists) return Results.StatusCode(HTTP_STATUSCODE_CONFLICT);
 
-    if (newInventoryEntryDTO.InventoryEntryCategoryIds == null || !newInventoryEntryDTO.InventoryEntryCategoryIds.Any())
+    if (newInventoryEntryDTO.InventoryEntryCategoryIds == null || newInventoryEntryDTO.InventoryEntryCategoryIds.Count == 0)
         return Results.BadRequest("At least one category must be assigned.");
 
     if (newInventoryEntryDTO.NamePrefixId.HasValue)
@@ -898,7 +911,7 @@ app.MapPost("/inventoryEntries", async (AppDbContext dbContext, ClaimsPrincipal 
         Name = newInventoryEntryDTO.Name,
         Order = newInventoryEntryDTO.Order,
         InventoryEntryCategories = await dbContext.InventoryEntryCategories
-                                        .Where((InventoryEntryCategory iec) => newInventoryEntryDTO.InventoryEntryCategoryIds!
+                                        .Where((iec) => newInventoryEntryDTO.InventoryEntryCategoryIds!
                                         .Contains(iec.Id))
                                         .ToListAsync(),
         NamePrefixId = newInventoryEntryDTO.NamePrefixId,
