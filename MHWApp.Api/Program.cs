@@ -1,20 +1,21 @@
 using MHWApp.Api.Data;
 using MHWApp.Api.Hubs;
+using MHWApp.Api.Provider;
 using MHWApp.Library;
-using static MHWApp.Library.StaticVariables;
 using MHWApp.Library.DTO;
+using MHWApp.Library.DTO.Create.Category_Armor_InventoryEntry;
 using MHWApp.Library.Model;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.ResponseCompression;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
+using System.Net;
+using System.Runtime.CompilerServices;
 using System.Security.Claims;
 using System.Text.Json.Serialization;
-using System.Net;
-using Microsoft.AspNetCore.SignalR;
-using System.Runtime.CompilerServices;
-using MHWApp.Api.Provider;
-using System.Linq;
+using static MHWApp.Library.StaticVariables;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -448,6 +449,111 @@ app.MapDelete("/participators/{id}", async (AppDbContext dbContext, ClaimsPrinci
 //    }
 //);
 
+#endregion
+
+#region Endpoint: Category + Armor + InventoryEntry
+app.MapPost("/categoriesArmorInventoryEntry", async (AppDbContext dbContext, ClaimsPrincipal user, IHubContext<DataBaseUpdatesHub> hubContext, CreateCategoryArmorInventoryEntryDTO dto) =>
+{
+    var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
+    if (userIdClaim == null) return Results.Unauthorized();
+
+    bool categoryExists = await dbContext.Categories.AnyAsync(c => c.Name == dto.Name);
+    if (categoryExists) return Results.StatusCode(HTTP_STATUSCODE_CONFLICT);
+
+    Category newCategory = new Category
+    {
+        Id = 0,
+        Name = dto.Name
+    };
+
+    await dbContext.Categories.AddAsync(newCategory);
+    await dbContext.SaveChangesAsync();
+
+    bool addArmorSet = dto.ArmorSet is not null && dto.ArmorSet.Count == 3 && dto.GeneralGameExtensionId is not null;
+
+    // check if all 3 armor types are present and unique
+    if (addArmorSet)
+    {
+        List<ArmorType> armorTypes = [];
+
+        foreach (var armorModel in dto.ArmorSet!)
+        {
+            if (armorTypes.Contains(armorModel.ArmorType))
+                addArmorSet = false;
+            else
+                armorTypes.Add(armorModel.ArmorType);
+        }
+    }
+    
+    if (addArmorSet)
+    {
+        ArmorCategory newArmorCategory = new ArmorCategory
+        {
+            Id = 0,
+            CategoryId = newCategory.Id,
+            Order = ORDER_DEFAULT_VALUE
+        };
+        await dbContext.ArmorCategories.AddAsync(newArmorCategory);
+        await dbContext.SaveChangesAsync();
+
+        foreach (var armorModel in dto.ArmorSet!)
+        {
+            Armor armor = new Armor
+            {
+                Id = 0,
+                Name = armorModel.Name,
+                //ArmorType = armorModel.ArmorType,
+                ArmorCategoryId = newArmorCategory.Id,
+                GameExtensionId = (int)dto.GeneralGameExtensionId!,
+                Order = ORDER_DEFAULT_VALUE
+            };
+            await dbContext.Armors.AddAsync(armor);
+        }
+    }
+
+    bool addInventoryEntries = dto.InventoryEntries is not null && dto.InventoryEntries.Any();
+
+    if (addInventoryEntries)
+    {
+        InventoryEntryCategory newInventoryEntryCategory = new InventoryEntryCategory
+        {
+            Id = 0,
+            CategoryId = newCategory.Id,
+            Order = ORDER_DEFAULT_VALUE
+        };
+        await dbContext.InventoryEntryCategories.AddAsync(newInventoryEntryCategory);
+        await dbContext.SaveChangesAsync();
+
+        foreach (InventoryEntryModel inventoryEntryModel in dto.InventoryEntries!)
+        {
+            if (await dbContext.InventoryEntries.AnyAsync(ie => ie.Name == inventoryEntryModel.Name))
+            {
+                var existingInventoryEntry = await dbContext.InventoryEntries.FirstAsync(ie => ie.Name == inventoryEntryModel.Name);
+                existingInventoryEntry.InventoryEntryCategories.Add(newInventoryEntryCategory);
+            }
+            else
+            { 
+                InventoryEntry inventoryEntry = new InventoryEntry
+                {
+                    Id = 0,
+                    Name = inventoryEntryModel.Name,
+                    GameExtensionId = inventoryEntryModel.GameExtension.Id,
+                    InventoryEntryCategories = new List<InventoryEntryCategory> { newInventoryEntryCategory },
+                    Order = ORDER_DEFAULT_VALUE
+                };
+
+                await dbContext.InventoryEntries.AddAsync(inventoryEntry);
+            }
+        }
+    }
+
+    // Save all remaining db changes 
+    if(addArmorSet || addInventoryEntries) await dbContext.SaveChangesAsync();
+
+    await hubContext.Clients.All.SendAsync("ReceiveNewCategory", newCategory);
+
+    return Results.Created($"/categories/{newCategory.Id}", newCategory);
+}).RequireAuthorization(policy => policy.RequireRole("Master", "Admin"));
 #endregion
 
 #region Endpoint: Category

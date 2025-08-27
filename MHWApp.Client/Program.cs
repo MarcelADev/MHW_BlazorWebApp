@@ -60,6 +60,7 @@ builder.Services.AddScoped<CategoryProvider>();
 builder.Services.AddScoped<WeaponProvider>();
 builder.Services.AddScoped<GameExtensionProvider>();
 builder.Services.AddScoped<ArmorProvider>();
+builder.Services.AddScoped<CategoryArmorInventoryEntryProvider>();
 
 #endregion
 

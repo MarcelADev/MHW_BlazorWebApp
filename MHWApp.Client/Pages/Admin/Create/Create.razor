@@ -1,14 +1,17 @@
 ﻿ @page "/admin/create"
-@using MHWApp.Library.DTO
-@using MHWApp.Library.Model
 @using MHWApp.Client.Pages.GeneralComponents.CustomInput
 @using MHWApp.Client.Pages.GeneralComponents.IconButtons
 @using MHWApp.Client.Pages.GeneralComponents.Select.Component
 @using MHWApp.Client.Pages.GeneralComponents.Select.Input
 @using MHWApp.Client.Provider
+@using MHWApp.Library
+@using MHWApp.Library.DTO.Create
+@using MHWApp.Library.DTO.Create.Category_Armor_InventoryEntry
+@using MHWApp.Library.Model
 @using static MHWApp.Library.StaticVariables
 @inject IJSRuntime jsRuntime
 @inject GameExtensionProvider gameExtensionProvider
+@inject CategoryArmorInventoryEntryProvider multiProvider
 @implements IDisposable
 
 <header class="container-left header">
@@ -320,39 +323,62 @@
             validateOnlyModified = true;
         }
 
-        CreateDTO dTO = new()
+        CreateCategoryArmorInventoryEntryDTO dto = new()
         {
             Name = FormModel!.Name,
         };
 
+        if (showArmorSet)
+        {
+            dto.GeneralGameExtensionId = FormModel.GeneralGameExtension!.Id;
+
+            string armorPrefix = (FormModel!.UseAlternativeArmorPrefix ? FormModel.AlternativeArmorPrefix : FormModel.ArmorPrefix) + " ";
+
+            dto.ArmorSet = [];
+
+            dto.ArmorSet.Add(new ArmorModel
+            {
+                Name = armorPrefix + FormModel!.HelmetSuffix,
+                ArmorType = ArmorType.Head
+            });
+
+            dto.ArmorSet.Add(new ArmorModel
+            {
+                Name = armorPrefix + FormModel!.MailSuffix,
+                ArmorType = ArmorType.Chest
+            });
+
+            dto.ArmorSet.Add(new ArmorModel
+            {
+                Name = armorPrefix + FormModel!.GreavesSuffix,
+                ArmorType = ArmorType.Legs
+            });
+        }
+
         if (showInventoryEntries)
         {
-            Dictionary<string, GameExtension> inventoryEntries = [];
+            dto.InventoryEntries = [];
 
             foreach (InventoryEntryCardModel model in inventoryEntryList!.FormModel!.SelectedCommonInventoryEntries)
             {
-                inventoryEntries.Add(model.ExtendedName == string.Empty ? model.Name : model.ExtendedName, model.GameExtension!);
+                dto.InventoryEntries.Add(new InventoryEntryModel
+                {
+                    Name = model.ExtendedName == string.Empty ? model.Name : model.ExtendedName,
+                    GameExtension = model.GameExtension!
+                });
             }
 
             foreach (InventoryEntryCardModel model in inventoryEntryList!.FormModel!.UncommonInventoryentries)
             {
-                inventoryEntries.Add(model.ExtendedName == string.Empty ? model.Name : model.ExtendedName, model.GameExtension!);
+                dto.InventoryEntries.Add(new InventoryEntryModel
+                {
+                    Name = model.ExtendedName == string.Empty ? model.Name : model.ExtendedName,
+                    GameExtension = model.GameExtension!
+                });
             }
-
-            dTO.InventoryEntries = inventoryEntries;
         }
 
-        if(showArmorSet)
-        {
-            string armorPrefix = (FormModel!.UseAlternativeArmorPrefix ? FormModel.AlternativeArmorPrefix : FormModel.ArmorPrefix) + " ";
-
-            dTO.ArmorSet = new Dictionary<ARMOR_TYPE, string>
-            {
-                { ARMOR_TYPE.Head, armorPrefix + FormModel!.HelmetSuffix },
-                { ARMOR_TYPE.Chest, armorPrefix + FormModel!.MailSuffix },
-                { ARMOR_TYPE.Legs, armorPrefix + FormModel!.GreavesSuffix }
-            };
-        }
+        await multiProvider.CreateCategoryArmorInventoryEntryAsync(dto);
     }
 
     private void InvalidSubmit()

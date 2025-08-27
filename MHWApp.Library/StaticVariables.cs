@@ -24,7 +24,7 @@ namespace MHWApp.Library
 
         #endregion
 
-        public enum ARMOR_TYPE
+        public enum ArmorType
         {
             Head = 0,
             Chest = 1,
