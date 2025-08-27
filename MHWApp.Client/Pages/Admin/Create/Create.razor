@@ -1,4 +1,5 @@
 ﻿ @page "/admin/create"
+@using MHWApp.Client.HubConnections
 @using MHWApp.Client.Pages.GeneralComponents.CustomInput
 @using MHWApp.Client.Pages.GeneralComponents.IconButtons
 @using MHWApp.Client.Pages.GeneralComponents.Select.Component
@@ -12,7 +13,9 @@
 @using static MHWApp.Library.StaticVariables
 @inject IJSRuntime jsRuntime
 @inject GameExtensionProvider gameExtensionProvider
+@inject CategoryProvider categoryProvider
 @inject CategoryArmorInventoryEntryProvider multiProvider
+@inject IDataBaseUpdatesHubConnection hubService
 @implements IDisposable
 
 <section>
@@ -160,11 +163,27 @@
     <header class="container-left header">
         <h2>Edit Category</h2>
     </header>
+
+    <div class="form__container">
+        @if (!isLoading)
+        {
+            foreach(Category category in categories)
+            {
+                var color = GetInterpolatedColor(categoryIndex, categories.Count);
+                <p>@category.Name</p>
+                <div id="dynamicAnimatedBox@(categoryIndex++)" class="box" style="border-color: @color">
+                    <p>content</p>
+                </div>
+            }
+        }
+    </div>
+
 </section>
 
 @code {
     private bool isLoading = true;
 
+    #region Create Category
     private bool showArmorSet = false;
     private bool showInventoryEntries = false;
 
@@ -185,10 +204,17 @@
     private InventoryEntryList? inventoryEntryList;
 
     private ValidationMessageStore? _messageStore;
+    #endregion
+
+    #region Edit Category
+    private List<Category> categories = [];
+    private int categoryIndex = 0;
+    #endregion
 
     protected override async Task OnInitializedAsync()
     {
         gameExtensions = await gameExtensionProvider.GetGameExtensionsAsync();
+        categories = await categoryProvider.GetCategoriesAsync();
 
         FormModel ??= new CreateFormModel();
         editContext = new(FormModel);
@@ -197,6 +223,8 @@
         _dotNetRef = DotNetObjectReference.Create(this);
 
         _messageStore = new ValidationMessageStore(editContext);
+
+        hubService.OnNewCategory += HandleSignalRNewCategory;
 
         isLoading = false;
     }
@@ -421,11 +449,49 @@
         Console.WriteLine("%%%%%%%%%%%%%%%%%%%%");
     }
 
+    private string GetInterpolatedColor(int index, int total)
+    {
+        // Edge case: only one item
+        if (total <= 1)
+            return $"rgb(27, 110, 194)";
+
+        // Start color (blue)
+        var r1 = 27;
+        var g1 = 110;
+        var b1 = 194;
+
+        // End color (purple)
+        var r2 = 100;
+        var g2 = 87;
+        var b2 = 166;
+
+        r2 = 255;
+        g2 = 0;
+        b2 = 138;
+
+        // t goes from 0 (start) to 1 (end)
+        double t = (double)index / (total - 1);
+
+        int r = (int)(r1 + (r2 - r1) * t);
+        int g = (int)(g1 + (g2 - g1) * t);
+        int b = (int)(b1 + (b2 - b1) * t);
+
+        return $"rgb({r}, {g}, {b})";
+    }
+
+    private void HandleSignalRNewCategory(Category newCategory)
+    {
+        categories.Add(newCategory);
+        StateHasChanged();
+    }
+
     public void Dispose()
     {
         _dotNetRef?.Dispose();
         
         if (editContext is not null)
             editContext.OnFieldChanged -= HandleFieldChanged;
+
+        hubService.OnNewCategory -= HandleSignalRNewCategory;
     }
 }
