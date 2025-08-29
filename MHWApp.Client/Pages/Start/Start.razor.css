@@ -22,3 +22,8 @@ p:hover {
 .footer {
     height: 20vh;
 }
+
+h1 {
+    font-weight: var(--standard-font-weight__h1);
+    font-size: 4rem;
+}

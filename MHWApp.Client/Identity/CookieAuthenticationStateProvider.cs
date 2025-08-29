@@ -5,6 +5,9 @@ using System.Security.Claims;
 using System.Text.Json;
 using System.Text;
 using System.Net.Http;
+using MHWApp.Library.DTO.Identity;
+using Microsoft.AspNetCore.Components.WebAssembly.Http;
+using Microsoft.AspNetCore.Mvc;
 
 namespace MHWApp.Client.Identity
 {
@@ -45,109 +48,80 @@ namespace MHWApp.Client.Identity
         /// <summary>
         /// Register a new user.
         /// </summary>
-        /// <param name="email">The user's email address.</param>
+        /// <param name="email">The user's userName address.</param>
         /// <param name="password">The user's password.</param>
         /// <returns>The result serialized to a <see cref="FormResult"/>.
         /// </returns>
-        public async Task<FormResult> RegisterAsync(string email, string password)
+        public async Task RegisterAsync(string userName, string password)
         {
-            string[] defaultDetail = ["An unknown error prevented registration from succeeding."];
+            // make the request
+            var result = await httpClient.PostAsJsonAsync("register", new IdentityDTO{ UserName = userName, Password = password });
 
-            try
+            if(result.StatusCode == System.Net.HttpStatusCode.Conflict)
             {
-                // make the request
-                var result = await httpClient.PostAsJsonAsync(
-                    "register", new
-                    {
-                        email,
-                        password
-                    });
+                var problem = result.Content.ReadFromJsonAsync<ProblemDetails>();
 
-                // successful?
-                if (result.IsSuccessStatusCode)
-                {
-                    return new FormResult { Succeeded = true };
-                }
+                return;
+            } 
 
-                // body should contain details about why it failed
-                var details = await result.Content.ReadAsStringAsync();
-                var problemDetails = JsonDocument.Parse(details);
-                var errors = new List<string>();
-                var errorList = problemDetails.RootElement.GetProperty("errors");
-
-                foreach (var errorEntry in errorList.EnumerateObject())
-                {
-                    if (errorEntry.Value.ValueKind == JsonValueKind.String)
-                    {
-                        errors.Add(errorEntry.Value.GetString()!);
-                    }
-                    else if (errorEntry.Value.ValueKind == JsonValueKind.Array)
-                    {
-                        errors.AddRange(
-                            errorEntry.Value.EnumerateArray().Select(
-                                e => e.GetString() ?? string.Empty)
-                            .Where(e => !string.IsNullOrEmpty(e)));
-                    }
-                }
-
-                // return the error list
-                return new FormResult
-                {
-                    Succeeded = false,
-                    ErrorList = problemDetails == null ? defaultDetail : [.. errors]
-                };
-            }
-            catch (Exception ex)
+            // successful?
+            if (result.IsSuccessStatusCode)
             {
-                logger.LogError(ex, "App error");
+                return;
             }
 
-            // unknown error
-            return new FormResult
+            // body should contain details about why it failed
+            var details = await result.Content.ReadAsStringAsync();
+            var problemDetails = JsonDocument.Parse(details);
+            var errors = new List<string>();
+            var errorList = problemDetails.RootElement.GetProperty("errors");
+
+            foreach (var errorEntry in errorList.EnumerateObject())
             {
-                Succeeded = false,
-                ErrorList = defaultDetail
-            };
+                if (errorEntry.Value.ValueKind == JsonValueKind.String)
+                {
+                    errors.Add(errorEntry.Value.GetString()!);
+                }
+                else if (errorEntry.Value.ValueKind == JsonValueKind.Array)
+                {
+                    errors.AddRange(
+                        errorEntry.Value.EnumerateArray().Select(
+                            e => e.GetString() ?? string.Empty)
+                        .Where(e => !string.IsNullOrEmpty(e)));
+                }
+            }
+
+            // return the error list
+            return;
         }
 
         /// <summary>
-        /// User login.
+        /// User login request through custom POST endpoint
         /// </summary>
-        /// <param name="email">The user's email address.</param>
+        /// <param name="userName">The user's userName.</param>
         /// <param name="password">The user's password.</param>
         /// <returns>The result of the login request serialized to a <see cref="FormResult"/>.</returns>
-        public async Task<FormResult> LoginAsync(string email, string password)
+        public async Task<FormResult> LoginAsync(IdentityDTO dto)
         {
-            try
-            {
-                // login with cookies
-                var result = await httpClient.PostAsJsonAsync(
-                    "login?useCookies=true", new
-                    {
-                        email,
-                        password
-                    });
+            // login with cookies
+            var result = await httpClient.PostAsJsonAsync("login", dto);
 
-                // success?
-                if (result.IsSuccessStatusCode)
-                {
-                    // need to refresh auth state
-                    NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
-
-                    // success!
-                    return new FormResult { Succeeded = true };
-                }
-            }
-            catch (Exception ex)
+            // success?
+            if (result.IsSuccessStatusCode)
             {
-                logger.LogError(ex, "App error");
+                // need to refresh auth state
+                NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
+
+                // success!
+                return new FormResult { Succeeded = true };
             }
+            
 
             // unknown error
             return new FormResult
             {
                 Succeeded = false,
-                ErrorList = ["Invalid email and/or password."]
+                ErrorList = ["Invalid userName and/or password."]
             };
         }
 
@@ -169,18 +143,20 @@ namespace MHWApp.Client.Identity
             try
             {
                 // the user info endpoint is secured, so if the user isn't logged in this will fail
-                var userResponse = await httpClient.GetAsync("manage/info");
+                var request = new HttpRequestMessage(HttpMethod.Get, "/manage/info");
+                request.SetBrowserRequestOption("credentials", "include");
+                var response = await httpClient.SendAsync(request);
 
                 // throw if user info wasn't retrieved
-                userResponse.EnsureSuccessStatusCode();
+                response.EnsureSuccessStatusCode();
 
                 // user is authenticated,so let's build their authenticated identity
-                var userJson = await userResponse.Content.ReadAsStringAsync();
+                var userJson = await response.Content.ReadAsStringAsync();
                 var userInfo = JsonSerializer.Deserialize<UserInfo>(userJson, jsonSerializerOptions);
 
                 if (userInfo != null)
                 {
-                    // in this example app, name and email are the same
+                    // in this example app, name and userName are the same
                     var claims = new List<Claim>
                     {
                         new(ClaimTypes.Name, userInfo.Email),

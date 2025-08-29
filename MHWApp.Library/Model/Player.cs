@@ -6,6 +6,7 @@ namespace MHWApp.Library.Model
 {
     public class Player : IdentityUser<int>
     {
-        
+        [Required]
+        public required bool IsApproved { get; set; }
     }
 }

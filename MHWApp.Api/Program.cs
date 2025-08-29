@@ -4,6 +4,7 @@ using MHWApp.Api.Provider;
 using MHWApp.Library;
 using MHWApp.Library.DTO;
 using MHWApp.Library.DTO.Create.Category_Armor_InventoryEntry;
+using MHWApp.Library.DTO.Identity;
 using MHWApp.Library.Model;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -26,11 +27,10 @@ builder.Services.AddOpenApi();
 #region CUSTOM CODE
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
+var enableRegister = builder.Configuration.GetValue<bool>("EnableRegister");
+
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite(connectionString));
-
-// establish cookie authentication
-builder.Services.AddAuthentication(IdentityConstants.ApplicationScheme).AddIdentityCookies();
 
 // Configure app cookie
 //
@@ -38,22 +38,20 @@ builder.Services.AddAuthentication(IdentityConstants.ApplicationScheme).AddIdent
 // BlazorWasmAuth apps on the same domain, are Lax and SameAsRequest. 
 // For more information on these settings, see:
 // https://learn.microsoft.com/aspnet/core/blazor/security/webassembly/standalone-with-identity#cross-domain-hosting-same-site-configuration
-/*
+
 builder.Services.ConfigureApplicationCookie(options =>
 {
     options.Cookie.SameSite = SameSiteMode.Lax;
     options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
 });
-*/
 
 // configure authorization
 builder.Services.AddAuthorizationBuilder();
 
 // add identity and opt-in to endpoints
-builder.Services.AddIdentityCore<Player>()
-    .AddRoles<IdentityRole<int>>()
+builder.Services.AddIdentity<Player, IdentityRole<int>>(options => { /* Optionen */ })
     .AddEntityFrameworkStores<AppDbContext>()
-    .AddApiEndpoints();
+    .AddDefaultTokenProviders();
 
 // add a CORS policy for the client
 builder.Services.AddCors(
@@ -111,7 +109,7 @@ if (app.Environment.IsDevelopment())
 }
 
 // create routes for the identity endpoints
-app.MapIdentityApi<Player>();
+//app.MapIdentityApi<Player>();
 
 // activate the CORS policy
 app.UseCors("wasm");
@@ -123,18 +121,105 @@ app.UseCors("wasm");
 app.UseAuthentication();
 app.UseAuthorization();
 
+#region Register
+if (!enableRegister)
+{
+    app.MapPost("/register", async (HttpContext httpContext, UserManager<Player> userManager, IdentityDTO dto) =>
+    {
+        if (Equals(dto.UserName.ToLower(), "prime vu"))
+        {
+            return Results.Problem(
+                title: "Prime Vu",
+                detail: $"The username '{dto.UserName}' can not be assigned. It is achieved.",
+                statusCode: StatusCodes.Status409Conflict
+            );
+        }
+
+        if (BANNED_NAMES.Contains(dto.UserName.ToLower()))
+        {
+            return Results.Problem(
+                title: "Username not allowed",
+                detail: $"The username '{dto.UserName}' is not permitted.",
+                statusCode: StatusCodes.Status409Conflict
+            );
+        }
+
+        var existingUser = await userManager.FindByNameAsync(dto.UserName);
+
+        if (existingUser is not null)
+        {
+            return Results.Problem(
+                title: "Username already taken",
+                detail: $"The username '{dto.UserName}' is already in use.",
+                statusCode: StatusCodes.Status409Conflict
+            );
+        }
+
+        var player = new Player
+        {
+            UserName = dto.UserName,
+            IsApproved = true
+        };
+
+        var result = await userManager.CreateAsync(player, dto.Password);
+
+        return result.Succeeded ? Results.Ok() : Results.BadRequest();
+    });
+}
+#endregion
+
+#region Login
+app.MapPost("/login", async (
+    HttpContext httpContext,
+    [FromServices] SignInManager<Player> signInManager,
+    [FromServices] UserManager<Player> userManager,
+    [FromBody] IdentityDTO dto) =>
+{
+    var user = await userManager.FindByNameAsync(dto.UserName);
+    if (user is null || !user.IsApproved) return Results.Unauthorized();
+
+    var result = await signInManager.PasswordSignInAsync(user, dto.Password, false, false);
+    if (result.Succeeded)
+    {
+        // Das Cookie wird automatisch gesetzt
+        return Results.Ok();
+    }
+    return Results.Unauthorized();
+});
+#endregion
+
 #region Endpoint: Logout
 // provide an endpoint to clear the cookie for logout
 //
 // For more information on the logout endpoint and antiforgery, see:
 // https://learn.microsoft.com/aspnet/core/blazor/security/webassembly/standalone-with-identity#antiforgery-support
-app.MapPost("/logout", async (SignInManager<Player> signInManager, [FromBody] object empty) =>
+app.MapPost("/logout", async ([FromServices] SignInManager<Player> signInManager, [FromBody] object empty) =>
 {
     if (empty is not null)
     {
         await signInManager.SignOutAsync();
 
         return Results.Ok();
+    }
+
+    return Results.Unauthorized();
+}).RequireAuthorization();
+#endregion
+
+#region User Info
+app.MapGet("/manage/info", (ClaimsPrincipal user) =>
+{
+    if (user.Identity is not null && user.Identity.IsAuthenticated)
+    {
+        var name = user.Identity.Name ?? "";
+        var claims = user.Claims
+            .ToDictionary(c => c.Type, c => c.Value);
+
+        return TypedResults.Ok(new
+        {
+            Email = name,
+            Claims = claims
+        });
     }
 
     return Results.Unauthorized();

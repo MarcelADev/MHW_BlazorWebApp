@@ -30,5 +30,19 @@ namespace MHWApp.Library
             Chest = 1,
             Legs = 2
         }
+
+        public static string[] BANNED_NAMES = new string[]
+        {
+            "master",
+            "admin",
+            "administrator",
+            "root",
+            "system",
+            "moderator",
+            "mod", 
+            "owner", 
+            "staff",
+            "abbasstinkt"
+        };
     }
 }

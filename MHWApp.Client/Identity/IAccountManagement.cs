@@ -1,4 +1,5 @@
 ﻿using MHWApp.Client.Identity.Model;
+using MHWApp.Library.DTO.Identity;
 
 namespace MHWApp.Client.Identity
 {
@@ -13,7 +14,7 @@ namespace MHWApp.Client.Identity
         /// <param name="email">User's email.</param>
         /// <param name="password">User's password.</param>
         /// <returns>The result of the request serialized to <see cref="FormResult"/>.</returns>
-        public Task<FormResult> LoginAsync(string email, string password);
+        public Task<FormResult> LoginAsync(IdentityDTO dto);
 
         /// <summary>
         /// Log out the logged in user.
@@ -24,10 +25,10 @@ namespace MHWApp.Client.Identity
         /// <summary>
         /// Registration service.
         /// </summary>
-        /// <param name="email">User's email.</param>
+        /// <param name="userName">User's email.</param>
         /// <param name="password">User's password.</param>
         /// <returns>The result of the request serialized to <see cref="FormResult"/>.</returns>
-        public Task<FormResult> RegisterAsync(string email, string password);
+        public Task RegisterAsync(string userName, string password);
 
         public Task<bool> CheckAuthenticatedAsync();
     }

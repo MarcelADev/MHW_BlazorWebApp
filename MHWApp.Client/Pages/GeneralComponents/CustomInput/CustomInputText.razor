@@ -2,6 +2,8 @@
 
 <input @attributes="AdditionalAttributes"
        class="@CssClass"
+       type="@InputType"
+       placeholder="@Placeholder"
        id="@Id"
        value="@CurrentValueAsString"
        @oninput="@(EventCallback.Factory.CreateBinder<string>(

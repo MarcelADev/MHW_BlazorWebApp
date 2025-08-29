@@ -8,7 +8,14 @@
 
     public partial class CustomInputText : InputText, IDisposable
     {
-        [Parameter] public string? Id { get; set; }
+        [Parameter]
+        public string? Id { get; set; }
+
+        [Parameter]
+        public string InputType { get; set; } = "text";
+
+        [Parameter]
+        public string Placeholder { get; set; } = string.Empty;
 
         private new string CssClass => $"custom-input {GetValidationClass()}";
 

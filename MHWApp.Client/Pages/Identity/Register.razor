@@ -105,17 +105,19 @@
             return;
         }
 
-        var result = await Acct.RegisterAsync(email, password);
+        await Acct.RegisterAsync(email, password);
 
-        if (result.Succeeded)
-        {
-            success = true;
-            email = password = confirmPassword = string.Empty;
-        }
-        else
-        {
-            errors = true;
-            errorList = result.ErrorList;
-        }
+        // TODO
+
+        // if (result.Succeeded)
+        // {
+        //     success = true;
+        //     email = password = confirmPassword = string.Empty;
+        // }
+        // else
+        // {
+        //     errors = true;
+        //     errorList = result.ErrorList;
+        // }
     }
 }
