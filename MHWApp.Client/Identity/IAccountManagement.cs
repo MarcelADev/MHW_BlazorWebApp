@@ -25,10 +25,9 @@ namespace MHWApp.Client.Identity
         /// <summary>
         /// Registration service.
         /// </summary>
-        /// <param name="userName">User's email.</param>
-        /// <param name="password">User's password.</param>
+        /// <param name="identityDTO">User's name and password.</param>
         /// <returns>The result of the request serialized to <see cref="FormResult"/>.</returns>
-        public Task RegisterAsync(string userName, string password);
+        public Task RegisterAsync(IdentityDTO identityDTO);
 
         public Task<bool> CheckAuthenticatedAsync();
     }

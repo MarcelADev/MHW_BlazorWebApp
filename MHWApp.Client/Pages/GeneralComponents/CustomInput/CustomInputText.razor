@@ -1,12 +1,12 @@
 ﻿@inherits InputText
 
 <input @attributes="AdditionalAttributes"
-       class="@CssClass"
-       type="@InputType"
-       placeholder="@Placeholder"
-       id="@Id"
-       value="@CurrentValueAsString"
-       @oninput="@(EventCallback.Factory.CreateBinder<string>(
-           this,
-           __value => CurrentValueAsString = __value,
-           CurrentValueAsString ?? ""))" />
+        class="@CssClass"
+        type="@InputType"
+        placeholder="@Placeholder"
+        id="@Id"
+        value="@CurrentValueAsString"
+        @oninput="@(EventCallback.Factory.CreateBinder<string>(
+        this,
+                __value => CurrentValueAsString = __value,
+                CurrentValueAsString ?? ""))" />

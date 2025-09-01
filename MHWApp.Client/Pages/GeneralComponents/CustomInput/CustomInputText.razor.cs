@@ -5,9 +5,12 @@
     using Microsoft.AspNetCore.Components.Rendering;
     using Microsoft.AspNetCore.Components.Web;
     using System.ComponentModel.DataAnnotations;
+    using System.Threading.Tasks;
 
     public partial class CustomInputText : InputText, IDisposable
     {
+        private new string CssClass => $"custom-input {GetValidationClass()}";
+
         [Parameter]
         public string? Id { get; set; }
 
@@ -16,8 +19,6 @@
 
         [Parameter]
         public string Placeholder { get; set; } = string.Empty;
-
-        private new string CssClass => $"custom-input {GetValidationClass()}";
 
         private string GetValidationClass()
         {

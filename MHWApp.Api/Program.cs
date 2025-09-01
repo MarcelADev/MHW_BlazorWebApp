@@ -122,7 +122,13 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 #region Register
-if (!enableRegister)
+app.MapGet("/register", () =>
+{
+    return Results.Ok(enableRegister);
+}
+);
+
+if (enableRegister)
 {
     app.MapPost("/register", async (HttpContext httpContext, UserManager<Player> userManager, IdentityDTO dto) =>
     {

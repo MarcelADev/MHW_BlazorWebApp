@@ -8,6 +8,8 @@ using System.Net.Http;
 using MHWApp.Library.DTO.Identity;
 using Microsoft.AspNetCore.Components.WebAssembly.Http;
 using Microsoft.AspNetCore.Mvc;
+using MHWApp.Library.Exceptions;
+using System.Net;
 
 namespace MHWApp.Client.Identity
 {
@@ -52,16 +54,41 @@ namespace MHWApp.Client.Identity
         /// <param name="password">The user's password.</param>
         /// <returns>The result serialized to a <see cref="FormResult"/>.
         /// </returns>
-        public async Task RegisterAsync(string userName, string password)
+        public async Task RegisterAsync(IdentityDTO dto)
         {
             // make the request
-            var result = await httpClient.PostAsJsonAsync("register", new IdentityDTO{ UserName = userName, Password = password });
+            var result = await httpClient.PostAsJsonAsync("register", dto);
 
-            if(result.StatusCode == System.Net.HttpStatusCode.Conflict)
+            if(result.StatusCode == HttpStatusCode.NotFound)
+            {
+                throw new NotFoundException();
+            }
+
+            if(result.StatusCode == HttpStatusCode.Conflict)
             {
                 var problem = result.Content.ReadFromJsonAsync<ProblemDetails>();
 
-                return;
+                if (problem is null || problem.Result is null || problem.Result.Title == string.Empty) 
+                { 
+                    throw new ConflictException("Conflict occured. Problem Details were empty"); 
+                }
+
+                if (problem.Result.Title.Contains("Prime Vu"))
+                {
+                    throw new ConflictException("Prime Vu is not assigned.\nIt is achieved");
+                }
+
+                if (problem.Result.Title.Contains("Username not allowed"))
+                {
+                    throw new ConflictException($"\"{dto.UserName}\" is a banned username. Choose another one");
+                }
+
+                if (problem.Result.Title.Contains("Username already taken"))
+                {
+                    throw new ConflictException($"\"{dto.UserName}\" isn't available. Choose another one");
+                }
+
+                throw new ConflictException(problem.Result.Title);
             } 
 
             // successful?
@@ -219,6 +246,19 @@ namespace MHWApp.Client.Identity
         {
             await GetAuthenticationStateAsync();
             return authenticated;
+        }
+
+        public async Task<bool> CheckRegistrationEnabled()
+        {
+            var result = await httpClient.GetAsync("register");
+
+            if (result is not null && result.StatusCode == HttpStatusCode.OK)
+            { 
+                //result.Content.ReadFromJsonAsync(registerEnabled);
+                //TODO
+            }
+
+            return false;
         }
     }
 }
