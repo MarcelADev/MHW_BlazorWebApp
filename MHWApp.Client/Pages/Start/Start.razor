@@ -1,5 +1,6 @@
 ﻿@page "/"
 @using MHWApp.Client.Pages.Identity
+@using MHWApp.Client.Utils
 
 <PageTitle>Home</PageTitle>
 
@@ -19,10 +20,12 @@
 		<div>
 			<a href="login">Login</a>
 		</div>
-		<div>
-			<a href="register">Register</a>
-		</div>
-
+		@if (FeatureFlags.IsRegisterEnabled)
+		{
+			<div>
+				<a href="register">Register</a>
+			</div>
+		}
 		<div>
 			<p>Leave</p>
 		</div>

@@ -1,10 +1,10 @@
 ﻿@page "/edit/inventoryentries"
 @using static MHWApp.Library.StaticVariables
+@using MHWApp.Client.GeneralComponents.Select.Component
 @using MHWApp.Library.Exceptions
 @using MHWApp.Library.Model
 @using MHWApp.Library.DTO
 @using MHWApp.Client.HubConnections
-@using MHWApp.Client.Pages.GeneralComponents.Select.Component
 @using Provider;
 @inject InventoryEntryProvider inventoryEntryProvider
 @inject CategoryProvider categoryProvider;
@@ -48,7 +48,7 @@
                     @bind-Value="Model.NamePrefix" />
                 }
 
-                <MultiSelect Label="Select Categories"
+                <MultiSelectComponent Label="Select Categories"
                 Placeholder="Select"
                 T="InventoryEntryCategory"
                 Options="@inventoryCategories"

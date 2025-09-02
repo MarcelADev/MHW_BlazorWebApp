@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Xml.Linq;
 
-namespace MHWApp.Client.Pages.GeneralComponents.Modals.EditSessionModal
+namespace MHWApp.Client.GeneralComponents.Modals.EditSessionModal
 {
     public class EditSessionFormModel : IValidatableObject
     {

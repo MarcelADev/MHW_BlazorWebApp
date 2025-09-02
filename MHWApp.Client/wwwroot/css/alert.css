@@ -1,0 +1,47 @@
+﻿.alert-container {
+    position: fixed;
+    bottom: 1rem;
+    left: 0;
+    right: 0;
+    align-items: center;
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 0.5rem;
+    z-index: 9999;
+    pointer-events: none;
+}
+
+.alert-warning.alert-prime-vu {
+    background: radial-gradient( ellipse at center, #443501 0%, #000000 100% );
+    background: transparent;
+    padding: 1rem;
+    border: none;
+}
+
+.prime-vu__container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    --prime-vu__font-size: 1.5rem;
+    --prime-vu__font-weight: 800;
+}
+
+.prime-vu__golden-text {
+    position: relative;
+    border: none;
+    color: transparent;
+    background-image: linear-gradient( to right, #462523 0, #cb9b51 22%, #f6e27a 45%, #f6f2c0 50%, #f6e27a 55%, #cb9b51 78%, #462523 100% );
+    -webkit-background-clip: text;
+    font-size: var(--prime-vu__font-size);
+    font-weight: var(--prime-vu__font-weight);
+}
+
+.prime-vu__text-shadow {
+    position: absolute;
+    font-size: var(--prime-vu__font-size);
+    font-weight: var(--prime-vu__font-weight);
+    left: 1rem;
+    margin-right: 1rem;
+    text-shadow: -1px 0 1px #c6bb9f, 0 1px 1px #c6bb9f, 4px 4px 10px rgba(0,0,0, 0.6);
+    z-index: -1;
+}

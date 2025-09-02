@@ -1,258 +1,193 @@
-﻿@page "/register"
-@using MHWApp.Client.Identity
-@using MHWApp.Client.Pages.GeneralComponents.CustomInput
-@using MHWApp.Library.DTO.Identity
-@using System.ComponentModel.DataAnnotations
-@using MHWApp.Library.Exceptions
-@inject IAccountManagement identityProvider
-@implements IDisposable
+﻿@if (FeatureFlags.IsRegisterEnabled)
+{
+    @page "/register"
+    @using MHWApp.Client.Identity
+    @using MHWApp.Client.GeneralComponents.CustomInput
+    @using MHWApp.Client.Services
+    @using MHWApp.Client.Utils
+    @using MHWApp.Library.DTO.Identity
+    @using System.ComponentModel.DataAnnotations
+    @using MHWApp.Library.Exceptions
+    @inject IAccountManagement identityProvider
+    @inject IGlobalAlertService alertService
+    @implements IDisposable
 
-<PageTitle>Register</PageTitle>
+    <PageTitle>Register</PageTitle>
 
-<div class="theme-purple container-center">
-
-    <header class="container-center header">
-        <h1>Register</h1>
-    </header>
-
-    @foreach (string warning in primeVu)
-    {
-        <div class="alert alert-warning">
-            <div class="prime-vu__container">
-                <div class="prime-vu__golden-text">@warning</div>
-                <div class="prime-vu__text-shadow">@warning</div>
-            </div>
-        </div>
-    }
-
-    @foreach (string danger in dangers)
-    {
-        <div class="alert alert-danger">@danger</div>
-    }
-
-    <AuthorizeView>
-        <Authorized>
-            <LoginRedirect></LoginRedirect>
-        </Authorized>
-        <NotAuthorized Context="notAuthorizedContext">
-            
-            @if (success)
-            {
-                <LoginRedirect></LoginRedirect>
-            }
-            else
-            {
-                <div class="form__container">
-                @if(!isLoading)
-                {
-                    <EditForm EditContext="editContext" FormName="register" OnValidSubmit="DoRegisterAsync">
-
-                        <div class="form__field">
-                            <label for="register-userName">Username</label>
-                            <CustomInputText id="register-userName"
-                                                AdditionalAttributes="FormModel!.AdditionalAttributes"
-                                                @bind-Value="FormModel!.UserName" />
-                            <ValidationMessage For="@(() => FormModel!.UserName)" />
-                        </div>
-
-                        <div class="form__field">
-                            <label for="register-password-one">Password</label>
-                            <CustomInputText id="register-password-one"
-                                                InputType="password"
-                                                @bind-Value="FormModel!.PasswordOne" />
-                            <ValidationMessage For="@(() => FormModel!.PasswordOne)" />
-                        </div>
-
-                        <div class="form__field">
-                            <label for="register-password-two">Confirm Password</label>
-                            <CustomInputText id="register-password-two"
-                                                InputType="password"
-                                                @bind-Value="FormModel!.PasswordTwo" />
-                            <ValidationMessage For="@(() => FormModel!.PasswordTwo)" />
-                        </div>
-
-                        <div class=" form__field form__button">
-                            <button type="submit" class="btn btn-primary btn-register">
-                                Register
-                            </button>
-                        </div>
-
-                    </EditForm>
-                }
+    @* <div class="alert-container">
+    @foreach (string success in successes)
+        {
+            <div class="alert alert-success">@success</div>
+        }
+        @foreach (string danger in dangers)
+        {
+            <div class="alert alert-danger">@danger</div>
+        }
+        @foreach (string warning in primeVu)
+        {
+            <div class="alert alert-warning">
+                <div class="prime-vu__container">
+                    <div class="prime-vu__golden-text">@warning</div>
+                    <div class="prime-vu__text-shadow">@warning</div>
                 </div>
+            </div>
+        }
+    </div> *@
+
+    <div class="container-top theme-purple container-height">
+
+        @* <div class="top-space"/> *@
+
+        <header class="container-center header">
+            <h1>Register</h1>
+        </header>
+
+        <AuthorizeView>
+            <Authorized>
+                <LoginRedirect></LoginRedirect>
+            </Authorized>
+            <NotAuthorized Context="notAuthorizedContext">
+            
+                <div class="form__container">
+                    @if(!isLoading)
+                    {
+                        <EditForm EditContext="editContext" FormName="register" OnValidSubmit="DoRegisterAsync">
+
+                            <div class="form__field">
+                                <label for="register-userName">Username</label>
+                                <CustomInputText id="register-userName"
+                                                    AdditionalAttributes="FormModel!.AdditionalAttributes"
+                                                    @bind-Value="FormModel!.UserName" />
+                                <ValidationMessage For="@(() => FormModel!.UserName)" />
+                            </div>
+
+                            <div class="form__field">
+                                <label for="register-password-one">Password</label>
+                                <CustomInputText id="register-password-one"
+                                                    InputType="password"
+                                                    @bind-Value="FormModel!.PasswordOne" />
+                                <ValidationMessage For="@(() => FormModel!.PasswordOne)" />
+                            </div>
+
+                            <div class="form__field">
+                                <label for="register-password-two">Confirm Password</label>
+                                <CustomInputText id="register-password-two"
+                                                    InputType="password"
+                                                    @bind-Value="FormModel!.PasswordTwo" />
+                                <ValidationMessage For="@(() => FormModel!.PasswordTwo)" />
+                            </div>
+
+                            <div class=" form__field form__button">
+                                <button type="submit" class="btn btn-primary btn-register">
+                                    Register
+                                </button>
+                            </div>
+
+                        </EditForm>
+                    }
+                </div>
+            
+            </NotAuthorized>
+        </AuthorizeView>
+    </div>
+
+    @code {
+        private bool isLoading = true;
+        private bool validateOnlyModified = true;
+
+        private List<string> primeVu = [];
+        private List<string> dangers = [];
+        private List<string> successes = [];
+
+        private EditContext? editContext;
+        private ValidationMessageStore? _messageStore;
+
+        [SupplyParameterFromForm]
+        private RegisterFormModel? FormModel { get; set; }
+
+        protected override void OnInitialized()
+        {
+            FormModel = new();
+            editContext = new EditContext(FormModel);
+            editContext.OnFieldChanged += HandleFieldChanged;
+
+            _messageStore = new ValidationMessageStore(editContext);
+
+            isLoading = false;
+        }
+
+        private void HandleFieldChanged(object? sender, FieldChangedEventArgs e)
+        {
+            if (editContext is not null) 
+            {
+                Utils.ManualModelValidator.ValidateModel(editContext, FormModel!, _messageStore!, onlyModified: validateOnlyModified);
+                StateHasChanged();
             }
-        </NotAuthorized>
-    </AuthorizeView>
-</div>
-
-@code {
-    private bool isLoading = true;
-    private bool success = false;
-
-    private List<string> primeVu = [];
-    private List<string> dangers = [];
-
-    private EditContext? editContext;
-    private ValidationMessageStore? _messageStore;
-    private bool validateOnlyModified = true;
-
-    [SupplyParameterFromForm]
-    private RegisterFormModel? FormModel { get; set; }
-
-    protected override void OnInitialized()
-    {
-        FormModel = new();
-        editContext = new EditContext(FormModel);
-        editContext.OnFieldChanged += HandleFieldChanged;
-
-        _messageStore = new ValidationMessageStore(editContext);
-
-        isLoading = false;
-    }
-
-    private void HandleFieldChanged(object? sender, FieldChangedEventArgs e)
-    {
-        if (editContext is not null) 
-        {
-            Utils.ManualModelValidator.ValidateModel(editContext, FormModel!, _messageStore!, onlyModified: validateOnlyModified);
-            StateHasChanged();
-        }
-    }
-
-    public async Task DoRegisterAsync()
-    {
-        Utils.ManualModelValidator.ValidateModel(editContext!, FormModel!, _messageStore!, onlyModified: false);
-
-        bool hasValidationErrors = editContext!.GetValidationMessages().Any();
-
-        if (hasValidationErrors)
-        {
-            validateOnlyModified = false;
-
-            Console.WriteLine("Not a valid Submit bruh");
-            return;
-        }
-        else
-        {
-            validateOnlyModified = true;
         }
 
-        //success = false;
+        public async Task DoRegisterAsync()
+        {
+            Utils.ManualModelValidator.ValidateModel(editContext!, FormModel!, _messageStore!, onlyModified: false);
 
-        try
-        {
-            await identityProvider.RegisterAsync(new IdentityDTO { UserName = FormModel!.UserName, Password = FormModel.PasswordOne });
-        }
-        catch(NotFoundException)
-        {
-            //TODO Endpoint
-        }
-        catch(ConflictException e)
-        {
-            if (e.ConflictTitle.Contains("Prime Vu"))
-                _ = ShowPrimeVu(e.ConflictTitle);
+            bool hasValidationErrors = editContext!.GetValidationMessages().Any();
+
+            if (hasValidationErrors)
+            {
+                validateOnlyModified = false;
+
+                Console.WriteLine("Not a valid Submit bruh");
+                return;
+            }
             else
-                _ = ShowDanger(e.ConflictTitle);
+            {
+                validateOnlyModified = true;
+            }
+
+            try
+            {
+                await identityProvider.RegisterAsync(new IdentityDTO { UserName = FormModel!.UserName, Password = FormModel.PasswordOne });
+            }
+            catch(ConflictException e)
+            {
+                if (e.ConflictTitle.Contains("Prime Vu"))
+                    alertService.ShowPrimeVu(e.ConflictTitle);
+                else
+                    alertService.ShowDanger(e.ConflictTitle);
+            }
         }
 
-        // if (string.IsNullOrWhiteSpace(FormModel!.UserName))
-        // {
-        //     errors = true;
-        //     errorList = ["Email is required."];
-
-        //     return;
-        // }
-
-        // if (string.IsNullOrWhiteSpace(FormModel!.PasswordOne))
-        // {
-        //     errors = true;
-        //     errorList = ["Password is required."];
-
-        //     return;
-        // }
-
-        // if (string.IsNullOrWhiteSpace(confirmPassword))
-        // {
-        //     errors = true;
-        //     errorList = ["Please confirm your password."];
-
-        //     return;
-        // }
-
-        // if (FormModel.PasswordOne != confirmPassword)
-        // {
-        //     errors = true;
-        //     errorList = ["Passwords don't match."];
-
-        //     return;
-        // }        
-
-        // TODO
-
-        // if (result.Succeeded)
-        // {
-        //     success = true;
-        //     email = password = confirmPassword = string.Empty;
-        // }
-        // else
-        // {
-        //     errors = true;
-        //     errorList = result.ErrorList;
-        // }
-    }
-
-    private async Task ShowPrimeVu(string message)
-    {
-        primeVu.Add(message);
-        StateHasChanged();
-
-        await Task.Delay(8000);
-
-        primeVu.Remove(message);
-        StateHasChanged();
-    }
-
-    private async Task ShowDanger(string message)
-    {
-        dangers.Add(message);
-        StateHasChanged();
-
-        await Task.Delay(8000);
-
-        dangers.Remove(message);
-        StateHasChanged();
-    }
-
-    public void Dispose()
-    {
-        if (editContext is not null) editContext.OnFieldChanged -= HandleFieldChanged;
-    }
-
-    internal class RegisterFormModel : IValidatableObject
-    {
-        public Dictionary<string, object> AdditionalAttributes = new()
+        public void Dispose()
         {
-            { "autofocus", "on" },
-        };
+            if (editContext is not null) editContext.OnFieldChanged -= HandleFieldChanged;
+        }
 
-        public string UserName { get; set; } = string.Empty;
-        public string PasswordOne { get; set; } = string.Empty;
-        public string PasswordTwo { get; set; } = string.Empty;
-
-        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        internal class RegisterFormModel : IValidatableObject
         {
-            if(UserName.Equals(string.Empty))
+            public Dictionary<string, object> AdditionalAttributes = new()
             {
-                yield return new ValidationResult("Username is required", [nameof(UserName)]);
-            }
-            if(PasswordOne.Equals(string.Empty))
+                { "autofocus", "on" },
+            };
+
+            public string UserName { get; set; } = string.Empty;
+            public string PasswordOne { get; set; } = string.Empty;
+            public string PasswordTwo { get; set; } = string.Empty;
+
+            public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
             {
-                yield return new ValidationResult("Password is required.", [nameof(PasswordOne)]);
-            }
-            if (PasswordOne != PasswordTwo)
-            {
-                yield return new ValidationResult("Passwords do not match.", [nameof(PasswordTwo)]);
+                if(UserName.Equals(string.Empty))
+                {
+                    yield return new ValidationResult("Username is required", [nameof(UserName)]);
+                }
+                if(PasswordOne.Equals(string.Empty))
+                {
+                    yield return new ValidationResult("Password is required.", [nameof(PasswordOne)]);
+                }
+                if (PasswordOne != PasswordTwo)
+                {
+                    yield return new ValidationResult("Passwords do not match.", [nameof(PasswordTwo)]);
+                }
             }
         }
     }
+
 }

@@ -1,6 +1,6 @@
 ﻿using MHWApp.Library.Exceptions;
 using MHWApp.Library.Model;
-using MHWApp.Client.Pages.GeneralComponents.Select;
+using MHWApp.Client.GeneralComponents.Select;
 using System.ComponentModel.DataAnnotations;
 using System.Xml.Linq;
 

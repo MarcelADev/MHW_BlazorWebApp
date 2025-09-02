@@ -5,13 +5,14 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <ServiceWorkerAssetsManifest>service-worker-assets.js</ServiceWorkerAssetsManifest>
+	<DefineConstants Condition=" '$(ENABLE_REGISTER)' == 'true' ">ENABLE_REGISTER</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Pages\GeneralComponents\DropDownVu\**" />
-    <Content Remove="Pages\GeneralComponents\DropDownVu\**" />
-    <EmbeddedResource Remove="Pages\GeneralComponents\DropDownVu\**" />
-    <None Remove="Pages\GeneralComponents\DropDownVu\**" />
+    <Compile Remove="GeneralComponents\DropDownVu\**" />
+    <Content Remove="GeneralComponents\DropDownVu\**" />
+    <EmbeddedResource Remove="GeneralComponents\DropDownVu\**" />
+    <None Remove="GeneralComponents\DropDownVu\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -45,7 +46,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Update="Pages\GeneralComponents\Select\Component\MultiSelectComponent.razor">
+    <Content Update="GeneralComponents\Select\Component\MultiSelectComponent.razor">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
     </Content>
   </ItemGroup>

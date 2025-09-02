@@ -1,6 +1,6 @@
 ﻿@using MHWApp.Library.Model;
 @using MHWApp.Client.Extensions
-@using MHWApp.Client.Pages.GeneralComponents.Select
+@using MHWApp.Client.GeneralComponents.Select.Component
 @using System.Text.RegularExpressions
 @inject ILogger<ParticipatorCard> Logger
 
@@ -16,13 +16,13 @@
             <div class="participator-weapon">
                 <img src="@($"Images/WeaponIcons/{Participator!.WeaponType?.Name.ReplaceWhitespace()}.svg")" alt="@Participator.WeaponType?.Name" />
                 
-                <SingleSelect T="WeaponType"
+                <SingleSelectComponent T="WeaponType"
                     Options="@weaponTypes"
                     OptionNameMapper="(WeaponType weaponType) => weaponType.Name"
                     OptionValueMapper="(WeaponType weaponType) => weaponType.Id"
                     Value="Participator.WeaponType"
                     ValueChanged="HandleWeaponChanged">
-                </SingleSelect>
+                </SingleSelectComponent>
 
             </div>
         </div>

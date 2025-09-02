@@ -1,17 +1,20 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.JSInterop;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq.Expressions;
 
-namespace MHWApp.Client.Pages.GeneralComponents.Select.Component
+namespace MHWApp.Client.GeneralComponents.Select.Input
 {
-    public abstract class SelectComponentBase<T> : ComponentBase, IAsyncDisposable
+    public abstract class SelectInputBase<T> : InputBase<T>, IAsyncDisposable
     {
-        public string Id = $"mhw-{Guid.NewGuid():N}";
+        public readonly string Id = $"mhw-{Guid.NewGuid():N}";
 
         protected string os = "";
         protected IJSObjectReference? module;
-        protected readonly Dictionary<string, object> selectAttributes = [];
         protected readonly Dictionary<string, object> labelAttributes = [];
+
+        protected bool hasValidationError => EditContext?.GetValidationMessages(FieldIdentifier).Any() == true;
 
         [Inject]
         protected IJSRuntime JSRuntime { get; set; } = default!;
@@ -52,6 +55,40 @@ namespace MHWApp.Client.Pages.GeneralComponents.Select.Component
         [Parameter]
         public bool Disabled { get; set; }
 
+        protected override bool TryParseValueFromString(string? value, [MaybeNullWhen(false)] out T result, [NotNullWhen(false)] out string? validationErrorMessage)
+        {
+            validationErrorMessage = null;
+
+            if (value is null)
+            {
+                result = default!;
+                return true;
+            }
+
+            // Find the matching option based on the mapped value
+            foreach (var option in Options)
+            {
+                var optionValue = OptionValueMapper(option)?.ToString();
+                if (optionValue == value)
+                {
+                    result = option;
+                    return true;
+                }
+            }
+
+            result = default!;
+            validationErrorMessage = $"The selected value '{value}' is not valid.";
+            return false;
+        }
+
+        protected override string? FormatValueAsString(T? value)
+        {
+            if (value is null)
+                return null;
+
+            return OptionValueMapper(value)?.ToString();
+        }
+
         protected override async Task OnInitializedAsync()
         {
             os = await JSRuntime.InvokeAsync<string>("getOperatingSystem", []);
@@ -64,6 +101,11 @@ namespace MHWApp.Client.Pages.GeneralComponents.Select.Component
 
             if (!Disabled)
                 labelAttributes["for"] = $"mhwapp-single-select-{Id}";
+
+            if (ValueExpression is not null)
+            {
+                FieldIdentifier = FieldIdentifier.Create(ValueExpression);
+            }
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)

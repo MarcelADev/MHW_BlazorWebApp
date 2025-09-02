@@ -50,9 +50,10 @@ builder.Services.AddHttpClient(
     .AddHttpMessageHandler<CookieHandler>();
 
 #region SELFMADE SERVICES
-
+//Hub Connections
 builder.Services.AddScoped<IChatHubConnection, ChatHubConnection>();
 builder.Services.AddSingleton<IDataBaseUpdatesHubConnection, DataBaseUpdatesHubConnection>();
+//Providers
 builder.Services.AddScoped<SessionProvider>();
 builder.Services.AddScoped<PlayerProvider>();
 builder.Services.AddScoped<ParticipatorProvider>();
@@ -62,7 +63,8 @@ builder.Services.AddScoped<WeaponProvider>();
 builder.Services.AddScoped<GameExtensionProvider>();
 builder.Services.AddScoped<ArmorProvider>();
 builder.Services.AddScoped<CategoryArmorInventoryEntryProvider>();
-
+//Alerts
+builder.Services.AddSingleton<IGlobalAlertService, GlobalAlertService>();
 #endregion
 
 await builder.Build().RunAsync();

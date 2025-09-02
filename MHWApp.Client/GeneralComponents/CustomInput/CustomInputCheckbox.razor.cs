@@ -1,4 +1,4 @@
-﻿namespace MHWApp.Client.Pages.GeneralComponents.CustomInput
+﻿namespace MHWApp.Client.GeneralComponents.CustomInput
 {
     using Microsoft.AspNetCore.Components;
     using Microsoft.AspNetCore.Components.Forms;

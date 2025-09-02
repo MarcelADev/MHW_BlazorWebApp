@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using MHWApp.Client.GeneralComponents.Select.Component;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.Extensions.Options;
 using Microsoft.JSInterop;
@@ -8,7 +9,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 
-namespace MHWApp.Client.Pages.GeneralComponents.Select.Component
+namespace MHWApp.Client.GeneralComponents.Select.Component
 {
     public partial class MultiSelectComponent<T> : SelectComponentBase<T>
     {

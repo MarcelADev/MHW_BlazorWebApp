@@ -1,4 +1,6 @@
-﻿@using MHWApp.Client.Pages.Identity
+﻿@using MHWApp.Client.GeneralComponents.Alerts
+@using MHWApp.Client.Pages.Identity
+
 ﻿<CascadingAuthenticationState>
     <Router AppAssembly="@typeof(App).Assembly">
         <Found Context="routeData">
@@ -24,3 +26,5 @@
         </NotFound>
     </Router>
 </CascadingAuthenticationState>
+
+<GlobalAlertDisplay />

@@ -1,7 +1,8 @@
-﻿@using MHWApp.Library.DTO
+﻿@using MHWApp.Client.GeneralComponents.Select.Component
+@using MHWApp.Library.DTO
 @using MHWApp.Library.Exceptions
 @using MHWApp.Library.Model
-@using MHWApp.Client.Pages.GeneralComponents.Select
+@using MHWApp.Client.GeneralComponents.Select
 @using MHWApp.Client.Pages.MainMenu.CreateSession
 @using MHWApp.Client.Provider
 @using static MHWApp.Library.StaticVariables
@@ -70,7 +71,7 @@
                                     {
                                         @if (!participatorsIsEmpty)
                                         {
-                                            <MultiSelect Label="Remove Participators"
+                                            <MultiSelectComponent Label="Remove Participators"
                                             Placeholder="Select"
                                             T="Participator"
                                             Options="participators"
@@ -78,12 +79,12 @@
                                             OptionValueMapper="(Participator p) => p.Id"
                                             ValueList="Model.RemoveParticipators"
                                             ValueListChanged="HandleRemoveSelect">
-                                            </MultiSelect>
+                                            </MultiSelectComponent>
                                         }
 
                                         @if (!playersIsEmpty)
                                         {
-                                            <MultiSelect Label="Add Participators"
+                                            <MultiSelectComponent Label="Add Participators"
                                             Placeholder="Select"
                                             T="Player"
                                             Options="players"
@@ -91,7 +92,7 @@
                                             OptionValueMapper="(Player p) => p.Id"
                                             ValueList="Model.PlayerValueList"
                                             ValueListChanged="HandleAddSelect">
-                                            </MultiSelect>
+                                            </MultiSelectComponent>
                                         }
 
                                         @for (var i = 0; i < Model!.AddParticipators.Count; i++)

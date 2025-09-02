@@ -1,15 +1,16 @@
-﻿using Microsoft.AspNetCore.Components.Authorization;
-using MHWApp.Client.Identity.Model;
-using System.Net.Http.Json;
-using System.Security.Claims;
-using System.Text.Json;
-using System.Text;
-using System.Net.Http;
+﻿using MHWApp.Client.Identity.Model;
 using MHWApp.Library.DTO.Identity;
+using MHWApp.Library.Exceptions;
+using MHWApp.Library.Model;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.WebAssembly.Http;
 using Microsoft.AspNetCore.Mvc;
-using MHWApp.Library.Exceptions;
 using System.Net;
+using System.Net.Http;
+using System.Net.Http.Json;
+using System.Security.Claims;
+using System.Text;
+using System.Text.Json;
 
 namespace MHWApp.Client.Identity
 {
@@ -59,11 +60,6 @@ namespace MHWApp.Client.Identity
             // make the request
             var result = await httpClient.PostAsJsonAsync("register", dto);
 
-            if(result.StatusCode == HttpStatusCode.NotFound)
-            {
-                throw new NotFoundException();
-            }
-
             if(result.StatusCode == HttpStatusCode.Conflict)
             {
                 var problem = result.Content.ReadFromJsonAsync<ProblemDetails>();
@@ -75,7 +71,7 @@ namespace MHWApp.Client.Identity
 
                 if (problem.Result.Title.Contains("Prime Vu"))
                 {
-                    throw new ConflictException("Prime Vu is not assigned.\nIt is achieved");
+                    throw new ConflictException("Prime Vu is not assigned. It is achieved");
                 }
 
                 if (problem.Result.Title.Contains("Username not allowed"))
@@ -252,13 +248,22 @@ namespace MHWApp.Client.Identity
         {
             var result = await httpClient.GetAsync("register");
 
-            if (result is not null && result.StatusCode == HttpStatusCode.OK)
-            { 
-                //result.Content.ReadFromJsonAsync(registerEnabled);
-                //TODO
+            if (result is null)
+            {
+                throw new EntityWasNullException();
             }
 
-            return false;
+            if(result.StatusCode == HttpStatusCode.NotFound)
+            {
+                throw new NotFoundException();
+            }
+
+            if (result.StatusCode == HttpStatusCode.OK)
+            {
+                return await result.Content.ReadFromJsonAsync<bool>();
+            }
+
+            throw new UnexpectedResponseException(result.StatusCode.ToString());
         }
     }
 }
