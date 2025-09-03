@@ -49,7 +49,18 @@ builder.Services.ConfigureApplicationCookie(options =>
 builder.Services.AddAuthorizationBuilder();
 
 // add identity and opt-in to endpoints
-builder.Services.AddIdentity<Player, IdentityRole<int>>(options => { /* Optionen */ })
+builder.Services.AddIdentity<Player, IdentityRole<int>>(options => 
+    {
+        // password requirements
+        options.Password.RequireDigit = (bool)PASSWORD_REQUIREMENTS["RequireDigit"];
+        options.Password.RequireLowercase = (bool)PASSWORD_REQUIREMENTS["RequireLowercase"];
+        options.Password.RequireUppercase = (bool)PASSWORD_REQUIREMENTS["RequireUppercase"];
+        options.Password.RequireNonAlphanumeric = (bool)PASSWORD_REQUIREMENTS["RequireNonAlphanumeric"];
+        options.Password.RequiredLength = (int)PASSWORD_REQUIREMENTS["RequiredLength"];
+        options.Password.RequiredUniqueChars = (int)PASSWORD_REQUIREMENTS["RequiredUniqueChars"];
+        // username requirements
+        options.User.AllowedUserNameCharacters = ALLOWED_USERNAME_CHARACTERS;
+    })
     .AddEntityFrameworkStores<AppDbContext>()
     .AddDefaultTokenProviders();
 
@@ -122,12 +133,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 #region Register
-app.MapGet("/register", () =>
-{
-    return Results.Ok(enableRegister);
-}
-);
-
 if (enableRegister)
 {
     app.MapPost("/register", async (HttpContext httpContext, UserManager<Player> userManager, IdentityDTO dto) =>
@@ -141,7 +146,7 @@ if (enableRegister)
             );
         }
 
-        if (BANNED_NAMES.Contains(dto.UserName.ToLower()))
+        if (BANNED_NAMES.Contains(dto.UserName.Replace(" ", "").ToLower()))
         {
             return Results.Problem(
                 title: "Username not allowed",
@@ -164,12 +169,12 @@ if (enableRegister)
         var player = new Player
         {
             UserName = dto.UserName,
-            IsApproved = true
+            IsApproved = false
         };
 
         var result = await userManager.CreateAsync(player, dto.Password);
 
-        return result.Succeeded ? Results.Ok() : Results.BadRequest();
+        return result.Succeeded ? Results.NoContent() : Results.BadRequest();
     });
 }
 #endregion
@@ -549,7 +554,7 @@ app.MapPost("/categoriesArmorsInventoryEntries", async (AppDbContext dbContext, 
     if (userIdClaim == null) return Results.Unauthorized();
 
     bool categoryExists = await dbContext.Categories.AnyAsync(c => c.Name == dto.Name);
-    if (categoryExists) return Results.StatusCode(HTTP_STATUSCODE_CONFLICT);
+    if (categoryExists) return Results.Conflict();
 
     Category newCategory = new()
     {
@@ -706,7 +711,7 @@ app.MapPost("/categories", async (AppDbContext dbContext, ClaimsPrincipal user, 
     if (userIdClaim == null) return Results.Unauthorized();
 
     bool exists = await dbContext.Categories.AnyAsync(c => c.Name == categoryDTO.NewCategory.Name);
-    if (exists) return Results.StatusCode(HTTP_STATUSCODE_CONFLICT);
+    if (exists) return Results.Conflict();
 
     await dbContext.Categories.AddAsync(categoryDTO.NewCategory);
     await dbContext.SaveChangesAsync();
@@ -759,7 +764,7 @@ app.MapPost("/categories/inventoryentries", async (AppDbContext dbContext, Claim
     if (userIdClaim == null) return Results.Unauthorized();
 
     bool exists = await dbContext.InventoryEntryCategories.AnyAsync(ic => ic.CategoryId == inventoryEntryCategory.CategoryId);
-    if (exists) return Results.StatusCode(HTTP_STATUSCODE_CONFLICT);
+    if (exists) return Results.Conflict();
 
     await dbContext.InventoryEntryCategories.AddAsync(inventoryEntryCategory);
     await dbContext.SaveChangesAsync();
@@ -776,7 +781,7 @@ app.MapPost("/categories/weapons", async (AppDbContext dbContext, ClaimsPrincipa
     if (userIdClaim == null) return Results.Unauthorized();
 
     bool exists = await dbContext.WeaponCategories.AnyAsync(wc => wc.CategoryId == weaponCategory.CategoryId);
-    if (exists) return Results.StatusCode(HTTP_STATUSCODE_CONFLICT);
+    if (exists) return Results.Conflict();
 
     await dbContext.WeaponCategories.AddAsync(weaponCategory);
     await dbContext.SaveChangesAsync();
@@ -793,7 +798,7 @@ app.MapPost("/categories/armors", async (AppDbContext dbContext, ClaimsPrincipal
     if (userIdClaim == null) return Results.Unauthorized();
 
     bool exists = await dbContext.ArmorCategories.AnyAsync(ac => ac.CategoryId == armorCategory.CategoryId);
-    if (exists) return Results.StatusCode(HTTP_STATUSCODE_CONFLICT);
+    if (exists) return Results.Conflict();
 
     await dbContext.ArmorCategories.AddAsync(armorCategory);
     await dbContext.SaveChangesAsync();
@@ -910,7 +915,7 @@ app.MapPost("/gameextensions", async (AppDbContext dbContext, ClaimsPrincipal us
     if (userIdClaim == null) return Results.Unauthorized();
 
     bool exists = await dbContext.GameExtensions.AnyAsync(ge => ge.Name == newGameExtension.Name);
-    if (exists) return Results.StatusCode(HTTP_STATUSCODE_CONFLICT);
+    if (exists) return Results.Conflict();
 
     await dbContext.GameExtensions.AddAsync(newGameExtension);
     await dbContext.SaveChangesAsync();
@@ -980,7 +985,7 @@ app.MapPost("/inventoryEntries", async (AppDbContext dbContext, ClaimsPrincipal 
     if (userIdClaim == null) return Results.Unauthorized();
 
     bool exists = await dbContext.InventoryEntries.AnyAsync(ie => ie.Name == newInventoryEntryDTO.Name);
-    if (exists) return Results.StatusCode(HTTP_STATUSCODE_CONFLICT);
+    if (exists) return Results.Conflict();
 
     if (newInventoryEntryDTO.InventoryEntryCategoryIds == null || newInventoryEntryDTO.InventoryEntryCategoryIds.Count == 0)
         return Results.BadRequest("At least one category must be assigned.");
@@ -1121,14 +1126,14 @@ app.MapPost("/armors", async (AppDbContext dbContext, ClaimsPrincipal user, IHub
     if(newArmor.NamePrefix)
     {
         bool exists = await dbContext.Armors.AnyAsync(a => a.Name == newArmor.Name && a.NamePrefix == false);
-        if (exists) return Results.StatusCode(HTTP_STATUSCODE_CONFLICT);
+        if (exists) return Results.Conflict();
     }
     else
     {
         bool exists = await dbContext.Armors.AnyAsync(a => a.Name == newArmor.Name && 
                                                            a.NamePrefix == true &&
                                                            a.ArmorCategoryId == newArmor.ArmorCategoryId);
-        if (exists) return Results.StatusCode(HTTP_STATUSCODE_CONFLICT);
+        if (exists) return Results.Conflict();
     }
 
     bool armorCategoryExists = await dbContext.ArmorCategories

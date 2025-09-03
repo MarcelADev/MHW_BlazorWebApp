@@ -18,19 +18,16 @@ namespace MHWApp.Library
 
         #endregion
 
-        #region HTTP Statuscodes
-
-        public static int HTTP_STATUSCODE_CONFLICT = 409;
-
-        #endregion
-
+        #region Armor Types
         public enum ArmorType
         {
             Head = 0,
             Chest = 1,
             Legs = 2
         }
+        #endregion
 
+        #region Banned Names
         public static string[] BANNED_NAMES = new string[]
         {
             "master",
@@ -39,10 +36,33 @@ namespace MHWApp.Library
             "root",
             "system",
             "moderator",
-            "mod", 
-            "owner", 
+            "mod",
+            "owner",
             "staff",
             "abbasstinkt"
         };
+        #endregion
+
+        #region Password & Username Requirements
+
+        public static Dictionary<string, object> PASSWORD_REQUIREMENTS = new()
+        {
+            {"RequireDigit", true },
+            {"RequireLowercase", true },
+            {"RequireUppercase", true },
+            {"RequireNonAlphanumeric", true },
+            {"RequiredLength", 10 },
+            {"RequiredUniqueChars", 10 },
+        };
+
+        public static char[] SPECIAL_CHARACTERS = new char[]
+        {
+            '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '-', '_', '=', '+',
+            '[', ']', '{', '}', ';', ':', '\'', '"', ',', '<', '.', '>', '/', '?', '\\', '|', '`', '~'
+        };
+
+        public static string ALLOWED_USERNAME_CHARACTERS = "abcdefghijklmnopqrstuvwxyz" + "ABCDEFGHIJKLMNOPQRSTUVWXYZ" + "0123456789" + " ";
+
+        #endregion
     }
 }

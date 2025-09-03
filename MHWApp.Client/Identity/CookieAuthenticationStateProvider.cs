@@ -85,37 +85,19 @@ namespace MHWApp.Client.Identity
                 }
 
                 throw new ConflictException(problem.Result.Title);
-            } 
+            }
 
-            // successful?
-            if (result.IsSuccessStatusCode)
+            if (result.StatusCode == HttpStatusCode.NoContent)
             {
                 return;
             }
 
-            // body should contain details about why it failed
-            var details = await result.Content.ReadAsStringAsync();
-            var problemDetails = JsonDocument.Parse(details);
-            var errors = new List<string>();
-            var errorList = problemDetails.RootElement.GetProperty("errors");
-
-            foreach (var errorEntry in errorList.EnumerateObject())
+            if (result.StatusCode == HttpStatusCode.BadRequest)
             {
-                if (errorEntry.Value.ValueKind == JsonValueKind.String)
-                {
-                    errors.Add(errorEntry.Value.GetString()!);
-                }
-                else if (errorEntry.Value.ValueKind == JsonValueKind.Array)
-                {
-                    errors.AddRange(
-                        errorEntry.Value.EnumerateArray().Select(
-                            e => e.GetString() ?? string.Empty)
-                        .Where(e => !string.IsNullOrEmpty(e)));
-                }
+                throw new BadRequestException();
             }
 
-            // return the error list
-            return;
+            throw new UnexpectedResponseException(result.StatusCode.ToString());
         }
 
         /// <summary>
@@ -242,28 +224,6 @@ namespace MHWApp.Client.Identity
         {
             await GetAuthenticationStateAsync();
             return authenticated;
-        }
-
-        public async Task<bool> CheckRegistrationEnabled()
-        {
-            var result = await httpClient.GetAsync("register");
-
-            if (result is null)
-            {
-                throw new EntityWasNullException();
-            }
-
-            if(result.StatusCode == HttpStatusCode.NotFound)
-            {
-                throw new NotFoundException();
-            }
-
-            if (result.StatusCode == HttpStatusCode.OK)
-            {
-                return await result.Content.ReadFromJsonAsync<bool>();
-            }
-
-            throw new UnexpectedResponseException(result.StatusCode.ToString());
         }
     }
 }

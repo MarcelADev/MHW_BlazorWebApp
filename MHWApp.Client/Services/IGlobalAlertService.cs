@@ -7,9 +7,13 @@ namespace MHWApp.Client.Services
         event Action? TriggerStateHasChanged;
         IReadOnlyList<Alert> Alerts { get; }
 
-        public void ShowSuccess(string message);
-        public void ShowDanger(string message);
-        public void ShowWarning(string message);
-        public void ShowPrimeVu(string message);
+        void ShowSuccess(string message);
+        void ShowDanger(string message);
+        void ShowWarning(string message);
+        void ShowInfo(string message);
+        void ShowPrimeVu(string message);
+
+        void ShowInfoWithoutTimer(string message);
+        void RemoveInfoManually(string message);
     }
 }

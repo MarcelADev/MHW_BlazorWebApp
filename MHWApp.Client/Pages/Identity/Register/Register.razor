@@ -8,31 +8,12 @@
     @using MHWApp.Library.DTO.Identity
     @using System.ComponentModel.DataAnnotations
     @using MHWApp.Library.Exceptions
+    @using static MHWApp.Library.StaticVariables
     @inject IAccountManagement identityProvider
     @inject IGlobalAlertService alertService
     @implements IDisposable
 
     <PageTitle>Register</PageTitle>
-
-    @* <div class="alert-container">
-    @foreach (string success in successes)
-        {
-            <div class="alert alert-success">@success</div>
-        }
-        @foreach (string danger in dangers)
-        {
-            <div class="alert alert-danger">@danger</div>
-        }
-        @foreach (string warning in primeVu)
-        {
-            <div class="alert alert-warning">
-                <div class="prime-vu__container">
-                    <div class="prime-vu__golden-text">@warning</div>
-                    <div class="prime-vu__text-shadow">@warning</div>
-                </div>
-            </div>
-        }
-    </div> *@
 
     <div class="container-top theme-purple container-height">
 
@@ -92,102 +73,175 @@
     </div>
 
     @code {
-        private bool isLoading = true;
-        private bool validateOnlyModified = true;
+    private bool isLoading = true;
+    private bool validateOnlyModified = true;
 
-        private List<string> primeVu = [];
-        private List<string> dangers = [];
-        private List<string> successes = [];
+    private List<string> primeVu = [];
+    private List<string> dangers = [];
+    private List<string> successes = [];
 
-        private EditContext? editContext;
-        private ValidationMessageStore? _messageStore;
+    private EditContext? editContext;
+    private ValidationMessageStore? _messageStore;
 
-        [SupplyParameterFromForm]
-        private RegisterFormModel? FormModel { get; set; }
+    [SupplyParameterFromForm]
+    private RegisterFormModel? FormModel { get; set; }
 
-        protected override void OnInitialized()
+    protected override void OnInitialized()
+    {
+        FormModel = new();
+        editContext = new EditContext(FormModel);
+        editContext.OnFieldChanged += HandleFieldChanged;
+
+        _messageStore = new ValidationMessageStore(editContext);
+
+        isLoading = false;
+    }
+
+    private void HandleFieldChanged(object? sender, FieldChangedEventArgs e)
+    {
+        if (editContext is null || FormModel is null) return;
+
+        Utils.ManualModelValidator.ValidateModel(editContext, FormModel, _messageStore!, onlyModified: validateOnlyModified);
+
+        if (e.FieldIdentifier.FieldName is nameof(FormModel.UserName))
         {
-            FormModel = new();
-            editContext = new EditContext(FormModel);
-            editContext.OnFieldChanged += HandleFieldChanged;
-
-            _messageStore = new ValidationMessageStore(editContext);
-
-            isLoading = false;
-        }
-
-        private void HandleFieldChanged(object? sender, FieldChangedEventArgs e)
-        {
-            if (editContext is not null) 
+            foreach (char c in FormModel!.InvalidChars)
             {
-                Utils.ManualModelValidator.ValidateModel(editContext, FormModel!, _messageStore!, onlyModified: validateOnlyModified);
-                StateHasChanged();
+                if (FormModel.activeAlerts.Add(c))
+                {
+                    alertService.ShowInfoWithoutTimer($"'{c}' is not allowed in usernames");
+                }
+            }
+            foreach (char c in FormModel.activeAlerts)
+            {
+                if (!FormModel.InvalidChars.Contains(c))
+                {
+                    alertService.RemoveInfoManually($"'{c}' is not allowed in usernames");
+                    FormModel.activeAlerts.Remove(c);
+                }
             }
         }
 
-        public async Task DoRegisterAsync()
+        StateHasChanged();
+    }
+
+    public async Task DoRegisterAsync()
+    {
+        Utils.ManualModelValidator.ValidateModel(editContext!, FormModel!, _messageStore!, onlyModified: false);
+
+        bool hasValidationErrors = editContext!.GetValidationMessages().Any();
+
+        if (hasValidationErrors)
         {
-            Utils.ManualModelValidator.ValidateModel(editContext!, FormModel!, _messageStore!, onlyModified: false);
+            validateOnlyModified = false;
 
-            bool hasValidationErrors = editContext!.GetValidationMessages().Any();
+            Console.WriteLine("Not a valid Submit bruh");
+            return;
+        }
+        else
+        {
+            validateOnlyModified = true;
+        }
 
-            if (hasValidationErrors)
+        try
+        {
+            await identityProvider.RegisterAsync(new IdentityDTO { UserName = FormModel!.UserName, Password = FormModel.PasswordOne });
+            alertService.ShowSuccess("User registration was successful. Account needs to be approved");
+
+        }
+        catch (ConflictException e)
+        {
+            if (e.ConflictTitle.Contains("Prime Vu"))
+                alertService.ShowPrimeVu(e.ConflictTitle);
+            else
+                alertService.ShowDanger(e.ConflictTitle);
+        }
+        catch (BadRequestException)
+        {
+            alertService.ShowDanger("Registration was unsuccessful for an unkown reason. Contact Support");
+        }
+        catch (UnexpectedResponseException)
+        {
+            alertService.ShowDanger("Unexpected server response. Contact support");
+        }
+    }
+
+    public void Dispose()
+    {
+        if (editContext is not null) editContext.OnFieldChanged -= HandleFieldChanged;
+    }
+
+    internal class RegisterFormModel : IValidatableObject
+    {
+        public Dictionary<string, object> AdditionalAttributes = new()
             {
-                validateOnlyModified = false;
+                { "autofocus", "on" },
+                { "autocomplete", "off" },
+            };
 
-                Console.WriteLine("Not a valid Submit bruh");
-                return;
+        public string UserName { get; set; } = string.Empty;
+        public string PasswordOne { get; set; } = string.Empty;
+        public string PasswordTwo { get; set; } = string.Empty;
+
+        public List<char> InvalidChars => UserName.Where(c => !ALLOWED_USERNAME_CHARACTERS.Contains(c))
+                                                  .Distinct()
+                                                  .ToList();
+
+        public HashSet<char> activeAlerts = [];
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            if (string.IsNullOrWhiteSpace(UserName))
+            {
+                yield return new ValidationResult("Username is required", [nameof(UserName)]);
             }
             else
             {
-                validateOnlyModified = true;
-            }
-
-            try
-            {
-                await identityProvider.RegisterAsync(new IdentityDTO { UserName = FormModel!.UserName, Password = FormModel.PasswordOne });
-            }
-            catch(ConflictException e)
-            {
-                if (e.ConflictTitle.Contains("Prime Vu"))
-                    alertService.ShowPrimeVu(e.ConflictTitle);
-                else
-                    alertService.ShowDanger(e.ConflictTitle);
-            }
-        }
-
-        public void Dispose()
-        {
-            if (editContext is not null) editContext.OnFieldChanged -= HandleFieldChanged;
-        }
-
-        internal class RegisterFormModel : IValidatableObject
-        {
-            public Dictionary<string, object> AdditionalAttributes = new()
-            {
-                { "autofocus", "on" },
-            };
-
-            public string UserName { get; set; } = string.Empty;
-            public string PasswordOne { get; set; } = string.Empty;
-            public string PasswordTwo { get; set; } = string.Empty;
-
-            public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
-            {
-                if(UserName.Equals(string.Empty))
+                if (InvalidChars.Any())
                 {
-                    yield return new ValidationResult("Username is required", [nameof(UserName)]);
+                    yield return new ValidationResult("Username contains invalid characters", [nameof(UserName)]);
                 }
-                if(PasswordOne.Equals(string.Empty))
+                
+            }
+                if(string.IsNullOrWhiteSpace(PasswordOne))
                 {
-                    yield return new ValidationResult("Password is required.", [nameof(PasswordOne)]);
+                    yield return new ValidationResult("Password is required", [nameof(PasswordOne)]);
+                }
+                else
+                {
+                    string message = "Password must contain at least one ";
+
+                    if ((bool)PASSWORD_REQUIREMENTS["RequireDigit"] && !PasswordOne.Any(char.IsDigit))
+                    {
+                        yield return new ValidationResult(message + "digit", [nameof(PasswordOne)]);
+                    }
+                    if ((bool)PASSWORD_REQUIREMENTS["RequireLowercase"] && !PasswordOne.Any(char.IsLower))
+                    {
+                        yield return new ValidationResult(message + "lowercase letter", [nameof(PasswordOne)]);
+                    }
+                    if ((bool)PASSWORD_REQUIREMENTS["RequireUppercase"] && !PasswordOne.Any(char.IsUpper))
+                    {
+                        yield return new ValidationResult(message + "uppercase letter", [nameof(PasswordOne)]);
+                    }
+                    if ((bool)PASSWORD_REQUIREMENTS["RequireNonAlphanumeric"] && !PasswordOne.Any(c => SPECIAL_CHARACTERS.Contains(c)))
+                    {
+                        yield return new ValidationResult(message + "special character", [nameof(PasswordOne)]);
+                    }
+                    if ((int)PASSWORD_REQUIREMENTS["RequiredLength"] > PasswordOne.Length)
+                    {
+                        yield return new ValidationResult($"Password must be at least {(int)PASSWORD_REQUIREMENTS["RequiredLength"]} characters long", [nameof(PasswordOne)]);
+                    }
+                    if ((int)PASSWORD_REQUIREMENTS["RequiredUniqueChars"] > PasswordOne.Distinct().Count())
+                    {
+                        yield return new ValidationResult($"Password must contain at least {(int)PASSWORD_REQUIREMENTS["RequiredUniqueChars"]} unique characters", [nameof(PasswordOne)]);
+                    }
                 }
                 if (PasswordOne != PasswordTwo)
                 {
                     yield return new ValidationResult("Passwords do not match.", [nameof(PasswordTwo)]);
                 }
+
             }
         }
     }
-
 }

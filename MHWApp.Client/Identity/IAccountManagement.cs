@@ -30,11 +30,5 @@ namespace MHWApp.Client.Identity
         public Task RegisterAsync(IdentityDTO identityDTO);
 
         public Task<bool> CheckAuthenticatedAsync();
-
-        /// <summary>
-        /// Get info from server if registration is enabled.
-        /// </summary>
-        /// <returns></returns>
-        public Task<bool> CheckRegistrationEnabled();
     }
 }
