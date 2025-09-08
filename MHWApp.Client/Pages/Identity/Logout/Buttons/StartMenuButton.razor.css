@@ -1,0 +1,15 @@
+﻿button {
+    display: flex;
+    border: 0;
+    background: transparent;
+    padding: 10px;
+    gap: 5px;
+}
+
+span {
+    color: black;
+}
+
+button:hover {
+    opacity: 0.8;
+}

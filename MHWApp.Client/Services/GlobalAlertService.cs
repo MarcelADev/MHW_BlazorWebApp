@@ -35,8 +35,8 @@
 
             await Task.Delay(8000);
 
-            _alerts.Remove(newAlert);
-            TriggerStateHasChanged?.Invoke();
+            //_alerts.Remove(newAlert);
+            //TriggerStateHasChanged?.Invoke();
         }
 
         private void AddAlertWithoutTimer(string message, AlertType type)

@@ -26,6 +26,17 @@
             }
             else
             {
+                <span class="material-symbols-outlined alert-icon">
+                    @(
+                        alert.Type switch
+                        {
+                            AlertType.Success => "check",
+                            AlertType.Info => "info",
+                            _ => "warning"
+                        }
+                    )
+                </span>
+
                 @alert.Message
             }
         </div>

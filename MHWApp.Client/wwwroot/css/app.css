@@ -27,10 +27,6 @@ a, .btn-link {
     padding-top: 1.1rem;
 }
 
-.validation-message {
-    color: red;
-}
-
 #blazor-error-ui {
     color-scheme: light only;
     background: lightyellow;
@@ -161,6 +157,8 @@ code {
     --standard-font-weight__label: 200;
 
     --standard-padding__all: 5px;
+
+    --standard-margin__all: 1rem;
 
     --standard-border-radius__all: 4px;
 

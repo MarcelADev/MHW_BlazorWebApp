@@ -1,12 +1,19 @@
 ﻿a,
-p {
+p,
+button{
     color: #60594D;
     text-decoration: none;
     font-size: 2.5rem;
 }
 
+button {
+    background-color: transparent;
+    border: 0;
+}
+
 a:hover,
-p:hover {
+p:hover,
+button:hover {
     color: #60594Dcd;
 }
 
@@ -15,12 +22,8 @@ p:hover {
 }
 
 .main {
-    height: 60vh;
+    height: 30vh;
     gap: 3rem;
-}
-
-.footer {
-    height: 20vh;
 }
 
 h1 {

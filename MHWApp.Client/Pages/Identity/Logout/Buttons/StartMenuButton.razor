@@ -1,0 +1,16 @@
+﻿<button @onclick="OnStartMenuButtonClicked">
+	<span class="material-symbols-outlined">
+		exit_to_app
+	</span>
+	Go to start page
+</button>
+
+@code {
+	[Parameter]
+	public required EventCallback StartMenuButtonClicked { get; set; }
+
+	private async Task OnStartMenuButtonClicked()
+	{
+		await StartMenuButtonClicked.InvokeAsync();
+	}
+}

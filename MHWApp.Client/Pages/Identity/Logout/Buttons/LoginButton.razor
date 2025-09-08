@@ -1,0 +1,16 @@
+﻿<button @onclick="OnLoginButtonClicked">
+	<span class="material-symbols-outlined">
+		login
+	</span>
+	Go to login page
+</button>
+
+@code {
+	[Parameter]
+	public required EventCallback LoginButtonClicked { get; set; }
+
+	private async Task OnLoginButtonClicked()
+	{
+		await LoginButtonClicked.InvokeAsync();
+	}
+}

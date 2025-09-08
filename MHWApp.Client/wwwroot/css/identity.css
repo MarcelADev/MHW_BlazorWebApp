@@ -1,8 +1,8 @@
-﻿.header {
+﻿.identity__header {
     height: 20vh;
 }
 
-.btn-login {
+.identity__button {
     background-color: var(--color__purple);
     border-color: var(--color__purple);
 }

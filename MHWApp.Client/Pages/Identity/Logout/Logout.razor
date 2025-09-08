@@ -1,0 +1,114 @@
+﻿@page "/logout"
+@using MHWApp.Client.Identity
+@using MHWApp.Client.Pages.Identity.Logout.Buttons
+@using MHWApp.Client.Provider.Interfaces
+@using MHWApp.Client.Services
+@inject IAccountManagement identityProvider
+@inject NavigationManager NavigationManager
+@inject IGlobalAlertService alertService
+@implements IDisposable
+
+<PageTitle>Logout</PageTitle>
+
+<header class="container-center header identity__header theme-purple">
+
+    <h1>Logout</h1>
+
+</header>
+
+<div class="container-center">
+
+    <AuthorizeView @ref="authView">
+
+        <NotAuthorized>
+
+            <div class="logout__card">
+                <p>Logout was successful.</p>
+            </div>
+
+            <div class="logout__card">
+                <p>Redirect to start menu in @Timer</p>
+            </div>
+
+            <LoginButton LoginButtonClicked="HandleLoginButtonClicked" />
+
+            <StartMenuButton StartMenuButtonClicked="HandleStartMenuButtonClicked" />
+
+        </NotAuthorized>
+
+    </AuthorizeView>
+
+</div>
+
+@code {
+    private static string INFO_MESSAGE = "Logging you out...";
+    private static int TIMER_DURATION = 6;
+
+    private string? Timer { get; set; }
+
+    private AuthorizeView? authView;
+    private bool clickedUrl = false;
+    private bool doRedirect = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        this.Timer = TIMER_DURATION.ToString();
+
+        alertService.ShowInfoWithoutTimer(INFO_MESSAGE);
+
+        await DoLogOutAsync();
+
+        _ = DelayInfoMessageAsync();
+        alertService.ShowSuccess("You're logged out");
+
+        NavigationManager.LocationChanged += OnLocationChanged;
+
+        _ = DoRedirectAsync();
+    }
+
+    private async Task DoLogOutAsync()
+    {
+        if (await identityProvider.CheckAuthenticatedAsync())
+        {
+            await identityProvider.LogoutAsync();
+        }
+    }
+
+    private async Task DelayInfoMessageAsync()
+    {
+        await Task.Delay(1000);
+        alertService.RemoveInfoManually(INFO_MESSAGE);
+    }
+
+    private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
+    {
+        doRedirect = false;
+    }
+
+    private async Task DoRedirectAsync()
+    {
+        for(int countDown = TIMER_DURATION - 1; countDown >= 0; countDown--)
+        {
+            await Task.Delay(1000);
+            Timer = countDown.ToString();
+            StateHasChanged();
+        }
+
+        if (doRedirect) NavigationManager.NavigateTo("/");
+    }
+
+    private void HandleLoginButtonClicked()
+    {
+        NavigationManager.NavigateTo("/login");
+    }
+
+    private void HandleStartMenuButtonClicked()
+    {
+        NavigationManager.NavigateTo("/");
+    }
+
+    public void Dispose()
+    {
+        NavigationManager.LocationChanged -= OnLocationChanged;
+    }
+}

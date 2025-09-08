@@ -1,6 +1,7 @@
 ﻿@page "/"
 @using MHWApp.Client.Pages.Identity
 @using MHWApp.Client.Utils
+@inject IJSRuntime jsRuntime
 
 <PageTitle>Home</PageTitle>
 
@@ -27,8 +28,20 @@
 			</div>
 		}
 		<div>
-			<p>Leave</p>
+			@* <p>Leave</p> *@
+
+			<button @onclick="CloseWindow">
+				Close
+			</button>
+
 		</div>
 	</main>
-	<footer class="footer"></footer>
 </div>
+
+@code {
+	public void CloseWindow()
+	{
+		jsRuntime.InvokeVoidAsync("window.close");
+	}
+}
+
