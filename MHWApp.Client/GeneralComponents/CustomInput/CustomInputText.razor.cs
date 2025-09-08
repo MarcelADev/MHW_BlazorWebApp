@@ -9,7 +9,7 @@
 
     public partial class CustomInputText : InputText, IDisposable
     {
-        private new string CssClass => $"custom-input {GetValidationClass()}";
+        private new string CssClass => GetValidationClass();
 
         [Parameter]
         public string? Id { get; set; }
