@@ -1,16 +1,19 @@
 ﻿@if (FeatureFlags.IsRegisterEnabled)
 {
     @page "/register"
-    @using MHWApp.Client.Identity
+    @using System.ComponentModel.DataAnnotations
     @using MHWApp.Client.GeneralComponents.CustomInput
+    @using MHWApp.Client.GeneralComponents.IconButtons
+    @using MHWApp.Client.Identity
+    @using MHWApp.Client.Provider.Interfaces
     @using MHWApp.Client.Services
     @using MHWApp.Client.Utils
     @using MHWApp.Library.DTO.Identity
-    @using System.ComponentModel.DataAnnotations
     @using MHWApp.Library.Exceptions
     @using static MHWApp.Library.StaticVariables
     @inject IAccountManagement identityProvider
     @inject IGlobalAlertService alertService
+    @inject NavigationManager navigationManager
     @implements IDisposable
 
     <PageTitle>Register</PageTitle>
@@ -67,6 +70,8 @@
                         </EditForm>
                     }
                 </div>
+
+                <ReturnButton ReturnButtonClicked="HandleReturnButtonClicked" Purple="true" />
             
             </NotAuthorized>
         </AuthorizeView>
@@ -125,6 +130,11 @@
         StateHasChanged();
     }
 
+    private void HandleReturnButtonClicked()
+    {
+        navigationManager.NavigateTo("/");
+    }
+
     public async Task DoRegisterAsync()
     {
         Utils.ManualModelValidator.ValidateModel(editContext!, FormModel!, _messageStore!, onlyModified: false);
@@ -148,6 +158,7 @@
             await identityProvider.RegisterAsync(new IdentityDTO { UserName = FormModel!.UserName, Password = FormModel.PasswordOne });
             alertService.ShowSuccess("User registration was successful. Account needs to be approved");
 
+			navigationManager.NavigateTo("/");
         }
         catch (ConflictException e)
         {

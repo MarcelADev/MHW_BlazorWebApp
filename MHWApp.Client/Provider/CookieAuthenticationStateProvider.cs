@@ -1,4 +1,5 @@
 ﻿using MHWApp.Client.Identity.Model;
+using MHWApp.Client.Provider.Interfaces;
 using MHWApp.Library.DTO.Identity;
 using MHWApp.Library.Exceptions;
 using MHWApp.Library.Model;
@@ -6,13 +7,12 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.WebAssembly.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
-using System.Net.Http;
 using System.Net.Http.Json;
 using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
 
-namespace MHWApp.Client.Identity
+namespace MHWApp.Client.Provider
 {
     /// <summary>
     /// Handles state for cookie-based auth.
@@ -106,28 +106,28 @@ namespace MHWApp.Client.Identity
         /// <param name="userName">The user's userName.</param>
         /// <param name="password">The user's password.</param>
         /// <returns>The result of the login request serialized to a <see cref="FormResult"/>.</returns>
-        public async Task<FormResult> LoginAsync(IdentityDTO dto)
+        public async Task LoginAsync(IdentityDTO dto)
         {
-            // login with cookies
             var result = await httpClient.PostAsJsonAsync("login", dto);
 
-            // success?
-            if (result.IsSuccessStatusCode)
+            if (result.StatusCode == HttpStatusCode.Conflict)
             {
-                // need to refresh auth state
-                NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
-
-                // success!
-                return new FormResult { Succeeded = true };
+                throw new ConflictException();
             }
-            
 
-            // unknown error
-            return new FormResult
+            if (result.StatusCode == HttpStatusCode.Unauthorized)
             {
-                Succeeded = false,
-                ErrorList = ["Invalid userName and/or password."]
-            };
+                throw new UnauthorizedRequestException();
+            }
+
+            if (result.StatusCode == HttpStatusCode.OK)
+            {
+                NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());    // need to refresh auth state
+
+                return;
+            }
+
+            throw new UnexpectedResponseException(result.StatusCode.ToString());
         }
 
         /// <summary>

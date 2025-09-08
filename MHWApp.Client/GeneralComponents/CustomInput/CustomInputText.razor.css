@@ -1,21 +1,36 @@
 ﻿.custom-input {
+    position: relative;
     border: none;
     border: 1px solid rgb(209, 209, 209);
     border-radius: var(--standard-border-radius__all);
-    transition: border-bottom 0.3s ease;
+    /*transition: border-bottom 0.3s ease;*/
 }
 
+    .custom-input::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: -1px;
+        height: 2px;
+        background-color: blue;
+        transition: background-color 0.3s ease;
+    }
+
     /* Valid input */
-    .custom-input.valid {
-        border-bottom: 2px solid green;
+    .custom-input.valid::after {
+        /*border-bottom: 2px solid green;*/
+        background-color: green;
     }
 
     /* Invalid input */
-    .custom-input.invalid {
-        border-bottom: 2px solid red;
+    .custom-input.invalid::after {
+        /*border-bottom: 2px solid red;*/
+        background-color: red;
     }
 
     /* Focus style */
-    .custom-input:focus {
-        border-bottom: 2px solid rgb(27, 110, 194);
+    .custom-input:focus::after {
+        /*border-bottom: 2px solid rgb(27, 110, 194);*/
+        background-color: rgb(27, 110, 194);
     }

@@ -1,0 +1,8 @@
+﻿.header {
+    height: 20vh;
+}
+
+.btn-login {
+    background-color: var(--color__purple);
+    border-color: var(--color__purple);
+}

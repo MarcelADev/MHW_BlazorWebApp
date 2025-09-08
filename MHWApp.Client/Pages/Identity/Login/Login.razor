@@ -1,0 +1,137 @@
+﻿@page "/login"
+@using System.ComponentModel.DataAnnotations;
+@using MHWApp.Client.GeneralComponents
+@using MHWApp.Client.GeneralComponents.CustomInput
+@using MHWApp.Client.GeneralComponents.IconButtons
+@using MHWApp.Client.Identity
+@using MHWApp.Client.Provider.Interfaces
+@using MHWApp.Client.Services
+@using MHWApp.Library.DTO.Identity
+@using MHWApp.Library.Exceptions
+@inject IAccountManagement identityProvider
+@inject NavigationManager navigationManager
+@inject IGlobalAlertService alertService
+
+<PageTitle>Login</PageTitle>
+
+<AuthorizeView>
+	<Authorized>
+		<LoginRedirect></LoginRedirect>
+	</Authorized>
+	<NotAuthorized Context="authContext">
+
+		<div class="theme-purple">
+
+			<header class="container-center header">
+
+				<h1>Login</h1>
+
+			</header>
+
+			<div class="form__container">
+
+				<EditForm EditContext="editContext" FormName="login" OnValidSubmit="DoLoginAsync">
+
+					<div class="form__field">
+						<label for="login-username">Username</label>
+						<CustomInputText id="login-username"
+										 InputType="text"
+										 @bind-Value="FormModel!.Username" />
+						<ValidationMessage For="@(() => FormModel!.Username)" />
+					</div>
+
+					<div class="form__field">
+						<label for="login-password">Password</label>
+						<CustomInputText 
+							id="login-password"
+							InputType="password"
+							@bind-Value="FormModel!.Password" />
+						<ValidationMessage For="@(() => FormModel!.Password)" />
+					</div>
+
+					<div class=" form__field form__button">
+						<button type="submit" class="btn btn-primary btn-login">
+							Login
+						</button>
+					</div>
+
+				</EditForm>
+			</div>
+
+			<ReturnButton ReturnButtonClicked="HandleReturnButtonClicked" Purple="true" />
+
+		</div>
+	</NotAuthorized>
+</AuthorizeView>
+
+@code {
+	[SupplyParameterFromForm]
+	private LoginFormModel? FormModel { get; set; }
+
+	private EditContext? editContext;
+
+	private ValidationMessageStore? _messageStore;
+
+	private List<string> dangers = [];
+
+	protected override void OnInitialized()
+	{
+		FormModel ??= new();
+		editContext = new(FormModel);
+		editContext.OnFieldChanged += HandleFieldChanged;
+
+		_messageStore = new ValidationMessageStore(editContext);
+	}
+
+	private void HandleFieldChanged(object? sender, FieldChangedEventArgs e)
+	{
+		if (editContext is not null)
+		{
+			Utils.ManualModelValidator.ValidateModel(editContext, FormModel!, _messageStore!);
+			StateHasChanged();
+		}
+	}
+
+	private void HandleReturnButtonClicked()
+	{
+		navigationManager.NavigateTo("/");
+	}
+
+	public async Task DoLoginAsync()
+	{
+		try
+		{
+			await identityProvider.LoginAsync(new IdentityDTO { UserName = FormModel!.Username, Password = FormModel.Password });
+		}
+		catch (ConflictException)
+		{
+			alertService.ShowDanger("Username and/or password is wrong");
+		}
+		catch (UnauthorizedRequestException)
+		{
+			alertService.ShowInfo("Login isn't possible because your account isn't approved yet. Contact host to approve your account");
+		}
+		catch (UnexpectedResponseException)
+		{
+			alertService.ShowDanger("Unexpected server response. Contact Support");
+		}
+	}
+
+	internal class LoginFormModel : IValidatableObject
+	{
+		public string Username { get; set; } = "";
+		public string Password { get; set; } = "";
+
+		public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+		{
+			if (Username.Trim() == "")
+			{
+				yield return new ValidationResult("Username is required.", [nameof(Username)]);
+			}
+			if (Password.Trim() == "")
+			{
+				yield return new ValidationResult("Password is required.", [nameof(Password)]);
+			}
+		}
+	}
+}

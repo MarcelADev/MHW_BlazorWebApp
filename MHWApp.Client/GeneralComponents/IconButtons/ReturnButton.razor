@@ -1,0 +1,21 @@
+﻿<div class="container-top">
+	<button id="button__register" class="container-center" type="button" @onclick="OnReturnButtonClicked">
+		<span class="material-symbols-outlined@(Purple ? " purple" : "")">
+			exit_to_app
+		</span>
+	</button>
+	<label for="button__register" class="@(Purple ? "purple" : "")">Return</label>
+</div>
+
+@code {
+	[Parameter]
+	public required EventCallback ReturnButtonClicked { get; set; }
+
+	[Parameter]
+	public bool Purple { get; set; } = false;
+
+	private async Task OnReturnButtonClicked()
+	{
+		await ReturnButtonClicked.InvokeAsync();
+	}
+}

@@ -8,6 +8,7 @@ using MHWApp.Client.Identity;
 using MHWApp.Client.Provider;
 using MHWApp.Client.Services;
 using Microsoft.AspNetCore.Components.WebAssembly.Http;
+using MHWApp.Client.Provider.Interfaces;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 

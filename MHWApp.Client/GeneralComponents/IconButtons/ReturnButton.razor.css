@@ -1,0 +1,26 @@
+﻿button {
+    border: 0;
+    background: transparent;
+    border-radius: 5px;
+    padding: 10px;
+    padding-top: 0;
+    margin-bottom: -10px;
+}
+
+span {
+    color: black;
+    margin-top: -3px;
+}
+
+label {
+    color: black;
+    font-size: 1rem;
+    font-weight: 400;
+}
+
+div:hover {
+    opacity: 0.8;
+}
+.purple {
+    color: var(--color__purple);
+}

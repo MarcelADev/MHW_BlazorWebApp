@@ -215,6 +215,8 @@ input:not([type="checkbox"]) {
     outline: none;
     border: none;
     font-size: var(--standard-font-size__p);
+    --size: calc-size:(auto, size);
+    height: var(--size);
 }
 
 /* ## GENERAL CLASSES ## */

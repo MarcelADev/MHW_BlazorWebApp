@@ -187,15 +187,19 @@ app.MapPost("/login", async (
     [FromBody] IdentityDTO dto) =>
 {
     var user = await userManager.FindByNameAsync(dto.UserName);
-    if (user is null || !user.IsApproved) return Results.Unauthorized();
+    if (user is null) return Results.Conflict();    // same HttpStatusCode for unknown user as for wrong password
+
+    if (!user.IsApproved) return Results.Unauthorized();
 
     var result = await signInManager.PasswordSignInAsync(user, dto.Password, false, false);
     if (result.Succeeded)
     {
-        // Das Cookie wird automatisch gesetzt
-        return Results.Ok();
+        return Results.Ok(); // Das Cookie wird automatisch gesetzt
     }
-    return Results.Unauthorized();
+    else
+    {
+        return Results.Conflict();  // same HttpStatusCode for unknown user as for wrong password
+    }
 });
 #endregion
 

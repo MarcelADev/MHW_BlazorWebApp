@@ -1,7 +1,7 @@
 ﻿using MHWApp.Client.Identity.Model;
 using MHWApp.Library.DTO.Identity;
 
-namespace MHWApp.Client.Identity
+namespace MHWApp.Client.Provider.Interfaces
 {
     /// <summary>
     /// Account management services.
@@ -14,7 +14,7 @@ namespace MHWApp.Client.Identity
         /// <param name="email">User's email.</param>
         /// <param name="password">User's password.</param>
         /// <returns>The result of the request serialized to <see cref="FormResult"/>.</returns>
-        public Task<FormResult> LoginAsync(IdentityDTO dto);
+        public Task LoginAsync(IdentityDTO dto);
 
         /// <summary>
         /// Log out the logged in user.
