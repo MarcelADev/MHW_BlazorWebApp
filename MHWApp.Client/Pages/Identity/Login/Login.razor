@@ -65,14 +65,14 @@
 </AuthorizeView>
 
 @code {
+	private bool validateOnlyModified = true;
+
 	[SupplyParameterFromForm]
 	private LoginFormModel? FormModel { get; set; }
 
 	private EditContext? editContext;
 
 	private ValidationMessageStore? _messageStore;
-
-	private List<string> dangers = [];
 
 	protected override void OnInitialized()
 	{
@@ -81,19 +81,13 @@
 		editContext.OnFieldChanged += HandleFieldChanged;
 
 		_messageStore = new ValidationMessageStore(editContext);
-
-		alertService.ShowPrimeVu("This is a Test. asdpofkj asdfo asdfojp pasdf dnkf asodifj aodn.");
-		alertService.ShowDanger("This is a Test. asdpofkj asdfo asdfojp pasdf dnkf asodifj aodn.");
-		alertService.ShowWarning("This is a Test. asdpofkj asdfo asdfojp pasdf dnkf asodifj aodn.");
-		alertService.ShowInfo("This is a Test. asdpofkj asdfo asdfojp pasdf dnkf asodifj aodn.");
-		alertService.ShowSuccess("This is a Test. asdpofkj asdfo asdfojp pasdf dnkf asodifj aodn.");
 	}
 
 	private void HandleFieldChanged(object? sender, FieldChangedEventArgs e)
 	{
 		if (editContext is not null)
 		{
-			Utils.ManualModelValidator.ValidateModel(editContext, FormModel!, _messageStore!);
+			Utils.ManualModelValidator.ValidateModel(editContext, FormModel!, _messageStore!, onlyModified: validateOnlyModified);
 			StateHasChanged();
 		}
 	}
@@ -105,6 +99,22 @@
 
 	public async Task DoLoginAsync()
 	{
+		Utils.ManualModelValidator.ValidateModel(editContext!, FormModel!, _messageStore!, onlyModified: false);
+
+		bool hasValidationErrors = editContext!.GetValidationMessages().Any();
+
+		if (hasValidationErrors)
+		{
+			validateOnlyModified = false;
+
+			Console.WriteLine("Not a valid Submit bruh");
+			return;
+		}
+		else
+		{
+			validateOnlyModified = true;
+		}
+
 		try
 		{
 			await identityProvider.LoginAsync(new IdentityDTO { UserName = FormModel!.Username, Password = FormModel.Password });

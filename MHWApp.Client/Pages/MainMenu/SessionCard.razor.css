@@ -1,98 +1,93 @@
-﻿h5 {
-    font-size: 1.5rem;
-    font-weight: 700;
-    text-align: left;
-    margin: 0;
-}
-
-p {
-    font-weight: 400;
-    font-size: 1.2rem;
-}
-
-label {
-    font-weight: 200;
-    font-size: 1.1rem;
-}
-
-.card-session {
-    width: 100%;
-    max-width: var(--standard-max-width);
-    display: flex;
-    flex-direction: column;
-    background: var(--secondary-color);
-    border: 0px;
-    margin-bottom: 1rem;
-    border-radius: 10px;
-    box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.3);
+﻿.session-card {
     padding: 0;
+    border-radius: var(--border-radius__session-card);
+
+    --session-card-info-container__padding-top-bottom: 0.5rem;
+    --session-card-info-container__padding-inline: var(--standard-margin__all);
+
+    --session-card-p__font-size: 1.2rem;
+    --session-card-p__font-weight: 400;
+
+    --session-card-label__font-size: 1.1rem;
+    --session-card-label__font-weight: 200;
+
+    --session-card-play-button__font-size: 1.1rem;
+    --session-card-play-button__font-weight: 300;
 }
 
-    .sessionCard:hover {
-        background: #33333312;
-    }
-
-.container-image {
+.session-card__image {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     width: 100%;
     height: 16vh;
-    overflow: hidden; /* This hides the parts of the image that go outside the container */
-    display: flex;
-    justify-content: center; /* Centers the image horizontally */
-    align-items: center; /* Centers the image vertically */
-    border-radius: 10px;
-    position: relative;
+    overflow: hidden;
+    border-radius: var(--border-radius__session-card);
 }
 
-    .container-image img {
+    .session-card__image img {
         width: 100%;
         height: 100%;
         object-fit: cover; /* Ensures the image fills the container, cropping the sides if necessary */
         object-position: center; /* Centers the image */
     }
 
-.container__iconbuttons {
-    display: flex;
-    flex-direction: row;
-    gap: 0.5rem;
-    z-index: 10;
-}
-
-.data__container {
+.session-card__info-container {
     width: 100%;
-    padding: 10px;
-    background-color: inherit;
+    padding: var(--session-card-info-container__padding-top-bottom)
+             var(--session-card-info-container__padding-inline);
 }
 
-.card-header__container{
+.session-card__header-container{
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 1rem;
+    margin-bottom: var(--standard-margin__all);
 }
 
-.date__container{
+.session-card__h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.session-card__date-container {
     display:flex;
     align-items: center;
 }
 
-.property__container {
-    margin-bottom: 0.3rem;
-}
-
-.property__container-last {
-    margin-bottom: 1rem;
-}
-
-.black {
+.session-card__date-icon {
     color: black;
 }
 
-.play__button {
+.session-card__info-field {
+    margin-bottom: var(--standard-margin__all);
+}
+
+    .session-card__info-field p,
+    .session-card__date-container p {
+        font-size: var(--session-card-p__font-size);
+        font-weight: var(--session-card-p__font-weight);
+    }
+
+    .session-card__info-field label {
+        font-size: var(--session-card-label__font-size);
+        font-weight: var(--session-card-label__font-weight);
+        margin-bottom: -1rem;
+    }
+
+.session-card__info-field:last-child {
+    margin-bottom: 0;
+}
+
+.session-card__play-button {
     color: white;
     border: 0;
-    border-radius: 5px;
-    background-color: #6457A6;
-    font-size: 1.1rem;
-    font-weight: 300;
-    padding: 3px 30px;
+    border-radius: var(--standard-border-radius__all);
+    background-color: var(--color__purple);
+    font-size: var(--session-card-play-button__font-size);
+    font-weight: var(--session-card-play-button__font-weight);
+    padding-inline: 30px;
+    /*align-content: center;*/
+    height: auto;
 }

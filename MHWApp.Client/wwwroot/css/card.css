@@ -1,0 +1,19 @@
+﻿.card__container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin-bottom: var(--standard-margin__all);
+    padding: 10px;
+    border-radius: var(--standard-border-radius__card);
+}
+
+.card__shadow {
+    box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.header-card {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 300;
+    border: 0;
+}

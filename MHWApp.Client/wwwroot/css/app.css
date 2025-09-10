@@ -157,10 +157,14 @@ code {
     --standard-font-weight__label: 200;
 
     --standard-padding__all: 5px;
+    --standard-padding__card: 5px;
+    --padding__session-card: 1rem;
 
     --standard-margin__all: 1rem;
 
     --standard-border-radius__all: 4px;
+    --standard-border-radius__card: 4px;
+    --border-radius__session-card: 10px;
 
     --color__purple: #6457A6;
 }
@@ -251,23 +255,6 @@ input:not([type="checkbox"]) {
         opacity: 0.9;
         color: var(--secondary-color-dark);
     }
-
-.card {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    margin-bottom: 1.5rem;
-    box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.3);
-    padding: 10px 15px;
-    border-radius: 8px;
-}
-
-.header-card {
-    margin: 0;
-    font-size: 1.5rem;
-    font-weight: 300;
-    border: 0;
-}
 
 .margin-h3 {
     margin-top: 2rem;
