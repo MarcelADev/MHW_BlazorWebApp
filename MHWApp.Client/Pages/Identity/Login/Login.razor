@@ -81,6 +81,12 @@
 		editContext.OnFieldChanged += HandleFieldChanged;
 
 		_messageStore = new ValidationMessageStore(editContext);
+
+		alertService.ShowPrimeVu("This is a Test. asdpofkj asdfo asdfojp pasdf dnkf asodifj aodn.");
+		alertService.ShowDanger("This is a Test. asdpofkj asdfo asdfojp pasdf dnkf asodifj aodn.");
+		alertService.ShowWarning("This is a Test. asdpofkj asdfo asdfojp pasdf dnkf asodifj aodn.");
+		alertService.ShowInfo("This is a Test. asdpofkj asdfo asdfojp pasdf dnkf asodifj aodn.");
+		alertService.ShowSuccess("This is a Test. asdpofkj asdfo asdfojp pasdf dnkf asodifj aodn.");
 	}
 
 	private void HandleFieldChanged(object? sender, FieldChangedEventArgs e)

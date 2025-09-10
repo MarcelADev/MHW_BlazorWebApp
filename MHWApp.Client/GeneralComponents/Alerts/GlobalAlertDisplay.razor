@@ -6,40 +6,54 @@
 <div class="alert-container">
     @foreach (var alert in alertService.Alerts)
     {
-        var cssClass = alert.Type switch
+        if (alert.Type == AlertType.Success)
         {
-            AlertType.Success => "alert alert-success",
-            AlertType.Danger => "alert alert-danger",
-            AlertType.Warning => "alert alert-warning",
-            AlertType.Info => "alert alert-info",
-            AlertType.PrimeVu => "alert alert-warning alert-prime-vu",
-            _ => "alert"
-        };
+            <div class="alert alert-success">
 
-        <div class="@cssClass">
-            @if (alert.Type == AlertType.PrimeVu)
-            {
+                <span class="material-symbols-outlined alert-icon">
+                    check
+                </span>
+
+                @alert.Message
+
+            </div>
+        }
+        else if (alert.Type == AlertType.Info)
+        {
+            <div class="alert alert-info">
+
+                <span class="material-symbols-outlined alert-icon">
+                    info
+                </span>
+
+                @alert.Message
+
+            </div>
+        }
+        else if (alert.Type == AlertType.Warning || alert.Type == AlertType.Danger)
+        {
+            var cssClass = alert.Type == AlertType.Warning ? "alert-warning" : "alert-danger";
+            <div class="alert @cssClass">
+
+                <span class="material-symbols-outlined alert-icon">
+                    warning
+                </span>
+
+                @alert.Message
+
+            </div>
+        }
+        else if (alert.Type == AlertType.PrimeVu)
+        {
+            <div class="alert alert-warning alert-prime-vu">
+
                 <div class="prime-vu__container">
                     <div class="prime-vu__golden-text">@alert.Message</div>
                     <div class="prime-vu__text-shadow">@alert.Message</div>
                 </div>
-            }
-            else
-            {
-                <span class="material-symbols-outlined alert-icon">
-                    @(
-                        alert.Type switch
-                        {
-                            AlertType.Success => "check",
-                            AlertType.Info => "info",
-                            _ => "warning"
-                        }
-                    )
-                </span>
 
-                @alert.Message
-            }
-        </div>
+            </div>
+        }
     }
 </div>
 
