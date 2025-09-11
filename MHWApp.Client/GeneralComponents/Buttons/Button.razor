@@ -1,0 +1,52 @@
+﻿@if (!isLoading)
+{
+    @if(Icon.Equals(string.Empty))
+    {
+        <button type="button" class="button__base@_cssClasses">
+            @Content
+        </button>
+    }
+    else
+    {
+        <button type="button" class="button__base button__flex@_cssClasses">
+
+            <div class="button__icon-container">
+                <span class="material-symbols-outlined button__icon">
+                    @Icon
+                </span>
+            </div>
+            
+            @Content
+
+        </button>
+    }
+}
+
+@code {
+    private bool isLoading = true;
+    private string _cssClasses = string.Empty;
+
+    [Parameter]
+    public required string Content { get; set; }
+
+    [Parameter]
+    public bool Blue { get; set; } = false;
+
+    [Parameter]
+    public bool Purple { get; set; } = false;
+
+    [Parameter]
+    public string Icon { get; set; } = string.Empty;
+
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        if (Blue) _cssClasses += " button__blue";
+
+        if (Purple) _cssClasses += " button__purple";
+
+        isLoading = false;
+    }
+}

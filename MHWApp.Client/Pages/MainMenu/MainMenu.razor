@@ -1,4 +1,5 @@
 ﻿@page "/mainmenu"
+@using MHWApp.Client.GeneralComponents.Buttons
 @using MHWApp.Client.Pages.MainMenu.Buttons
 @using MHWApp.Library.Model
 @using MHWApp.Client.HubConnections
@@ -39,7 +40,9 @@
 
 	</button> *@
 
-	<AddSessionButton />
+	@* <AddSessionButton /> *@
+
+	<Button Content="Add Session" Purple="true" Icon="add_2"></Button>
 
 </main>
 

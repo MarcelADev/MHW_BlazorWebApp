@@ -1,0 +1,100 @@
+﻿.button__base {
+    --button__line-height: 1.5;
+    --button__color: black;
+    --button__background: transparent;
+    --button__border-width: 0;
+    --button__border-color: transparent;
+    --button__box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15), 0 1px 1px rgba(0, 0, 0, 0.075);
+    --button-hover__border-color: transparent;
+    --button-disabled__opacity: 0.65;
+    --button-focus__box-shadow: 0 0 0 0.25rem rgba(var(--bs-btn-focus-shadow-rgb), .5);
+
+    display: inline-block;
+    padding: var(--standard-padding__button-y) var(--standard-padding__button-x);
+    font-size: var(--standard-font-size__button);
+    font-weight: var(--standard-font-weight__button);
+    line-height: var(--button__line-height);
+    color: var(--button__color);
+    background-color: var(--button__background);
+
+    text-align: center;
+    text-decoration: none;
+    vertical-align: middle;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+    border: var(--button__border-width) solid var(--button__border-color);
+    border-radius: var(--standard-border-radius__button);
+    transition: color .15s ease-in-out, background-color .15s ease-in-out, border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+}
+
+    .button__base:focus, .button__base:active:focus, .button__base.nav-link:focus, .form-control:focus, .form-check-input:focus {
+        box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+    }
+
+    .button__base:hover {
+        color: var(--button-hover__color);
+        background-color: var(--button-hover__background);
+        border-color: var(--button-hover__border-color);
+    }
+
+[type=button]:not(:disabled), [type=reset]:not(:disabled), [type=submit]:not(:disabled), button:not(:disabled) {
+    cursor: pointer;
+}
+
+.button__flex {
+    display: flex;
+    flex-direction: row;
+    padding-left: 0;
+}
+
+.button__icon {
+    color: var(--button__background);
+    background-color: transparent;
+}
+
+.button__icon-container {
+    display: flex;
+    align-items: center;
+    vertical-align: central;
+    background-color: #222222;
+    border-color: #222222;
+    margin: calc(var(--standard-padding__button-y) * -1) var(--standard-padding__button-x) calc(var(--standard-padding__button-y) * -1) 0;
+    border-width: var(--button__border-width);
+    border-radius: var(--standard-border-radius__button) 0 0 var(--standard-border-radius__button);
+}
+
+.button__blue {
+    --button__color: #fff;
+    --button__background: #0d6efd;
+    --button__border-color: #0d6efd;
+    --button-hover__color: #fff;
+    --button-hover__background: #0b5ed7;
+    --button-hover__border-color: #0a58ca;
+    --button-focus__shadow-rgb: 49, 132, 253;
+    --button-active__color: #fff;
+    --button-active__background: #0a58ca;
+    --button-active__border-color: #0a53be;
+    --button-active__shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+    --button-disabled__color: #fff;
+    --button-disabled__background: #0d6efd;
+    --button-disabled__border-color: #0d6efd;
+}
+
+.button__purple {
+    --button__color: #fff;
+    --button__background: var(--color__purple);
+    --button__border-color: var(--color__purple);
+    --button-hover__color: #fff;
+    --button-hover__background: #564B91;
+    --button-hover__border-color: #564B91;
+    --button-focus__shadow-rgb: 49, 132, 253;
+    --button-active__color: #fff;
+    --button-active__background: #4D4384;
+    --button-active__border-color: #4D4384;
+    --button-active__shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+    --button-disabled__color: #fff;
+    --button-disabled__background: var(--color__purple);
+    --button-disabled__border-color: var(--color__purple);
+}
