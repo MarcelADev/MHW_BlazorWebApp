@@ -31,6 +31,8 @@ namespace MHWApp.Api.Data
         public required DbSet<WeaponCraftingIngredient> WeaponCraftingIngredients { get; set; }
         public required DbSet<ArmorCraftingIngredient> ArmorCraftingIngredients { get; set; }
 
+        public required DbSet<ImageEntity> Images { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             #region Participator

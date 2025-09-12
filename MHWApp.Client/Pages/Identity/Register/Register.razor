@@ -2,19 +2,20 @@
 {
     @page "/register"
     @using System.ComponentModel.DataAnnotations
-    @using MHWApp.Client.GeneralComponents.CustomInput
+@using MHWApp.Client.GeneralComponents.CustomInput
 @using MHWApp.Client.GeneralComponents.Buttons.IconButtons
-    @using MHWApp.Client.Identity
-    @using MHWApp.Client.Provider.Interfaces
-    @using MHWApp.Client.Services
-    @using MHWApp.Client.Utils
-    @using MHWApp.Library.DTO.Identity
-    @using MHWApp.Library.Exceptions
-    @using static MHWApp.Library.StaticVariables
-    @inject IAccountManagement identityProvider
-    @inject IGlobalAlertService alertService
-    @inject NavigationManager navigationManager
-    @implements IDisposable
+@using MHWApp.Client.Identity
+@using MHWApp.Client.Provider.Interfaces
+@using MHWApp.Client.Services
+@using MHWApp.Client.Services.Interfaces
+@using MHWApp.Client.Utils
+@using MHWApp.Library.DTO.Identity
+@using MHWApp.Library.Exceptions
+@using static MHWApp.Library.StaticVariables
+@inject IAccountManagement identityProvider
+@inject IGlobalAlertService alertService
+@inject NavigationManager navigationManager
+@implements IDisposable
 
     <PageTitle>Register</PageTitle>
 

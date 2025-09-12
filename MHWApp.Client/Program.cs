@@ -9,6 +9,7 @@ using MHWApp.Client.Provider;
 using MHWApp.Client.Services;
 using Microsoft.AspNetCore.Components.WebAssembly.Http;
 using MHWApp.Client.Provider.Interfaces;
+using MHWApp.Client.Services.Interfaces;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
@@ -64,8 +65,10 @@ builder.Services.AddScoped<WeaponProvider>();
 builder.Services.AddScoped<GameExtensionProvider>();
 builder.Services.AddScoped<ArmorProvider>();
 builder.Services.AddScoped<CategoryArmorInventoryEntryProvider>();
+builder.Services.AddScoped<IImageProvider, ImageProvider>();
 //Alerts
 builder.Services.AddSingleton<IGlobalAlertService, GlobalAlertService>();
+builder.Services.AddSingleton<IImageService, ImageService>();
 #endregion
 
 await builder.Build().RunAsync();

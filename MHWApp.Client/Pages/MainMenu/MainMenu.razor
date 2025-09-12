@@ -1,11 +1,13 @@
 ﻿@page "/mainmenu"
 @using MHWApp.Client.GeneralComponents.Buttons
+@using MHWApp.Client.Services.Interfaces
 @using MHWApp.Library.Model
 @using MHWApp.Client.HubConnections
 @using MHWApp.Client.Provider
 @inject SessionProvider sessionProvider
 @inject NavigationManager navigationManager
 @inject IDataBaseUpdatesHubConnection hubService
+@inject IImageService imageService
 @implements IDisposable
 
 <header class="container-center header">
@@ -43,6 +45,8 @@
 	protected async override Task OnInitializedAsync()
 	{
 		sessions = await sessionProvider.GetSessionsAsync();
+
+		await imageService.SupplyImageServiceWithImagesAsync();
 
 		hubService.OnDeletedParticipator += HandleSignalRDeletedParticipator;
 

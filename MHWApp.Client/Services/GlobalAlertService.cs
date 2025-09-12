@@ -1,4 +1,6 @@
-﻿namespace MHWApp.Client.Services
+﻿using MHWApp.Client.Services.Interfaces;
+
+namespace MHWApp.Client.Services
 {
     public class GlobalAlertService : IGlobalAlertService
     {

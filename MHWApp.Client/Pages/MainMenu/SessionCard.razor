@@ -1,4 +1,5 @@
 ﻿@using MHWApp.Client.GeneralComponents.Buttons
+@using MHWApp.Client.Services.Interfaces
 @using MHWApp.Library.Exceptions
 @using MHWApp.Library.Model
 @using MHWApp.Client.HubConnections
@@ -10,6 +11,7 @@
 @inject ParticipatorProvider participatorProvider
 @inject SessionProvider sessionProvider
 @inject IDataBaseUpdatesHubConnection hubService
+@inject IImageService imageService
 @implements IDisposable
 
 @if (errors)
@@ -24,7 +26,18 @@
 
     <div class="session-card__image">
 
-        <img src="Images/CardPicture.jpg" alt="Image not available" />
+        @* <img src="Images/CardPicture.jpg" alt="Image not available" /> *@
+
+        @* TODO https://learn.microsoft.com/en-us/ef/core/modeling/data-seeding#use-seeding-method *@
+
+        @if (imageService.TryGetImage(Session.Name, out var image))
+        {
+            <img src="data:@image!.ImageType;base64,@image.Base64Data" alt="image not available" />
+        }
+        else
+        {
+            <p>image not available</p>
+        }
 
     </div>
 

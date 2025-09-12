@@ -1,6 +1,6 @@
 ﻿using static MHWApp.Client.Services.GlobalAlertService;
 
-namespace MHWApp.Client.Services
+namespace MHWApp.Client.Services.Interfaces
 {
     public interface IGlobalAlertService
     {

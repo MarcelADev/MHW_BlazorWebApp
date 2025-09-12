@@ -5,6 +5,7 @@ using MHWApp.Library;
 using MHWApp.Library.DTO;
 using MHWApp.Library.DTO.Create.Category_Armor_InventoryEntry;
 using MHWApp.Library.DTO.Identity;
+using MHWApp.Library.DTO.Images;
 using MHWApp.Library.Model;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -268,16 +269,25 @@ app.MapGet("/roles", (ClaimsPrincipal user) =>
 }).RequireAuthorization();
 #endregion
 
-#region Endpoint: Dummy-Example for Authorization
-// provide an endpoint example that requires authorization
-app.MapPost("/data-processing-1", ([FromBody] FormModel model) =>
-    Results.Text($"{model.Message.Length} characters"))
-        .RequireAuthorization();
+#region Endpoint: Images
 
-// provide an endpoint example that requires authorization with a policy
-app.MapPost("/data-processing-2", ([FromBody] FormModel model) =>
-    Results.Text($"{model.Message.Length} characters"))
-        .RequireAuthorization(policy => policy.RequireRole("Manager"));
+app.MapGet("/images", async (AppDbContext dbContext, ClaimsPrincipal user) =>
+{
+    var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
+    if (userIdClaim == null) return Results.Unauthorized();
+
+    var imageEntities = await dbContext.Images.ToListAsync();
+
+    var images = imageEntities.Select(img => new ImageDTO
+    {
+        Name = img.Name,
+        ImageType = img.ImageType,
+        Base64Data = Convert.ToBase64String(img.Data)
+    }).ToList();
+
+    return Results.Ok(images);
+}).RequireAuthorization();
+
 #endregion
 
 #region Endpoint: Session
@@ -296,7 +306,7 @@ app.MapGet("/sessions", async (AppDbContext dbContext, ClaimsPrincipal user) =>
 
         return Results.Ok(playerSessions);
     }
-).RequireAuthorization(); ;
+).RequireAuthorization();
 
 app.MapPost("/sessions", async (AppDbContext dbContext, ClaimsPrincipal user, IHubContext<DataBaseUpdatesHub> hubContext, SessionCreateDTO createSessionDTO) =>
     {
