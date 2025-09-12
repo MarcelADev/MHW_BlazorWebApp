@@ -2,13 +2,17 @@
 {
     @if(Icon.Equals(string.Empty))
     {
-        <button type="button" class="button__base@_cssClasses">
+        <button type="@(IsSubmitButton ? "submit" : "button")" 
+                class="button__base@_cssClasses"
+                @onclick="OnButtonClicked">
             @Content
         </button>
     }
     else
     {
-        <button type="button" class="button__base button__flex@_cssClasses">
+        <button type="@(IsSubmitButton ? "submit" : "button")" 
+                class="button__base button__flex@_cssClasses"
+                @onclick="OnButtonClicked">
 
             <div class="button__icon-container">
                 <span class="material-symbols-outlined button__icon">
@@ -30,6 +34,9 @@
     public required string Content { get; set; }
 
     [Parameter]
+    public required EventCallback ButtonClicked { get; set; }
+
+    [Parameter]
     public bool Blue { get; set; } = false;
 
     [Parameter]
@@ -38,6 +45,8 @@
     [Parameter]
     public string Icon { get; set; } = string.Empty;
 
+    [Parameter]
+    public bool IsSubmitButton { get; set; } = false;
 
     protected override void OnInitialized()
     {
@@ -48,5 +57,10 @@
         if (Purple) _cssClasses += " button__purple";
 
         isLoading = false;
+    }
+
+    private async Task OnButtonClicked()
+    {
+        await ButtonClicked.InvokeAsync();
     }
 }

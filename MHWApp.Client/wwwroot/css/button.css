@@ -76,9 +76,9 @@
     border-width: var(--button__border-width);
     border-radius: var(--standard-border-radius__button);
     /*background*/
-    background: linear-gradient(to right, var(--button-icon-container__background) 35%, var(--button-hover__background) 65%) left;
     background: linear-gradient(to right, var(--button-icon-container__background) 35%, var(--button-icon-container__background-hover) 65%) left;
-    background-size: 300% 100%;
+    background: linear-gradient(to right, var(--button-icon-container__background) 49%, var(--button-icon-container__background-hover) 51%) left;
+    background-size: 210% 100%;
     transition: .5s ease-out;
 }
 
