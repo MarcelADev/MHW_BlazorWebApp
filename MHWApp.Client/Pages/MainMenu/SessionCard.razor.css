@@ -10,9 +10,6 @@
 
     --session-card-label__font-size: 1.1rem;
     --session-card-label__font-weight: 200;
-
-    --session-card-play-button__font-size: 1.1rem;
-    --session-card-play-button__font-weight: 300;
 }
 
 .session-card__image {
@@ -78,16 +75,4 @@
 
 .session-card__info-field:last-child {
     margin-bottom: 0;
-}
-
-.session-card__play-button {
-    color: white;
-    border: 0;
-    border-radius: var(--standard-border-radius__all);
-    background-color: var(--color__purple);
-    font-size: var(--session-card-play-button__font-size);
-    font-weight: var(--session-card-play-button__font-weight);
-    padding-inline: 30px;
-    /*align-content: center;*/
-    height: auto;
 }
