@@ -1,13 +1,17 @@
 ﻿.button__base {
     --button__line-height: 1.5;
-    --button__color: black;
-    --button__background: transparent;
     --button__border-width: 0;
-    --button__border-color: transparent;
     --button__box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15), 0 1px 1px rgba(0, 0, 0, 0.075);
-    --button-hover__border-color: transparent;
     --button-disabled__opacity: 0.65;
     --button-focus__box-shadow: 0 0 0 0.25rem rgba(var(--bs-btn-focus-shadow-rgb), .5);
+
+    /*colors*/
+    --button__color: black;
+    --button__background: transparent;
+    --button__border-color: transparent;
+    --button-hover__border-color: transparent;
+    --button-icon-container__background: black;
+    --button-icon-container__background-hover: black;
 
     display: inline-block;
     padding: var(--standard-padding__button-y) var(--standard-padding__button-x);
@@ -39,6 +43,14 @@
         border-color: var(--button-hover__border-color);
     }
 
+    .button__base:hover .button__icon-container {
+        background-position: right;
+    }
+
+    .button__base:hover .button__icon {
+        color: var(--button__color)
+    }
+
 [type=button]:not(:disabled), [type=reset]:not(:disabled), [type=submit]:not(:disabled), button:not(:disabled) {
     cursor: pointer;
 }
@@ -57,44 +69,64 @@
 .button__icon-container {
     display: flex;
     align-items: center;
-    vertical-align: central;
-    background-color: #222222;
-    border-color: #222222;
+    justify-content: center;
+    width: calc(var(--standard-padding__button-y) * 2 + 24px);
+    border-color: var(--button-icon-container__background);
     margin: calc(var(--standard-padding__button-y) * -1) var(--standard-padding__button-x) calc(var(--standard-padding__button-y) * -1) 0;
     border-width: var(--button__border-width);
-    border-radius: var(--standard-border-radius__button) 0 0 var(--standard-border-radius__button);
+    border-radius: var(--standard-border-radius__button);
+    /*background*/
+    background: linear-gradient(to right, var(--button-icon-container__background) 35%, var(--button-hover__background) 65%) left;
+    background: linear-gradient(to right, var(--button-icon-container__background) 35%, var(--button-icon-container__background-hover) 65%) left;
+    background-size: 300% 100%;
+    transition: .5s ease-out;
 }
 
 .button__blue {
+    /*button*/
     --button__color: #fff;
     --button__background: #0d6efd;
     --button__border-color: #0d6efd;
+    /*button hover*/
     --button-hover__color: #fff;
     --button-hover__background: #0b5ed7;
     --button-hover__border-color: #0a58ca;
+    /*button focus*/
     --button-focus__shadow-rgb: 49, 132, 253;
+    /*button active*/
     --button-active__color: #fff;
     --button-active__background: #0a58ca;
     --button-active__border-color: #0a53be;
     --button-active__shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+    /*button disabled*/
     --button-disabled__color: #fff;
     --button-disabled__background: #0d6efd;
     --button-disabled__border-color: #0d6efd;
+    /*button icon container*/
+    /*--button-icon-container__background: #222222;*/
 }
 
 .button__purple {
+    /*button*/
     --button__color: #fff;
     --button__background: var(--color__purple);
     --button__border-color: var(--color__purple);
+    /*button hover*/
     --button-hover__color: #fff;
     --button-hover__background: #564B91;
     --button-hover__border-color: #564B91;
+    /*button focus*/
     --button-focus__shadow-rgb: 49, 132, 253;
+    /*button active*/
     --button-active__color: #fff;
     --button-active__background: #4D4384;
     --button-active__border-color: #4D4384;
     --button-active__shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+    /*button disabled*/
     --button-disabled__color: #fff;
     --button-disabled__background: var(--color__purple);
     --button-disabled__border-color: var(--color__purple);
+    /*button icon container*/
+    --button-icon-container__background: pink;
+    --button-icon-container__background-hover: #1e0057;
 }
