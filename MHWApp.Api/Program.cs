@@ -271,22 +271,22 @@ app.MapGet("/roles", (ClaimsPrincipal user) =>
 
 #region Endpoint: Images
 
-app.MapGet("/images", async (AppDbContext dbContext, ClaimsPrincipal user) =>
-{
-    var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
-    if (userIdClaim == null) return Results.Unauthorized();
+//app.MapGet("/images", async (AppDbContext dbContext, ClaimsPrincipal user) =>
+//{
+//    var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
+//    if (userIdClaim == null) return Results.Unauthorized();
 
-    var imageEntities = await dbContext.Images.ToListAsync();
+//    var imageEntities = await dbContext.Images.ToListAsync();
 
-    var images = imageEntities.Select(img => new ImageDTO
-    {
-        Name = img.Name,
-        ImageType = img.ImageType,
-        Base64Data = Convert.ToBase64String(img.Data)
-    }).ToList();
+//    var images = imageEntities.Select(img => new ImageDTO
+//    {
+//        Name = img.Name,
+//        ImageType = img.ImageType,
+//        Base64Data = Convert.ToBase64String(img.Data)
+//    }).ToList();
 
-    return Results.Ok(images);
-}).RequireAuthorization();
+//    return Results.Ok(images);
+//}).RequireAuthorization();
 
 #endregion
 

@@ -137,29 +137,6 @@ namespace MHWApp.Api.Migrations
                     b.ToTable("GameExtensions");
                 });
 
-            modelBuilder.Entity("MHWApp.Library.Model.ImageEntity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<byte[]>("Data")
-                        .IsRequired()
-                        .HasColumnType("BLOB");
-
-                    b.Property<string>("ImageType")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Images");
-                });
-
             modelBuilder.Entity("MHWApp.Library.Model.InventoryEntry", b =>
                 {
                     b.Property<int>("Id")

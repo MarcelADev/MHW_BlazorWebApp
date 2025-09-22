@@ -11,7 +11,6 @@
 @inject ParticipatorProvider participatorProvider
 @inject SessionProvider sessionProvider
 @inject IDataBaseUpdatesHubConnection hubService
-@inject IImageService imageService
 @implements IDisposable
 
 @if (errors)
@@ -30,14 +29,14 @@
 
         @* TODO https://learn.microsoft.com/en-us/ef/core/modeling/data-seeding#use-seeding-method *@
 
-        @if (imageService.TryGetImage(Session.Name, out var image))
+        @* @if (imageService.TryGetImage(Session.Name, out var image))
         {
             <img src="data:@image!.ImageType;base64,@image.Base64Data" alt="image not available" />
         }
         else
         {
             <p>image not available</p>
-        }
+        } *@
 
     </div>
 

@@ -68,7 +68,6 @@ builder.Services.AddScoped<CategoryArmorInventoryEntryProvider>();
 builder.Services.AddScoped<IImageProvider, ImageProvider>();
 //Alerts
 builder.Services.AddSingleton<IGlobalAlertService, GlobalAlertService>();
-builder.Services.AddSingleton<IImageService, ImageService>();
 #endregion
 
 await builder.Build().RunAsync();

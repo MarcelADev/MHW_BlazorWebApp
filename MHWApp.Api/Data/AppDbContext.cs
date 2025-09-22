@@ -31,30 +31,6 @@ namespace MHWApp.Api.Data
         public required DbSet<WeaponCraftingIngredient> WeaponCraftingIngredients { get; set; }
         public required DbSet<ArmorCraftingIngredient> ArmorCraftingIngredients { get; set; }
 
-        public required DbSet<ImageEntity> Images { get; set; }
-
-        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        //=> optionsBuilder
-        //.UseSqlite("Data Source=EFDataSeeding.db") // ← SQLite statt SQL Server
-        //.UseSeeding((context, _) =>
-        //{
-        //    var testBlog = context.Set<Blog>().FirstOrDefault(b => b.Url == "http://test.com");
-        //    if (testBlog == null)
-        //    {
-        //        context.Set<Blog>().Add(new Blog { Url = "http://test.com" });
-        //        context.SaveChanges();
-        //    }
-        //})
-        //.UseAsyncSeeding(async (context, _, cancellationToken) =>
-        //{
-        //    var testBlog = await context.Set<Blog>().FirstOrDefaultAsync(b => b.Url == "http://test.com", cancellationToken);
-        //    if (testBlog == null)
-        //    {
-        //        context.Set<Blog>().Add(new Blog { Url = "http://test.com" });
-        //        await context.SaveChangesAsync(cancellationToken);
-        //    }
-        //});
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             #region Participator

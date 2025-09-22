@@ -7,7 +7,6 @@
 @inject SessionProvider sessionProvider
 @inject NavigationManager navigationManager
 @inject IDataBaseUpdatesHubConnection hubService
-@inject IImageService imageService
 @implements IDisposable
 
 <header class="container-center header">
@@ -45,8 +44,6 @@
 	protected async override Task OnInitializedAsync()
 	{
 		sessions = await sessionProvider.GetSessionsAsync();
-
-		await imageService.SupplyImageServiceWithImagesAsync();
 
 		hubService.OnDeletedParticipator += HandleSignalRDeletedParticipator;
 
