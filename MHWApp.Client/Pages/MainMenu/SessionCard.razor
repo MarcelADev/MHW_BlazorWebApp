@@ -1,7 +1,9 @@
 ﻿@using MHWApp.Client.GeneralComponents.Buttons
+@using MHWApp.Client.Provider.Interfaces
 @using MHWApp.Client.Services.Interfaces
 @using MHWApp.Library.Exceptions
 @using MHWApp.Library.Model
+@using static MHWApp.Library.StaticVariables
 @using MHWApp.Client.HubConnections
 @using MHWApp.Client.GeneralComponents.Buttons.IconButtons
 @using MHWApp.Client.GeneralComponents.Modals
@@ -11,15 +13,9 @@
 @inject ParticipatorProvider participatorProvider
 @inject SessionProvider sessionProvider
 @inject IDataBaseUpdatesHubConnection hubService
+@inject IImageProvider imageProvider
+@inject IGlobalAlertService alertService
 @implements IDisposable
-
-@if (errors)
-{
-    @foreach (var error in errorList)
-    {
-        <div class="alert alert-danger">@error</div>
-    }
-}
 
 <div class="card__container card__shadow session-card">
 
@@ -29,14 +25,22 @@
 
         @* TODO https://learn.microsoft.com/en-us/ef/core/modeling/data-seeding#use-seeding-method *@
 
-        @* @if (imageService.TryGetImage(Session.Name, out var image))
+        @if (isLoadingImage)
         {
-            <img src="data:@image!.ImageType;base64,@image.Base64Data" alt="image not available" />
+            <div class="session-card__image-placeholder">
+                <p>Is Loading ...</p>
+            </div>
+        }
+        else if(loadingImageWasSuccessful)
+        {
+            <img src="@base64ImageString" alt="Image not available"/>
         }
         else
         {
-            <p>image not available</p>
-        } *@
+            <div class="session-card__image-placeholder">
+                <p class=".session-card__image-placeholder-not-found">@imagePlaceHolderText</p>
+            </div>
+        }
 
     </div>
 
@@ -118,8 +122,11 @@
     private bool showDeleteModal = false;
     private bool showEditModal = false;
 
-    private bool errors;
-    private string[] errorList = [];
+    private bool isLoadingImage = true;
+    private bool loadingImageWasSuccessful = false;
+
+    private string base64ImageString = string.Empty;
+    private string imagePlaceHolderText = "";
 
     Participator? participator;
 
@@ -133,6 +140,39 @@
         hubService.OnUpdatedSession += HandleSignalRUpdatedSession;
 
         isLoading = false;
+
+        _ = LoadCardImage();
+    }
+
+    private async Task LoadCardImage()
+    {
+        string fileName = "SessionCard_Picture.jpg";
+
+        try
+        {
+            var rawBase64ImageString = await imageProvider.GetImageAsync(fileName);
+
+            base64ImageString = $"data:image/jpeg;base64,{rawBase64ImageString}";
+
+            loadingImageWasSuccessful = true;
+        }
+        catch (EntityWasNotFoundException)
+        {
+            alertService.ShowWarning($"{fileName} was not found");
+
+            imagePlaceHolderText = "404";
+        }
+        catch(EntityWasNullException)
+        {
+            alertService.ShowDanger($"Image string was empty. Try relöading page and deleting browser cache");
+        }
+        catch (UnexpectedResponseException)
+        {
+            alertService.ShowDanger(ALERT_MESSAGE_UNEXPECTED_SERVER_RESPONSE);
+        }
+
+        isLoadingImage = false;
+        StateHasChanged();
     }
 
     private void HandleMoreButtonClicked()
@@ -167,22 +207,19 @@
 
     private async Task HandleModalRemoveParticipationButtonClicked()
     {
-        errors = false;
-        errorList = [];
-
         try
         {
             await participatorProvider.RemoveParticipatorAsync(participator!.Id);
+
+            alertService.ShowSuccess("Participation was successfully removed");
         }
         catch (EntityWasNotFoundException)
         {
-            errors = true;
-            errorList = ["Couldnt remove Participator because it wasn't found. Please reload page!"];
+            alertService.ShowDanger("Couldnt remove Participator because it wasn't found. Please reload page!");
         }
         catch (UnexpectedResponseException)
         {
-            errors = true;
-            errorList = ["Unexpected HTTP Response. Please contact Devs!"];
+            alertService.ShowDanger(ALERT_MESSAGE_UNEXPECTED_SERVER_RESPONSE);
         }
 
         showDeleteModal = false;
@@ -191,22 +228,19 @@
 
     private async Task HandleModalDeleteSessionButtonClicked()
     {
-        errors = false;
-        errorList = [];
-
         try
         {
             await sessionProvider.RemoveSessionAsync(Session.Id);
+
+            alertService.ShowSuccess("Session was successfully removed");
         }
         catch (EntityWasNotFoundException)
         {
-            errors = true;
-            errorList = ["Couldnt remove Session because it wasn't found. Please reload page!"];
+            alertService.ShowDanger("Couldnt remove Session because it wasn't found. Please reload page!");
         }
         catch (UnexpectedResponseException)
         {
-            errors = true;
-            errorList = ["Unexpected HTTP Response. Please contact Devs!"];
+            alertService.ShowDanger(ALERT_MESSAGE_UNEXPECTED_SERVER_RESPONSE);
         }
 
         showDeleteModal = false;

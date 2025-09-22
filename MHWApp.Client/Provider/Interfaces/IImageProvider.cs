@@ -5,6 +5,6 @@ namespace MHWApp.Client.Provider.Interfaces
 {
     public interface IImageProvider
     {
-        Task<List<ImageDTO>> GetImagesAsync();
+        Task<string> GetImageAsync(string fileName);
     }
 }

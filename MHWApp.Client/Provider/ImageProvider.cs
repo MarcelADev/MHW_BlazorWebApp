@@ -13,14 +13,16 @@ namespace MHWApp.Client.Provider
     {
         private readonly HttpClient _httpClient = httpClientFactory.CreateClient("AuthAndResp");
 
-        public async Task<List<ImageDTO>> GetImagesAsync()
+        public async Task<string> GetImageAsync(string fileName)
         {
-            var request = new HttpRequestMessage(HttpMethod.Get, "images");
+            var request = new HttpRequestMessage(HttpMethod.Get, "images/" + fileName);
             var response = await _httpClient.SendAsync(request);
 
-            var images = await response.Content.ReadFromJsonAsync<List<ImageDTO>>();
+            if (response.StatusCode == HttpStatusCode.NotFound) throw new EntityWasNotFoundException();
 
-            if (response.StatusCode == HttpStatusCode.OK) return images ?? throw new EntityWasNullException();
+            var base64String = await response.Content.ReadFromJsonAsync<string>();
+
+            if (response.StatusCode == HttpStatusCode.OK) return base64String ?? throw new EntityWasNullException();
 
             logger.LogWarning($"Unexpexted HTTP Response: {response.StatusCode.ToString()}");
             throw new UnexpectedResponseException(response.StatusCode.ToString());

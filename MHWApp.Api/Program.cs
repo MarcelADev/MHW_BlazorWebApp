@@ -16,6 +16,7 @@ using System.Linq;
 using System.Net;
 using System.Runtime.CompilerServices;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text.Json.Serialization;
 using static MHWApp.Library.StaticVariables;
 
@@ -271,22 +272,20 @@ app.MapGet("/roles", (ClaimsPrincipal user) =>
 
 #region Endpoint: Images
 
-//app.MapGet("/images", async (AppDbContext dbContext, ClaimsPrincipal user) =>
-//{
-//    var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
-//    if (userIdClaim == null) return Results.Unauthorized();
+app.MapGet("/images/{fileName}", async (AppDbContext dbContext, IWebHostEnvironment webHostEnvironment, ClaimsPrincipal user, string fileName) =>
+{
+    var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
+    if (userIdClaim == null) return Results.Unauthorized();
 
-//    var imageEntities = await dbContext.Images.ToListAsync();
+    string path = Path.Combine(webHostEnvironment.ContentRootPath, "Images", fileName);
 
-//    var images = imageEntities.Select(img => new ImageDTO
-//    {
-//        Name = img.Name,
-//        ImageType = img.ImageType,
-//        Base64Data = Convert.ToBase64String(img.Data)
-//    }).ToList();
+    if (!File.Exists(path)) return Results.NotFound("File not found");
 
-//    return Results.Ok(images);
-//}).RequireAuthorization();
+    byte[] imageBytes = await File.ReadAllBytesAsync(path);
+    string base64String = Convert.ToBase64String(imageBytes);
+
+    return Results.Ok(base64String);
+}).RequireAuthorization();
 
 #endregion
 

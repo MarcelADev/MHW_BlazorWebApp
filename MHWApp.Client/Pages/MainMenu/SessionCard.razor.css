@@ -30,10 +30,26 @@
         object-position: center; /* Centers the image */
     }
 
+.session-card__image-placeholder {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    background-image: linear-gradient( to bottom right, #222222 0, #555 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+}
+
+.session-card__image-placeholder-not-found {
+    font-weight: 800;
+    font-size: 3rem;
+}
+
 .session-card__info-container {
     width: 100%;
-    padding: var(--session-card-info-container__padding-top-bottom)
-             var(--session-card-info-container__padding-inline);
+    padding: var(--session-card-info-container__padding-top-bottom) var(--session-card-info-container__padding-inline);
 }
 
 .session-card__header-container{

@@ -27,23 +27,7 @@ namespace MHWApp.Library
         }
         #endregion
 
-        #region Banned Names
-        public static string[] BANNED_NAMES = new string[]
-        {
-            "master",
-            "admin",
-            "administrator",
-            "root",
-            "system",
-            "moderator",
-            "mod",
-            "owner",
-            "staff",
-            "abbasstinkt"
-        };
-        #endregion
-
-        #region Password & Username Requirements
+        #region Password & Username Requirements & Banned Names
 
         public static Dictionary<string, object> PASSWORD_REQUIREMENTS = new()
         {
@@ -62,6 +46,28 @@ namespace MHWApp.Library
         };
 
         public static string ALLOWED_USERNAME_CHARACTERS = "abcdefghijklmnopqrstuvwxyz" + "ABCDEFGHIJKLMNOPQRSTUVWXYZ" + "0123456789" + " ";
+
+        public static string[] BANNED_NAMES = new string[]
+        {
+            "master",
+            "admin",
+            "administrator",
+            "root",
+            "system",
+            "moderator",
+            "mod",
+            "owner",
+            "staff",
+            "abbasstinkt",
+            "polestinkt",
+            "marcelstinkt"
+        };
+
+        #endregion
+
+        #region Alert Messages
+
+        public static string ALERT_MESSAGE_UNEXPECTED_SERVER_RESPONSE = "Unexpected server response. Contact support";
 
         #endregion
     }

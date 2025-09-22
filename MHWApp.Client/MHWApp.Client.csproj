@@ -17,7 +17,6 @@
 
   <ItemGroup>
     <None Include="wwwroot\css\select.css" />
-    <None Include="wwwroot\Images\CardPicture.jpg" />
   </ItemGroup>
 
   <ItemGroup>
