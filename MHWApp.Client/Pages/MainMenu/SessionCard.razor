@@ -21,10 +21,6 @@
 
     <div class="session-card__image">
 
-        @* <img src="Images/CardPicture.jpg" alt="Image not available" /> *@
-
-        @* TODO https://learn.microsoft.com/en-us/ef/core/modeling/data-seeding#use-seeding-method *@
-
         @if (isLoadingImage)
         {
             <div class="session-card__image-placeholder">
@@ -38,7 +34,7 @@
         else
         {
             <div class="session-card__image-placeholder">
-                <p class=".session-card__image-placeholder-not-found">@imagePlaceHolderText</p>
+                <p class="session-card__image-placeholder-not-found">@imagePlaceHolderText</p>
             </div>
         }
 
@@ -99,6 +95,8 @@
 
 </div>
 
+@* TODO https://www.w3schools.com/howto/howto_css_flip_card.asp *@
+
 @if (showEditModal)
 {
     <EditSessionModal Session="Session" 
@@ -150,6 +148,8 @@
 
         try
         {
+            throw new EntityWasNullException();
+
             var rawBase64ImageString = await imageProvider.GetImageAsync(fileName);
 
             base64ImageString = $"data:image/jpeg;base64,{rawBase64ImageString}";
@@ -164,7 +164,7 @@
         }
         catch(EntityWasNullException)
         {
-            alertService.ShowDanger($"Image string was empty. Try relöading page and deleting browser cache");
+            alertService.ShowDanger($"Image string was empty. Try reloading page and deleting browser cache");
         }
         catch (UnexpectedResponseException)
         {
