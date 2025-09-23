@@ -7,7 +7,7 @@ namespace MHWApp.Client.Pages.Admin.Create
 {
     public class CreateFormModel : IValidatableObject
     {
-        [Required(ErrorMessage = "Name must not be empty")]
+        [Required(ErrorMessage = "CurrentName must not be empty")]
         public string Name { get; set; } = string.Empty;
 
         public bool AddArmorSet { get; set; } = false;

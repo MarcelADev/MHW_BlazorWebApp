@@ -142,7 +142,7 @@
     private List<WeaponType> weaponTypes = [];
 
     [SupplyParameterFromForm]
-    private EditSessionFormModel? Model { get; set; }
+    private EditSessionModalFormModel? Model { get; set; }
 
     [Parameter]
     public required Session Session { get; set; }
@@ -160,7 +160,7 @@
 
         weaponTypes = await weaponProvider.GetWeaponTypesAsync();
 
-        Model = new EditSessionFormModel(Session.Name, Session.DayCount, Session.MaxDays);
+        Model = new EditSessionModalFormModel(Session.Name, Session.DayCount, Session.MaxDays);
         editContext = new(Model);
         editContext.OnFieldChanged += HandleFieldChanged;
 

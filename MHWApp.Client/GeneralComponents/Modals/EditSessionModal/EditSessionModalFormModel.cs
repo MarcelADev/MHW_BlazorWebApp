@@ -4,7 +4,7 @@ using System.Xml.Linq;
 
 namespace MHWApp.Client.GeneralComponents.Modals.EditSessionModal
 {
-    public class EditSessionFormModel : IValidatableObject
+    public class EditSessionModalFormModel : IValidatableObject
     {
         public string CurrentName { get; set; }
         public string NewName { get; set; }
@@ -24,7 +24,7 @@ namespace MHWApp.Client.GeneralComponents.Modals.EditSessionModal
         public bool EntityWasNullFlag { get; set; } = false;
         public bool UnexpectedResponseFlag { get; set; } = false;
 
-        public EditSessionFormModel(string sessionName, int dayCount, int maxDays)
+        public EditSessionModalFormModel(string sessionName, int dayCount, int maxDays)
         {
             CurrentName = NewName = sessionName;
             CurrentDayCount = NewDayCount = dayCount;

@@ -1,4 +1,6 @@
 ﻿@using MHWApp.Client.GeneralComponents.Buttons
+@using MHWApp.Client.GeneralComponents.CustomInput
+@using MHWApp.Client.Pages.MainMenu.ShowAndEditSession
 @using MHWApp.Client.Provider.Interfaces
 @using MHWApp.Client.Services.Interfaces
 @using MHWApp.Library.Exceptions
@@ -17,87 +19,166 @@
 @inject IGlobalAlertService alertService
 @implements IDisposable
 
-<div class="card__container card__shadow session-card">
+<div class="flip-card__container-outer session-card__variables">
 
-    <div class="session-card__image">
+    <div class="flip-card__container-inner@(showBackSide ? " flip-card__rotate" : "")">
 
-        @if (isLoadingImage)
-        {
-            <div class="session-card__image-placeholder">
-                <p>Is Loading ...</p>
+        <div class="card__container card__shadow flip-card-front session-card-front">
+
+            <div class="session-card-front__image">
+
+                @if (isLoadingImage)
+                {
+                    <div class="session-card-front__image-placeholder">
+                        <p>Is Loading ...</p>
+                    </div>
+                }
+                else if(loadingImageWasSuccessful)
+                {
+                    <img src="@base64ImageString" alt="Image not available"/>
+                }
+                else
+                {
+                    <div class="session-card-front__image-placeholder">
+                        <p class="session-card-front__image-placeholder-not-found">@imagePlaceHolderText</p>
+                    </div>
+                }
+
             </div>
-        }
-        else if(loadingImageWasSuccessful)
-        {
-            <img src="@base64ImageString" alt="Image not available"/>
-        }
-        else
-        {
-            <div class="session-card__image-placeholder">
-                <p class="session-card__image-placeholder-not-found">@imagePlaceHolderText</p>
+
+            <div class="session-card-front__info-container">
+
+                <div class="session-card-front__header-container">
+
+                    <h2 class="session-card-front__h2">@Session.Name</h2>
+
+                    <div class="session-card-front__date-container">
+
+                        <span class="material-symbols-outlined session-card-front__date-icon">
+                            event_available
+                        </span>
+
+                        <p>@Session.DayCount/@Session.MaxDays</p>
+                    </div>
+                </div>
+
+                <div class="session-card-front__info-field">
+
+                    <label for="session-weapon">Weapon:</label>
+                    @if (isLoading)
+                    {
+                        <p id="session-weapon">Loading ...</p>
+                    }
+                    else
+                    {
+                        <p id="session-weapon">@participator!.WeaponType!.Name</p>
+                    }
+                </div>
+
+                <div class="session-card-front__info-field">
+
+                    <label for="session-date">Date:</label>
+
+                    <p id="session-date">@Session.Date</p>
+
+                </div>
+
+                <div class="session-card-front__info-field container-left-space-between">
+
+                    <Button Content="Play" ButtonClicked="HandlePlayButtonClicked" Blue="true"></Button>
+
+                    <div class="container-left">
+                        @if (toggleMore)
+                        {
+                            <EditButton EditButtonClicked="HandleEditButtonClicked" AlternativeDesign="true"></EditButton>
+                            <DeleteButton DeleteButtonClicked="HandleDeleteButtonClicked" AlternativeDesign="true"></DeleteButton>
+                        }
+                        <MoreButton MoreButtonClicked="HandleMoreButtonClicked"></MoreButton>
+                    </div>
+                </div>
             </div>
-        }
+        </div>
+
+        <div class="card__container card__shadow flip-card-back session-card-back">
+
+            @if(!isLoading)
+            {
+                @* <div class="session-card-front__header-container">
+
+                    <h2>Edit</h2>
+
+                </div>
+
+                <h2>@FormModel.CurrentName</h2> *@
+
+                <EditForm EditContext="@editContext" FormName="edit-session" OnInvalidSubmit="Submit">
+
+                    <div class="form__field">
+                        <label for="edit-session-name">Change Name</label>
+                        <CustomInputText id="edit-session-name"
+                                            @bind-Value="FormModel!.NewName" />
+                        <ValidationMessage For="@(() => FormModel!.NewName)" />
+                    </div>
+
+                    <div class="form__field">
+                        <label for="edit-session-name">Change Name</label>
+                        <CustomInputText id="edit-session-name"
+                                            @bind-Value="FormModel!.NewName" />
+                        <ValidationMessage For="@(() => FormModel!.NewName)" />
+                    </div>
+
+                    <div class="form__field">
+                        <label for="edit-session-name">Change Name</label>
+                        <CustomInputText id="edit-session-name"
+                                            @bind-Value="FormModel!.NewName" />
+                        <ValidationMessage For="@(() => FormModel!.NewName)" />
+                    </div>
+
+                </EditForm>
+            }
+
+        </div>
 
     </div>
+</div>
 
-    <div class="session-card__info-container">
+@if (!showBackSide)
+{
+    <div class="card__container card__shadow session-card-front session-card__variables session-card__hidden">
 
-        <div class="session-card__header-container">
+        <div class="session-card-front__image" />
 
-            <h2 class="session-card__h2">@Session.Name</h2>
+        <div class="session-card-front__info-container">
 
-            <div class="session-card__date-container">
-
-                <span class="material-symbols-outlined session-card__date-icon">
-                    event_available
-                </span>
-
-                <p>@Session.DayCount/@Session.MaxDays</p>
+            <div class="session-card-front__header-container">
+                <h2 class="session-card-front__h2">Dummy</h2>
             </div>
-        </div>
 
-        <div class="session-card__info-field">
+            <div class="session-card-front__info-field">
+                <label for="session-weapon-dummy">Dummy</label>
+                <p id="session-weapon-dummy">Dummy</p>
+            </div>
 
-            <label for="session-weapon">Weapon:</label>
-            @if (isLoading)
-            {
-                <p id="session-weapon">Loading ...</p>
-            }
-            else
-            {
-                <p id="session-weapon">@participator!.WeaponType!.Name</p>
-            }
-        </div>
+            <div class="session-card-front__info-field">
+                <label for="session-date-dummy">Dummy</label>
+                <p id="session-date-dummy">Dummy</p>
+            </div>
 
-        <div class="session-card__info-field">
-
-            <label for="session-date">Date:</label>
-
-            <p id="session-date">@Session.Date</p>
-
-        </div>
-
-        <div class="session-card__info-field container-left-space-between">
-
-            <Button Content="Play" ButtonClicked="HandlePlayButtonClicked" Blue="true"></Button>
-
-            <div class="container-left">
-                @if (toggleMore)
-                {
-                    <EditButton EditButtonClicked="HandleEditButtonClicked" AlternativeDesign="true"></EditButton>
-                    <DeleteButton DeleteButtonClicked="HandleDeleteButtonClicked" AlternativeDesign="true"></DeleteButton>
-                }
+            <div class="session-card-front__info-field container-left-space-between">
+                <Button Content="Play" ButtonClicked="HandlePlayButtonClicked" Purple="true"></Button>
                 <MoreButton MoreButtonClicked="HandleMoreButtonClicked"></MoreButton>
             </div>
-
         </div>
     </div>
+}
+else
+{
 
-</div>
+}
 
 @* TODO https://www.w3schools.com/howto/howto_css_flip_card.asp *@
 
-@if (showEditModal)
+@if (false)
 {
     <EditSessionModal Session="Session" 
     CloseModal="HandleCloseEditModal">
@@ -118,7 +199,7 @@
     private bool toggleMore = false;
     private bool isLoading = true;
     private bool showDeleteModal = false;
-    private bool showEditModal = false;
+    private bool showBackSide = false;
 
     private bool isLoadingImage = true;
     private bool loadingImageWasSuccessful = false;
@@ -128,12 +209,21 @@
 
     Participator? participator;
 
+    private EditContext? editContext;
+
     [Parameter]
     public required Session Session { get; set; }
+
+    [SupplyParameterFromForm]
+    private EditSessionFormModel? FormModel { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         participator = await participatorProvider.GetParticipatorAsync(Session.Id);
+
+		FormModel = new (Session);
+		editContext = new (FormModel);
+        editContext.OnFieldChanged += HandleFormFieldChanged;
 
         hubService.OnUpdatedSession += HandleSignalRUpdatedSession;
 
@@ -148,8 +238,6 @@
 
         try
         {
-            throw new EntityWasNullException();
-
             var rawBase64ImageString = await imageProvider.GetImageAsync(fileName);
 
             base64ImageString = $"data:image/jpeg;base64,{rawBase64ImageString}";
@@ -182,7 +270,7 @@
 
     private void HandleEditButtonClicked()
     {
-        showEditModal = true;
+        showBackSide = true;
     }
 
     private void HandleDeleteButtonClicked()
@@ -202,7 +290,7 @@
 
     private void HandleCloseEditModal()
     {
-        showEditModal = false;
+        showBackSide = false;
     }
 
     private async Task HandleModalRemoveParticipationButtonClicked()
@@ -247,6 +335,20 @@
         StateHasChanged();
     }
 
+    #region Session Card Back
+
+    private void HandleFormFieldChanged(object? sender, FieldChangedEventArgs e)
+    {
+        StateHasChanged();
+	}
+
+    private void Submit()
+    {
+        
+	}
+
+    #endregion
+
     private void HandleSignalRUpdatedSession(Session updatedSession)
     {
         if(Session.Id == updatedSession.Id)
@@ -259,5 +361,6 @@
     public void Dispose()
     {
         hubService.OnUpdatedSession -= HandleSignalRUpdatedSession;
+        editContext!.OnFieldChanged -= HandleFormFieldChanged;
     }
 }

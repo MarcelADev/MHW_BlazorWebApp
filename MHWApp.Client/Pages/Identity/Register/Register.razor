@@ -2,217 +2,218 @@
 {
     @page "/register"
     @using System.ComponentModel.DataAnnotations
-@using MHWApp.Client.GeneralComponents.CustomInput
-@using MHWApp.Client.GeneralComponents.Buttons.IconButtons
-@using MHWApp.Client.Identity
-@using MHWApp.Client.Provider.Interfaces
-@using MHWApp.Client.Services
-@using MHWApp.Client.Services.Interfaces
-@using MHWApp.Client.Utils
-@using MHWApp.Library.DTO.Identity
-@using MHWApp.Library.Exceptions
-@using static MHWApp.Library.StaticVariables
-@inject IAccountManagement identityProvider
-@inject IGlobalAlertService alertService
-@inject NavigationManager navigationManager
-@implements IDisposable
+    @using MHWApp.Client.GeneralComponents.CustomInput
+    @using MHWApp.Client.GeneralComponents.Buttons.IconButtons
+    @using MHWApp.Client.Identity
+    @using MHWApp.Client.Provider.Interfaces
+    @using MHWApp.Client.Services
+    @using MHWApp.Client.Services.Interfaces
+    @using MHWApp.Client.Utils
+    @using MHWApp.Library.DTO.Identity
+    @using MHWApp.Library.Exceptions
+    @using static MHWApp.Library.StaticVariables
+    @inject IAccountManagement identityProvider
+    @inject IGlobalAlertService alertService
+    @inject NavigationManager navigationManager
+    @implements IDisposable
 
-    <PageTitle>Register</PageTitle>
+        <PageTitle>Register</PageTitle>
 
-    <div class="container-top theme-purple container-height">
+        <div class="container-top theme-purple container-height">
 
-        <header class="container-center header identity__header">
-            <h1>Register</h1>
-        </header>
+            <header class="container-center header identity__header">
+                <h1>Register</h1>
+            </header>
 
-        <AuthorizeView>
-            <Authorized>
-                <LoginRedirect></LoginRedirect>
-            </Authorized>
-            <NotAuthorized Context="notAuthorizedContext">
+            <AuthorizeView>
+                <Authorized>
+                    <LoginRedirect></LoginRedirect>
+                </Authorized>
+                <NotAuthorized Context="notAuthorizedContext">
             
-                <div class="form__container">
-                    @if(!isLoading)
+                    <div class="form__container">
+                        @if(!isLoading)
+                        {
+                            <EditForm EditContext="editContext" FormName="register" OnValidSubmit="DoRegisterAsync">
+
+                                <div class="form__field">
+                                    <label for="register-userName">Username</label>
+                                    <CustomInputText id="register-userName"
+                                                        AdditionalAttributes="FormModel!.AdditionalAttributes"
+                                                        @bind-Value="FormModel!.UserName" />
+                                    <ValidationMessage For="@(() => FormModel!.UserName)" />
+                                </div>
+
+                                <div class="form__field">
+                                    <label for="register-password-one">Password</label>
+                                    <CustomInputText id="register-password-one"
+                                                        InputType="password"
+                                                        @bind-Value="FormModel!.PasswordOne" />
+                                    <ValidationMessage For="@(() => FormModel!.PasswordOne)" />
+                                </div>
+
+                                <div class="form__field">
+                                    <label for="register-password-two">Confirm Password</label>
+                                    <CustomInputText id="register-password-two"
+                                                        InputType="password"
+                                                        @bind-Value="FormModel!.PasswordTwo" />
+                                    <ValidationMessage For="@(() => FormModel!.PasswordTwo)" />
+                                </div>
+
+                                <div class=" form__field form__button">
+                                    <button type="submit" class="btn btn-primary identity__button">
+                                        Register
+                                    </button>
+                                </div>
+
+                            </EditForm>
+                        }
+                    </div>
+
+                    <ReturnButton ReturnButtonClicked="HandleReturnButtonClicked" Purple="true" />
+            
+                </NotAuthorized>
+            </AuthorizeView>
+        </div>
+
+        @code {
+        private bool isLoading = true;
+        private bool validateOnlyModified = true;
+
+        private List<string> primeVu = [];
+        private List<string> dangers = [];
+        private List<string> successes = [];
+
+        private EditContext? editContext;
+        private ValidationMessageStore? _messageStore;
+
+        [SupplyParameterFromForm]
+        private RegisterFormModel? FormModel { get; set; }
+
+        protected override void OnInitialized()
+        {
+            FormModel = new();
+            editContext = new EditContext(FormModel);
+            editContext.OnFieldChanged += HandleFieldChanged;
+
+            _messageStore = new ValidationMessageStore(editContext);
+
+            isLoading = false;
+        }
+
+        private void HandleFieldChanged(object? sender, FieldChangedEventArgs e)
+        {
+            if (editContext is null || FormModel is null) return;
+
+            Utils.ManualModelValidator.ValidateModel(editContext, FormModel, _messageStore!, onlyModified: validateOnlyModified);
+
+            if (e.FieldIdentifier.FieldName is nameof(FormModel.UserName))
+            {
+                foreach (char c in FormModel!.InvalidChars)
+                {
+                    if (FormModel.activeAlerts.Add(c))
                     {
-                        <EditForm EditContext="editContext" FormName="register" OnValidSubmit="DoRegisterAsync">
-
-                            <div class="form__field">
-                                <label for="register-userName">Username</label>
-                                <CustomInputText id="register-userName"
-                                                    AdditionalAttributes="FormModel!.AdditionalAttributes"
-                                                    @bind-Value="FormModel!.UserName" />
-                                <ValidationMessage For="@(() => FormModel!.UserName)" />
-                            </div>
-
-                            <div class="form__field">
-                                <label for="register-password-one">Password</label>
-                                <CustomInputText id="register-password-one"
-                                                    InputType="password"
-                                                    @bind-Value="FormModel!.PasswordOne" />
-                                <ValidationMessage For="@(() => FormModel!.PasswordOne)" />
-                            </div>
-
-                            <div class="form__field">
-                                <label for="register-password-two">Confirm Password</label>
-                                <CustomInputText id="register-password-two"
-                                                    InputType="password"
-                                                    @bind-Value="FormModel!.PasswordTwo" />
-                                <ValidationMessage For="@(() => FormModel!.PasswordTwo)" />
-                            </div>
-
-                            <div class=" form__field form__button">
-                                <button type="submit" class="btn btn-primary identity__button">
-                                    Register
-                                </button>
-                            </div>
-
-                        </EditForm>
+                        alertService.ShowInfoWithoutTimer($"'{c}' is not allowed in usernames");
                     }
-                </div>
-
-                <ReturnButton ReturnButtonClicked="HandleReturnButtonClicked" Purple="true" />
-            
-            </NotAuthorized>
-        </AuthorizeView>
-    </div>
-
-    @code {
-    private bool isLoading = true;
-    private bool validateOnlyModified = true;
-
-    private List<string> primeVu = [];
-    private List<string> dangers = [];
-    private List<string> successes = [];
-
-    private EditContext? editContext;
-    private ValidationMessageStore? _messageStore;
-
-    [SupplyParameterFromForm]
-    private RegisterFormModel? FormModel { get; set; }
-
-    protected override void OnInitialized()
-    {
-        FormModel = new();
-        editContext = new EditContext(FormModel);
-        editContext.OnFieldChanged += HandleFieldChanged;
-
-        _messageStore = new ValidationMessageStore(editContext);
-
-        isLoading = false;
-    }
-
-    private void HandleFieldChanged(object? sender, FieldChangedEventArgs e)
-    {
-        if (editContext is null || FormModel is null) return;
-
-        Utils.ManualModelValidator.ValidateModel(editContext, FormModel, _messageStore!, onlyModified: validateOnlyModified);
-
-        if (e.FieldIdentifier.FieldName is nameof(FormModel.UserName))
-        {
-            foreach (char c in FormModel!.InvalidChars)
-            {
-                if (FormModel.activeAlerts.Add(c))
+                }
+                foreach (char c in FormModel.activeAlerts)
                 {
-                    alertService.ShowInfoWithoutTimer($"'{c}' is not allowed in usernames");
+                    if (!FormModel.InvalidChars.Contains(c))
+                    {
+                        alertService.RemoveInfoManually($"'{c}' is not allowed in usernames");
+                        FormModel.activeAlerts.Remove(c);
+                    }
                 }
             }
-            foreach (char c in FormModel.activeAlerts)
+
+            StateHasChanged();
+        }
+
+        private void HandleReturnButtonClicked()
+        {
+            navigationManager.NavigateTo("/");
+        }
+
+        public async Task DoRegisterAsync()
+        {
+            Utils.ManualModelValidator.ValidateModel(editContext!, FormModel!, _messageStore!, onlyModified: false);
+
+            bool hasValidationErrors = editContext!.GetValidationMessages().Any();
+
+            if (hasValidationErrors)
             {
-                if (!FormModel.InvalidChars.Contains(c))
-                {
-                    alertService.RemoveInfoManually($"'{c}' is not allowed in usernames");
-                    FormModel.activeAlerts.Remove(c);
-                }
-            }
-        }
+                validateOnlyModified = false;
 
-        StateHasChanged();
-    }
-
-    private void HandleReturnButtonClicked()
-    {
-        navigationManager.NavigateTo("/");
-    }
-
-    public async Task DoRegisterAsync()
-    {
-        Utils.ManualModelValidator.ValidateModel(editContext!, FormModel!, _messageStore!, onlyModified: false);
-
-        bool hasValidationErrors = editContext!.GetValidationMessages().Any();
-
-        if (hasValidationErrors)
-        {
-            validateOnlyModified = false;
-
-            Console.WriteLine("Not a valid Submit bruh");
-            return;
-        }
-        else
-        {
-            validateOnlyModified = true;
-        }
-
-        try
-        {
-            await identityProvider.RegisterAsync(new IdentityDTO { UserName = FormModel!.UserName, Password = FormModel.PasswordOne });
-            alertService.ShowSuccess("User registration was successful. Account needs to be approved");
-
-			navigationManager.NavigateTo("/");
-        }
-        catch (ConflictException e)
-        {
-            if (e.ConflictTitle.Contains("Prime Vu"))
-                alertService.ShowPrimeVu(e.ConflictTitle);
-            else
-                alertService.ShowDanger(e.ConflictTitle);
-        }
-        catch (BadRequestException)
-        {
-            alertService.ShowDanger("Registration was unsuccessful for an unkown reason. Contact Support");
-        }
-        catch (UnexpectedResponseException)
-        {
-            alertService.ShowDanger("Unexpected server response. Contact support");
-        }
-    }
-
-    public void Dispose()
-    {
-        if (editContext is not null) editContext.OnFieldChanged -= HandleFieldChanged;
-    }
-
-    internal class RegisterFormModel : IValidatableObject
-    {
-        public Dictionary<string, object> AdditionalAttributes = new()
-            {
-                { "autofocus", "on" },
-                { "autocomplete", "off" },
-            };
-
-        public string UserName { get; set; } = string.Empty;
-        public string PasswordOne { get; set; } = string.Empty;
-        public string PasswordTwo { get; set; } = string.Empty;
-
-        public List<char> InvalidChars => UserName.Where(c => !ALLOWED_USERNAME_CHARACTERS.Contains(c))
-                                                  .Distinct()
-                                                  .ToList();
-
-        public HashSet<char> activeAlerts = [];
-
-        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
-        {
-            if (string.IsNullOrWhiteSpace(UserName))
-            {
-                yield return new ValidationResult("Username is required", [nameof(UserName)]);
+                Console.WriteLine("Not a valid Submit bruh");
+                return;
             }
             else
             {
-                if (InvalidChars.Any())
+                validateOnlyModified = true;
+            }
+
+            try
+            {
+                await identityProvider.RegisterAsync(new IdentityDTO { UserName = FormModel!.UserName, Password = FormModel.PasswordOne });
+                alertService.ShowSuccess("User registration was successful. Account needs to be approved");
+
+			    navigationManager.NavigateTo("/");
+            }
+            catch (ConflictException e)
+            {
+                if (e.ConflictTitle.Contains("Prime Vu"))
+                    alertService.ShowPrimeVu(e.ConflictTitle);
+                else
+                    alertService.ShowDanger(e.ConflictTitle);
+            }
+            catch (BadRequestException)
+            {
+                alertService.ShowDanger("Registration was unsuccessful for an unkown reason. Contact Support");
+            }
+            catch (UnexpectedResponseException)
+            {
+                alertService.ShowDanger("Unexpected server response. Contact support");
+            }
+        }
+
+        public void Dispose()
+        {
+            if (editContext is not null) editContext.OnFieldChanged -= HandleFieldChanged;
+        }
+
+        internal class RegisterFormModel : IValidatableObject
+        {
+            public Dictionary<string, object> AdditionalAttributes = new()
                 {
-                    yield return new ValidationResult("Username contains invalid characters", [nameof(UserName)]);
+                    { "autofocus", "on" },
+                    { "autocomplete", "off" },
+                };
+
+            public string UserName { get; set; } = string.Empty;
+            public string PasswordOne { get; set; } = string.Empty;
+            public string PasswordTwo { get; set; } = string.Empty;
+
+            public List<char> InvalidChars => UserName.Where(c => !ALLOWED_USERNAME_CHARACTERS.Contains(c))
+                                                      .Distinct()
+                                                      .ToList();
+
+            public HashSet<char> activeAlerts = [];
+
+            public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+            {
+                if (string.IsNullOrWhiteSpace(UserName))
+                {
+                    yield return new ValidationResult("Username is required", [nameof(UserName)]);
                 }
+                else
+                {
+                    if (InvalidChars.Any())
+                    {
+                        yield return new ValidationResult("Username contains invalid characters", [nameof(UserName)]);
+                    }
                 
-            }
+                }
+
                 if(string.IsNullOrWhiteSpace(PasswordOne))
                 {
                     yield return new ValidationResult("Password is required", [nameof(PasswordOne)]);
@@ -250,7 +251,6 @@
                 {
                     yield return new ValidationResult("Passwords do not match.", [nameof(PasswordTwo)]);
                 }
-
             }
         }
     }

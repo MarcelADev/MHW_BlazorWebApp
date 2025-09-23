@@ -1,6 +1,6 @@
-﻿.session-card {
-    padding: 0;
-    border-radius: var(--border-radius__session-card);
+﻿.session-card__variables {
+    --session-card-image__width: 100%;
+    --session-card-image__height: 16vh;
 
     --session-card-info-container__padding-top-bottom: 0.5rem;
     --session-card-info-container__padding-inline: var(--standard-margin__all);
@@ -10,27 +10,46 @@
 
     --session-card-label__font-size: 1.1rem;
     --session-card-label__font-weight: 200;
+
+    --session-card-not-found__font-size: 3rem;
+    --session-card-not-found__font-weight: 800;
+
+    /*height: calc(
+        var(--session-card-image__height) +
+        (var(--session-card-info-container__padding-top-bottom) * 2) +
+        (var(--standard-margin__all) * 3) +
+        (1.5rem * var(--bs-body-line-height)) +
+        (var(--session-card-label__font-size) * var(--bs-body-line-height) * 2) +
+        (var(--session-card-p__font-size) * var(--bs-body-line-height) * 2) + 
+        (var(--standard-font-size__button) * var(--bs-body-line-height)) +
+        (var(--standard-padding__button-y))
+    );*/
 }
 
-.session-card__image {
+.session-card-front {
+    padding: 0;
+    border-radius: var(--border-radius__session-card);
+}
+
+.session-card-front__image {
     position: relative;
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 100%;
-    height: 16vh;
+    width: var(--session-card-image__width);
+    height: var(--session-card-image__height);
     overflow: hidden;
     border-radius: var(--border-radius__session-card);
 }
 
-    .session-card__image img {
+    .session-card-front__image img {
         width: 100%;
         height: 100%;
         object-fit: cover; /* Ensures the image fills the container, cropping the sides if necessary */
         object-position: center; /* Centers the image */
     }
 
-.session-card__image-placeholder {
+.session-card-front__image-placeholder {
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -41,57 +60,71 @@
     justify-content: center;
 }
 
-    .session-card__image-placeholder p {
+    .session-card-front__image-placeholder p {
         color: white;
     }
 
-.session-card__image-placeholder-not-found {
-    font-weight: 800;
-    font-size: 3rem;
+.session-card-front__image-placeholder-not-found {
+    font-weight: var(--session-card-not-found__font-weight);
+    font-size: var(--session-card-not-found__font-size);
 }
 
-.session-card__info-container {
+.session-card-front__info-container {
     width: 100%;
     padding: var(--session-card-info-container__padding-top-bottom) var(--session-card-info-container__padding-inline);
 }
 
-.session-card__header-container{
+.session-card-front__header-container {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: var(--standard-margin__all);
 }
 
-.session-card__h2 {
+.session-card-front__h2 {
     font-size: 1.5rem;
     font-weight: 700;
 }
 
-.session-card__date-container {
-    display:flex;
+.session-card-front__date-container {
+    display: flex;
     align-items: center;
 }
 
-.session-card__date-icon {
+.session-card-front__date-icon {
     color: black;
 }
 
-.session-card__info-field {
+.session-card-front__info-field {
     margin-bottom: var(--standard-margin__all);
 }
 
-    .session-card__info-field p,
-    .session-card__date-container p {
+    .session-card-front__info-field p,
+    .session-card-front__date-container p {
         font-size: var(--session-card-p__font-size);
         font-weight: var(--session-card-p__font-weight);
     }
 
-    .session-card__info-field label {
+    .session-card-front__info-field label {
         font-size: var(--session-card-label__font-size);
         font-weight: var(--session-card-label__font-weight);
         margin-bottom: -1rem;
     }
 
-.session-card__info-field:last-child {
+    .session-card-front__info-field:last-child {
+        margin-bottom: 0;
+    }
+
+.session-card-back {
+    padding: 0;
+    width: 100%;
+    padding: var(--session-card-info-container__padding-top-bottom) var(--session-card-info-container__padding-inline);
+}
+
+.form__field:last-child {
     margin-bottom: 0;
+}
+
+.session-card__hidden {
+    visibility: hidden;
 }

@@ -127,7 +127,7 @@
                         .Any(scie => scie.ExtendedName
                         .Equals(uncommon.Name)))
                 {
-                    _ = ShowDanger($"After changing Category Name, there were 2 instances of \"{uncommon.Name}\". The uncommon instance got removed!");
+                    _ = ShowDanger($"After changing Category CurrentName, there were 2 instances of \"{uncommon.Name}\". The uncommon instance got removed!");
                     FormModel.UncommonInventoryentries.Remove(uncommon);
                     NotifyCards();
                 }
