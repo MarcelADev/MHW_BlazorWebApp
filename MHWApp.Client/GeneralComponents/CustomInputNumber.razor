@@ -1,0 +1,15 @@
+﻿@typeparam T
+@inherits InputNumber<T>
+
+<div class="custom-input__container @CssClass">
+    <input @attributes="AdditionalAttributes"
+           class="@($"custom-input {CssClass}")"
+           type="number"
+           placeholder="@Placeholder"
+           id="@Id"
+           value="@CurrentValueAsString"
+           @oninput="@(EventCallback.Factory.CreateBinder<string>(
+           this,
+                           __value => CurrentValueAsString = __value,
+                           CurrentValueAsString ?? ""))" />
+</div>
