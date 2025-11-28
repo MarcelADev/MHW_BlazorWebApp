@@ -1,0 +1,60 @@
+﻿:root {
+    /*  %% COLORS %% */
+    --primary-color: black;
+    --secondary-color: white;
+    --secondary-color-dark: whitesmoke;
+    --primary-color-alternative: gray;
+    --button-play-color: #00b100;
+    --button-play-color: #209320;
+    --button-play-color: #007800;
+    --button-play-dummy-color: #686868;
+    --button-edit-color: #337eff;
+    --button-edit-color: #5688da;
+    --button-edit-color: #4077d0;
+    --button-confirm-color: var(--button-edit-color);
+    --button-confirm-color-disabled: gray;
+    --button-delete-color: #EA3323;
+    --button-delete-color: #c65147;
+    --button-delete-color: #b12d21;
+    --button-cancel-color: var(--button-delete-color);
+    /*  %% WIDTH & HEIGHT %% */
+    --full-width: 100%;
+    --standard-width: 90%;
+    --standard-max-width: 400px;
+    --standard-height: 100vh;
+    /*  %% PADDING & MARGIN & GAP %% */
+    --input-padding: 5px;
+    --standard-padding: 5px;
+    --tab-padding: 20px;
+    --card-container-button-gap: 1rem;
+    --card-container-button-margin-right: 0.5rem;
+    /*  %% FONT %% */
+    --thin: 100;
+    --standard-font-size: 1.3rem;
+    /*new design architecture:*/
+    --standard-font-size__h1: 2.5rem;
+    --standard-font-size__h2: 1.4rem;
+    --standard-font-size__h3: 1.4rem;
+    --standard-font-size__label: 0.9rem;
+    --standard-font-size__p: 1rem;
+    --standard-font-size__button: var(--standard-font-size__p);
+    --standard-font-size__a: var(--standard-font-size__p);
+    --standard-font-weight__h1: 100;
+    --standard-font-weight__h2: 300;
+    --standard-font-weight__h3: var(--standard-font-weight__h1);
+    --standard-font-weight__h4: var(--standard-font-weight__h1);
+    --standard-font-weight__p: 400;
+    --standard-font-weight__button: var(--standard-font-size__p);
+    --standard-font-weight__label: 200;
+    --standard-padding__all: 5px;
+    --standard-padding__card: 5px;
+    --padding__session-card: 1rem;
+    --standard-padding__button-y: 0.375rem;
+    --standard-padding__button-x: 0.75rem;
+    --standard-margin__all: 1rem;
+    --standard-border-radius__all: 4px;
+    --standard-border-radius__button: 8px;
+    --standard-border-radius__card: 4px;
+    --border-radius__session-card: 10px;
+    --color__purple: #6457A6;
+}
