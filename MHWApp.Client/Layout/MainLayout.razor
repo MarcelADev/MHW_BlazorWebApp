@@ -2,13 +2,11 @@
 @using static MHWApp.Client.Services.GlobalAlertService
 @inherits LayoutComponentBase
 
-<div class="page">
+@* <div class="page"> *@
 
     <AuthorizeView>
         <Authorized>
-            <div class="sidebar">
-                <NavMenu />
-            </div>
+            <Header />
         </Authorized>
     </AuthorizeView>
     
@@ -17,4 +15,4 @@
             @Body
         </div>
     </main>
-</div>
+@* </div> *@

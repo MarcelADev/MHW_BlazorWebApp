@@ -1,7 +1,15 @@
 ﻿@using static MHWApp.Library.StaticVariables
 @inject NavigationManager NavigationManager
 
-<div class="top-row ps-3 navbar navbar-dark">
+<nav>
+    <ul>
+        <li>
+           <p>Hello World</p>
+        </li>
+    </ul>
+</nav>
+
+@* <div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="">@CurrentUrl</a>
         <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
@@ -119,7 +127,7 @@
             </Authorized>
         </AuthorizeView>
     </nav>
-</div>
+</div> *@
 
 @code {
     private static string HOME = "Home";
