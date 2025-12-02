@@ -38,6 +38,11 @@ label {
     font-weight: var(--standard-font-weight__label);
 }
 
+ul {
+    margin: 0;
+    padding: 0;
+}
+
 /* // Setting general styling rules and resetting input styling. They are styled within the scoped css of the custom inputs */
 input:not([type="checkbox"]) {
     width: 100%;

@@ -67,20 +67,36 @@
     --standard-margin__all: 1rem;
 }
 
-:root {     /* ## COLOR PALETTE ## */
-    --dark-1: hsl(0, 0, 0);
-    --dark-2: hsl(0, 0, 10%);
-    --dark-3: hsl(0, 0, 20%);
-    --light-1: hsl(0, 0, 100%);
-    --light-2: hsl(0, 0, 90%);
-    --light-3: hsl(0, 0, 80%);
+:root {     /* ## HEADER ## */
+    --header__padding: 3px;
+}
+
+:root { /* ## NAV LI ## */
+    --nav__li-padding-y: 3px;
+    --nav__li-padding-x: 5px;
+    --nav__li-padding: var(--nav__li-padding-y) var(--nav__li-padding-x);
+    --nav__li-margin-right: 5px;
+    --nav__li-border-radius: calc(var(--standard-font-size__p) + (var(--nav__li-padding-y) * 2));
+}
+
+:root { /* ## COLOR PALETTE ## */
+    --dark-1: hsl(0, 0%, 0%);
+    --dark-2: hsl(0, 0%, 10%);
+    --dark-3: hsl(0, 0%, 20%);
+    --light-1: hsl(0, 0%, 100%);
+    --light-2: hsl(0, 0%, 95%);
+    --light-3: hsl(0, 0%, 90%);
+    --light-4: hsl(0, 0%, 85%);
     --color__purple: #6457A6;
     --purple-1: var(--color__purple);
 }
 
 :root { /* ## CHOSEN COLORS ## */
-    --header__background-color: var(--light-1);
+    --header__background-color: var(--light-2);
     --header__foreground-color: var(--dark-1);
+    --header__foreground-color: pink;
+    --nav__li-background-color: var(--light-4);
+    --nav__li-foreground-color: var(--dark-2);
     color-scheme: light;
 }
 
@@ -88,6 +104,7 @@
     :root {
         --header__background-color: var(--dark-1);
         --header__foreground-color: var(--light-1);
+        --nav__li-background-color: var(--dark-2);
         color-scheme: dark;
     }
 }

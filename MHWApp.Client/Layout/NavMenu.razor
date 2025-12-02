@@ -1,4 +1,5 @@
-﻿@inject NavigationManager NavigationManager
+﻿@using MHWApp.Client.Layout.Model
+@inject NavigationManager NavigationManager
 @using static MHWApp.Library.StaticVariables
 
 <nav>
@@ -9,6 +10,8 @@
         <li>
             <p>@CurrentUrl</p>
         </li>
+        <NavItem Model="navItemModel" />
+        <NavItem Model="navItemModel2" />
     </ul>
 </nav>
 
@@ -164,8 +167,20 @@
     private bool adminPagesActive = false;
     private bool masterPageActive = false;
 
+    private NavItemModel navItemModel = new NavItemModel("Sample Nav Item");
+    private List<NavItemModel> options = new List<NavItemModel>
+    {
+        new NavItemModel("Option 1"),
+        new NavItemModel("Option 2"),
+        new NavItemModel("Option 3"),
+        new NavItemModel("Option 4")
+    };
+    private NavItemModel? navItemModel2;
+
     protected override void OnInitialized()
     {
+        navItemModel2 = new NavItemModel("Test", options);
+
         // Subscribe to the LocationChanged event to update the URL dynamically
         NavigationManager.LocationChanged += OnLocationChanged;
 

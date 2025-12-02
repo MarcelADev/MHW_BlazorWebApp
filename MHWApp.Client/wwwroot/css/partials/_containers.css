@@ -1,14 +1,5 @@
 ﻿/* ## CONTAINERS ## */
 
-.container-main {
-    width: 100%;
-}
-
-.container-main-inner {
-    width: var(--standard-width);
-    max-width: var(--standard-max-width);
-}
-
 .container-top {
     display: flex;
     flex-direction: column;

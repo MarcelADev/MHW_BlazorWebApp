@@ -1,0 +1,40 @@
+﻿@using MHWApp.Client.Layout.Model
+@* <div class="nav-item px-3">
+    <NavLink class="nav-link" href="mainmenu/createsession">
+        <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Create Session
+    </NavLink>
+</div> *@
+
+@if(IsLowerLayer)
+{
+    @Model.Content
+}
+else if(Model.OnlyContent)
+{
+    <li>
+        <p>@Model.Content</p>
+    </li>
+}
+else
+{
+    <li>
+        @* <label for="@Model.Content">@Model.Content</label> *@
+        @* <select id="@Model.Content" class="select">
+            @foreach(NavItemModel model in Model.Options!)
+            {
+                <option value="@model.Content">
+                    <NavItem Model="model" IsLowerLayer="true" />
+                </option>
+            }
+        </select> *@
+        @* <DropDown /> *@
+    </li>
+}
+
+@code {
+    [Parameter]
+    public required NavItemModel Model { get; set; }
+
+    [Parameter]
+    public bool IsLowerLayer { get; set; } = false;
+}

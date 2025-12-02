@@ -1,16 +1,29 @@
 ﻿html, body {
     font-family: 'Roboto', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    line-height: 1;
 }
 
 .header {
+    display: grid;
+    grid-template-columns: auto 1fr;
     background-color: var(--header__background-color);
+    padding: var(--header__padding);
+    align-items: center;
 }
 
-    .header p {
+    .header p.title {
         color: var(--header__foreground-color);
     }
 
-.nav-menu__holder {
+.main__inner-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: var(--standard-width);
+    max-width: var(--standard-max-width);
+}
+
+.nav__holder {
     
     /*background-image: linear-gradient(180deg, rgb(5, 39, 103) 0%, #3a0647 70%);*/
     /*background-color: black;*/
@@ -22,6 +35,19 @@ nav ul {
 
 nav li {
     display: block;
+    padding: var(--nav__li-padding);
+    margin-right: var(--nav__li-margin-right);
+    background-color: var(--nav__li-background-color);
+    border-radius: var(--nav__li-border-radius);
+}
+
+nav li p {
+    color: var(--nav__li-foreground-color);
+}
+
+nav li select {
+    background-color: transparent;
+    border: 0;
 }
 
 /*## COPY PASTED main LAYOUT ##*/
