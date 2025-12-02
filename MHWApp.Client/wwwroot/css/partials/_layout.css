@@ -45,11 +45,6 @@ nav li p {
     color: var(--nav__li-foreground-color);
 }
 
-nav li select {
-    background-color: transparent;
-    border: 0;
-}
-
 /*## COPY PASTED main LAYOUT ##*/
 
 /*.page {
