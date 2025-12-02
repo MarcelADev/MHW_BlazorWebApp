@@ -1,0 +1,50 @@
+﻿h1, h2, h3, h4 {
+    color: var(--primary-color);
+    margin: 0;
+}
+
+h1 {
+    font-weight: var(--standard-font-weight__h1);
+    font-size: var(--standard-font-size__h1);
+    padding-bottom: 1rem;
+}
+
+h2 {
+    font-weight: var(--standard-font-weight__h2);
+    font-size: var(--standard-font-size__h2);
+}
+
+h3 {
+    font-weight: var(--standard-font-weight__h3);
+    font-size: var(--standard-font-size__h3);
+}
+
+h4 {
+    font-weight: var(--standard-font-weight__h4);
+    font-size: var(--standard-font-size__h4);
+}
+
+p, a {
+    font-size: var(--standard-font-size__p);
+    font-weight: var(--standard-font-weight__p);
+    color: var(--primary-color);
+    margin: 0;
+}
+
+label {
+    color: var(--primary-color);
+    margin: 0;
+    font-size: var(--standard-font-size__label);
+    font-weight: var(--standard-font-weight__label);
+}
+
+/* // Setting general styling rules and resetting input styling. They are styled within the scoped css of the custom inputs */
+input:not([type="checkbox"]) {
+    width: 100%;
+    padding: var(--standard-padding__all);
+    outline: none;
+    border: none;
+    font-size: var(--standard-font-size__p);
+    --size: calc-size:(auto, size);
+    height: var(--size);
+}
