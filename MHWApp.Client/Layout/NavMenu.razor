@@ -1,17 +1,23 @@
 ﻿@using MHWApp.Client.Layout.Model
+@using MHWApp.Client.Layout.NavItem
 @inject NavigationManager NavigationManager
 @using static MHWApp.Library.StaticVariables
 
 <nav>
     <ul>
-        <li>
+       @*  <li>
            <p>Hello World</p>
         </li>
         <li>
             <p>@CurrentUrl</p>
         </li>
         <NavItem Model="navItemModel" />
-        <NavItem Model="navItemModel2" />
+        <NavItem Model="navItemModel2" /> *@
+        @if (navItemAreLoaded)
+        {
+            <NavItem NavItemModel="sessionNavItemModel" />
+            <NavItem NavItemModel="adminNavItemModel" />
+        }
     </ul>
 </nav>
 
@@ -167,19 +173,31 @@
     private bool adminPagesActive = false;
     private bool masterPageActive = false;
 
-    private NavItemModel navItemModel = new NavItemModel("Sample Nav Item");
-    private List<NavItemModel> options = new List<NavItemModel>
-    {
-        new NavItemModel("Option 1"),
-        new NavItemModel("Option 2"),
-        new NavItemModel("Option 3"),
-        new NavItemModel("Option 4")
-    };
-    private NavItemModel? navItemModel2;
+    private NavItemModel? sessionNavItemModel;
+    private List<NavItemModel>? sessionOptions;
+
+    private NavItemModel adminNavItemModel = new NavItemModel("Sample Nav Item");
+    private List<NavItemModel>? adminOptions;
+
+    private bool navItemAreLoaded = false;
 
     protected override void OnInitialized()
     {
-        navItemModel2 = new NavItemModel("Test", options);
+        sessionOptions = new List<NavItemModel>
+        {
+            new NavItemModel("Choose Session", "/mainmenu"),
+            new NavItemModel("Create Session", "/mainmenu/createsession")
+        };
+        sessionNavItemModel = new NavItemModel("Sessions", sessionOptions, "/mainmenu");
+
+        adminOptions = new List<NavItemModel>
+        {
+            new NavItemModel("Create Category", "/admin/create"),
+            new NavItemModel("Create GameExtension", "/edit/gameextensions")
+        };
+        adminNavItemModel = new NavItemModel("Admin", adminOptions, "/admin/create");
+
+        navItemAreLoaded = true;
 
         // Subscribe to the LocationChanged event to update the URL dynamically
         NavigationManager.LocationChanged += OnLocationChanged;

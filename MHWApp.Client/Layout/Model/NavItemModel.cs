@@ -2,41 +2,57 @@
 {
     public class NavItemModel
     {
-		private string _content;
-        private List<NavItemModel>? _options;
+		private string _title;
+        private List<NavItemModel>? _options = [];
 
-        public string Content
+        public string Title
 		{
-			get { return _content; }
-			private set { _content = value; }
+			get { return _title; }
+			private set { _title = value; }
 		}
-		public List<NavItemModel>? Options
+        public List<NavItemModel> Options
 		{
-			get { return _options; }
+			get { return _options!; }
 			private set { _options = value; }
 		}
+		public bool HasOptions => Options.Any();
+        public string? RedirectPath { get; private set; }
+        public bool IsLink => RedirectPath != null;
 
-		public bool OnlyContent => _options == null;
-
-        public NavItemModel(string content, List<NavItemModel>? options = null)
+        public NavItemModel(string title)
         {
-			if (content == null)
-			{
+            if (title == null || title == string.Empty)
+            {
                 throw new NavItemModelInvalidConstructorException();
             }
 
-			this._content = content;
+            this._title = title;
+        }
 
-			if (options != null)
-			{
-				this._options = options;
-			}
+        public NavItemModel(string title, List<NavItemModel> options) : this(title)
+        {
+            if (options == null)
+            {
+                throw new NavItemModelInvalidConstructorException();
+            }
+
+            this._options = options;
+        }
+
+        public NavItemModel(string title, string redirectPath) : this(title)
+        {
+            RedirectPath = redirectPath;
+        }
+
+        public NavItemModel(string title, List<NavItemModel> options, string redirectPath) : this(title, options)
+        {
+            RedirectPath = redirectPath;
         }
     }
 
 	public class NavItemModelInvalidConstructorException : Exception
 	{
-		public NavItemModelInvalidConstructorException() : base("NavItemModel has to have content.")
+		public NavItemModelInvalidConstructorException() : base("NavItemModel had invalid constructor parameters.")
 		{
 		}
     }

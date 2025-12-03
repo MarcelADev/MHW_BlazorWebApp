@@ -67,22 +67,53 @@
     --standard-margin__all: 1rem;
 }
 
-:root {     /* ## HEADER ## */
+:root { /* ## HEADER ## */
     --header__padding: 3px;
+    --header__background-color: var(--light-2);
+    --header__foreground-color: var(--dark-1);
 }
 
-:root { /* ## NAV LI ## */
-    --nav__li-padding-y: 3px;
-    --nav__li-padding-x: 5px;
-    --nav__li-padding: var(--nav__li-padding-y) var(--nav__li-padding-x);
-    --nav__li-margin-right: 5px;
-    --nav__li-border-radius: calc(var(--standard-font-size__p) + (var(--nav__li-padding-y) * 2));
+:root { /* ## NAV HOLDER ## */
+    --nav-holder__left-margin: 10px;
+    --nav-holder__padding-y: 5px;
+    --nav-holder__padding-x: 5px;
+    --nav-holder__padding: var(--nav-holder__padding-y) var(--nav-holder__padding-x);
+    --nav-holder__background-color: var(--dark-2);
+    --nav-holder__border-radius: calc(var(--nav__item-border-radius) + (var(--nav-holder__padding-y) * 2));
+}
+
+:root { /* ## NAV ITEM ## */
+    --nav__item-padding-y: 2px;
+    --nav__item-padding-x: 5px;
+    --nav__item-padding: var(--nav__item-padding-y) var(--nav__item-padding-x);
+    --nav__item-margin-right: 5px;
+    --nav__item-border-radius: calc(var(--standard-font-size__p) + (var(--nav__item-padding-y) * 2));
+    --nav__item-background-color: var(--dark-4);
+    --nav__item-foreground-color: var(--light-3);
+}
+
+:root { /* ## NAV DROPDOWN MENU ## */
+    --nav__dropdown-menu__background: var(--dark-4);
+    --nav__dropdown-menu__foreground: var(--light-3);
+    --nav__dropdown-menu__border: 0;
+    --nav__dropdown-menu__border-radius: 10px;
+    --nav__dropdown-menu__padding: 2px;
+    --nav__dropdown-menu-outer__padding-top: var(--nav-holder__padding-y);
+}
+
+:root { /* ## NAV DROPDOWN MENU LI ## */
+    --nav__dropdown-menu-li__padding: 2px;
+    --nav__dropdown-menu-li__border-radius: 10px;
+    --nav__dropdown-menu-li__background-hover: var(--dark-3);
 }
 
 :root { /* ## COLOR PALETTE ## */
     --dark-1: hsl(0, 0%, 0%);
     --dark-2: hsl(0, 0%, 10%);
     --dark-3: hsl(0, 0%, 20%);
+    --dark-4: hsl(0, 0%, 30%);
+    --dark-5: hsl(0, 0%, 40%);
+    --dark-6: hsl(0, 0%, 50%);
     --light-1: hsl(0, 0%, 100%);
     --light-2: hsl(0, 0%, 95%);
     --light-3: hsl(0, 0%, 90%);
@@ -91,12 +122,7 @@
     --purple-1: var(--color__purple);
 }
 
-:root { /* ## CHOSEN COLORS ## */
-    --header__background-color: var(--light-2);
-    --header__foreground-color: var(--dark-1);
-    --header__foreground-color: pink;
-    --nav__li-background-color: var(--light-4);
-    --nav__li-foreground-color: var(--dark-2);
+:root {
     color-scheme: light;
 }
 

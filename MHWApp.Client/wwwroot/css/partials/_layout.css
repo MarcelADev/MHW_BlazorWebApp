@@ -4,8 +4,7 @@
 }
 
 .header {
-    display: grid;
-    grid-template-columns: auto 1fr;
+    display: flex;
     background-color: var(--header__background-color);
     padding: var(--header__padding);
     align-items: center;
@@ -24,25 +23,10 @@
 }
 
 .nav__holder {
-    
-    /*background-image: linear-gradient(180deg, rgb(5, 39, 103) 0%, #3a0647 70%);*/
-    /*background-color: black;*/
-}
-
-nav ul {
-    display: flex;
-}
-
-nav li {
-    display: block;
-    padding: var(--nav__li-padding);
-    margin-right: var(--nav__li-margin-right);
-    background-color: var(--nav__li-background-color);
-    border-radius: var(--nav__li-border-radius);
-}
-
-nav li p {
-    color: var(--nav__li-foreground-color);
+    margin-left: var(--nav-holder__left-margin);
+    background-color: var(--nav-holder__background-color);
+    padding: var(--nav-holder__padding);
+    border-radius: var(--nav-holder__border-radius);
 }
 
 /*## COPY PASTED main LAYOUT ##*/
