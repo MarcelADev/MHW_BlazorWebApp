@@ -1,0 +1,32 @@
+﻿nav {
+    display: flex;
+}
+
+    nav a {
+        text-decoration: none;
+    }
+
+    nav li {
+        font-size: var(--nav__font-size);
+        font-weight: var(--nav__font-weight);
+    }
+
+.nav__tag {
+    padding: var(--nav__tag-padding);
+    background-color: var(--nav__tag-background-color);
+    border-radius: var(--nav__tag-border-radius);
+    margin-right: var(--nav__tag-margin-right);
+}
+
+    .nav__tag p,
+    .nav__tag a {
+        color: var(--nav__tag-foreground-color);
+        font-size: var(--nav__tag-font-size);
+        font-weight: var(--nav__tag-font-weight);
+    }
+
+@media (max-width: 640.98px) {
+}
+
+@media (min-width: 641px) {
+}

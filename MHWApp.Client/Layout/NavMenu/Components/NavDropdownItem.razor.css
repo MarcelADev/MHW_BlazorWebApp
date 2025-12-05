@@ -1,26 +1,7 @@
-﻿a {
-    text-decoration: none;
-}
-
-.nav__dropdown {
+﻿.nav__dropdown {
     position: relative;
     display: inline-block;
 }
-
-.nav__item {
-    
-}
-
-.nav__tag {
-    padding: var(--nav__item-padding);
-    background-color: var(--nav__item-background-color);
-    border-radius: var(--nav__item-border-radius);
-}
-
-    .nav__tag p,
-    .nav__tag a{
-        color: var(--nav__item-foreground-color);
-    }
 
 .nav__dropdown-menu-outer {
     display: none;

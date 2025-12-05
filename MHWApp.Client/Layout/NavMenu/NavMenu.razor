@@ -1,24 +1,31 @@
-﻿@using MHWApp.Client.Layout.Model
-@using MHWApp.Client.Layout.NavItem
-@inject NavigationManager NavigationManager
+﻿@inject NavigationManager NavigationManager
+@using MHWApp.Client.Layout.NavMenu.Components
+@using MHWApp.Client.Layout.NavMenu.Model
 @using static MHWApp.Library.StaticVariables
 
 <nav>
-    <ul>
-       @*  <li>
-           <p>Hello World</p>
-        </li>
-        <li>
-            <p>@CurrentUrl</p>
-        </li>
-        <NavItem Model="navItemModel" />
-        <NavItem Model="navItemModel2" /> *@
-        @if (navItemAreLoaded)
+    @* <ul> *@
+
+        @foreach (NavItemBaseModel model in navItems!)
         {
-            <NavItem NavItemModel="sessionNavItemModel" />
-            <NavItem NavItemModel="adminNavItemModel" />
+            @* <li> *@
+                @if(model is NavDropdownItemModel)
+                {
+                    <NavDropdownItem Model="model" />
+                }
+                else if(model is NavSingleLinkItemModel)
+                {
+                    <NavSingleLinkItem Model="model" />
+                }
+                else if(model is NavDummyItemModel)
+                {
+                    <NavDummyItem Model="model" />
+                }
+            @* </li> *@
         }
-    </ul>
+
+        @if (navItemAreLoaded){}
+    @* </ul> *@
 </nav>
 
 @* <div class="top-row ps-3 navbar navbar-dark">
@@ -173,29 +180,36 @@
     private bool adminPagesActive = false;
     private bool masterPageActive = false;
 
-    private NavItemModel? sessionNavItemModel;
-    private List<NavItemModel>? sessionOptions;
-
-    private NavItemModel adminNavItemModel = new NavItemModel("Sample Nav Item");
-    private List<NavItemModel>? adminOptions;
+    private List<NavItemBaseModel>? navItems;
 
     private bool navItemAreLoaded = false;
 
     protected override void OnInitialized()
     {
-        sessionOptions = new List<NavItemModel>
+        List<NavItemBaseModel> sessionOptions = new List<NavItemBaseModel>
         {
-            new NavItemModel("Choose Session", "/mainmenu"),
-            new NavItemModel("Create Session", "/mainmenu/createsession")
+            new NavSingleLinkItemModel("Choose Session", "/mainmenu"),
+            new NavSingleLinkItemModel("Create Session", "/mainmenu/createsession")
         };
-        sessionNavItemModel = new NavItemModel("Sessions", sessionOptions, "/mainmenu");
+        NavDropdownItemModel sessionNavDropdownItemModel = new NavDropdownItemModel("Sessions", sessionOptions, "/mainmenu");
 
-        adminOptions = new List<NavItemModel>
+        List<NavItemBaseModel> adminOptions = new List<NavItemBaseModel>
         {
-            new NavItemModel("Create Category", "/admin/create"),
-            new NavItemModel("Create GameExtension", "/edit/gameextensions")
+            new NavSingleLinkItemModel("Create Category", "/admin/create"),
+            new NavSingleLinkItemModel("Create GameExtension", "/edit/gameextensions")
         };
-        adminNavItemModel = new NavItemModel("Admin", adminOptions, "/admin/create");
+        NavDropdownItemModel adminNavDropdownItemModel = new NavDropdownItemModel("Admin", adminOptions, "/admin/create");
+
+        NavDummyItemModel dummyItemModel = new NavDummyItemModel("Dummy Item");
+        NavSingleLinkItemModel singleLinkItemModel = new NavSingleLinkItemModel("Sngle Link Item", "/master");
+
+        navItems = new List<NavItemBaseModel>()
+        {
+            sessionNavDropdownItemModel,
+            adminNavDropdownItemModel,
+            dummyItemModel,
+            singleLinkItemModel
+        };
 
         navItemAreLoaded = true;
 

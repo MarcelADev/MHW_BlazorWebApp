@@ -1,0 +1,46 @@
+﻿@inherits NavItemBase
+@using MHWApp.Client.Layout.NavMenu.Model
+@inject NavigationManager navigationManager
+
+@if (ModelImplementation.HasOptions)
+{
+    <div id="@NavDropDownID" class="nav__dropdown">
+
+        <div class="nav__tag">
+            @if (ModelImplementation.IsLink)
+            {
+                <a href="@ModelImplementation.RedirectPath">@ModelImplementation.Title</a>
+            }
+            else
+            {
+                <p>@ModelImplementation.Title</p>
+            }
+        </div>
+
+        <div class="nav__dropdown-menu-outer">
+            <ul id="@NavDropDownMenuID" class="nav__dropdown-menu">
+                @foreach (NavItemBaseModel navItemModel in ModelImplementation.Options)
+                {
+                    if (navItemModel is NavDropdownItemModel)
+                    {
+                        
+                    }
+                    else if (navItemModel is NavSingleLinkItemModel)
+                    {
+                        <li @onclick="@(() => navigationManager.NavigateTo(navItemModel.RedirectPath!))">@navItemModel.Title</li>
+                    }
+                    else if (navItemModel is NavDummyItemModel)
+                    {
+                        <li>@navItemModel.Title</li>
+                    }
+                }
+            </ul>
+        </div>
+    </div>
+}
+else
+{
+    <div class="nav__item">
+        @ModelImplementation.Title
+    </div>
+}
