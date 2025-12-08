@@ -12,7 +12,8 @@
     }
 
 .nav__tag {
-    padding: var(--nav__tag-padding);
+    display: flex;
+    align-items: center;
     background-color: var(--nav__tag-background-color);
     border-radius: var(--nav__tag-border-radius);
     margin-right: var(--nav__tag-margin-right);
@@ -23,6 +24,7 @@
         color: var(--nav__tag-foreground-color);
         font-size: var(--nav__tag-font-size);
         font-weight: var(--nav__tag-font-weight);
+        margin: var(--nav__tag-padding);
     }
 
 @media (max-width: 640.98px) {

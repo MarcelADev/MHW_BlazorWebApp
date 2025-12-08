@@ -9,12 +9,17 @@
         <div class="nav__tag">
             @if (ModelImplementation.IsLink)
             {
-                <a href="@ModelImplementation.RedirectPath">@ModelImplementation.Title</a>
+                <a href="@ModelImplementation.RedirectPath">
+                    @ModelImplementation.Title
+                </a>
             }
             else
             {
-                <p>@ModelImplementation.Title</p>
+                <p>
+                    @ModelImplementation.Title
+                </p>
             }
+            <span class="material-symbols-outlined nav__dropdown-icon">keyboard_arrow_down</span>
         </div>
 
         <div class="nav__dropdown-menu-outer">
