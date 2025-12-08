@@ -3,6 +3,7 @@
     public abstract class NavItemBaseModel
     {
         public string Title { get; protected set; }
+        public string? Description { get; protected set; }
         public string? RedirectPath { get; protected set; } = null;
         protected NavItemBaseModel(string title)
         {

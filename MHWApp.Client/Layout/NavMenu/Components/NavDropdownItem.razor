@@ -18,7 +18,7 @@
         </div>
 
         <div class="nav__dropdown-menu-outer">
-            <ul id="@NavDropDownMenuID" class="nav__dropdown-menu">
+            <div id="@NavDropDownMenuID" class="nav__dropdown-menu">
                 @foreach (NavItemBaseModel navItemModel in ModelImplementation.Options)
                 {
                     if (navItemModel is NavDropdownItemModel)
@@ -27,14 +27,21 @@
                     }
                     else if (navItemModel is NavSingleLinkItemModel)
                     {
-                        <li @onclick="@(() => navigationManager.NavigateTo(navItemModel.RedirectPath!))">@navItemModel.Title</li>
+                        <a href="@navItemModel.RedirectPath" 
+                           class="nav__dropdown-menu-item">
+                            <p>@navItemModel.Title</p>
+                            <p class="muted">@navItemModel.Description</p>
+                        </a>
                     }
                     else if (navItemModel is NavDummyItemModel)
                     {
-                        <li>@navItemModel.Title</li>
+                        <a href="@navItemModel.RedirectPath"
+                           class="nav__dropdown-menu-item">
+                           @navItemModel.Title
+                        </a>
                     }
                 }
-            </ul>
+            </div>
         </div>
     </div>
 }

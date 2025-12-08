@@ -106,14 +106,14 @@
     --nav__dropdown-menu__foreground: var(--light-3);
     --nav__dropdown-menu__border: 0;
     --nav__dropdown-menu__border-radius: 10px;
-    --nav__dropdown-menu__padding: 2px;
+    --nav__dropdown-menu__padding: 0.5rem;
     --nav__dropdown-menu-outer__padding-top: var(--nav-holder__padding-y);
 }
 
-:root {     /* ## NAV DROPDOWN MENU LI ## */
-    --nav__dropdown-menu-li__padding: 2px;
-    --nav__dropdown-menu-li__border-radius: 10px;
-    --nav__dropdown-menu-li__background-hover: var(--dark-3);
+:root { /* ## NAV DROPDOWN MENU LI ## */
+    --nav__dropdown-menu-item__padding: 0.5rem;
+    --nav__dropdown-menu-item__border-radius: 10px;
+    --nav__dropdown-menu-item__background-hover: var(--dark-3);
 }
 
 :root {     /* ## COLOR PALETTE ## */

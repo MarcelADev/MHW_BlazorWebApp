@@ -4,28 +4,24 @@
 @using static MHWApp.Library.StaticVariables
 
 <nav>
-    @* <ul> *@
 
-        @foreach (NavItemBaseModel model in navItems!)
+    @foreach (NavItemBaseModel model in navItems!)
+    {
+        @if(model is NavDropdownItemModel)
         {
-            @* <li> *@
-                @if(model is NavDropdownItemModel)
-                {
-                    <NavDropdownItem Model="model" />
-                }
-                else if(model is NavSingleLinkItemModel)
-                {
-                    <NavSingleLinkItem Model="model" />
-                }
-                else if(model is NavDummyItemModel)
-                {
-                    <NavDummyItem Model="model" />
-                }
-            @* </li> *@
+            <NavDropdownItem Model="model" />
         }
+        else if(model is NavSingleLinkItemModel)
+        {
+            <NavSingleLinkItem Model="model" />
+        }
+        else if(model is NavDummyItemModel)
+        {
+            <NavDummyItem Model="model" />
+        }
+    }
 
-        @if (navItemAreLoaded){}
-    @* </ul> *@
+    @if (navItemAreLoaded){}
 </nav>
 
 @* <div class="top-row ps-3 navbar navbar-dark">
@@ -188,10 +184,10 @@
     {
         List<NavItemBaseModel> sessionOptions = new List<NavItemBaseModel>
         {
-            new NavSingleLinkItemModel("Choose Session", "/mainmenu"),
-            new NavSingleLinkItemModel("Create Session", "/mainmenu/createsession")
+            new NavSingleLinkItemModel("My Sessions", "/mainmenu", "Continue with your adventures. Manage your sessions"),
+            new NavSingleLinkItemModel("Create Session", "/mainmenu/createsession", "Add your friends. Pick your favourite weapons. Start adventuring")
         };
-        NavDropdownItemModel sessionNavDropdownItemModel = new NavDropdownItemModel("Sessions", sessionOptions, "/mainmenu");
+        NavDropdownItemModel sessionNavDropdownItemModel = new NavDropdownItemModel("Play", sessionOptions, "/mainmenu");
 
         List<NavItemBaseModel> adminOptions = new List<NavItemBaseModel>
         {

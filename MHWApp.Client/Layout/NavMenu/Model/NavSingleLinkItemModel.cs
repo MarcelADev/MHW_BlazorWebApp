@@ -9,5 +9,15 @@
 
             base.RedirectPath = redirectPath;
         }
+
+        public NavSingleLinkItemModel(string title, string redirectPath, string description) : this(title, redirectPath)
+        {
+            if(string.IsNullOrWhiteSpace(description))
+            {
+                throw new NavItemModelInvalidConstructorException();
+            }
+
+            base.Description = description;
+        }
     }
 }
