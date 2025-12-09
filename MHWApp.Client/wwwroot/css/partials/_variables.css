@@ -92,13 +92,14 @@
 :root { /* ## NAV TAG ## */
     --nav__tag-font-size: var(--standard-font-size__p);
     --nav__tag-font-weight: var(--nav__font-weight);
-    --nav__tag-padding-y: 2px;
-    --nav__tag-padding-x: 5px;
+    --nav__tag-padding-y: 5px;
+    --nav__tag-padding-x: 10px;
     --nav__tag-padding: var(--nav__tag-padding-y) var(--nav__tag-padding-x);
     --nav__tag-margin-right: 5px;
     --nav__tag-border-radius: calc(var(--standard-font-size__p) + (var(--nav__tag-padding-y) * 2));
     --nav__tag-background-color: var(--dark-4);
     --nav__tag-foreground-color: var(--light-3);
+    --nav__tag-icon-left-margin: 5px;
 }
 
 :root {     /* ## NAV DROPDOWN MENU ## */

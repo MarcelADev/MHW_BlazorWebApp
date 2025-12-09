@@ -17,6 +17,7 @@
     background-color: var(--nav__tag-background-color);
     border-radius: var(--nav__tag-border-radius);
     margin-right: var(--nav__tag-margin-right);
+    padding: var(--nav__tag-padding);
 }
 
     .nav__tag p,
@@ -24,8 +25,77 @@
         color: var(--nav__tag-foreground-color);
         font-size: var(--nav__tag-font-size);
         font-weight: var(--nav__tag-font-weight);
-        margin: var(--nav__tag-padding);
     }
+
+.nav__dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.nav__dropdown-icon {
+    --icon-size: 18px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--nav__tag-foreground-color);
+    margin-left: var(--nav__tag-icon-left-margin);
+    height: 10px;
+    width: 14px;
+    transition: transform 0.2s ease-out;
+}
+
+.nav__dropdown:hover .nav__dropdown-icon {
+    transform: rotateZ(180deg);
+}
+
+.nav__dropdown-menu-outer {
+    display: none;
+    position: absolute;
+    background: transparent;
+    padding-top: calc(var(--nav__dropdown-menu-outer__padding-top) + 0.5rem);
+    z-index: 100;
+}
+
+.nav__dropdown-menu {
+    display: grid;
+    grid-template-columns: repeat(2, max-content);
+    background: var(--nav__dropdown-menu__background);
+    color: var(--nav__dropdown-menu__foreground);
+    border: var(--nav__dropdown-menu__border);
+    border-radius: var(--nav__dropdown-menu__border-radius);
+    padding: var(--nav__dropdown-menu__padding);
+    margin: 0;
+    list-style: none;
+    width: fit-content;
+    z-index: 100;
+    white-space: nowrap;
+}
+
+.nav__dropdown:hover .nav__dropdown-menu-outer {
+    display: block;
+}
+
+.nav__dropdown-menu-item {
+    display: flex;
+    flex-direction: column;
+    padding: var(--nav__dropdown-menu-item__padding);
+    cursor: pointer;
+    border-radius: var(--nav__dropdown-menu-item__border-radius);
+    max-width: 300px;
+}
+
+    .nav__dropdown-menu-item:hover {
+        background: var(--nav__dropdown-menu-item__background-hover);
+    }
+
+    .nav__dropdown-menu-item p {
+        color: hsl(0,0%, 100%);
+    }
+
+        .nav__dropdown-menu-item p.muted {
+            color: hsl(0, 0%, 60%);
+            white-space: normal;
+        }
 
 @media (max-width: 640.98px) {
 }
