@@ -66,8 +66,9 @@ builder.Services.AddScoped<GameExtensionProvider>();
 builder.Services.AddScoped<ArmorProvider>();
 builder.Services.AddScoped<CategoryArmorInventoryEntryProvider>();
 builder.Services.AddScoped<IImageProvider, ImageProvider>();
-//Alerts
-builder.Services.AddSingleton<IGlobalAlertService, GlobalAlertService>();
+//Services
+builder.Services.AddScoped<IGlobalAlertService, GlobalAlertService>();
+builder.Services.AddScoped<IScreenSizeService, ScreenSizeService>();
 #endregion
 
 await builder.Build().RunAsync();

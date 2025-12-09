@@ -1,0 +1,27 @@
+﻿@using MHWApp.Client.Services.Interfaces
+@inject IJSRuntime JS
+@inject IScreenSizeService screenSizeService
+
+@code {
+    private DotNetObjectReference<ScreenSizeListener>? objRef;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            objRef = DotNetObjectReference.Create(this);
+            await JS.InvokeVoidAsync("screenSize.initialize", objRef);
+        }
+    }
+
+    [JSInvokable]
+    public void UpdateWidth(int width)
+    {
+        screenSizeService.Width = width;
+    }
+
+    public void Dispose()
+    {
+        objRef?.Dispose();
+    }
+}

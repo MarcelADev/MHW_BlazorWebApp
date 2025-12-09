@@ -1,7 +1,10 @@
-﻿@inject NavigationManager NavigationManager
-@using MHWApp.Client.Layout.NavMenu.Components
+﻿@using MHWApp.Client.Layout.NavMenu.Components
 @using MHWApp.Client.Layout.NavMenu.Model
+@using MHWApp.Client.Services.Interfaces
 @using static MHWApp.Library.StaticVariables
+@inject NavigationManager NavigationManager
+@inject IScreenSizeService screenSizeService
+@implements IDisposable
 
 <nav>
 
@@ -20,8 +23,13 @@
             <NavDummyItem Model="model" />
         }
     }
+    @{
+        string s = "Screen is ";
+        s += screenSizeService.ScreenIsWide ? "wide" : "small";
 
-    @if (navItemAreLoaded){}
+        NavDummyItemModel dummyItemModel = new NavDummyItemModel(s);
+        <NavDummyItem Model="dummyItemModel" />
+    }
 </nav>
 
 @* <div class="top-row ps-3 navbar navbar-dark">
@@ -178,10 +186,10 @@
 
     private List<NavItemBaseModel>? navItems;
 
-    private bool navItemAreLoaded = false;
-
     protected override void OnInitialized()
     {
+		screenSizeService.OnChange += StateHasChanged;
+
         List<NavItemBaseModel> sessionOptions = new List<NavItemBaseModel>
         {
             new NavSingleLinkItemModel("My Sessions", "/mainmenu", "Continue with your adventures. Manage your sessions"),
@@ -206,8 +214,6 @@
             dummyItemModel,
             singleLinkItemModel
         };
-
-        navItemAreLoaded = true;
 
         // Subscribe to the LocationChanged event to update the URL dynamically
         NavigationManager.LocationChanged += OnLocationChanged;
@@ -275,5 +281,6 @@
     {
         // Unsubscribe when the component is disposed
         NavigationManager.LocationChanged -= OnLocationChanged;
+		screenSizeService.OnChange -= StateHasChanged;
     }
 }
