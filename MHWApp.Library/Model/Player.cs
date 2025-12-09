@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using MHWApp.Library.Enums;
+using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
-using System.Runtime.CompilerServices;
 
 namespace MHWApp.Library.Model
 {
@@ -8,5 +8,7 @@ namespace MHWApp.Library.Model
     {
         [Required]
         public required bool IsApproved { get; set; }
+
+        public ColorScheme PreferredColorScheme { get; set; } = ColorScheme.Light;
     }
 }

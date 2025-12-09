@@ -6,6 +6,7 @@ using MHWApp.Library.DTO;
 using MHWApp.Library.DTO.Create.Category_Armor_InventoryEntry;
 using MHWApp.Library.DTO.Identity;
 using MHWApp.Library.DTO.Images;
+using MHWApp.Library.Enums;
 using MHWApp.Library.Model;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -241,6 +242,41 @@ app.MapGet("/manage/info", (ClaimsPrincipal user) =>
 
     return Results.Unauthorized();
 }).RequireAuthorization();
+
+app.MapGet("/preferred-color-scheme", async (ClaimsPrincipal user, UserManager<Player> userManager) =>
+{
+    if (user?.Identity?.IsAuthenticated != true)
+        return Results.Unauthorized();
+
+    var dbUser = await userManager.GetUserAsync(user);
+
+    if (dbUser == null)
+        return Results.Unauthorized();
+
+    return Results.Ok(dbUser.PreferredColorScheme);
+
+}).RequireAuthorization();
+
+app.MapPost("/preferred-color-scheme", async (ClaimsPrincipal user, UserManager<Player> userManager, ColorScheme newScheme) =>
+{
+    if (user?.Identity?.IsAuthenticated != true)
+        return Results.Unauthorized();
+
+    var dbUser = await userManager.GetUserAsync(user);
+
+    if (dbUser == null)
+        return Results.Unauthorized();
+
+    // Update the preferred color scheme
+    dbUser.PreferredColorScheme = newScheme;
+
+    // Save changes to the database
+    var result = await userManager.UpdateAsync(dbUser);
+    if (!result.Succeeded)
+        return Results.Problem("Failed to update preferred color scheme.");
+
+    return Results.Ok(dbUser.PreferredColorScheme);
+}).RequireAuthorization(policy => policy.RequireRole("Master", "Admin"));
 #endregion
 
 app.UseHttpsRedirection();

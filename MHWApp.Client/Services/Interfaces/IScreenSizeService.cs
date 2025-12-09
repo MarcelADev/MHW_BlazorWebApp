@@ -2,8 +2,8 @@
 {
     public interface IScreenSizeService
     {
-        public event Action? OnChange;
-        public int Width { get; set; }
-        public bool ScreenIsWide => Width >= 768;
+        event Action? OnChange;
+        int Width { get; set; }
+        bool ScreenIsWide { get; }
     }
 }

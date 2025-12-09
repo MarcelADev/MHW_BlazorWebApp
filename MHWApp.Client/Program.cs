@@ -69,6 +69,7 @@ builder.Services.AddScoped<IImageProvider, ImageProvider>();
 //Services
 builder.Services.AddScoped<IGlobalAlertService, GlobalAlertService>();
 builder.Services.AddScoped<IScreenSizeService, ScreenSizeService>();
+builder.Services.AddScoped<IPreferredColorSchemeService, PreferredColorSchemeService>();
 #endregion
 
 await builder.Build().RunAsync();
