@@ -1,0 +1,27 @@
+﻿@using MHWApp.Client.Services.Interfaces
+@inject IPreferredColorSchemeService PreferredColorSchemeService
+@inject IJSRuntime JS
+@implements IDisposable
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        PreferredColorSchemeService.OnChange += async() => await ApplyTheme();
+
+        if (!PreferredColorSchemeService.HasFetchedUsersPreferredColorScheme)
+            await PreferredColorSchemeService.FetchUsersPreferredColorScheme();
+
+        await ApplyTheme();
+    }
+
+    private async Task ApplyTheme()
+    {
+        var className = PreferredColorSchemeService.IsDarkMode ? "dark-mode" : "light-mode";
+        await JS.InvokeVoidAsync("colorScheme.apply", className);
+    }
+
+    public void Dispose()
+    {
+        PreferredColorSchemeService.OnChange -= async() => await ApplyTheme();
+    }
+}

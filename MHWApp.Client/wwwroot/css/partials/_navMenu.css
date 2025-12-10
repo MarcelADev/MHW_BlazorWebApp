@@ -20,6 +20,10 @@
     padding: var(--nav__tag-padding);
 }
 
+.nav__tag:last-child {
+    margin-right: 0;
+}
+
     .nav__tag p,
     .nav__tag a {
         color: var(--nav__tag-foreground-color);

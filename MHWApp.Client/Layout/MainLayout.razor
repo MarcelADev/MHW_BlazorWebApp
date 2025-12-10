@@ -1,9 +1,11 @@
-﻿@using MHWApp.Client.Services
+﻿@using MHWApp.Client.GeneralComponents.ColorSchemeListener
+@using MHWApp.Client.Services
 @using static MHWApp.Client.Services.GlobalAlertService
 @inherits LayoutComponentBase
 
 <AuthorizeView>
     <Authorized>
+        <ColorSchemeInitializer />
         <Header />
     </Authorized>
 </AuthorizeView>

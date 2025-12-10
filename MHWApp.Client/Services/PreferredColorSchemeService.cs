@@ -32,19 +32,19 @@ namespace MHWApp.Client.Services
             }
         }
 
-        public bool IsInitialized { get; private set; } = false;
+        public bool HasFetchedUsersPreferredColorScheme { get; private set; } = false;
 
         public bool IsDarkMode => Scheme == ColorScheme.Dark;
 
-        public async Task InitializeColorScheme()
+        public async Task FetchUsersPreferredColorScheme()
         {
-            if (IsInitialized) return;
+            if (HasFetchedUsersPreferredColorScheme) return;
 
             ColorScheme colorScheme = await GetColorSchemeAsync();
             _scheme = colorScheme;
         }
 
-        public async Task<ColorScheme> GetColorSchemeAsync()
+        private async Task<ColorScheme> GetColorSchemeAsync()
         {
             var request = new HttpRequestMessage(HttpMethod.Get, "preferred-color-scheme");
             var response = await _httpClient.SendAsync(request);
@@ -58,7 +58,7 @@ namespace MHWApp.Client.Services
             return preferredColorScheme;
         }
 
-        public async Task PostPreferredColorScheme(ColorScheme colorScheme)
+        private async Task PostPreferredColorScheme(ColorScheme colorScheme)
         {
             var response = await _httpClient.PostAsJsonAsync("preferred-color-scheme", colorScheme);
 
