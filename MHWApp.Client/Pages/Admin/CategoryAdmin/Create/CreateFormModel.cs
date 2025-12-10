@@ -3,7 +3,7 @@ using Microsoft.Extensions.Options;
 using MHWApp.Client.Utils;
 using System.ComponentModel.DataAnnotations;
 
-namespace MHWApp.Client.Pages.Admin.Create
+namespace MHWApp.Client.Pages.Admin.CategoryAdmin.Create
 {
     public class CreateFormModel : IValidatableObject
     {

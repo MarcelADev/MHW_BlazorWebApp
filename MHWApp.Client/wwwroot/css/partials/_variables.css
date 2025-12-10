@@ -80,6 +80,11 @@
     --body__foreground-color: #E6E1E9;
 }
 
+.theme-purple {
+    --body__foreground-color: #6457A6;
+    --primary-color-alternative: #7D7ABC;
+}
+
 :root { /* ## HEADER ## */
     --header__padding: 1rem;
     --header__background-color: transparent;

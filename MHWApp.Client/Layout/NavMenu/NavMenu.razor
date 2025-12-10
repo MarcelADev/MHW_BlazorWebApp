@@ -199,7 +199,8 @@
 
         List<NavItemBaseModel> adminOptions = new List<NavItemBaseModel>
         {
-            new NavSingleLinkItemModel("Create Category", "/admin/create"),
+            new NavSingleLinkItemModel("Create Category", "/admin/category/create"),
+            new NavSingleLinkItemModel("Manage Categories", "/admin/category/manage"),
             new NavSingleLinkItemModel("Create GameExtension", "/edit/gameextensions")
         };
         NavDropdownItemModel adminNavDropdownItemModel = new NavDropdownItemModel("Admin", adminOptions, "/admin/create");

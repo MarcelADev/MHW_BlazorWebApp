@@ -1,7 +1,7 @@
 ﻿using MHWApp.Library.Model;
 using System.ComponentModel.DataAnnotations;
 
-namespace MHWApp.Client.Pages.Admin.Create
+namespace MHWApp.Client.Pages.Admin.CategoryAdmin.Create
 {
     public class InventoryEntryCardFormModel : IValidatableObject
     {
@@ -29,7 +29,7 @@ namespace MHWApp.Client.Pages.Admin.Create
         {
             if (ShowValidationMessages)
             {
-                if (CurrentName.Equals(SelectedName) && object.Equals(CurrentGameExtension, SelectedGameExtension))
+                if (CurrentName.Equals(SelectedName) && Equals(CurrentGameExtension, SelectedGameExtension))
                     yield return new ValidationResult("Nothing was changed", [nameof(SelectedName)]);
 
                 if (NameAlreadyExistsFlag)
