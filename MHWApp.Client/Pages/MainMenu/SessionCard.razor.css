@@ -29,6 +29,7 @@
 .session-card-front {
     padding: 0;
     border-radius: var(--border-radius__session-card);
+    background-color: var(--session-card__background-color);
 }
 
 .session-card-front__image {

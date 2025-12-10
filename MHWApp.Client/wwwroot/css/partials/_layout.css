@@ -29,6 +29,7 @@
     background-color: var(--nav-holder__background-color);
     padding: var(--nav-holder__padding);
     border-radius: var(--nav-holder__border-radius);
+    border: var(--nav-holder__border);
 }
 
 .app {

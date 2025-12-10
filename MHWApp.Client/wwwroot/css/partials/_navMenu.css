@@ -16,6 +16,7 @@
     align-items: center;
     background-color: var(--nav__tag-background-color);
     border-radius: var(--nav__tag-border-radius);
+    border: var(--nav__tag-border);
     margin-right: var(--nav__tag-margin-right);
     padding: var(--nav__tag-padding);
 }
@@ -46,6 +47,11 @@
     height: 10px;
     width: 14px;
     transition: transform 0.2s ease-out;
+}
+
+.nav__dropdown:hover .nav__tag,
+.nav__tag:hover {
+    background-color: var(--nav__tag-background-color-hover);
 }
 
 .nav__dropdown:hover .nav__dropdown-icon {
