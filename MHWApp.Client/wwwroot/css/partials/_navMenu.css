@@ -27,7 +27,7 @@
 
     .nav__tag p,
     .nav__tag a {
-        color: var(--nav__tag-foreground-color);
+        /*color: var(--nav__tag-foreground-color);*/
         font-size: var(--nav__tag-font-size);
         font-weight: var(--nav__tag-font-weight);
     }
@@ -44,8 +44,8 @@
     align-items: center;
     color: var(--nav__tag-foreground-color);
     margin-left: var(--nav__tag-icon-left-margin);
-    height: 10px;
-    width: 14px;
+    /*height: 10px;
+    width: 14px;*/
     transition: transform 0.2s ease-out;
 }
 
@@ -53,6 +53,15 @@
 .nav__tag:hover {
     background-color: var(--nav__tag-background-color-hover);
 }
+
+    .nav__dropdown:hover .nav__tag p,
+    .nav__dropdown:hover .nav__tag a,
+    .nav__tag:hover p
+    .nav__tag:hover a {
+        background-color: var(--nav__tag-background-color-hover);
+        color: var(--body__foreground-color-hover);
+        color: var(--body__foreground-color-hover);
+    }
 
 .nav__dropdown:hover .nav__dropdown-icon {
     transform: rotateZ(180deg);

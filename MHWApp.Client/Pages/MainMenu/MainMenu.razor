@@ -9,26 +9,24 @@
 @inject IDataBaseUpdatesHubConnection hubService
 @implements IDisposable
 
-@* <main class="container-top"> *@
 
-	<h1>Sessions</h1>
 
-	@if (!isLoading)
+<h1>Sessions</h1>
+
+@if (!isLoading)
+{
+	@foreach (Session session in sessions)
 	{
-		@foreach (Session session in sessions)
-		{
-			<SessionCard @key="session.Id" 
-						 Session="session" />
-		}
+		<SessionCard @key="session.Id" 
+						Session="session" />
 	}
-	else
-	{
-		<p>Loading ...</p>
-	}
+}
+else
+{
+	<p>Loading ...</p>
+}
 
-	<Button Content="Add Session" Purple="true" Icon="add" ButtonClicked="HandleAddSessionButtonClicked"></Button>
-
-@* </main> *@
+<Button Content="Add Session" Purple="true" Icon="add" ButtonClicked="HandleAddSessionButtonClicked"></Button>
 
 <footer class="footer"></footer>
 

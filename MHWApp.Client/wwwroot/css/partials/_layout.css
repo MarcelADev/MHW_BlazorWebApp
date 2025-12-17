@@ -30,6 +30,7 @@
     padding: var(--nav-holder__padding);
     border-radius: var(--nav-holder__border-radius);
     border: var(--nav-holder__border);
+    box-shadow: var(--nav-holder__shadow);
 }
 
 .app {

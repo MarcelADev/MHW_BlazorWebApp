@@ -2,13 +2,11 @@
     display: flex;
     flex-direction: column;
     width: 100%;
-    margin-bottom: var(--standard-margin__all);
-    padding: 10px;
-    border-radius: var(--standard-border-radius__card);
-}
-
-.card__shadow {
-    box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.3);
+    margin-bottom: var(--card__margin-bottom);
+    padding: var(--card__padding);
+    border-radius: var(--card__border-radius);
+    background-image: var(--card__background-gradient);
+    box-shadow: var(--card__shadow);
 }
 
 .header-card {
@@ -16,33 +14,4 @@
     font-size: 1.5rem;
     font-weight: 300;
     border: 0;
-}
-
-/* ## Flip Card ## */
-.flip-card__container-outer {
-    width: 100%;
-    perspective: 1000px; /* Remove this if you don't want the 3D effect */
-}
-
-.flip-card__container-inner {
-    position: relative;
-    width: 100%;
-    transition: transform 0.8s;
-    transform-style: preserve-3d;
-}
-
-.flip-card__rotate {
-    transform: rotateY(180deg);
-}
-
-.flip-card-front,
-.flip-card-back {
-    position: absolute;
-    width: 100%;
-    -webkit-backface-visibility: hidden; /* Safari */
-    backface-visibility: hidden;
-}
-
-.flip-card-back {
-    transform: rotateY(180deg);
 }

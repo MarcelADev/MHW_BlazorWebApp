@@ -34,7 +34,6 @@
     /*new design architecture:*/
     --standard-border-radius__all: 4px;
     --standard-border-radius__button: 8px;
-    --standard-border-radius__card: 4px;
     --border-radius__session-card: 10px;
 }
 
@@ -70,14 +69,15 @@
 :root { /* ## BODY ## */
     --body__background-color: white;
     --body__foreground-color: black;
+    --body__foreground-color-hover: hsl(0, 0%, 10%);
+    --body__foreground-color-muted: hsl(0, 0%, 30%);
 }
 
 .dark-mode { /* ## BODY ## */
-    --body__background-color: hsl(0, 0%, 10%);
-    --body__foreground-color: hsl(0, 0%, 95%);
-
-    --body__background-color: #141318;
-    --body__foreground-color: #E6E1E9;
+    --body__background-color: hsl(270, 5%, 10%);
+    --body__foreground-color: white;
+    --body__foreground-color-hover: hsl(0, 0%, 90%);
+    --body__foreground-color-muted: hsl(0, 0%, 65%);
 }
 
 .theme-purple {
@@ -105,10 +105,12 @@
     --nav-holder__padding: var(--nav-holder__padding-y) var(--nav-holder__padding-x);
     --nav-holder__background-color: var(--dark-2);
     --nav-holder__border-radius: calc(var(--nav__tag-border-radius) + (var(--nav-holder__padding-y) * 2));
+    --nav-holder__shadow: 4px 4px 10px rgba(0, 0, 0, 0.3);
 }
 
 .dark-mode {
     --nav-holder__background-color: transparent;
+    --nav-holder__background-color: hsl(270, 8%, 15%);
 }
 
 :root { /* NAV */
@@ -136,6 +138,9 @@
     --nav__tag-background-color-hover: #292533;
     --nav__tag-foreground-color: #FFFFFF;
     /*--nav__tag-border: 1px solid #5C556A;*/
+
+    --nav__tag-background-color: hsl(270, 45%, 15%);
+    --nav__tag-background-color-hover: hsl(270, 45%, 10%);
 }
 
 :root { /* ## NAV DROPDOWN MENU ## */
@@ -147,18 +152,38 @@
     --nav__dropdown-menu-outer__padding-top: var(--nav-holder__padding-y);
 }
 
+.dark-mode {
+    --nav__dropdown-menu__background: var(--nav-holder__background-color);
+}
+
 :root { /* ## NAV DROPDOWN MENU ITEM ## */
     --nav__dropdown-menu-item__padding: 0.5rem;
     --nav__dropdown-menu-item__border-radius: 10px;
     --nav__dropdown-menu-item__background-hover: var(--nav__tag-background-color-hover);
 }
 
-:root {
-    --session-card__background-color: transparent;
+:root { /* ## CARD ## */
+    --card__padding: 10px;
+    --card__margin-bottom: var(--standard-margin__all);
+    --card__background-gradient: transparent;
+    --card__shadow: 4px 4px 10px rgba(0, 0, 0, 0.3);
+    --card__border-radius: 4px;
 }
 
-.dark-mode {
-    --session-card__background-color: hsl(0, 0%, 20%);
+.dark-mode { /* ## CARD ## */
+    --card__background-gradient: linear-gradient( 45deg, hsl(270, 8%, 15%), hsl(270, 15%, 10%) );
+    /*--card__background-gradient: linear-gradient( 45deg, hsl(270, 15%, 10%), hsl(270, 20%, 10%) );*/
+}
+
+:root { /* ## IMAGE CARD ## */
+    --image-card__border-radius: 10px;
+    --image-card__image__height: 16vh;
+    --image-card__image__not-found-font-size: 3rem;
+    --image-card__image__not-found-font-weight: 800;
+    /*--image-card__content__padding-y: 0.5rem;*/
+    --image-card__content__padding-y: var(--standard-margin__all);
+    --image-card__content__padding-x: var(--standard-margin__all);
+    --image-card__content__padding: var(--image-card__content__padding-y) var(--image-card__content__padding-x);
 }
 
 :root {     /* ## COLOR PALETTE ## */
