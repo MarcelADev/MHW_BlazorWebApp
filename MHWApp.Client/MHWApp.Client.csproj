@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="wwwroot\css\select.css" />
+    <None Include="wwwroot\css\partials\_select.css" />
   </ItemGroup>
 
   <ItemGroup>
