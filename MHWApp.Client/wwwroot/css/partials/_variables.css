@@ -108,7 +108,7 @@
     --nav-holder__shadow: 4px 4px 10px rgba(0, 0, 0, 0.3);
 }
 
-.dark-mode {
+.dark-mode { /* ## NAV HOLDER ## */
     --nav-holder__background-color: transparent;
     --nav-holder__background-color: hsl(270, 8%, 15%);
 }

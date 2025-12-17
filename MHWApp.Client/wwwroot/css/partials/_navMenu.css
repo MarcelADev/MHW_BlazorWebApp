@@ -44,8 +44,8 @@
     align-items: center;
     color: var(--nav__tag-foreground-color);
     margin-left: var(--nav__tag-icon-left-margin);
-    /*height: 10px;
-    width: 14px;*/
+    height: 10px;
+    width: 14px;
     transition: transform 0.2s ease-out;
 }
 
