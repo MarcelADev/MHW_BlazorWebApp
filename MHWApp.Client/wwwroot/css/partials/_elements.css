@@ -1,5 +1,10 @@
-﻿h1, h2, h3, h4 {
-    color: var(--primary-color);
+﻿html,
+body {
+    background-color: var(--body__background-color);
+}
+
+h1, h2, h3, h4 {
+    color: var(--body__foreground-color);
     margin: 0;
 }
 
@@ -27,12 +32,12 @@ h4 {
 p, a {
     font-size: var(--standard-font-size__p);
     font-weight: var(--standard-font-weight__p);
-    color: var(--primary-color);
+    color: var(--body__foreground-color);
     margin: 0;
 }
 
 label {
-    color: var(--primary-color);
+    color: var(--body__foreground-color);
     margin: 0;
     font-size: var(--standard-font-size__label);
     font-weight: var(--standard-font-weight__label);

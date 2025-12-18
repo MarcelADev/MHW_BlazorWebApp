@@ -8,8 +8,10 @@ namespace MHWApp.Client.Services.Interfaces
 
         ColorScheme Scheme { get; set; }
 
-        bool IsInitialized { get; }
+        bool HasFetchedUsersPreferredColorScheme { get; }
 
         bool IsDarkMode { get; }
+
+        Task FetchUsersPreferredColorScheme();
     }
 }

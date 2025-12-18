@@ -1,5 +1,11 @@
-﻿@import "/css/partials/_variables.css";
-@import "/css/partials/_layout.css";
+﻿@import "/css/partials/_alert.css";
+@import "/css/partials/_button.css";
+@import "/css/partials/_card.css";
 @import "/css/partials/_containers.css";
 @import "/css/partials/_elements.css";
+@import "/css/partials/_form.css";
+@import "/css/partials/_image-card.css";
+@import "/css/partials/_layout.css";
 @import "/css/partials/_navMenu.css";
+@import "/css/partials/_select.css";
+@import "/css/partials/_variables.css";

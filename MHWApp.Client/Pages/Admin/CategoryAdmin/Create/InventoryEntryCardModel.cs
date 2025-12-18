@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace MHWApp.Client.Pages.Admin.Create
+namespace MHWApp.Client.Pages.Admin.CategoryAdmin.Create
 {
     public class InventoryEntryCardModel : INotifyPropertyChanged
     {
