@@ -20,7 +20,9 @@
                 </span>
             </div>
             
-            @Content
+            <div class="button__content-container">
+                @Content
+            </div>
 
         </button>
     }
@@ -37,9 +39,6 @@
     public required EventCallback ButtonClicked { get; set; }
 
     [Parameter]
-    public bool Blue { get; set; } = false;
-
-    [Parameter]
     public bool Purple { get; set; } = false;
 
     [Parameter]
@@ -52,9 +51,7 @@
     {
         base.OnInitialized();
 
-        if (Blue) _cssClasses += " button__blue";
-
-        if (Purple) _cssClasses += " button__purple";
+        if (Purple) _cssClasses += " button__secondary";
 
         isLoading = false;
     }
