@@ -111,11 +111,6 @@ code {
     }
 }
 
-    .button:hover {
-        opacity: 0.9;
-        color: var(--secondary-color-dark);
-    }
-
 .margin-h3 {
     margin-top: 2rem;
 }
@@ -126,40 +121,4 @@ code {
 
 .tab {
     padding-left: var(--tab-padding);
-}
-
-/* ## THEMES ## */
-
-.theme-purple {
-    --primary-color: #6457A6;
-    --primary-color-alternative: #7D7ABC;
-}
-
-.theme-dark {
-    --primary-color: #3f3f3f;
-    --secondary-color: whitesmoke;
-}
-
-.theme-blue {
-    --primary-color: #028df7;
-    --primary-color: #5161b8;
-    --primary-color: #0d6efd;
-}
-
-.theme-red {
-    --primary-color: #eb4034;
-}
-
-.material-symbols-outlined {
-    --primary-color: white;
-    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 48;
-    color: var(--primary-color);
-}
-
-.icon__color-black {
-    color: black;
-}
-
-.icon__color-blue {
-    color: #5161b8;
 }

@@ -10,7 +10,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: var(--standard-margin__all);
+    margin-bottom: var(--general__margin);
 }
 
 .session-card__h2 {
@@ -28,7 +28,7 @@
 }
 
 .session-card__field {
-    margin-bottom: var(--standard-margin__all);
+    margin-bottom: var(--general__margin);
 }
 
     .session-card__field p,

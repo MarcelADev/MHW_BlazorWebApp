@@ -19,7 +19,8 @@
 }
 
     .button__base:focus, .button__base:active:focus, .button__base.nav-link:focus, .form-control:focus, .form-check-input:focus {
-        box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+        box-shadow: 0 0 0 0.1rem var(--body__foreground-color);
+        /*, 0 0 0 0.25rem var(--button__background)*/
     }
 
 .button__base:hover {
@@ -48,7 +49,7 @@
 }
 
     .button__flex:hover {
-        background-color: transparent;
+        background-color: var(--button__background-hover);
     }
 
         .button__flex:hover .button__content-container {
@@ -59,6 +60,10 @@
             background-color: var(--button-icon__background-hover);
         }
 
+        .button__flex:hover .material-symbols-outlined {
+            color: var(--button-icon__foreground-hover);
+        }
+
 .button__icon {
     color: var(--button-icon__foreground);
     background-color: transparent;
@@ -67,7 +72,7 @@
 .button__content-container {
     background-color: var(--button-content-container__background);
     padding: var(--button__padding-y) var(--button__padding-x);
-    border-radius: var(--button__border-radius);
+    border-radius: var(--button__border-radius) calc(var(--button__border-radius) / 2) calc(var(--button__border-radius) / 2) var(--button__border-radius);
 }
 
 .button__icon-container {

@@ -39,7 +39,10 @@
     public required EventCallback ButtonClicked { get; set; }
 
     [Parameter]
-    public bool Purple { get; set; } = false;
+    public bool Secondary { get; set; } = false;
+
+    [Parameter]
+    public bool Muted { get; set; } = false;
 
     [Parameter]
     public string Icon { get; set; } = string.Empty;
@@ -51,7 +54,8 @@
     {
         base.OnInitialized();
 
-        if (Purple) _cssClasses += " button__secondary";
+        if (Secondary) _cssClasses += " button__secondary";
+        if (Muted) _cssClasses += " button__muted";
 
         isLoading = false;
     }

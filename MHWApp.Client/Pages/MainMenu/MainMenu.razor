@@ -9,8 +9,6 @@
 @inject IDataBaseUpdatesHubConnection hubService
 @implements IDisposable
 
-
-
 <h1>Sessions</h1>
 
 @if (!isLoading)
@@ -26,7 +24,7 @@ else
 	<p>Loading ...</p>
 }
 
-<Button Content="Add Session" Purple="true" Icon="add" ButtonClicked="HandleAddSessionButtonClicked"></Button>
+<Button Content="Add Session" Icon="add" ButtonClicked="HandleAddSessionButtonClicked"></Button>
 
 <footer class="footer"></footer>
 

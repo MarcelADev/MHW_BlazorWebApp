@@ -1,22 +1,4 @@
 ﻿:root {
-    /*  %% COLORS %% */
-    --primary-color: black;
-    --secondary-color: white;
-    --secondary-color-dark: whitesmoke;
-    --primary-color-alternative: gray;
-    --button-play-color: #00b100;
-    --button-play-color: #209320;
-    --button-play-color: #007800;
-    --button-play-dummy-color: #686868;
-    --button-edit-color: #337eff;
-    --button-edit-color: #5688da;
-    --button-edit-color: #4077d0;
-    --button-confirm-color: var(--button-edit-color);
-    --button-confirm-color-disabled: gray;
-    --button-delete-color: #EA3323;
-    --button-delete-color: #c65147;
-    --button-delete-color: #b12d21;
-    --button-cancel-color: var(--button-delete-color);
     /*  %% WIDTH & HEIGHT %% */
     --full-width: 100%;
     --standard-width: 90%;
@@ -36,7 +18,7 @@
     --border-radius__session-card: 10px;
 }
 
-:root {     /* ## FONT SIZES ## */
+:root { /* ## FONT SIZES ## */
     --standard-font-size__h1: 2.5rem;
     --standard-font-size__h2: 1.4rem;
     --standard-font-size__h3: 1.4rem;
@@ -56,11 +38,9 @@
     --standard-font-weight__label: 200;
 }
 
-:root { /* ## MARGIN & PADDING ## */
-    --standard-padding__all: 5px;
-    --standard-padding__card: 5px;
-    --padding__session-card: 1rem;
-    --standard-margin__all: 1rem;
+:root { /* ## GENERAL ## */
+    --general__padding: 5px;
+    --general__margin: 1rem;
 }
 
 :root { /* ## BODY ## */
@@ -73,7 +53,7 @@
 .dark-mode { /* ## BODY ## */
     --body__background-color: hsl(270, 5%, 10%);
     --body__foreground-color: white;
-    --body__foreground-color-hover: hsl(0, 0%, 90%);
+    --body__foreground-color-hover: hsl(0, 0%, 85%);
     --body__foreground-color-muted: hsl(0, 0%, 65%);
 }
 
@@ -88,11 +68,16 @@
     --header__foreground-color: var(--dark-1);
     --header__title-font-size: 1.6rem;
     --header__title-font-weight: 100;
+    --header__z-index: 1;
 }
 
 .dark-mode { /* ## HEADER ## */
-    /*--header__background-color: var(--dark-2);*/
-    --header__foreground-color: var(--light-2);
+    --header__background-color: var(--body__background-color);
+    --header__foreground-color: var(--body__foreground-color);
+}
+
+:root { /* ## MAIN ## */
+    --main__margin-bottom: 50px;
 }
 
 :root { /* ## NAV HOLDER ## */
@@ -157,7 +142,7 @@
 
 :root { /* ## CARD ## */
     --card__padding: 10px;
-    --card__margin-bottom: var(--standard-margin__all);
+    --card__margin-bottom: var(--general__margin);
     --card__background-gradient: transparent;
     --card__shadow: 4px 4px 10px rgba(0, 0, 0, 0.3);
     --card__border-radius: 4px;
@@ -174,8 +159,8 @@
     --image-card__image__not-found-font-size: 3rem;
     --image-card__image__not-found-font-weight: 800;
     /*--image-card__content__padding-y: 0.5rem;*/
-    --image-card__content__padding-y: var(--standard-margin__all);
-    --image-card__content__padding-x: var(--standard-margin__all);
+    --image-card__content__padding-y: var(--general__margin);
+    --image-card__content__padding-x: var(--general__margin);
     --image-card__content__padding: var(--image-card__content__padding-y) var(--image-card__content__padding-x);
 }
 
@@ -223,12 +208,17 @@
     --button-disabled__color: #fff;
     --button-disabled__background: #0d6efd;
     --button-disabled__border-color: #0d6efd;
-    /*button icon container*/
 }
 
 .button__flex { /* ## BUTTON WITH ICON ## */
     /*button*/
     --button__background: transparent;
+    --button__background-hover: hsl( 
+        var(--button__hue)
+        var(--button__saturation)
+        calc(var(--button__lightness) - 10%)
+        / 15%
+    );
     --button__border-color: var(--button__primary-color);
     /*button icon*/
     --button-icon__foreground: var(--body__foreground-color);
@@ -264,17 +254,6 @@
     --button-icon-container__background-hover: #1e0057;
 }
 
-:root {     /* ## COLOR PALETTE ## */
-    --dark-1: hsl(0, 0%, 0%);
-    --dark-2: hsl(0, 0%, 10%);
-    --dark-3: hsl(0, 0%, 20%);
-    --dark-4: hsl(0, 0%, 30%);
-    --dark-5: hsl(0, 0%, 40%);
-    --dark-6: hsl(0, 0%, 50%);
-    --light-1: hsl(0, 0%, 100%);
-    --light-2: hsl(0, 0%, 95%);
-    --light-3: hsl(0, 0%, 90%);
-    --light-4: hsl(0, 0%, 85%);
-    --color__purple: #6457A6;
-    --purple-1: var(--color__purple);
+.button__muted {
+
 }
