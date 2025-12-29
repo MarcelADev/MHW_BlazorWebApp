@@ -1,0 +1,6 @@
+﻿.card__conainer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--general__margin);
+}

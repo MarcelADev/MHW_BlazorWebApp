@@ -1,46 +1,10 @@
-﻿:root {
-    /*  %% WIDTH & HEIGHT %% */
-    --full-width: 100%;
-    --standard-width: 90%;
-    --standard-max-width: 400px;
-    --standard-height: 100vh;
-    /*  %% PADDING & MARGIN & GAP %% */
-    --input-padding: 5px;
-    --standard-padding: 5px;
-    --tab-padding: 20px;
-    --card-container-button-gap: 1rem;
-    --card-container-button-margin-right: 0.5rem;
-    /*  %% FONT %% */
-    --thin: 100;
-    --standard-font-size: 1.3rem;
-    /*new design architecture:*/
-    --standard-border-radius__all: 4px;
-    --border-radius__session-card: 10px;
-}
-
-:root { /* ## FONT SIZES ## */
-    --standard-font-size__h1: 2.5rem;
-    --standard-font-size__h2: 1.4rem;
-    --standard-font-size__h3: 1.4rem;
-    --standard-font-size__label: 0.9rem;
-    --standard-font-size__p: 1rem;
-    --standard-font-size__button: var(--standard-font-size__p);
-    --standard-font-size__a: var(--standard-font-size__p);
-}
-
-:root { /* ## FONT WEIGHTS ## */
-    --standard-font-weight__h1: 100;
-    --standard-font-weight__h2: 300;
-    --standard-font-weight__h3: var(--standard-font-weight__h1);
-    --standard-font-weight__h4: var(--standard-font-weight__h1);
-    --standard-font-weight__p: 400;
-    --standard-font-weight__button: var(--standard-font-size__p);
-    --standard-font-weight__label: 200;
-}
-
-:root { /* ## GENERAL ## */
+﻿:root { /* ## GENERAL ## */
     --general__padding: 5px;
     --general__margin: 1rem;
+    --general__font-size: 1rem;
+    --general__font-weight: 400;
+    --general__width: 90%;
+    --general__max-width: 90%;
 }
 
 :root { /* ## BODY ## */
@@ -78,6 +42,7 @@
 
 :root { /* ## MAIN ## */
     --main__margin-bottom: 50px;
+    --main__padding: 1rem;
 }
 
 :root { /* ## NAV HOLDER ## */
@@ -101,13 +66,13 @@
 }
 
 :root { /* ## NAV TAG ## */
-    --nav__tag-font-size: var(--standard-font-size__p);
+    --nav__tag-font-size: var(--general__font-size);
     --nav__tag-font-weight: var(--nav__font-weight);
     --nav__tag-padding-y: 10px;
     --nav__tag-padding-x: 15px;
     --nav__tag-padding: var(--nav__tag-padding-y) var(--nav__tag-padding-x);
     --nav__tag-margin-right: 5px;
-    --nav__tag-border-radius: calc(var(--standard-font-size__p) + (var(--nav__tag-padding-y) * 2));
+    --nav__tag-border-radius: calc(var(--general__font-size) + (var(--nav__tag-padding-y) * 2));
     --nav__tag-background-color: hsl(0, 0%, 30%);
     --nav__tag-background-color-hover: hsl(0, 0%, 20%);
     --nav__tag-foreground-color: var(--body__foreground-color);
@@ -164,6 +129,10 @@
     --image-card__content__padding: var(--image-card__content__padding-y) var(--image-card__content__padding-x);
 }
 
+:root { /* ## SESSION CARD ## */
+    --session-card__max-width: 400px;
+}
+
 :root { /* ## BUTTON ## */
     --button__padding-y: 0.375rem;
     --button__padding-x: 0.75rem;
@@ -189,6 +158,11 @@
         var(--button__saturation), 
         calc(var(--button__lightness) - 10%)
     );
+    --button__primary-color-muted: hsl(
+        var(--button__hue)
+        var(--button__saturation)
+        var(--button__lightness) / 20%
+    );
     /*button*/
     --button__color: var(--body__foreground-color);
     --button__background: var(--button__primary-color);
@@ -197,6 +171,8 @@
     --button-hover__color: var(--body__foreground-color-hover);
     --button-hover__background: var(--button__primary-color-hover);
     --button-hover__border-color: var(--button-hover__background);
+    --button-hover__muted__background: var(--button__primary-color-muted);
+    --button-hover__muted__border-color: var(--button__primary-color-muted);
     /*button focus*/
     --button-focus__shadow-rgb: 49, 132, 253;
     /*button active*/
@@ -227,6 +203,13 @@
     /*button content*/
     --button-content-container__background: var(--button__primary-color);
     --button-content-container__background-hover: var(--button__primary-color-hover);
+}
+
+:root { /* ## ICON BUTTON ## */
+    --icon-button__color: var(--body__foreground-color);
+    --icon-button__color-hover: var(--body__foreground-color-hover);
+    --icon-button__background: var(--button__primary-color);
+    --icon-button__background-hover: var(--button__primary-color-hover);
 }
 
 .button__secondary {

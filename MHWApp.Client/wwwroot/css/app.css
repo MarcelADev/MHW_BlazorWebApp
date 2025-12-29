@@ -88,37 +88,3 @@ code {
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
     text-align: start;
 }
-
-/* ## GENERAL CLASSES ## */
-
-.glow {
-    animation: glowPulse 1.0s infinite alternate;
-}
-
-@keyframes glowPulse {
-    0% {
-        text-shadow: 
-            0 0 10px rgba(0, 0, 0, 0.7), 
-            0 0 20px rgba(0, 0, 0, 0.5), 
-            0 0 30px rgba(0, 0, 0, 0.3);
-    }
-
-    100% {
-        text-shadow: 
-            0 0 30px rgba(0, 0, 0, 1), 
-            0 0 40px rgba(0, 0, 0, 0.8), 
-            0 0 50px rgba(0, 0, 0, 0.6);
-    }
-}
-
-.margin-h3 {
-    margin-top: 2rem;
-}
-
-.margin-h4 {
-    margin-top: 1rem;
-}
-
-.tab {
-    padding-left: var(--tab-padding);
-}

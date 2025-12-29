@@ -1,0 +1,43 @@
+﻿.icon-button {
+    position: relative;
+    border: 2px solid var(--icon-button__background);
+    color: var(--icon-button__color);
+    background-color: var(--icon-button__background);
+    border-radius: 5px;
+    padding: var(--button__padding-y) var(--button__padding-x);
+    font-size: var(--general__font-size);
+    font-weight: var(--general__font-weight);
+    line-height: var(--button__line-height);
+}
+
+    .icon-button:hover {
+        color: var(--icon-button__color-hover);
+        background-color: var(--icon-button__background-hover);
+        border-color: var(--icon-button__background-hover);
+    }
+
+    .icon-button.muted {
+        border-color: transparent;
+        background-color: transparent;
+    }
+
+        .icon-button.muted:hover {
+            background-color: var(--button-hover__muted__background);
+            border-color: var(--icon-button__background)
+        }
+
+        .icon-button.muted[aria-pressed="true"] {
+            background-color: var(--button-hover__muted__background);
+            border-color: var(--icon-button__background);
+        }
+
+.icon-button__placeholder {
+    visibility: hidden;
+}
+
+.icon-button .material-symbols-outlined {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}

@@ -1,4 +1,9 @@
-﻿/* pass variables to the image card content container */
+﻿.image-card__base {
+    width: 90%;
+    max-width: var(--session-card__max-width);
+}
+
+/* pass variables to the image card content container */
 .image-card__content {
     --session-card__p__font-size: 1.2rem;
     --session-card__p__font-weight: 400;

@@ -1,8 +1,8 @@
 ﻿.button__base {
     display: inline-block;
     padding: var(--button__padding-y) var(--button__padding-x);
-    font-size: var(--standard-font-size__button);
-    font-weight: var(--standard-font-weight__button);
+    font-size: var(--general__font-size);
+    font-weight: var(--general__font-weight);
     line-height: var(--button__line-height);
     color: var(--button__color);
     background-color: var(--button__background);

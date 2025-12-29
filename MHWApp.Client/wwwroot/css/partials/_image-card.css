@@ -1,4 +1,4 @@
-﻿.image-card__container {
+﻿.image-card__base {
     display: flex;
     flex-direction: column;
     width: 100%;

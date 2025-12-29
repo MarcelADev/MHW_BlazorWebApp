@@ -11,29 +11,29 @@ h1, h2, h3, h4 {
 }
 
 h1 {
-    font-weight: var(--standard-font-weight__h1);
-    font-size: var(--standard-font-size__h1);
+    font-weight: 100;
+    font-size: 2.5rem;
     padding-bottom: 1rem;
 }
 
 h2 {
-    font-weight: var(--standard-font-weight__h2);
-    font-size: var(--standard-font-size__h2);
+    font-weight: 300;
+    font-size: 1.4rem;
 }
 
 h3 {
-    font-weight: var(--standard-font-weight__h3);
-    font-size: var(--standard-font-size__h3);
+    font-weight: 100;
+    font-size: 1.4rem;
 }
 
 h4 {
-    font-weight: var(--standard-font-weight__h4);
-    font-size: var(--standard-font-size__h4);
+    font-weight: 100;
+    font-size: 1.2rem;
 }
 
 p, a {
-    font-size: var(--standard-font-size__p);
-    font-weight: var(--standard-font-weight__p);
+    font-size: var(--general__font-size);
+    font-weight: 400;
     color: var(--body__foreground-color);
     margin: 0;
 }
@@ -41,8 +41,8 @@ p, a {
 label {
     color: var(--body__foreground-color);
     margin: 0;
-    font-size: var(--standard-font-size__label);
-    font-weight: var(--standard-font-weight__label);
+    font-size: 0.9rem;
+    font-weight: 200;
 }
 
 ul {
@@ -56,7 +56,7 @@ input:not([type="checkbox"]) {
     padding: var(--general__padding);
     outline: none;
     border: none;
-    font-size: var(--standard-font-size__p);
+    font-size: var(--general__font-size);
     --size: calc-size:(auto, size);
     height: var(--size);
 }

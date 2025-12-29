@@ -13,11 +13,13 @@
 
 @if (!isLoading)
 {
-	@foreach (Session session in sessions)
-	{
-		<SessionCard @key="session.Id" 
-						Session="session" />
-	}
+	<div class="card__conainer">
+		@foreach (Session session in sessions)
+		{
+			<SessionCard @key="session.Id" 
+						 Session="session" />
+		}
+	</div>
 }
 else
 {

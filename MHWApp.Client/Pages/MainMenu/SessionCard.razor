@@ -19,7 +19,7 @@
 @inject IGlobalAlertService alertService
 @implements IDisposable
 
-<div class="image-card__container">
+<div class="image-card__base">
 
     <div class="image-card__image">
 
@@ -87,10 +87,10 @@
             <div class="container-left">
                 @if (toggleMore)
                 {
-                    <EditButton EditButtonClicked="HandleEditButtonClicked" AlternativeDesign="true"></EditButton>
-                    <DeleteButton DeleteButtonClicked="HandleDeleteButtonClicked" AlternativeDesign="true"></DeleteButton>
+                    <IconButton Icon="edit" Muted="true" IconButtonClicked="HandleEditButtonClicked" />
+                    <IconButton Icon="delete" Muted="true" IconButtonClicked="HandleDeleteButtonClicked" />
                 }
-                <MoreButton MoreButtonClicked="HandleMoreButtonClicked"></MoreButton>
+                <IconButton Icon="more_vert" Muted="true" IconButtonClicked="HandleMoreButtonClicked" IsPressed="@toggleMore" />
             </div>
         </div>
     </div>
@@ -98,9 +98,10 @@
 
 @if(showDeleteModal)
 {
-    <DeleteSessionModal CloseButtonClicked="HandleDeleteModalCloseButtonClicked"
-    RemoveParticipationButtonClicked="HandleModalRemoveParticipationButtonClicked"
-    DeleteSessionButtonClicked="HandleModalDeleteSessionButtonClicked">
+    <DeleteSessionModal 
+        CloseButtonClicked="HandleDeleteModalCloseButtonClicked"
+        RemoveParticipationButtonClicked="HandleModalRemoveParticipationButtonClicked"
+        DeleteSessionButtonClicked="HandleModalDeleteSessionButtonClicked">
     </DeleteSessionModal>
 }
 

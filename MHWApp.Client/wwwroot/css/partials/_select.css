@@ -143,8 +143,8 @@
     gap: 0.5rem;
     align-items: center;
     width: 100%;
-    font-weight: var(--standard-font-weight__p);
-    font-size: var(--standard-font-size__p);
+    font-weight: var(--general__font-weight);
+    font-size: var(--general__font-size);
 }
 
 .select__option-label-hidden {

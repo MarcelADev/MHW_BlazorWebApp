@@ -7,8 +7,8 @@
     border-top: 0;
     border-right: 0;
     border-bottom: 0;
-    width: var(--standard-width);
-    max-width: var(--standard-max-width);
+    width: var(--general__width);
+    max-width: var(--general__max-width);
     padding-inline: 0.5rem;
     --alert-color: black;
 }
