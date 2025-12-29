@@ -27,7 +27,7 @@
     width: calc(100% - var(--border-radius));
     width: 100%;
     content: "";
-    background-image: linear-gradient( 0deg, var(--focus) 0%, var(--focus) 50%, transparent 50%, transparent 100% );
+    background-image: linear-gradient( 0deg, var(--input__focus-color) 0%, var(--input__focus-color) 50%, transparent 50%, transparent 100% );
     transition-property: transform;
     transition-duration: 50ms;
     transform: scaleX(0)
@@ -49,7 +49,7 @@
 }
 
 ::deep .form__container input {
-    border: 1px solid var(--neutral);
+    border: 1px solid var(--input__border-color);
     border-radius: var(--border-radius);
     position: relative;
     padding: 0.5rem;
@@ -57,7 +57,7 @@
 }
 
 ::deep .form__container select {
-    border: 1px solid var(--neutral);
+    border: 1px solid var(--input__border-color);
     border-radius: var(--border-radius);
     padding: 0.5rem;
     width: 100%;

@@ -1,7 +1,7 @@
 ﻿.alert {
     display: flex;
     gap: 0.5rem;
-    border-radius: 0 var(--standard-border-radius__all) var(--standard-border-radius__all) 0;
+    border-radius: 0 var(--general__border-radius) var(--general__border-radius) 0;
     border-width: 1px;
     border-left-width: 4px;
     border-top: 0;

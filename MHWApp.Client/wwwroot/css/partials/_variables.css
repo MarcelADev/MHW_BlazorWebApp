@@ -5,6 +5,7 @@
     --general__font-weight: 400;
     --general__width: 90%;
     --general__max-width: 90%;
+    --general__border-radius: 4px;
 }
 
 :root { /* ## BODY ## */
@@ -28,16 +29,11 @@
 
 :root { /* ## HEADER ## */
     --header__padding: 1rem;
-    --header__background-color: transparent;
-    --header__foreground-color: var(--dark-1);
+    --header__background-color: var(--body__background-color);
+    --header__foreground-color: var(--body__foreground-color);
     --header__title-font-size: 1.6rem;
     --header__title-font-weight: 100;
     --header__z-index: 1;
-}
-
-.dark-mode { /* ## HEADER ## */
-    --header__background-color: var(--body__background-color);
-    --header__foreground-color: var(--body__foreground-color);
 }
 
 :root { /* ## MAIN ## */
@@ -56,7 +52,6 @@
 }
 
 .dark-mode { /* ## NAV HOLDER ## */
-    --nav-holder__background-color: transparent;
     --nav-holder__background-color: hsl(270, 8%, 15%);
 }
 
@@ -103,6 +98,29 @@
     --nav__dropdown-menu-item__padding: 0.5rem;
     --nav__dropdown-menu-item__border-radius: 10px;
     --nav__dropdown-menu-item__background-hover: var(--nav__tag-background-color-hover);
+}
+
+:root { /* ## INPUT ## */
+    __input__padding: var(--general__padding);
+    --input__width: 400px;
+    --input__background-color: hsl(0, 0%, 95%);
+    --input__border-color: hsl(0, 0%, 82%);
+    --input__focus-color: #0F6CBD;
+}
+
+.dark-mode { /* ## INPUT ## */
+    --input__background-color: hsl(270, 8%, 15%);
+    --input__border-color: var(--input__background-color);
+}
+
+:root { /* ## SELECT ## */
+    --select-dropdown__background-color: hsl(0, 0%, 100%);
+    --select-option__background-color-hover: hsl(0 0% 78%);
+}
+
+.dark-mode {
+    --select-dropdown__background-color: hsl(270, 8%, 15%);
+    --select-option__background-color-hover: var(--nav__tag-background-color-hover);
 }
 
 :root { /* ## CARD ## */

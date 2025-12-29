@@ -59,6 +59,9 @@ input:not([type="checkbox"]) {
     font-size: var(--general__font-size);
     --size: calc-size:(auto, size);
     height: var(--size);
+    background-color: var(--input__background-color);
+    color: var(--body__foreground-color);
+    border-color: var(--input__border-color);
 }
 
 .material-symbols-outlined { /* ## GOOGLE ICONS ## */
