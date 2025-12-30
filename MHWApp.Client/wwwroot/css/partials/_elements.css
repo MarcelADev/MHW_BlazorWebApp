@@ -57,8 +57,7 @@ input:not([type="checkbox"]) {
     outline: none;
     border: none;
     font-size: var(--general__font-size);
-    --size: calc-size:(auto, size);
-    height: var(--size);
+    line-height: var(--input__line-height);
     background-color: var(--input__background-color);
     color: var(--body__foreground-color);
     border-color: var(--input__border-color);

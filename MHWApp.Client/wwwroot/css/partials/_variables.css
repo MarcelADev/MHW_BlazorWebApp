@@ -102,6 +102,7 @@
 
 :root { /* ## INPUT ## */
     __input__padding: var(--general__padding);
+    --input__line-height: 1.2;
     --input__width: 400px;
     --input__background-color: hsl(0, 0%, 95%);
     --input__border-color: hsl(0, 0%, 82%);

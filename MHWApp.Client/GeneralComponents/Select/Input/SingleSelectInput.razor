@@ -25,7 +25,7 @@
 }
 else
 {
-    <div class="select__anchor">
+    <div class="single-select__anchor">
         @if (!string.IsNullOrWhiteSpace(Label))
         {
             <label id="@Id-label"
@@ -37,15 +37,15 @@ else
         }
 
         <div id="mhwapp-single-select-@Id"
-             class="@($"select{GetCSSClassesForSingleSelect()}")"
+             class="@($"single-select{GetCSSClassesForSingleSelect()}")"
              aria-labelledby="@Id-label"
              @attributes="AdditionalAttributes">
 
-            <div class="select__trigger @(Disabled ? "disabled" : "")"
+            <div class="single-select__trigger @(Disabled ? "disabled" : "")"
                  tabindex="@(Disabled ? -1 : 0)"
                  aria-disabled="@Disabled">
 
-                <div aria-hidden="true" class="select__content">
+                <div class="single-select__trigger-content">
                     @if (Value is not null)
                     {
                         @OptionNameMapper(Value)
@@ -55,16 +55,17 @@ else
                         @Placeholder
                     }
                 </div>
+
+                <span class="material-symbols-outlined single-select__trigger-icon">keyboard_arrow_down</span>
+                
             </div>
 
-            <span class="material-symbols-outlined arrow-down">keyboard_arrow_down</span>
 
-
-            <div class="select__dropdown" tabindex="@(Disabled ? -1 : 0)">
+            <div class="single-select__dropdown" tabindex="@(Disabled ? -1 : 0)">
                 @foreach (var option in Options)
                 {
-                    <div class="select__option">
-                        <label class="select__option-label">
+                    <div class="single-select__option">
+                        <label class="single-select__option-label">
                             <input type="checkbox"
                                    class="select__option-label-hidden"
                                    checked="@IsSelected(option, Value)"
@@ -82,8 +83,6 @@ else
                 }
             </div>
         </div>
-
-        <div class="select__content-overlay"></div>
 
         <input type="text"
                hidden
