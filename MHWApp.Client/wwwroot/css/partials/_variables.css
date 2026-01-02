@@ -1,69 +1,30 @@
-﻿:root {
-    /*  %% COLORS %% */
-    --primary-color: black;
-    --secondary-color: white;
-    --secondary-color-dark: whitesmoke;
-    --primary-color-alternative: gray;
-    --button-play-color: #00b100;
-    --button-play-color: #209320;
-    --button-play-color: #007800;
-    --button-play-dummy-color: #686868;
-    --button-edit-color: #337eff;
-    --button-edit-color: #5688da;
-    --button-edit-color: #4077d0;
-    --button-confirm-color: var(--button-edit-color);
-    --button-confirm-color-disabled: gray;
-    --button-delete-color: #EA3323;
-    --button-delete-color: #c65147;
-    --button-delete-color: #b12d21;
-    --button-cancel-color: var(--button-delete-color);
-    /*  %% WIDTH & HEIGHT %% */
-    --full-width: 100%;
-    --standard-width: 90%;
-    --standard-max-width: 400px;
-    --standard-height: 100vh;
-    /*  %% PADDING & MARGIN & GAP %% */
-    --input-padding: 5px;
-    --standard-padding: 5px;
-    --tab-padding: 20px;
-    --card-container-button-gap: 1rem;
-    --card-container-button-margin-right: 0.5rem;
-    /*  %% FONT %% */
-    --thin: 100;
-    --standard-font-size: 1.3rem;
-    /*new design architecture:*/
-    --standard-border-radius__all: 4px;
-    --standard-border-radius__button: 8px;
-    --border-radius__session-card: 10px;
+﻿:root { /* ## GENERAL ## */
+    --general__padding: 5px;
+    --general__margin: 1rem;
+    --general__font-size: 1rem;
+    --general__font-weight: 400;
+    --general__width: 90%;
+    --general__max-width: 90%;
+    --general__border-radius: 4px;
 }
 
-:root {     /* ## FONT SIZES ## */
-    --standard-font-size__h1: 2.5rem;
-    --standard-font-size__h2: 1.4rem;
-    --standard-font-size__h3: 1.4rem;
-    --standard-font-size__label: 0.9rem;
-    --standard-font-size__p: 1rem;
-    --standard-font-size__button: var(--standard-font-size__p);
-    --standard-font-size__a: var(--standard-font-size__p);
+:root { /* ## BODY ## */
+    --body__background-color: white;
+    --body__foreground-color: black;
+    --body__foreground-color-hover: hsl(0, 0%, 10%);
+    --body__foreground-color-muted: hsl(0, 0%, 30%);
 }
 
-:root { /* ## FONT WEIGHTS ## */
-    --standard-font-weight__h1: 100;
-    --standard-font-weight__h2: 300;
-    --standard-font-weight__h3: var(--standard-font-weight__h1);
-    --standard-font-weight__h4: var(--standard-font-weight__h1);
-    --standard-font-weight__p: 400;
-    --standard-font-weight__button: var(--standard-font-size__p);
-    --standard-font-weight__label: 200;
+.dark-mode { /* ## BODY ## */
+    --body__background-color: hsl(270, 5%, 10%);
+    --body__foreground-color: white;
+    --body__foreground-color-hover: hsl(0, 0%, 85%);
+    --body__foreground-color-muted: hsl(0, 0%, 65%);
 }
 
-:root { /* ## MARGIN & PADDING ## */
-    --standard-padding__all: 5px;
-    --standard-padding__card: 5px;
-    --padding__session-card: 1rem;
-    --standard-padding__button-y: 0.375rem;
-    --standard-padding__button-x: 0.75rem;
-    --standard-margin__all: 1rem;
+.theme-purple {
+    --body__foreground-color: #6457A6;
+    --primary-color-alternative: #7D7ABC;
 }
 
 :root { /* ## BODY ## */
@@ -87,15 +48,16 @@
 
 :root { /* ## HEADER ## */
     --header__padding: 1rem;
-    --header__background-color: transparent;
-    --header__foreground-color: var(--dark-1);
+    --header__background-color: var(--body__background-color);
+    --header__foreground-color: var(--body__foreground-color);
     --header__title-font-size: 1.6rem;
     --header__title-font-weight: 100;
+    --header__z-index: 1;
 }
 
-.dark-mode { /* ## HEADER ## */
-    /*--header__background-color: var(--dark-2);*/
-    --header__foreground-color: var(--light-2);
+:root { /* ## MAIN ## */
+    --main__margin-bottom: 50px;
+    --main__padding: 1rem;
 }
 
 :root { /* ## NAV HOLDER ## */
@@ -109,7 +71,6 @@
 }
 
 .dark-mode { /* ## NAV HOLDER ## */
-    --nav-holder__background-color: transparent;
     --nav-holder__background-color: hsl(270, 8%, 15%);
 }
 
@@ -119,26 +80,22 @@
 }
 
 :root { /* ## NAV TAG ## */
-    --nav__tag-font-size: var(--standard-font-size__p);
+    --nav__tag-font-size: var(--general__font-size);
     --nav__tag-font-weight: var(--nav__font-weight);
     --nav__tag-padding-y: 10px;
     --nav__tag-padding-x: 15px;
     --nav__tag-padding: var(--nav__tag-padding-y) var(--nav__tag-padding-x);
     --nav__tag-margin-right: 5px;
-    --nav__tag-border-radius: calc(var(--standard-font-size__p) + (var(--nav__tag-padding-y) * 2));
+    --nav__tag-border-radius: calc(var(--general__font-size) + (var(--nav__tag-padding-y) * 2));
     --nav__tag-background-color: hsl(0, 0%, 30%);
     --nav__tag-background-color-hover: hsl(0, 0%, 20%);
-    --nav__tag-foreground-color: var(--light-3);
+    --nav__tag-foreground-color: var(--body__foreground-color);
     --nav__tag-icon-left-margin: 5px;
     --nav__tag-border: 0;
 }
 
-.dark-mode {
-    --nav__tag-background-color: #393347;
-    --nav__tag-background-color-hover: #292533;
-    --nav__tag-foreground-color: #FFFFFF;
-    /*--nav__tag-border: 1px solid #5C556A;*/
-
+.dark-mode { /* ## NAV TAG ## */
+    --nav__tag-foreground-color: var(--body__foreground-color);
     --nav__tag-background-color: hsl(270, 45%, 15%);
     --nav__tag-background-color-hover: hsl(270, 45%, 10%);
 }
@@ -162,9 +119,33 @@
     --nav__dropdown-menu-item__background-hover: var(--nav__tag-background-color-hover);
 }
 
+:root { /* ## INPUT ## */
+    __input__padding: var(--general__padding);
+    --input__line-height: 1.2;
+    --input__width: 400px;
+    --input__background-color: hsl(0, 0%, 95%);
+    --input__border-color: hsl(0, 0%, 82%);
+    --input__focus-color: #0F6CBD;
+}
+
+.dark-mode { /* ## INPUT ## */
+    --input__background-color: hsl(270, 8%, 15%);
+    --input__border-color: var(--input__background-color);
+}
+
+:root { /* ## SELECT ## */
+    --select-dropdown__background-color: hsl(0, 0%, 100%);
+    --select-option__background-color-hover: hsl(0 0% 78%);
+}
+
+.dark-mode {
+    --select-dropdown__background-color: hsl(270, 8%, 15%);
+    --select-option__background-color-hover: var(--nav__tag-background-color-hover);
+}
+
 :root { /* ## CARD ## */
     --card__padding: 10px;
-    --card__margin-bottom: var(--standard-margin__all);
+    --card__margin-bottom: var(--general__margin);
     --card__background-gradient: transparent;
     --card__shadow: 4px 4px 10px rgba(0, 0, 0, 0.3);
     --card__border-radius: 4px;
@@ -181,22 +162,119 @@
     --image-card__image__not-found-font-size: 3rem;
     --image-card__image__not-found-font-weight: 800;
     /*--image-card__content__padding-y: 0.5rem;*/
-    --image-card__content__padding-y: var(--standard-margin__all);
-    --image-card__content__padding-x: var(--standard-margin__all);
+    --image-card__content__padding-y: var(--general__margin);
+    --image-card__content__padding-x: var(--general__margin);
     --image-card__content__padding: var(--image-card__content__padding-y) var(--image-card__content__padding-x);
 }
 
-:root {     /* ## COLOR PALETTE ## */
-    --dark-1: hsl(0, 0%, 0%);
-    --dark-2: hsl(0, 0%, 10%);
-    --dark-3: hsl(0, 0%, 20%);
-    --dark-4: hsl(0, 0%, 30%);
-    --dark-5: hsl(0, 0%, 40%);
-    --dark-6: hsl(0, 0%, 50%);
-    --light-1: hsl(0, 0%, 100%);
-    --light-2: hsl(0, 0%, 95%);
-    --light-3: hsl(0, 0%, 90%);
-    --light-4: hsl(0, 0%, 85%);
-    --color__purple: #6457A6;
-    --purple-1: var(--color__purple);
+:root { /* ## SESSION CARD ## */
+    --session-card__max-width: 400px;
+}
+
+:root { /* ## BUTTON ## */
+    --button__padding-y: 0.375rem;
+    --button__padding-x: 0.75rem;
+    --button__line-height: 1.5;
+    --button__border-width: 2px;
+    --button__border-radius: 8px;
+    --button__box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15), 0 1px 1px rgba(0, 0, 0, 0.075);
+    --button-disabled__opacity: 0.65;
+    --button-focus__box-shadow: 0 0 0 0.25rem rgba(var(--bs-btn-focus-shadow-rgb), .5);
+    /* %%% COLORS %%% */
+
+    --button__hue: 270;
+    --button__saturation: 45%;
+    --button__lightness: 30%;
+
+    --button__primary-color: hsl(
+        var(--button__hue), 
+        var(--button__saturation), 
+        var(--button__lightness)
+    );
+    --button__primary-color-hover: hsl(
+        var(--button__hue), 
+        var(--button__saturation), 
+        calc(var(--button__lightness) - 10%)
+    );
+    --button__primary-color-muted: hsl(
+        var(--button__hue)
+        var(--button__saturation)
+        var(--button__lightness) / 20%
+    );
+    /*button*/
+    --button__color: var(--body__foreground-color);
+    --button__background: var(--button__primary-color);
+    --button__border-color: var(--button__background);
+    /*button hover*/
+    --button-hover__color: var(--body__foreground-color-hover);
+    --button-hover__background: var(--button__primary-color-hover);
+    --button-hover__border-color: var(--button-hover__background);
+    --button-hover__muted__background: var(--button__primary-color-muted);
+    --button-hover__muted__border-color: var(--button__primary-color-muted);
+    /*button focus*/
+    --button-focus__shadow-rgb: 49, 132, 253;
+    /*button active*/
+    --button-active__color: #fff;
+    --button-active__background: #0a58ca;
+    --button-active__border-color: #0a53be;
+    --button-active__shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+    /*button disabled*/
+    --button-disabled__color: #fff;
+    --button-disabled__background: #0d6efd;
+    --button-disabled__border-color: #0d6efd;
+}
+
+.button__flex { /* ## BUTTON WITH ICON ## */
+    /*button*/
+    --button__background: transparent;
+    --button__background-hover: hsl( 
+        var(--button__hue)
+        var(--button__saturation)
+        calc(var(--button__lightness) - 10%)
+        / 15%
+    );
+    --button__border-color: var(--button__primary-color);
+    /*button icon*/
+    --button-icon__foreground: var(--body__foreground-color);
+    --button-icon__background: transparent;
+    --button-icon__background-hover: transparent;
+    /*button content*/
+    --button-content-container__background: var(--button__primary-color);
+    --button-content-container__background-hover: var(--button__primary-color-hover);
+}
+
+:root { /* ## ICON BUTTON ## */
+    --icon-button__color: var(--body__foreground-color);
+    --icon-button__color-hover: var(--body__foreground-color-hover);
+    --icon-button__background: var(--button__primary-color);
+    --icon-button__background-hover: var(--button__primary-color-hover);
+}
+
+.button__secondary {
+    /*button*/
+    --button__color: var(--body__foreground-color);
+    --button__background: var(--color__purple);
+    --button__border-color: var(--color__purple);
+    /*button hover*/
+    --button-hover__color: #fff;
+    --button-hover__background: #564B91;
+    --button-hover__border-color: #564B91;
+    /*button focus*/
+    --button-focus__shadow-rgb: 49, 132, 253;
+    /*button active*/
+    --button-active__color: #fff;
+    --button-active__background: #4D4384;
+    --button-active__border-color: #4D4384;
+    --button-active__shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+    /*button disabled*/
+    --button-disabled__color: #fff;
+    --button-disabled__background: var(--color__purple);
+    --button-disabled__border-color: var(--color__purple);
+    /*button icon container*/
+    --button-icon-container__background: pink;
+    --button-icon-container__background-hover: #1e0057;
+}
+
+.button__muted {
+
 }

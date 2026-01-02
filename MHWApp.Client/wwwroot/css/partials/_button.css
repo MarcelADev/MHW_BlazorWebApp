@@ -14,9 +14,9 @@
     --button-icon-container__background-hover: black;
 
     display: inline-block;
-    padding: var(--standard-padding__button-y) var(--standard-padding__button-x);
-    font-size: var(--standard-font-size__button);
-    font-weight: var(--standard-font-weight__button);
+    padding: var(--button__padding-y) var(--button__padding-x);
+    font-size: var(--general__font-size);
+    font-weight: var(--general__font-weight);
     line-height: var(--button__line-height);
     color: var(--button__color);
     background-color: var(--button__background);
@@ -29,19 +29,20 @@
     -moz-user-select: none;
     user-select: none;
     border: var(--button__border-width) solid var(--button__border-color);
-    border-radius: var(--standard-border-radius__button);
+    border-radius: var(--button__border-radius);
     transition: color .15s ease-in-out, background-color .15s ease-in-out, border-color .15s ease-in-out, box-shadow .15s ease-in-out;
 }
 
     .button__base:focus, .button__base:active:focus, .button__base.nav-link:focus, .form-control:focus, .form-check-input:focus {
-        box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+        box-shadow: 0 0 0 0.1rem var(--body__foreground-color);
+        /*, 0 0 0 0.25rem var(--button__background)*/
     }
 
-    .button__base:hover {
-        color: var(--button-hover__color);
-        background-color: var(--button-hover__background);
-        border-color: var(--button-hover__border-color);
-    }
+.button__base:hover {
+    color: var(--button-hover__color);
+    background-color: var(--button-hover__background);
+    border-color: var(--button-hover__border-color);
+}
 
     .button__base:hover .button__icon-container {
         background-position: right;
@@ -59,74 +60,41 @@
     display: flex;
     flex-direction: row;
     padding-left: 0;
+    padding: 0;
 }
 
+    .button__flex:hover {
+        background-color: var(--button__background-hover);
+    }
+
+        .button__flex:hover .button__content-container {
+            background-color: var(--button-content-container__background-hover);
+        }
+
+        .button__flex:hover .button__icon-container {
+            background-color: var(--button-icon__background-hover);
+        }
+
+        .button__flex:hover .material-symbols-outlined {
+            color: var(--button-icon__foreground-hover);
+        }
+
 .button__icon {
-    color: var(--button__background);
+    color: var(--button-icon__foreground);
     background-color: transparent;
+}
+
+.button__content-container {
+    background-color: var(--button-content-container__background);
+    padding: var(--button__padding-y) var(--button__padding-x);
+    border-radius: var(--button__border-radius) calc(var(--button__border-radius) / 2) calc(var(--button__border-radius) / 2) var(--button__border-radius);
 }
 
 .button__icon-container {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: calc(var(--standard-padding__button-y) * 2 + 24px);
+    width: calc(var(--button__padding-y) * 2 + 24px);
     border-color: var(--button-icon-container__background);
-    margin: calc(var(--standard-padding__button-y) * -1) var(--standard-padding__button-x) calc(var(--standard-padding__button-y) * -1) 0;
-    border-width: var(--button__border-width);
-    border-radius: var(--standard-border-radius__button);
-    /*background*/
-    background: linear-gradient(to right, var(--button-icon-container__background) 35%, var(--button-icon-container__background-hover) 65%) left;
-    background: linear-gradient(to right, var(--button-icon-container__background) 49%, var(--button-icon-container__background-hover) 51%) left;
-    background-size: 210% 100%;
-    transition: .5s ease-out;
-}
-
-.button__blue {
-    /*button*/
-    --button__color: #fff;
-    --button__background: #0d6efd;
-    --button__border-color: #0d6efd;
-    /*button hover*/
-    --button-hover__color: #fff;
-    --button-hover__background: #0b5ed7;
-    --button-hover__border-color: #0a58ca;
-    /*button focus*/
-    --button-focus__shadow-rgb: 49, 132, 253;
-    /*button active*/
-    --button-active__color: #fff;
-    --button-active__background: #0a58ca;
-    --button-active__border-color: #0a53be;
-    --button-active__shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
-    /*button disabled*/
-    --button-disabled__color: #fff;
-    --button-disabled__background: #0d6efd;
-    --button-disabled__border-color: #0d6efd;
-    /*button icon container*/
-    /*--button-icon-container__background: #222222;*/
-}
-
-.button__purple {
-    /*button*/
-    --button__color: #fff;
-    --button__background: var(--color__purple);
-    --button__border-color: var(--color__purple);
-    /*button hover*/
-    --button-hover__color: #fff;
-    --button-hover__background: #564B91;
-    --button-hover__border-color: #564B91;
-    /*button focus*/
-    --button-focus__shadow-rgb: 49, 132, 253;
-    /*button active*/
-    --button-active__color: #fff;
-    --button-active__background: #4D4384;
-    --button-active__border-color: #4D4384;
-    --button-active__shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
-    /*button disabled*/
-    --button-disabled__color: #fff;
-    --button-disabled__background: var(--color__purple);
-    --button-disabled__border-color: var(--color__purple);
-    /*button icon container*/
-    --button-icon-container__background: pink;
-    --button-icon-container__background-hover: #1e0057;
+    background-color: var(--button-icon__background);
 }

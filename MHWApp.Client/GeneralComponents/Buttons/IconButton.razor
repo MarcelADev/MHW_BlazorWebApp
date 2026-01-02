@@ -1,0 +1,32 @@
+﻿<button class="icon-button container-center@(Muted ? " muted" : "")" 
+		type="@(IsSubmit ? "submit" : "button")" @onclick="OnIconButtonClicked"
+		aria-pressed="@(IsPressed ? "true" : "false")">
+	
+	<p class="icon-button__placeholder">O</p>
+	
+	<span class="material-symbols-outlined">
+		@Icon
+	</span>
+</button>
+
+@code {
+	[Parameter]
+	public required string Icon { get; set; }
+
+	[Parameter]
+	public required EventCallback IconButtonClicked { get; set; }
+
+	[Parameter]
+	public bool IsSubmit { get; set; } = false;
+
+	[Parameter]
+	public bool Muted { get; set; } = false;
+
+	[Parameter]
+	public bool IsPressed { get; set; } = false;
+
+	private async Task OnIconButtonClicked()
+	{
+		await IconButtonClicked.InvokeAsync();
+	}
+}

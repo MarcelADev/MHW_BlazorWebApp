@@ -1,14 +1,14 @@
 ﻿.alert {
     display: flex;
     gap: 0.5rem;
-    border-radius: 0 var(--standard-border-radius__all) var(--standard-border-radius__all) 0;
+    border-radius: 0 var(--general__border-radius) var(--general__border-radius) 0;
     border-width: 1px;
     border-left-width: 4px;
     border-top: 0;
     border-right: 0;
     border-bottom: 0;
-    width: var(--standard-width);
-    max-width: var(--standard-max-width);
+    width: var(--general__width);
+    max-width: var(--general__max-width);
     padding-inline: 0.5rem;
     --alert-color: black;
 }

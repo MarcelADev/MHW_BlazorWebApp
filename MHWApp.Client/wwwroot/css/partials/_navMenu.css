@@ -1,4 +1,13 @@
-﻿nav {
+﻿.nav__holder {
+    margin-left: var(--nav-holder__left-margin);
+    background-color: var(--nav-holder__background-color);
+    padding: var(--nav-holder__padding);
+    border-radius: var(--nav-holder__border-radius);
+    border: var(--nav-holder__border);
+    box-shadow: var(--nav-holder__shadow);
+}
+
+nav {
     display: flex;
 }
 
@@ -44,8 +53,8 @@
     align-items: center;
     color: var(--nav__tag-foreground-color);
     margin-left: var(--nav__tag-icon-left-margin);
-    height: 10px;
-    width: 14px;
+    /*height: 10px;
+    width: 14px;*/
     transition: transform 0.2s ease-out;
 }
 
@@ -72,7 +81,6 @@
     position: absolute;
     background: transparent;
     padding-top: calc(var(--nav__dropdown-menu-outer__padding-top) + 0.5rem);
-    z-index: 100;
 }
 
 .nav__dropdown-menu {
@@ -86,7 +94,6 @@
     margin: 0;
     list-style: none;
     width: fit-content;
-    z-index: 100;
     white-space: nowrap;
 }
 

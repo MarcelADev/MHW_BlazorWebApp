@@ -1,5 +1,5 @@
 ﻿input {
-	width: var(--full-width);
+	width: 100%;
 	padding: var(--input-padding);
 	border-color: var(--primary-color);
 	border: 0;
@@ -12,7 +12,7 @@
 	display: flex;
 	align-items: center;
 	margin-bottom: 10px;
-	width: var(--standard-width);
-	max-width: var(--standard-max-width);
+	width: var(--general__width);
+	max-width: var(--general__max-width);
 	color: var(--primary-color);
 }

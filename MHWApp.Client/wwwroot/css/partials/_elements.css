@@ -1,6 +1,8 @@
 ﻿html,
 body {
     background-color: var(--body__background-color);
+    font-family: 'Roboto', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    line-height: 1;
 }
 
 h1, h2, h3, h4 {
@@ -9,29 +11,29 @@ h1, h2, h3, h4 {
 }
 
 h1 {
-    font-weight: var(--standard-font-weight__h1);
-    font-size: var(--standard-font-size__h1);
+    font-weight: 100;
+    font-size: 2.5rem;
     padding-bottom: 1rem;
 }
 
 h2 {
-    font-weight: var(--standard-font-weight__h2);
-    font-size: var(--standard-font-size__h2);
+    font-weight: 300;
+    font-size: 1.4rem;
 }
 
 h3 {
-    font-weight: var(--standard-font-weight__h3);
-    font-size: var(--standard-font-size__h3);
+    font-weight: 100;
+    font-size: 1.4rem;
 }
 
 h4 {
-    font-weight: var(--standard-font-weight__h4);
-    font-size: var(--standard-font-size__h4);
+    font-weight: 100;
+    font-size: 1.2rem;
 }
 
 p, a {
-    font-size: var(--standard-font-size__p);
-    font-weight: var(--standard-font-weight__p);
+    font-size: var(--general__font-size);
+    font-weight: 400;
     color: var(--body__foreground-color);
     margin: 0;
 }
@@ -39,8 +41,8 @@ p, a {
 label {
     color: var(--body__foreground-color);
     margin: 0;
-    font-size: var(--standard-font-size__label);
-    font-weight: var(--standard-font-weight__label);
+    font-size: 0.9rem;
+    font-weight: 200;
 }
 
 ul {
@@ -51,10 +53,17 @@ ul {
 /* // Setting general styling rules and resetting input styling. They are styled within the scoped css of the custom inputs */
 input:not([type="checkbox"]) {
     width: 100%;
-    padding: var(--standard-padding__all);
+    padding: var(--general__padding);
     outline: none;
     border: none;
-    font-size: var(--standard-font-size__p);
-    --size: calc-size:(auto, size);
-    height: var(--size);
+    font-size: var(--general__font-size);
+    line-height: var(--input__line-height);
+    background-color: var(--input__background-color);
+    color: var(--body__foreground-color);
+    border-color: var(--input__border-color);
+}
+
+.material-symbols-outlined { /* ## GOOGLE ICONS ## */
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 48;
+    color: var(--body__foreground);
 }

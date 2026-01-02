@@ -1,4 +1,9 @@
-﻿/* pass variables to the image card content container */
+﻿.image-card__base {
+    width: 90%;
+    max-width: var(--session-card__max-width);
+}
+
+/* pass variables to the image card content container */
 .image-card__content {
     --session-card__p__font-size: 1.2rem;
     --session-card__p__font-weight: 400;
@@ -10,7 +15,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: var(--standard-margin__all);
+    margin-bottom: var(--general__margin);
 }
 
 .session-card__h2 {
@@ -28,7 +33,7 @@
 }
 
 .session-card__field {
-    margin-bottom: var(--standard-margin__all);
+    margin-bottom: var(--general__margin);
 }
 
     .session-card__field p,
