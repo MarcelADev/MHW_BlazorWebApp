@@ -98,7 +98,7 @@
 .single-select__option {
     display: flex;
     align-items: center;
-    padding: 0.25rem 0.5rem;
+    justify-content: space-between;
 }
 
     .single-select__option:hover {
@@ -114,11 +114,6 @@
         width: initial;
     }
 
-    .single-select__option .ms-Icon {
-        color: var(--input__focus-color);
-        font-weight: bold;
-    }
-
 .single-select__option-label {
     display: flex;
     gap: 0.5rem;
@@ -126,18 +121,21 @@
     width: 100%;
     font-weight: var(--general__font-weight);
     font-size: var(--general__font-size);
+    margin: var(--select-option__padding);
 }
 
 .single-select__option-label-hidden {
     display: none;
 }
 
-/* Show red border when invalid */
-.single-select.invalid .single-select__trigger {
-    border-bottom: 2px solid red;
+.single-select__option-icon {
+    color: var(--input__valid-color);
 }
 
-/* Optional: Green border when valid */
+.single-select.invalid .single-select__trigger {
+    border-bottom: 2px solid var(--input__invalid-color);
+}
+
 .single-select.valid .single-select__trigger {
-    border-bottom: 2px solid green;
+    border-bottom: 2px solid var(--input__valid-color);
 }

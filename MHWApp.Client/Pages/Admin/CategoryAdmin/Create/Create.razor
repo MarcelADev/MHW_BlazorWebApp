@@ -30,6 +30,23 @@
             <ValidationSummary />
 
             <div class="form__field">
+                <CheckboxWithToggleContainer Title="Erster Test" OnToggleChanged="HandleToggleChange">
+                    <p>Testing</p>
+                    <p>Testing 2</p>
+                    <p>Testing 3</p>
+                </CheckboxWithToggleContainer>
+            </div>
+
+            @if (testToggleIsOpen)
+            {
+                <p>Toggle ist offen</p>
+            }
+            else
+            {
+                <p>Toggle ist geschlossen</p>
+            }
+
+            <div class="form__field">
                 <label for="create-category-name">Name</label>
                 <CustomInputText id="create-category-name" @bind-Value="FormModel!.Name" />
                 <ValidationMessage For="@(() => FormModel!.Name)" />
@@ -146,9 +163,7 @@
             }
 
             <div class=" form__field form__button">
-                <button type="submit" class="btn btn-primary">
-                    Create
-                </button>
+                <Button Content="Create" IsSubmit="true"></Button>
             </div>
 
         </EditForm>
@@ -180,6 +195,12 @@
 
     private ValidationMessageStore? _messageStore;
     #endregion
+
+    private bool testToggleIsOpen = false;
+    private void HandleToggleChange(bool isOpen)
+    {
+        testToggleIsOpen = isOpen;
+    }
 
     protected override async Task OnInitializedAsync()
     {

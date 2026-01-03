@@ -41,11 +41,6 @@
     --body__foreground-color-muted: hsl(0, 0%, 65%);
 }
 
-.theme-purple {
-    --body__foreground-color: #6457A6;
-    --primary-color-alternative: #7D7ABC;
-}
-
 :root { /* ## HEADER ## */
     --header__padding: 1rem;
     --header__background-color: var(--body__background-color);
@@ -109,7 +104,7 @@
     --nav__dropdown-menu-outer__padding-top: var(--nav-holder__padding-y);
 }
 
-.dark-mode {
+.dark-mode { /* ## NAV DROPDOWN MENU ## */
     --nav__dropdown-menu__background: var(--nav-holder__background-color);
 }
 
@@ -119,12 +114,18 @@
     --nav__dropdown-menu-item__background-hover: var(--nav__tag-background-color-hover);
 }
 
+:root { /* ## FORM ## */
+    --form__width: 600px;
+}
+
 :root { /* ## INPUT ## */
     __input__padding: var(--general__padding);
     --input__line-height: 1.2;
-    --input__width: 400px;
+    --input__width: 100%;
     --input__background-color: hsl(0, 0%, 95%);
     --input__border-color: hsl(0, 0%, 82%);
+    --input__valid-color: green;
+    --input__invalid-color: red;
     --input__focus-color: #0F6CBD;
 }
 
@@ -135,10 +136,11 @@
 
 :root { /* ## SELECT ## */
     --select-dropdown__background-color: hsl(0, 0%, 100%);
+    --select-option__padding: 0.25rem 0.5rem;
     --select-option__background-color-hover: hsl(0 0% 78%);
 }
 
-.dark-mode {
+.dark-mode { /* ## SELECT ## */
     --select-dropdown__background-color: hsl(270, 8%, 15%);
     --select-option__background-color-hover: var(--nav__tag-background-color-hover);
 }

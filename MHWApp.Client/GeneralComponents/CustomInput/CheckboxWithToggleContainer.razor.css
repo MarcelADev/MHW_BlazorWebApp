@@ -1,0 +1,13 @@
+﻿.toggle-container__wrapper {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.3s ease-in-out;
+    overflow: hidden;
+}
+    .toggle-container__wrapper.open {
+        grid-template-rows: 1fr;
+    }
+
+.toggle-container__content {
+    min-height: 0;
+}

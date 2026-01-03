@@ -1,0 +1,53 @@
+﻿<label>
+    <input type="checkbox" @bind="@IsOpen">
+    @Title
+</label>
+
+<div class="toggle-container__wrapper@(IsOpen ? " open" : "")">
+    <div class="toggle-container__content">
+        @ChildContent
+    </div>
+</div>
+
+@code {
+    /// <summary>
+    /// The content of the label for the checkbox.
+    /// </summary>
+    [Parameter]
+    public string Title { get; set; } = "Toggle checkbox";
+
+    /// <summary>
+    /// Content to be displayed when the toggle is active.
+    /// </summary>
+    [Parameter] 
+    public RenderFragment? ChildContent { get; set; }
+
+    /// <summary>
+    /// Event hook that can be used by the parent component to respond to toggle state changes.
+    /// </summary>
+    [Parameter]
+    public EventCallback<bool> OnToggleChanged { get; set; }
+
+
+    private bool _isOpen = false;
+    /// <summary>
+    /// Stores toggle state.
+    /// </summary>
+    private bool IsOpen
+    {
+        get { return _isOpen; }
+        set
+        {
+            if (_isOpen != value)
+            {
+                _isOpen = value;
+                NotifyToggleStateChanged();
+            }
+        }
+    }
+
+    void NotifyToggleStateChanged()
+    {
+		OnToggleChanged.InvokeAsync(IsOpen);
+    }
+}

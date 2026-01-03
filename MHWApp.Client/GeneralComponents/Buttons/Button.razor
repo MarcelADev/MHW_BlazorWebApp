@@ -2,7 +2,7 @@
 {
     @if(Icon.Equals(string.Empty))
     {
-        <button type="@(IsSubmitButton ? "submit" : "button")" 
+        <button type="@(IsSubmit ? "submit" : "button")" 
                 class="button__base@_cssClasses"
                 @onclick="OnButtonClicked">
             @Content
@@ -10,7 +10,7 @@
     }
     else
     {
-        <button type="@(IsSubmitButton ? "submit" : "button")" 
+        <button type="@(IsSubmit ? "submit" : "button")" 
                 class="button__base button__flex@_cssClasses"
                 @onclick="OnButtonClicked">
 
@@ -36,7 +36,7 @@
     public required string Content { get; set; }
 
     [Parameter]
-    public required EventCallback ButtonClicked { get; set; }
+    public EventCallback ButtonClicked { get; set; }
 
     [Parameter]
     public bool Secondary { get; set; } = false;
@@ -48,7 +48,7 @@
     public string Icon { get; set; } = string.Empty;
 
     [Parameter]
-    public bool IsSubmitButton { get; set; } = false;
+    public bool IsSubmit { get; set; } = false;
 
     protected override void OnInitialized()
     {
