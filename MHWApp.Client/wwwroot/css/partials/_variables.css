@@ -6,6 +6,12 @@
     --general__width: 90%;
     --general__max-width: 90%;
     --general__border-radius: 4px;
+    --general__outline: 1px var(--input__focus-color);
+    --general__outline-offset: 2px;
+}
+
+.dark-mode { /* ## GENERAL ## */
+    --general__outline: 1px solid hsl(0, 0%, 100%);
 }
 
 :root { /* ## BODY ## */
@@ -116,6 +122,8 @@
 
 :root { /* ## FORM ## */
     --form__width: 600px;
+    --form__max-width: 90%;
+    --identity-form__width: 400px;
 }
 
 :root { /* ## INPUT ## */
@@ -132,6 +140,17 @@
 .dark-mode { /* ## INPUT ## */
     --input__background-color: hsl(270, 8%, 15%);
     --input__border-color: var(--input__background-color);
+}
+
+:root { /* ## CHECKBOX ## */
+    --checkbox__background-color: #e5e7eb;
+    --checkbox__border-color: #9ca3af;
+    --checkmark__color: white;
+}
+
+.dark-mode { /* ## CHECKBOX ## */
+    --checkbox__background-color: var(--input__background-color);
+    --checkbox__border-color: hsl(0, 0%, 30%);
 }
 
 :root { /* ## SELECT ## */
@@ -151,11 +170,13 @@
     --card__background-gradient: transparent;
     --card__shadow: 4px 4px 10px rgba(0, 0, 0, 0.3);
     --card__border-radius: 4px;
+    --identity-card__border-color: #6457A6;
+    --identity-card__border-radius: 10Px;
 }
 
 .dark-mode { /* ## CARD ## */
     --card__background-gradient: linear-gradient( 45deg, hsl(270, 8%, 15%), hsl(270, 15%, 10%) );
-    /*--card__background-gradient: linear-gradient( 45deg, hsl(270, 15%, 10%), hsl(270, 20%, 10%) );*/
+    --identity-card__border-color: white;
 }
 
 :root { /* ## IMAGE CARD ## */
@@ -204,11 +225,11 @@
         var(--button__lightness) / 20%
     );
     /*button*/
-    --button__color: var(--body__foreground-color);
+    --button__color: white;
     --button__background: var(--button__primary-color);
     --button__border-color: var(--button__background);
     /*button hover*/
-    --button-hover__color: var(--body__foreground-color-hover);
+    --button-hover__color: hsl(0, 0%, 85%);
     --button-hover__background: var(--button__primary-color-hover);
     --button-hover__border-color: var(--button-hover__background);
     --button-hover__muted__background: var(--button__primary-color-muted);

@@ -1,0 +1,34 @@
+﻿@using System.Linq.Expressions
+@typeparam TValue
+
+@if(!DisableWrapper)
+{
+    <div class="form__field-holder@(NoMargin ? " no-margin" : "")">
+        @if(Label != string.Empty) { <label>@Label</label> }
+
+        @ChildContent
+
+        <ValidationMessage For="For" />
+    </div>
+}
+else
+{
+    @ChildContent
+}
+
+@code {
+    [Parameter]
+    public string Label { get; set; } = string.Empty;
+
+    [Parameter]
+    public Expression<Func<TValue>>? For { get; set; }
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    [Parameter]
+	public bool NoMargin { get; set; } = false;
+
+    [Parameter]
+	public bool DisableWrapper { get; set; } = false;
+}

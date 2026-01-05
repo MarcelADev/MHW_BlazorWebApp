@@ -1,4 +1,12 @@
-﻿.form__container {
+﻿form {
+    width: var(--form__width);
+    max-width: var(--form__max-width);
+    overflow: visible;
+    display:flex;
+    flex-direction: column;
+}
+
+.form__container {
     --input-height: 2.5rem;
     --box-shadow: rgba(0, 0, 0, 0.12) 0px 0px 2px 0px, rgba(0, 0, 0, 0.14) 0px 2px 4px 0px
 }
@@ -18,11 +26,6 @@
     align-items: center;
     justify-content: flex-start;
     gap: 1rem;
-}
-
-.form__button {
-    display: flex;
-    justify-content: center;
 }
 
 .input-grid {

@@ -1,6 +1,7 @@
 ﻿@page "/login"
 @using System.ComponentModel.DataAnnotations;
 @using MHWApp.Client.GeneralComponents
+@using MHWApp.Client.GeneralComponents.Buttons
 @using MHWApp.Client.GeneralComponents.CustomInput
 @using MHWApp.Client.GeneralComponents.Buttons.IconButtons
 @using MHWApp.Client.Identity
@@ -12,58 +13,31 @@
 @inject IAccountManagement identityProvider
 @inject NavigationManager navigationManager
 @inject IGlobalAlertService alertService
+@layout IdentityLayout
 
 <PageTitle>Login</PageTitle>
 
-<AuthorizeView>
-	<Authorized>
-		<LoginRedirect />
-	</Authorized>
-	<NotAuthorized Context="authContext">
+<div class="identity-card">
 
-		<div class="theme-purple">
+	<h1>Login</h1>
 
-			<header class="container-center header identity__header">
+	<EditForm EditContext="editContext" FormName="login" OnValidSubmit="DoLoginAsync">
 
-				<h1>Login</h1>
+		<CustomInputText id="login-username"
+							Label="Username"
+							@bind-Value="FormModel!.Username" />
 
-			</header>
-
-			<div class="form__container">
-
-				<EditForm EditContext="editContext" FormName="login" OnValidSubmit="DoLoginAsync">
-
-					<div class="form__field">
-						<label for="login-username">Username</label>
-						<CustomInputText id="login-username"
-										 InputType="text"
-										 @bind-Value="FormModel!.Username" />
-						<ValidationMessage For="@(() => FormModel!.Username)" />
-					</div>
-
-					<div class="form__field">
-						<label for="login-password">Password</label>
-						<CustomInputText 
-							id="login-password"
+		<CustomInputText id="login-password"
+							Label="Password"
 							InputType="password"
 							@bind-Value="FormModel!.Password" />
-						<ValidationMessage For="@(() => FormModel!.Password)" />
-					</div>
 
-					<div class=" form__field form__button">
-						<button type="submit" class="btn btn-primary identity__button">
-							Login
-						</button>
-					</div>
+		<Button Content="Login" IsSubmit="true" />
 
-				</EditForm>
-			</div>
+	</EditForm>
 
-			<ReturnButton ReturnButtonClicked="HandleReturnButtonClicked" Purple="true" />
-
-		</div>
-	</NotAuthorized>
-</AuthorizeView>
+	<ReturnButton ReturnButtonClicked="HandleReturnButtonClicked" Purple="true" />
+</div>
 
 @code {
 	private bool validateOnlyModified = true;

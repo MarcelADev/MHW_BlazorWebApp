@@ -9,7 +9,7 @@
 
     public partial class CustomInputText : InputText, IDisposable
     {
-        private new string CssClass => GetValidationClass();
+        private new string CssClass => GetCssClasses();
 
         [Parameter]
         public string? Id { get; set; }
@@ -20,18 +20,34 @@
         [Parameter]
         public string Placeholder { get; set; } = string.Empty;
 
-        private string GetValidationClass()
+        [Parameter]
+        public string Label { get; set; } = string.Empty;
+
+        [Parameter]
+        public bool DisableWrapper { get; set; } = false;
+
+        [Parameter]
+        public bool NoMargin { get; set; } = false;
+
+        [Parameter]
+        public string Prefix { get; set; } = string.Empty;
+
+        private bool IsPrefix => !string.IsNullOrEmpty(Prefix);
+
+        private string GetCssClasses()
         {
+            string cssClasses = IsPrefix ? "prefix" : string.Empty;
+
             if (EditContext == null)
-                return string.Empty;
+                return cssClasses;
 
             if (EditContext.GetValidationMessages(FieldIdentifier).Any())
-                return "invalid";
+                return cssClasses + " invalid";
 
             if (!EditContext.IsModified(FieldIdentifier))
-                return string.Empty;
+                return cssClasses;
 
-            return "valid";
+            return cssClasses + " valid";
         }
 
         protected override void OnInitialized()

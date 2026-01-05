@@ -1,63 +1,74 @@
-﻿.custom-input__container {
-    width: var(--input__width);
-    max-width: 100%;
-    height: fit-content;
-    position: relative;
+﻿input {
+    width: 100%;
+    line-height: var(--input__line-height);
+    padding: var(--general__padding);
+    outline: none;
+    border: none;
+    border-radius: 0;
+    background-color: var(--input__background-color);
+    color: var(--body__foreground-color);
 }
 
-    .custom-input__container::after {
-        --left-margin: 2px;
-        position: absolute;
-        left: calc(var(--general__border-radius) / 2);
-        left: var(--left-margin);
-        right: 0px;
-        bottom: -1px;
-        height: var(--general__border-radius);
-        height: 3px;
-        width: calc(100% - calc(var(--left-margin) * 2));
-        border-radius: var(--general__border-radius);
-        content: "";
-        transition-property: transform;
-        transition-duration: 50ms;
-        transform: scaleX(0);
-    }
+input::after{
+    display:none;
+}
 
-    .custom-input__container.valid::after {
-        background-image: linear-gradient(0deg, green 0%, green 50%, transparent 50%, transparent 100%);
-        transition-property: transform;
-        transition-duration: 150ms;
-        transform: scaleX(1);
-    }
-
-    .custom-input__container.invalid::after {
-        background-image: linear-gradient(0deg, red 0%, red 50%, transparent 50%, transparent 100%);
-        transition-property: transform;
-        transition-duration: 150ms;
-        transform: scaleX(1);
-    }
-
-    .custom-input__container:focus-within::after,
-    .custom-input__container.valid:focus-within::after,
-    .custom-input__container.invalid:focus-within::after {
-        background-image: linear-gradient(0deg, var(--input__focus-color) 0%, var(--input__focus-color) 50%, transparent 50%, transparent 100%);
-        transition-property: transform;
-        transition-duration: 150ms;
-        transform: scaleX(1);
-    }
-
-.custom-input {
+.custom-text-input__container {
+    position: relative;
+    width: 100%;
+    font-size: var(--general__font-size);
+    background-color: var(--input__background-color);
     border: 1px solid var(--input__border-color);
     border-radius: var(--general__border-radius);
 }
 
-    .custom-input.valid {
-        border-bottom-color: green;
+    .custom-text-input__container:focus-within {
+        outline: var(--general__outline);
+        outline-offset: var(--general__outline-offset);
     }
 
-    .custom-input.invalid {
-        border-bottom-color: red;
+    .custom-text-input__container:disabled {
+        cursor: not-allowed;
+        opacity: 0.5;
     }
 
-    .custom-input:focus-within {
-        border-bottom-color: var(--input__focus-color);
+    .custom-text-input__container.prefix {
+        display:flex;
+        align-items: center;
+    }
+
+    .custom-text-input__container.prefix p {
+
+    }
+
+    .custom-text-input__container::after {
+        position: absolute;
+
+        left: -1px;
+        bottom: -1px;
+
+        height: 4px;
+        width: calc(100% + 2px);
+
+        border: 1px solid transparent;
+        border-top-width: 0px;
+        border-bottom-width: 2px;
+        border-radius: 0 0 var(--general__border-radius) var(--general__border-radius);
+        content: "";
+        
+        transition: border-color 0.3s ease-in;
+    }
+
+    .custom-text-input__container.valid::after {
+        border-color: var(--input__valid-color);
+    }
+
+    .custom-text-input__container.invalid::after {
+        border-color: var(--input__invalid-color);
+    }
+
+    .custom-text-input__container:focus-within::after,
+    .custom-text-input__container.valid:focus-within::after,
+    .custom-text-input__container.invalid:focus-within::after {
+        border-color: var(--input__focus-color);
     }

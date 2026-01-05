@@ -1,0 +1,14 @@
+﻿@using MHWApp.Client.Pages.Identity
+@inherits LayoutComponentBase
+
+<AuthorizeView>
+    <Authorized>
+        <LoginRedirect />
+    </Authorized>
+
+    <NotAuthorized>
+        <main>
+            @Body
+		</main>
+    </NotAuthorized>
+</AuthorizeView>

@@ -50,19 +50,6 @@ ul {
     padding: 0;
 }
 
-/* // Setting general styling rules and resetting input styling. They are styled within the scoped css of the custom inputs */
-input:not([type="checkbox"]) {
-    width: 100%;
-    padding: var(--general__padding);
-    outline: none;
-    border: none;
-    font-size: var(--general__font-size);
-    line-height: var(--input__line-height);
-    background-color: var(--input__background-color);
-    color: var(--body__foreground-color);
-    border-color: var(--input__border-color);
-}
-
 .material-symbols-outlined { /* ## GOOGLE ICONS ## */
     font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 48;
     color: var(--body__foreground);

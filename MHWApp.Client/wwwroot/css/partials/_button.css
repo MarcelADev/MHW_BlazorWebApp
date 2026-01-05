@@ -1,6 +1,7 @@
 ﻿.button__base {
     display: inline-block;
     padding: var(--button__padding-y) var(--button__padding-x);
+    width: fit-content;
     font-size: var(--general__font-size);
     font-weight: var(--general__font-weight);
     line-height: var(--button__line-height);

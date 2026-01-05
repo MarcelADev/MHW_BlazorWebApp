@@ -1,0 +1,17 @@
+﻿@if(IsSubmitButton)
+{
+	<div class="form__button-holder">
+		@ChildContent
+	</div>
+}
+else
+{
+	@ChildContent
+}
+@code {
+	[Parameter]
+	public RenderFragment? ChildContent { get; set; }
+
+	[Parameter]
+	public bool IsSubmitButton { get; set; }
+}
