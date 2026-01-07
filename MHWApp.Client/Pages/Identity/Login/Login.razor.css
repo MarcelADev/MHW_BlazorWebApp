@@ -1,13 +1,10 @@
-﻿form {
-    width: var(--identity-form__width);
-    max-width: unset;
-}
-
-.identity-card {
-    padding: var(--general__padding);
+﻿.identity-card {
+    padding: var(--general__margin);
     display: flex;
     flex-direction: column;
     align-items: center;
-    border: 1px solid var(--identity-card__border-color);
     border-radius: var(--identity-card__border-radius);
+    background-color: hsl(270, 50%, 95%);
+    margin-bottom: var(--general__margin);
+    box-shadow: var(--card__shadow);
 }

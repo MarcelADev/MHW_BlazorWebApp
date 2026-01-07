@@ -1,0 +1,24 @@
+﻿@if(HasLabel)
+{
+	<div class="form__icon-button-holder">
+		@ChildContent
+		<label for="@InputId">@Label</label>
+	</div>
+}
+else
+{
+	@ChildContent
+}
+
+@code {
+	[Parameter]
+	public RenderFragment? ChildContent { get; set; }
+
+	[Parameter]
+	public string Label { get; set; } = string.Empty;
+
+	public bool HasLabel => !string.IsNullOrWhiteSpace(Label);
+
+	[Parameter]
+	public string InputId { get; set; } = string.Empty;
+}

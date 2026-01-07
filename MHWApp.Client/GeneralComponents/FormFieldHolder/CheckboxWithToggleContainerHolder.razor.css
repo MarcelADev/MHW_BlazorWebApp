@@ -1,0 +1,9 @@
+﻿.form__field-holder {
+    margin-bottom: var(--general__margin);
+    position: relative;
+    width: var(--input__width);
+}
+
+    .form__field-holder.no-margin {
+        margin-bottom: 0;
+    }

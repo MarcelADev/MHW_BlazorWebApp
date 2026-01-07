@@ -1,15 +1,24 @@
-﻿<button class="icon-button container-center@(Muted ? " muted" : "")" 
-		type="@(IsSubmit ? "submit" : "button")" @onclick="OnIconButtonClicked"
-		aria-pressed="@(IsPressed ? "true" : "false")">
+﻿@using MHWApp.Client.GeneralComponents.FormFieldHolder
+
+<IconButtonHolder Label="@Label" InputId="@Id">
+	<button id="@Id"
+			class="icon-button container-center@(Muted ? " muted" : "")" 
+			type="@(IsSubmit ? "submit" : "button")" @onclick="OnIconButtonClicked"
+			aria-pressed="@(IsPressed ? "true" : "false")">
 	
-	<p class="icon-button__placeholder">O</p>
+		<p class="icon-button__placeholder">O</p>
 	
-	<span class="material-symbols-outlined">
-		@Icon
-	</span>
-</button>
+		<span class="material-symbols-outlined">
+			@Icon
+		</span>
+	</button>
+</IconButtonHolder>
 
 @code {
+	private string? _id;
+
+	public string Id => _id ??= $"icon-button__{Convert.ToHexStringLower(Guid.NewGuid().ToByteArray())}";
+
 	[Parameter]
 	public required string Icon { get; set; }
 
@@ -24,6 +33,9 @@
 
 	[Parameter]
 	public bool IsPressed { get; set; } = false;
+
+	[Parameter]
+	public string Label { get; set; } = string.Empty;
 
 	private async Task OnIconButtonClicked()
 	{

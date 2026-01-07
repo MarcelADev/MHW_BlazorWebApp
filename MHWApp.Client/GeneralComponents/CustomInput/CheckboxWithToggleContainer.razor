@@ -1,20 +1,33 @@
-﻿<label>
-    <input type="checkbox" @bind="@IsOpen">
-    @Title
-</label>
+﻿@using MHWApp.Client.GeneralComponents.FormFieldHolder
+@inject IJSRuntime JS
+@implements IAsyncDisposable
 
-<div class="toggle-container__wrapper @(IsOpen ? "open" : "close")">
-    <div class="toggle-container__content">
-        @ChildContent
+<CheckboxWithToggleContainerHolder>
+    <label for="@CheckboxId">
+        <input id="@CheckboxId" type="checkbox" @bind="@IsOpen">
+        @Label
+    </label>
+
+    <div id="@WrapperId" class="toggle-container__wrapper @(IsOpen ? "open" : "close")">
+        <div class="toggle-container__content">
+            @ChildContent
+        </div>
     </div>
-</div>
+</CheckboxWithToggleContainerHolder>
 
 @code {
+    private string? _guid;
+    private Lazy<IJSObjectReference> CheckboxWithToggleContainerModule = new();
+
+    public string Guid => _guid ??= Convert.ToHexStringLower(System.Guid.NewGuid().ToByteArray());
+    public string CheckboxId => $"checkbox-toggle-{Guid}";
+    public string WrapperId => $"checkbox-toggle-wrapper-{Guid}";
+
     /// <summary>
     /// The content of the label for the checkbox.
     /// </summary>
     [Parameter]
-    public string Title { get; set; } = "Toggle checkbox";
+    public required string Label { get; set; } = "Toggle checkbox";
 
     /// <summary>
     /// Content to be displayed when the toggle is active.
@@ -42,12 +55,34 @@
             {
                 _isOpen = value;
                 NotifyToggleStateChanged();
+				_ = ToggleOverflowVisibility();
             }
         }
     }
 
     void NotifyToggleStateChanged()
     {
-		OnToggleChanged.InvokeAsync(IsOpen);
+        OnToggleChanged.InvokeAsync(IsOpen);
+    }
+
+    private async Task ToggleOverflowVisibility()
+    {
+        await CheckboxWithToggleContainerModule.Value.InvokeVoidAsync("toggleOverflowVisibility", IsOpen, WrapperId);
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            CheckboxWithToggleContainerModule = new(await JS.InvokeAsync<IJSObjectReference>("import", "./GeneralComponents/CustomInput/CheckboxWithToggleContainer.razor.js"));
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (CheckboxWithToggleContainerModule.IsValueCreated)
+        {
+            await CheckboxWithToggleContainerModule.Value.DisposeAsync();
+        }
     }
 }

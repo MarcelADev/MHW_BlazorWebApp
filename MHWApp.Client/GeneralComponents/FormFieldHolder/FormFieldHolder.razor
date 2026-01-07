@@ -4,7 +4,7 @@
 @if(!DisableWrapper)
 {
     <div class="form__field-holder@(NoMargin ? " no-margin" : "")">
-        @if(Label != string.Empty) { <label>@Label</label> }
+        @if (Label != string.Empty) { <label for="@InputId">@Label</label> }
 
         @ChildContent
 
@@ -19,6 +19,9 @@ else
 @code {
     [Parameter]
     public string Label { get; set; } = string.Empty;
+
+    [Parameter]
+	public string InputId { get; set; } = string.Empty;
 
     [Parameter]
     public Expression<Func<TValue>>? For { get; set; }

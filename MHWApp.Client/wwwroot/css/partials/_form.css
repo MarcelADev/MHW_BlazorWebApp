@@ -6,6 +6,11 @@
     flex-direction: column;
 }
 
+    form.identity-form {
+        width: var(--identity-form__width);
+        max-width: 100%;
+    }
+
 .form__container {
     --input-height: 2.5rem;
     --box-shadow: rgba(0, 0, 0, 0.12) 0px 0px 2px 0px, rgba(0, 0, 0, 0.14) 0px 2px 4px 0px

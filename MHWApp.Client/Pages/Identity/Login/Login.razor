@@ -17,27 +17,27 @@
 
 <PageTitle>Login</PageTitle>
 
+<h1>Login</h1>
+
 <div class="identity-card">
-
-	<h1>Login</h1>
-
-	<EditForm EditContext="editContext" FormName="login" OnValidSubmit="DoLoginAsync">
+	<EditForm EditContext="editContext" FormName="login" OnValidSubmit="DoLoginAsync" class="identity-form">
 
 		<CustomInputText id="login-username"
-							Label="Username"
-							@bind-Value="FormModel!.Username" />
+						 Label="Username"
+						 @bind-Value="FormModel!.Username" />
 
 		<CustomInputText id="login-password"
-							Label="Password"
-							InputType="password"
-							@bind-Value="FormModel!.Password" />
+						 Label="Password"
+						 InputType="password"
+						 @bind-Value="FormModel!.Password" />
 
 		<Button Content="Login" IsSubmit="true" />
 
 	</EditForm>
-
-	<ReturnButton ReturnButtonClicked="HandleReturnButtonClicked" Purple="true" />
 </div>
+
+@* <ReturnButton ReturnButtonClicked="HandleReturnButtonClicked" Purple="true" /> *@
+<IconButton Icon="exit_to_app" Label="Return" Muted="true" IconButtonClicked="HandleReturnButtonClicked" />
 
 @code {
 	private bool validateOnlyModified = true;

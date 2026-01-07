@@ -38,7 +38,8 @@ input::after{
     }
 
     .custom-text-input__container.prefix p {
-
+        margin-left: var(--general__padding);
+        color: var(--input__emphasize-color);
     }
 
     .custom-text-input__container::after {

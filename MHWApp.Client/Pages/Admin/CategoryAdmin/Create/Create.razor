@@ -31,40 +31,48 @@
 
         <div class="form__field">
             <SingleSelectInput Label="Choose general Game Extension"
-                                Placeholder="Select"
-                                T="GameExtension"
-                                Options="gameExtensions"
-                                OptionNameMapper="(GameExtension ge) => ge.Name"
-                                OptionValueMapper="(GameExtension ge) => ge.Id"
-                                @bind-Value="FormModel.GeneralGameExtension" />
+                               Placeholder="Select"
+                               T="GameExtension"
+                               Options="gameExtensions"
+                               OptionNameMapper="(GameExtension ge) => ge.Name"
+                               OptionValueMapper="(GameExtension ge) => ge.Id"
+                               @bind-Value="FormModel.GeneralGameExtension" />
             <ValidationMessage For="@(() => FormModel!.GeneralGameExtension)" />
         </div>
 
-        <div class="form__field">
-            <CheckboxWithToggleContainer Title="Add Armor Set (New Version)">
+        <CheckboxWithToggleContainer Label="Add Armor Set (New Version)">
 
-                <div class="form__field">
-                    <CheckboxWithToggleContainer Title="Use alternative Prefix" OnToggleChanged="HandleUseAlternativePrefixToggle">
+            <CheckboxWithToggleContainer Label="Use alternative Prefix" OnToggleChanged="HandleUseAlternativePrefixToggle">
 
-                        <CustomInputText id="change-armorset-prefix-textbox"
-										 NoMargin="true"
-                                         @bind-Value="FormModel!.AlternativeArmorPrefix" />
-
-                    </CheckboxWithToggleContainer>
-                </div>
-
-                <CustomInputText id="create-category-helmet" 
-                                 Prefix="@(useAlternativePrefix? FormModel!.AlternativeArmorPrefix : FormModel!.Name)"                                  
-                                 @bind-Value="FormModel!.HelmetSuffix" />
+                <CustomInputText id="change-armorset-prefix-textbox"
+								 NoMargin="true"
+                                 @bind-Value="FormModel!.AlternativeArmorPrefix" />
 
             </CheckboxWithToggleContainer>
-        </div>
+
+            <CustomInputText id="create-category-head"
+                             Label="Head"
+                             Prefix="@(useAlternativePrefix? FormModel!.AlternativeArmorPrefix : FormModel!.Name)"                                  
+                             @bind-Value="FormModel!.HelmetSuffix" />
+
+            <CustomInputText id="create-category-chest"
+                             Label="Chest"
+                             Prefix="@(useAlternativePrefix? FormModel!.AlternativeArmorPrefix : FormModel!.Name)"
+                             @bind-Value="FormModel!.MailSuffix" />
+
+            <CustomInputText id="create-category-legs"
+                             Label="Legs"
+                             Prefix="@(useAlternativePrefix? FormModel!.AlternativeArmorPrefix : FormModel!.Name)"
+                             NoMargin="true"
+                             @bind-Value="FormModel!.GreavesSuffix" />
+
+        </CheckboxWithToggleContainer>
 
         <div class="form__field">
             <InputCheckbox id="create-armorset-checkbox"
-                            Value="FormModel.AddArmorSet"
-                            ValueChanged="ToggleArmorSet"
-                            ValueExpression="() => FormModel.AddArmorSet" />
+                           Value="FormModel.AddArmorSet"
+                           ValueChanged="ToggleArmorSet"
+                           ValueExpression="() => FormModel.AddArmorSet" />
             <label for="create-armorset-checkbox">Add Armor Set</label>
         </div>
 

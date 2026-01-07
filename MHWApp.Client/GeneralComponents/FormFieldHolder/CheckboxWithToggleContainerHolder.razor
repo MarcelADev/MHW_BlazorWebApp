@@ -1,0 +1,11 @@
+﻿<div class="form__field-holder@(NoMargin ? " no-margin" : "")">
+	@ChildContent
+</div>
+
+@code {
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    [Parameter]
+    public bool NoMargin { get; set; } = false;
+}

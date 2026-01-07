@@ -123,7 +123,7 @@
 :root { /* ## FORM ## */
     --form__width: 600px;
     --form__max-width: 90%;
-    --identity-form__width: 400px;
+    --identity-form__width: 200px;
 }
 
 :root { /* ## INPUT ## */
@@ -135,6 +135,7 @@
     --input__valid-color: green;
     --input__invalid-color: red;
     --input__focus-color: #0F6CBD;
+    --input__emphasize-color: orange;
 }
 
 .dark-mode { /* ## INPUT ## */

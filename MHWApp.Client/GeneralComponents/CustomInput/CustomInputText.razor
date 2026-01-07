@@ -1,22 +1,22 @@
 ﻿@using MHWApp.Client.GeneralComponents.FormFieldHolder
 @inherits InputText
 
-<FormFieldHolder Label="@Label" TValue="string" For="ValueExpression" NoMargin="@NoMargin" DisableWrapper="@DisableWrapper">
+<FormFieldHolder Label="@Label" InputId="@Id" TValue="string" For="ValueExpression" NoMargin="@NoMargin" DisableWrapper="@DisableWrapper">
 
     <div class="custom-text-input__container @CssClass">
 
         @if(IsPrefix) { <p>@Prefix</p> }
 
         <input @attributes="AdditionalAttributes"
-                type="@InputType"
-                placeholder="@Placeholder"
-                id="@Id"
-                value="@CurrentValueAsString"
-                @oninput="@(EventCallback.Factory.CreateBinder<string>(
-                    this,
-                    __value => CurrentValueAsString = __value,
-                    CurrentValueAsString ?? ""
-                ))" />
+               type="@InputType"
+               placeholder="@Placeholder"
+               id="@Id"
+               value="@CurrentValueAsString"
+               @oninput="@(EventCallback.Factory.CreateBinder<string>(
+                   this,
+                   __value => CurrentValueAsString = __value,
+                   CurrentValueAsString ?? ""
+               ))" />
     </div>
 
 </FormFieldHolder> 
