@@ -4,9 +4,9 @@
     z-index: 1;
 }
 
-.single-select:focus-within {
+/*.single-select:focus-within {
     z-index: 999;
-}
+}*/
 
 .single-select:hover {
     cursor: pointer;
@@ -57,14 +57,14 @@
     z-index: 10;
 }
 
-.single-select:focus-within .single-select__dropdown {
+.single-select.open .single-select__dropdown {
     transition-property: transform;
     transition-duration: 50ms;
     transform-origin: top;
     transform: scaleY(1)
 }
 
-.single-select:focus-within .single-select__trigger-icon {
+.single-select.open .single-select__trigger-icon {
     transform: rotateZ(180deg);
 }
 

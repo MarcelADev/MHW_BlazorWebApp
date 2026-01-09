@@ -1,15 +1,20 @@
 ﻿@using System.Linq.Expressions
 @using MHWApp.Client.GeneralComponents.FormFieldHolder
 @typeparam T
+@inject IJSRuntime js
+@implements IAsyncDisposable
 
 <InputSingleSelectDesktopHolder Label="@Label" LabelId="@LabelId">
 
-    <div aria-labelledby="@LabelId"
-         class="single-select@(ValidationClass)">
+    <div @ref="_singleSelectElementRef"
+         aria-labelledby="@LabelId"
+         class="single-select@(ValidationClass + (IsOpen ? " open" : string.Empty))">
 
-        <div class="single-select__trigger@(Disabled ? " disabled" : "")"
+        <div class="single-select__trigger@(Disabled ? " disabled" : string.Empty)"
              tabindex="@TabIndex"
-             aria-disabled="@Disabled">
+             aria-disabled="@Disabled"
+             @onclick="HandleTriggerClicked"
+             @onkeydown="HandleTriggerKeyDown">
 
             <div class="single-select__trigger-content">
                 @if (Value is not null)
@@ -25,7 +30,8 @@
             <span class="material-symbols-outlined single-select__trigger-icon">keyboard_arrow_down</span>
         </div>
 
-        <div class="single-select__dropdown">
+        <div class="single-select__dropdown"
+             tabindex="1">
             @foreach (var option in Options)
             {
                 <div class="single-select__option">
@@ -49,8 +55,10 @@
 </InputSingleSelectDesktopHolder>
 
 @code {
-    private string Test { get; set; } = string.Empty;
-
+    private bool IsOpen { get; set; } = false;
+    private Lazy<IJSObjectReference> _module = new();
+    private DotNetObjectReference<InputSingleSelectDesktop<T>>? _dotNetRef;
+    private ElementReference _singleSelectElementRef;
 
     [Parameter, EditorRequired] public string Id { get; set; } = default!;
     [Parameter, EditorRequired] public string LabelId { get; set; } = default!;
@@ -77,6 +85,48 @@
     private bool IsSelected(T option)
         => Value is not null && EqualityComparer<T>.Default.Equals(Value, option);
 
+    private void HandleTriggerClicked()
+    {
+        if (Disabled) {
+            IsOpen = false;
+            return;
+        }
+        IsOpen = !IsOpen;
+
+        if (IsOpen)
+        {
+            _ = AddMousClickListener();
+        }
+        else
+        {
+            _ = RemoveMousClickListener();
+        }
+    }
+
+    private async Task HandleTriggerKeyDown(KeyboardEventArgs e)
+    {
+        if (Disabled)
+        {
+            IsOpen = false;
+            return;
+        }
+
+        if (e.Key is "Enter" or " " or "ArrowDown")
+        {
+            if (!IsOpen)
+            {
+                IsOpen = true;
+                await AddMousClickListener();
+            }
+        }
+
+        if (e.Key is "Escape")
+        {
+            IsOpen = false;
+            await RemoveMousClickListener();
+        }
+    }
+
     private async Task HandleRadioChange(T option)
     {
         if (!IsSelected(option))
@@ -94,11 +144,49 @@
         if (EditContext is null) return string.Empty;
 
         if (EditContext.GetValidationMessages(FieldIdentifier).Any()) return " invalid";
-        
+
         if (!EditContext.IsModified(FieldIdentifier)) return string.Empty;
 
         if (CssClass.Contains("valid")) return " valid";
 
         return string.Empty;
+    }
+
+    private async Task AddMousClickListener()
+    {
+        await _module.Value.InvokeVoidAsync("addMouseClickListener", _singleSelectElementRef, _dotNetRef);
+    }
+
+    private async Task RemoveMousClickListener()
+    {
+        await _module.Value.InvokeVoidAsync("removeMouseClickListener");
+    }
+
+    [JSInvokable]
+    public async Task HandleOutsideClick()
+    {
+        if (!IsOpen) return;
+
+        IsOpen = false;
+		_ = RemoveMousClickListener();
+
+        StateHasChanged();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _module = new(await js.InvokeAsync<IJSObjectReference>("import", "./GeneralComponents/CustomInput/InputSingleSelect/InputSingleSelectDesktop.razor.js"));
+            _dotNetRef = DotNetObjectReference.Create(this);
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_module.IsValueCreated)
+        {
+            await _module.Value.DisposeAsync();
+        }
     }
 }
