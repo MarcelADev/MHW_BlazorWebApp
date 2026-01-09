@@ -1,0 +1,93 @@
+﻿@using MHWApp.Client.Services.Interfaces
+@using MHWApp.Library.Enums
+@using System.Diagnostics.CodeAnalysis
+@inherits InputBase<T>
+@typeparam T
+@inject IOperatingSystemService OperatingSystemService
+
+
+@if (_isLoading)
+{
+    <p>Loading Select</p>
+}
+else if (_operatingSystem is OperatingSystemType.Android or OperatingSystemType.IOS)
+{
+    <InputSingleSelectMobile T="T"
+                                Id="@Id"
+                                Value="Value"
+                                ValueChanged="ValueChanged"
+                                ValueExpression="ValueExpression" />
+}
+else
+{
+    <InputSingleSelectDesktop T="T"
+                                Id="@Id"
+                                LabelId="@LabelId"
+                                OptionId="@OptionId"
+                                Label="@Label"
+                                Placeholder="@Placeholder"
+                                Disabled="@Disabled"
+                                Options="@Options"
+                                OptionValueMapper="@OptionValueMapper"
+                                OptionNameMapper="@OptionNameMapper"
+                                Value="Value"
+                                ValueChanged="ValueChanged"
+                                ValueExpression="ValueExpression"
+                                EditContext="EditContext"
+                                FieldIdentifier="FieldIdentifier"
+                                CssClass="@CssClass" />
+}
+
+@code {
+    private bool _isLoading = true;
+    private OperatingSystemType _operatingSystem;
+    private string? _guid;
+
+    public string GUID => _guid ??= Convert.ToHexStringLower(Guid.NewGuid().ToByteArray());
+    public string Id => $"single-select__{GUID}";
+    public string LabelId => $"single-select__label__{GUID}";
+    public string OptionId => $"single-select__option__{GUID}";
+
+    [Parameter] public string Label { get; set; } = string.Empty;
+    [Parameter] public string Placeholder { get; set; } = "Choose an option";
+    [Parameter] public bool Disabled { get; set; }
+
+    [Parameter, EditorRequired]
+    public List<T> Options { get; set; } = new();
+
+    [Parameter, EditorRequired]
+    public Func<T, object> OptionValueMapper { get; set; } = default!;
+
+    [Parameter, EditorRequired]
+    public Func<T, string> OptionNameMapper { get; set; } = default!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _operatingSystem = await OperatingSystemService.GetOperatingSystemAsync();
+        _isLoading = false;
+    }
+
+    protected override bool TryParseValueFromString(
+        string? value,
+        [MaybeNullWhen(false)] out T result,
+        [NotNullWhen(false)] out string? validationErrorMessage)
+    {
+        validationErrorMessage = null;
+        result = default!;
+
+        if (value is null)
+            return true;
+
+        foreach (var option in Options)
+        {
+            if (OptionValueMapper(option)?.ToString() == value)
+            {
+                result = option;
+                return true;
+            }
+        }
+
+        validationErrorMessage = "Invalid selection.";
+        return false;
+    }
+}

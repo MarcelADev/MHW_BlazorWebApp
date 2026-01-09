@@ -1,0 +1,17 @@
+﻿<div class="single-select-holder">
+	@if(HasLabel) { <label id="@LabelId">@Label</label>}
+	@ChildContent
+</div>
+
+@code {
+	[Parameter]
+	public RenderFragment? ChildContent { get; set; }
+
+	[Parameter]
+	public required string Label { get; set; }
+
+	public bool HasLabel => !string.IsNullOrEmpty(Label);
+
+	[Parameter]
+	public required string LabelId { get; set; }
+}

@@ -1,0 +1,104 @@
+﻿@using System.Linq.Expressions
+@using MHWApp.Client.GeneralComponents.FormFieldHolder
+@typeparam T
+
+<InputSingleSelectDesktopHolder Label="@Label" LabelId="@LabelId">
+
+    <div aria-labelledby="@LabelId"
+         class="single-select@(ValidationClass)">
+
+        <div class="single-select__trigger@(Disabled ? " disabled" : "")"
+             tabindex="@TabIndex"
+             aria-disabled="@Disabled">
+
+            <div class="single-select__trigger-content">
+                @if (Value is not null)
+                {
+                    @OptionNameMapper(Value!)
+                }
+                else
+                {
+                    @Placeholder
+                }
+            </div>
+
+            <span class="material-symbols-outlined single-select__trigger-icon">keyboard_arrow_down</span>
+        </div>
+
+        <div class="single-select__dropdown">
+            @foreach (var option in Options)
+            {
+                <div class="single-select__option">
+                    <label class="single-select__option-label">
+                        <input type="radio"
+                               name="@Id"
+                               disabled="@Disabled"
+                               checked="@IsSelected(option)"
+                               @onchange="() => HandleRadioChange(option)"/>
+                        @OptionNameMapper(option)
+                    </label>
+
+                    @if (IsSelected(option))
+                    {
+                        <span class="material-symbols-outlined">check</span>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+</InputSingleSelectDesktopHolder>
+
+@code {
+    private string Test { get; set; } = string.Empty;
+
+
+    [Parameter, EditorRequired] public string Id { get; set; } = default!;
+    [Parameter, EditorRequired] public string LabelId { get; set; } = default!;
+    [Parameter, EditorRequired] public string OptionId { get; set; } = default!;
+    [Parameter] public string Label { get; set; } = string.Empty;
+    [Parameter] public string Placeholder { get; set; } = string.Empty;
+    [Parameter] public bool Disabled { get; set; }
+
+    [Parameter, EditorRequired] public List<T> Options { get; set; } = new();
+    [Parameter, EditorRequired] public Func<T, object> OptionValueMapper { get; set; } = default!;
+    [Parameter, EditorRequired] public Func<T, string> OptionNameMapper { get; set; } = default!;
+
+    // Forwarded InputBase state
+    [Parameter] public T? Value { get; set; }
+    [Parameter] public EventCallback<T?> ValueChanged { get; set; }
+    [Parameter] public Expression<Func<T?>>? ValueExpression { get; set; }
+    [Parameter] public EditContext? EditContext { get; set; }
+    [Parameter] public FieldIdentifier FieldIdentifier { get; set; }
+    [Parameter] public string CssClass { get; set; } = string.Empty;
+
+    private bool HasLabel => !string.IsNullOrWhiteSpace(Label);
+    private string TabIndex => Disabled ? "-1" : "0";
+
+    private bool IsSelected(T option)
+        => Value is not null && EqualityComparer<T>.Default.Equals(Value, option);
+
+    private async Task HandleRadioChange(T option)
+    {
+        if (!IsSelected(option))
+        {
+            await ValueChanged.InvokeAsync(option);
+            EditContext?.NotifyFieldChanged(FieldIdentifier);
+        }
+    }
+
+    private string ValidationClass => GetValidationCss();
+
+    private string GetValidationCss(){
+        string cssClasses = string.Empty;
+
+        if (EditContext is null) return string.Empty;
+
+        if (EditContext.GetValidationMessages(FieldIdentifier).Any()) return " invalid";
+        
+        if (!EditContext.IsModified(FieldIdentifier)) return string.Empty;
+
+        if (CssClass.Contains("valid")) return " valid";
+
+        return string.Empty;
+    }
+}

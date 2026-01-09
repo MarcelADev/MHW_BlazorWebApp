@@ -1,5 +1,6 @@
 ﻿@page "/admin/category/create"
 @using MHWApp.Client.GeneralComponents.Buttons
+@using MHWApp.Client.GeneralComponents.CustomInput.InputSingleSelect
 @using MHWApp.Client.HubConnections
 @using MHWApp.Client.GeneralComponents.CustomInput
 @using MHWApp.Client.GeneralComponents.Buttons.IconButtons
@@ -31,6 +32,17 @@
 
         <div class="form__field">
             <SingleSelectInput Label="Choose general Game Extension"
+                               Placeholder="Select"
+                               T="GameExtension"
+                               Options="gameExtensions"
+                               OptionNameMapper="(GameExtension ge) => ge.Name"
+                               OptionValueMapper="(GameExtension ge) => ge.Id"
+                               @bind-Value="FormModel.GeneralGameExtension" />
+            <ValidationMessage For="@(() => FormModel!.GeneralGameExtension)" />
+        </div>
+
+        <div class="form__field">
+            <InputSingleSelect Label="Choose general Game Extension"
                                Placeholder="Select"
                                T="GameExtension"
                                Options="gameExtensions"
