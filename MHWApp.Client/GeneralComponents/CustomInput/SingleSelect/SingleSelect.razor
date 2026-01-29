@@ -5,37 +5,36 @@
 @typeparam T
 @inject IOperatingSystemService OperatingSystemService
 
-
 @if (_isLoading)
 {
     <p>Loading Select</p>
 }
 else if (_operatingSystem is OperatingSystemType.Android or OperatingSystemType.IOS)
 {
-    <InputSingleSelectMobile T="T"
-                                Id="@Id"
-                                Value="Value"
-                                ValueChanged="ValueChanged"
-                                ValueExpression="ValueExpression" />
+    <SingleSelectMobile T="T"
+                        Id="@Id"
+                        Value="Value"
+                        ValueChanged="ValueChanged"
+                        ValueExpression="ValueExpression" />
 }
 else
 {
-    <InputSingleSelectDesktop T="T"
-                                Id="@Id"
-                                LabelId="@LabelId"
-                                OptionId="@OptionId"
-                                Label="@Label"
-                                Placeholder="@Placeholder"
-                                Disabled="@Disabled"
-                                Options="@Options"
-                                OptionValueMapper="@OptionValueMapper"
-                                OptionNameMapper="@OptionNameMapper"
-                                Value="Value"
-                                ValueChanged="ValueChanged"
-                                ValueExpression="ValueExpression"
-                                EditContext="EditContext"
-                                FieldIdentifier="FieldIdentifier"
-                                CssClass="@CssClass" />
+    <SingleSelectDesktop T="T"
+                         Id="@Id"
+                         LabelId="@LabelId"
+                         OptionId="@OptionId"
+                         Label="@Label"
+                         Placeholder="@Placeholder"
+                         Disabled="@Disabled"
+                         Options="@Options"
+                         OptionValueMapper="@OptionValueMapper"
+                         OptionNameMapper="@OptionNameMapper"
+                         Value="Value"
+                         ValueChanged="ValueChanged"
+                         ValueExpression="ValueExpression"
+                         EditContext="EditContext"
+                         FieldIdentifier="FieldIdentifier"
+                         CssClass="@CssClass" />
 }
 
 @code {

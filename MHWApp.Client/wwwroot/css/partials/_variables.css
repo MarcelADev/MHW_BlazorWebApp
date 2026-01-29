@@ -156,8 +156,10 @@
 
 :root { /* ## SELECT ## */
     --select-dropdown__background-color: hsl(0, 0%, 100%);
-    --select-option__padding: 0.25rem 0.5rem;
     --select-option__background-color-hover: hsl(0 0% 78%);
+    --select-option-icon__right: 0;
+    --select-dropdown__padding: 2px;
+    --select-option__padding: 0.25rem 0.25rem 0.25rem 0;
 }
 
 .dark-mode { /* ## SELECT ## */

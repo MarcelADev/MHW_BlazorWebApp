@@ -14,7 +14,7 @@
 
 .single-select__trigger {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
     border: 1px solid var(--input__border-color);
     border-radius: var(--general__border-radius);
     background-color: var(--input__background-color);
@@ -34,10 +34,11 @@
 }
 
 .single-select__trigger-icon {
+    position:absolute;
+    right: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 2;
     transition: transform 0.2s ease-out;
 }
 
@@ -47,6 +48,7 @@
     box-shadow: var(--box-shadow);
     background-color: var(--select-dropdown__background-color);
     position: absolute;
+    margin-top: 1px;
     right: 0;
     left: 0;
     width: 100%;
@@ -55,6 +57,7 @@
     transform-origin: top;
     transform: scaleY(0);
     z-index: 10;
+    padding: var(--select-dropdown__padding);
 }
 
 .single-select.open .single-select__dropdown {
@@ -90,7 +93,7 @@
     transform: scaleX(1)
 }
 
-.single-select__option {
+/*.single-select__option {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -103,11 +106,11 @@
 
         .single-select__option:hover * {
             cursor: pointer;
-        }
+        }*/
 
-    .single-select__option input {
+    /*.single-select__option input {
         width: initial;
-    }
+    }*/
 
 .single-select__option-label {
     display: flex;
@@ -116,15 +119,22 @@
     width: 100%;
     font-weight: var(--general__font-weight);
     font-size: var(--general__font-size);
-    margin: var(--select-option__padding);
+    padding: var(--select-option__padding);
+    border-radius: var(--general__border-radius);
 }
 
-.single-select__option-label input {
-    -webkit-appearance: none;
-    appearance: none;
-}
+    .single-select__option-label:hover {
+        background-color: var(--select-option__background-color-hover);
+    }
+
+    .single-select__option-label input {
+        -webkit-appearance: none;
+        appearance: none;
+    }
 
 .single-select__option-icon {
+    position: absolute;
+    right: var(--select-option-icon__right);
     color: var(--input__valid-color);
 }
 

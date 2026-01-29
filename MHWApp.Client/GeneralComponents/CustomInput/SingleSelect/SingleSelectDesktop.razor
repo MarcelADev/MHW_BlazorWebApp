@@ -1,0 +1,272 @@
+﻿@using System.Linq.Expressions
+@using MHWApp.Client.GeneralComponents.FormFieldHolder
+@typeparam T
+@inject IJSRuntime js
+@implements IAsyncDisposable
+
+<SingleSelectDesktopHolder Label="@Label" LabelId="@LabelId" For="ValueExpression">
+
+    <p>Index: @FocusedOptionIndex</p>
+
+    <div @ref="_singleSelectElementRef"
+         aria-labelledby="@LabelId"
+         class="single-select@(ValidationClass + (IsOpen ? " open" : string.Empty))">
+
+        <div class="single-select__trigger@(Disabled ? " disabled" : string.Empty)"
+             tabindex="@TabIndex"
+             aria-disabled="@Disabled"
+             @onclick="HandleTriggerClicked"
+             @onkeydown="HandleTriggerKeyDown">
+
+            <div class="single-select__trigger-content">
+                @if (Value is not null)
+                {
+                    @OptionNameMapper(Value!)
+                }
+                else
+                {
+                    @Placeholder
+                }
+            </div>
+
+            <span class="material-symbols-outlined single-select__trigger-icon">keyboard_arrow_down</span>
+        </div>
+
+        <div class="single-select__dropdown"
+             tabindex="-1">
+            @for (int i = 0; i < Options.Count; i++)
+            {
+                var option = Options[i];
+                string optionId = @OptionId + $"-{i}";
+
+                <label id="@optionId"
+                       class="single-select__option-label"
+                       tabindex="@OptionsTabIndex"
+                       @onkeydown="e => HandleOptionKeyDown(e, option, i)">
+                    <input type="radio"
+                           name="@Id"
+                           disabled="@Disabled"
+                           checked="@IsSelected(option)"
+                           tabindex="-1"
+                           @onchange="() => HandleRadioChange(option, i)"/>
+                    @OptionNameMapper(option)
+
+                    @if (IsSelected(option))
+                    {
+                        <span class="material-symbols-outlined single-select__option-icon">check</span>
+                    }
+                </label>
+            }
+        </div>
+    </div>
+</SingleSelectDesktopHolder>
+
+@code {
+    private bool IsOpen { get; set; } = false;
+    private Lazy<IJSObjectReference> _module = new();
+    private DotNetObjectReference<SingleSelectDesktop<T>>? _dotNetRef;
+    private ElementReference _singleSelectElementRef;
+
+    [Parameter, EditorRequired] public string Id { get; set; } = default!;
+    [Parameter, EditorRequired] public string LabelId { get; set; } = default!;
+    [Parameter, EditorRequired] public string OptionId { get; set; } = default!;
+    [Parameter] public string Label { get; set; } = string.Empty;
+    [Parameter] public string Placeholder { get; set; } = string.Empty;
+    [Parameter] public bool Disabled { get; set; }
+
+    [Parameter, EditorRequired] public List<T> Options { get; set; } = new();
+    [Parameter, EditorRequired] public Func<T, object> OptionValueMapper { get; set; } = default!;
+    [Parameter, EditorRequired] public Func<T, string> OptionNameMapper { get; set; } = default!;
+
+    // Forwarded InputBase state
+    [Parameter] public T? Value { get; set; }
+    [Parameter] public EventCallback<T?> ValueChanged { get; set; }
+    [Parameter] public Expression<Func<T?>>? ValueExpression { get; set; }
+    [Parameter] public EditContext? EditContext { get; set; }
+    [Parameter] public FieldIdentifier FieldIdentifier { get; set; }
+    [Parameter] public string CssClass { get; set; } = string.Empty;
+
+    private bool HasLabel => !string.IsNullOrWhiteSpace(Label);
+    private string TabIndex => Disabled ? "-1" : "0";
+    private string OptionsTabIndex => Disabled ? "-1" : IsOpen ? "0" : "-1";
+
+    private int _focusedOptionIndex = 0;
+    private int FocusedOptionIndex
+    {
+        get => _focusedOptionIndex;
+        set
+        {
+            if (value < 0)
+            {
+                _focusedOptionIndex = Options.Count - 1;
+            }
+            else if (value >= Options.Count)
+            {
+                _focusedOptionIndex = 0;
+            }
+            else
+            {
+                _focusedOptionIndex = value;
+            }
+        }
+    }
+
+    private bool IsSelected(T option)
+        => Value is not null && EqualityComparer<T>.Default.Equals(Value, option);
+
+    private async Task HandleRadioChange(T option, int index)
+    {
+        if (!IsSelected(option))
+        {
+            FocusedOptionIndex = index;
+            await ValueChanged.InvokeAsync(option);
+            EditContext?.NotifyFieldChanged(FieldIdentifier);
+        }
+    }
+
+    private string ValidationClass => GetValidationCss();
+
+    private string GetValidationCss(){
+        string cssClasses = string.Empty;
+
+        if (EditContext is null) return string.Empty;
+
+        if (EditContext.GetValidationMessages(FieldIdentifier).Any()) return " invalid";
+
+        if (!EditContext.IsModified(FieldIdentifier)) return string.Empty;
+
+        if (CssClass.Contains("valid")) return " valid";
+
+        return string.Empty;
+    }
+
+    private void HandleTriggerClicked()
+    {
+        if (Disabled)
+        {
+            IsOpen = false;
+            return;
+        }
+        IsOpen = !IsOpen;
+
+        if (IsOpen)
+        {
+            _ = OpenDropDown();
+        }
+        else
+        {
+            _ = CollapseDropDown();
+        }
+    }
+
+    private async Task HandleTriggerKeyDown(KeyboardEventArgs e)
+    {
+        if (Disabled)
+        {
+            IsOpen = false;
+            return;
+        }
+
+        if (e.Key is "Enter" or " " or "ArrowDown")
+        {
+            if (!IsOpen)
+            {
+                _ = OpenDropDown();
+                await ChangeFocusedElement();
+            }
+        }
+        else if (e.Key is "Escape" && IsOpen)
+        {
+            if (IsOpen) _ = CollapseDropDown();
+        }
+    }
+
+    private async Task HandleOptionKeyDown(KeyboardEventArgs e, T option, int index)
+    {
+        switch (e.Key)
+        {
+            case "Enter":
+            case " ":
+                await HandleRadioChange(option, index);
+                break;
+            case "Tab":
+                await HandleTabKeyPressed();
+                break;
+            case "ArrowUp":
+            case "ArrowLeft":
+                FocusedOptionIndex--;
+                await ChangeFocusedElement();
+                break;
+            case "ArrowDown":
+            case "ArrowRight":
+                FocusedOptionIndex++;
+                await ChangeFocusedElement();
+                break;
+        }
+    }
+
+    private async Task HandleTabKeyPressed()
+    {
+        FocusedOptionIndex++;
+        if (FocusedOptionIndex == 0)
+        {
+            _ = CollapseDropDown();
+        }
+    }
+
+    private async Task AddMousClickListener()
+    {
+        await _module.Value.InvokeVoidAsync("addMouseClickListener", _singleSelectElementRef, _dotNetRef);
+    }
+
+    private async Task RemoveMouseClickListener()
+    {
+        await _module.Value.InvokeVoidAsync("removeMouseClickListener");
+    }
+
+    private async Task ChangeFocusedElement()
+    {
+        await _module.Value.InvokeVoidAsync("changeFocusedElement", _singleSelectElementRef, FocusedOptionIndex, OptionId);
+    }
+
+    private async Task OpenDropDown()
+    {
+        IsOpen = true;
+        FocusedOptionIndex = 0;
+        await AddMousClickListener();
+    }
+
+    private async Task CollapseDropDown()
+    {
+        IsOpen = false;
+        FocusedOptionIndex = 0;
+        await RemoveMouseClickListener();
+    }
+
+    [JSInvokable]
+    public async Task HandleOutsideClick()
+    {
+        if (!IsOpen) return;
+
+        _ = CollapseDropDown();
+
+        StateHasChanged();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _module = new(await js.InvokeAsync<IJSObjectReference>("import", "./GeneralComponents/CustomInput/SingleSelect/SingleSelectDesktop.razor.js"));
+            _dotNetRef = DotNetObjectReference.Create(this);
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_module.IsValueCreated)
+        {
+            await _module.Value.DisposeAsync();
+        }
+    }
+}

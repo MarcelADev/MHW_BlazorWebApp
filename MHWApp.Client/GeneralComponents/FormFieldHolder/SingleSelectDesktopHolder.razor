@@ -1,6 +1,10 @@
-﻿<div class="single-select-holder">
+﻿@using System.Linq.Expressions
+@typeparam TValue
+
+<div class="single-select-holder">
 	@if(HasLabel) { <label id="@LabelId">@Label</label>}
 	@ChildContent
+	<ValidationMessage For="For" />
 </div>
 
 @code {
@@ -14,4 +18,7 @@
 
 	[Parameter]
 	public required string LabelId { get; set; }
+
+	[Parameter]
+	public Expression<Func<TValue>>? For { get; set; }
 }
