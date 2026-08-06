@@ -32,6 +32,9 @@
         [Parameter]
         public string Prefix { get; set; } = string.Empty;
 
+        [Parameter]
+        public bool Disabled { get; set; } = false;
+
         private bool IsPrefix => !string.IsNullOrEmpty(Prefix);
 
         private string GetCssClasses()

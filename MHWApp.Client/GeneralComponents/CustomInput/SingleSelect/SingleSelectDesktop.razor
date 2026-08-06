@@ -6,8 +6,6 @@
 
 <SingleSelectDesktopHolder Label="@Label" LabelId="@LabelId" For="ValueExpression">
 
-    <p>Index: @FocusedOptionIndex</p>
-
     <div @ref="_singleSelectElementRef"
          aria-labelledby="@LabelId"
          class="single-select@(ValidationClass + (IsOpen ? " open" : string.Empty))">
@@ -38,17 +36,18 @@
             {
                 var option = Options[i];
                 string optionId = @OptionId + $"-{i}";
+                int tempI = i;
 
                 <label id="@optionId"
                        class="single-select__option-label"
                        tabindex="@OptionsTabIndex"
-                       @onkeydown="e => HandleOptionKeyDown(e, option, i)">
+                       @onkeydown="e => HandleOptionKeyDown(e, option, tempI)">
                     <input type="radio"
                            name="@Id"
                            disabled="@Disabled"
                            checked="@IsSelected(option)"
                            tabindex="-1"
-                           @onchange="() => HandleRadioChange(option, i)"/>
+                           @onchange="() => HandleRadioChange(option, tempI)" />
                     @OptionNameMapper(option)
 
                     @if (IsSelected(option))
@@ -108,6 +107,7 @@
             {
                 _focusedOptionIndex = value;
             }
+            StateHasChanged();
         }
     }
 

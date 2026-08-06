@@ -12,6 +12,7 @@
                placeholder="@Placeholder"
                id="@Id"
                value="@CurrentValueAsString"
+               disabled="@Disabled"
                @oninput="@(EventCallback.Factory.CreateBinder<string>(
                    this,
                    __value => CurrentValueAsString = __value,

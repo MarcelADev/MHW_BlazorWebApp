@@ -10,6 +10,8 @@ namespace MHWApp.Client.Pages.Admin.CategoryAdmin.Create
         [Required(ErrorMessage = "CurrentName must not be empty")]
         public string Name { get; set; } = string.Empty;
 
+        public bool DisableInputs => string.IsNullOrEmpty(Name);
+
         public bool AddArmorSet { get; set; } = false;
         public bool AddInventoryEntries { get; set; } = false;
         public bool RequiresGameExtension => AddArmorSet || AddInventoryEntries;
