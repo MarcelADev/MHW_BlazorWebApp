@@ -10,13 +10,16 @@ namespace MHWApp.Client.Pages.Admin.CategoryAdmin.Create
         [Required(ErrorMessage = "CurrentName must not be empty")]
         public string Name { get; set; } = string.Empty;
 
-        public bool DisableInputs => string.IsNullOrEmpty(Name);
+        public bool DisableToggleCheckboxes => string.IsNullOrEmpty(Name);
+        public bool DisableArmorInputs => string.IsNullOrEmpty(Name) || !ArmorToggle;
+        public bool DisableArmorPrefixText => string.IsNullOrEmpty(Name) || !ArmorToggle || !ArmorPrefixToggle;
+        public bool DisableEntryInputs => string.IsNullOrEmpty(Name) || !EntryToggle;
 
-        public bool AddArmorToggle { get; set; } = false;
+        public bool ArmorToggle { get; set; } = false;
         public bool ArmorPrefixToggle { get; set; } = false;
-        public bool AddEntriesToggle { get; set; } = false;
+        public bool EntryToggle { get; set; } = false;
 
-        public bool RequiresGameExtension => AddArmorToggle || AddEntriesToggle;
+        public bool RequiresGameExtension => ArmorToggle || EntryToggle;
         public string CustomArmorPrefix { get; set; } = string.Empty;
         public string ArmorPrefix => ArmorPrefixToggle ? CustomArmorPrefix : Name;
 
@@ -40,11 +43,11 @@ namespace MHWApp.Client.Pages.Admin.CategoryAdmin.Create
             if (UnexpectedResponseFlag)
                 yield return new ValidationResult("Unexpected server response. Please reload page!", [nameof(Name)]);
 
-            if ((AddArmorToggle || AddEntriesToggle) && 
+            if ((ArmorToggle || EntryToggle) && 
                 GeneralGameExtension is null)
                 yield return new ValidationResult("Game extension is needed for armor set and/or inventory entries", [nameof(GeneralGameExtension)]);
 
-            if (AddArmorToggle)
+            if (ArmorToggle)
             {
                 if (ArmorPrefixToggle &&
                     CustomArmorPrefix == string.Empty)

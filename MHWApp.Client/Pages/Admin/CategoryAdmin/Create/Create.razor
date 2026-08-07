@@ -27,21 +27,21 @@
                       Options="gameExtensions"
                       OptionNameMapper="(GameExtension ge) => ge.Name"
                       OptionValueMapper="(GameExtension ge) => ge.Id"
-                      Disabled="FormModel.DisableInputs"
+                      Disabled="FormModel.DisableArmorInputs"
                       @bind-Value="FormModel.GeneralGameExtension" />
         <ValidationMessage For="@(() => FormModel!.GeneralGameExtension)" />
 
         <CheckboxWithToggleContainer Label="Add Armor Set (New Version)"
-                                     Disabled="FormModel.DisableInputs"
+                                     Disabled="FormModel.DisableToggleCheckboxes"
                                      OnToggleChanged="HandleAddArmorToggle">
 
             <CheckboxWithToggleContainer Label="Use custom Prefix"
-                                         Disabled="FormModel.DisableInputs"
+                                         Disabled="FormModel.DisableArmorInputs"
                                          OnToggleChanged="HandleArmorPrefixToggle">
 
                 <CustomInputText id="change-armorset-prefix-textbox"
 								 NoMargin="true"
-                                 Disabled="FormModel.DisableInputs"
+                                 Disabled="FormModel.DisableArmorPrefixText"
                                  @bind-Value="FormModel!.CustomArmorPrefix" />
 
             </CheckboxWithToggleContainer>
@@ -49,26 +49,26 @@
             <CustomInputText id="create-category-head"
                              Label="Head"
                              Prefix="@(FormModel.ArmorPrefixToggle ? FormModel!.CustomArmorPrefix : FormModel!.Name)" 
-                             Disabled="FormModel.DisableInputs"
+                             Disabled="FormModel.DisableArmorInputs"
                              @bind-Value="FormModel!.HelmetSuffix" />
 
             <CustomInputText id="create-category-chest"
                              Label="Chest"
                              Prefix="@(FormModel.ArmorPrefixToggle? FormModel!.CustomArmorPrefix : FormModel!.Name)"
-                             Disabled="FormModel.DisableInputs"
+                             Disabled="FormModel.DisableArmorInputs"
                              @bind-Value="FormModel!.MailSuffix" />
 
             <CustomInputText id="create-category-legs"
                              Label="Legs"
                              Prefix="@(FormModel.ArmorPrefixToggle? FormModel!.CustomArmorPrefix : FormModel!.Name)"
                              NoMargin="true"
-                             Disabled="FormModel.DisableInputs"
+                             Disabled="FormModel.DisableArmorInputs"
                              @bind-Value="FormModel!.GreavesSuffix" />
 
         </CheckboxWithToggleContainer>
 
         <CheckboxWithToggleContainer Label="Add Inventory Entries"
-                                     Disabled="FormModel.DisableInputs"
+                                     Disabled="FormModel.DisableToggleCheckboxes"
                                      OnToggleChanged="HandleAddEntriesToggle">
 
             <MultiSelect Label="Choose multiple Game Extension"
@@ -77,7 +77,7 @@
                          Options="gameExtensions"
                          OptionNameMapper="(GameExtension ge) => ge.Name"
                          OptionValueMapper="(GameExtension ge) => ge.Id"
-                         Disabled="FormModel.DisableInputs"
+                         Disabled="FormModel.DisableEntryInputs"
                          @bind-Value="FormModel.GameExtensions" />
             <ValidationMessage For="@(() => FormModel!.GameExtensions)" />
                 
@@ -175,7 +175,7 @@
 
     private void HandleAddArmorToggle(bool toggleState)
     {
-        FormModel!.AddArmorToggle = toggleState;
+        FormModel!.ArmorToggle = toggleState;
     }
 
     private void HandleArmorPrefixToggle(bool toggleState)
@@ -185,7 +185,7 @@
 
     private void HandleAddEntriesToggle(bool toggleState)
     {
-        FormModel!.AddEntriesToggle = toggleState;
+        FormModel!.EntryToggle = toggleState;
     }
 
     private async Task Submit()
