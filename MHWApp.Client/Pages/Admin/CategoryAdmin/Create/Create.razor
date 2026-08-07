@@ -1,18 +1,11 @@
 ﻿@page "/admin/category/create"
 @using MHWApp.Client.GeneralComponents.Buttons
-@using MHWApp.Client.GeneralComponents.CustomInput.SingleSelect
+@using MHWApp.Client.GeneralComponents.CustomInput.Select.MultiSelect
+@using MHWApp.Client.GeneralComponents.CustomInput.Select.SingleSelect
 @using MHWApp.Client.HubConnections
 @using MHWApp.Client.GeneralComponents.CustomInput
-@using MHWApp.Client.GeneralComponents.Buttons.IconButtons
-@using MHWApp.Client.GeneralComponents.Select.Component
-@using MHWApp.Client.GeneralComponents.Select.Input
 @using MHWApp.Client.Provider
-@using MHWApp.Library
-@using MHWApp.Library.DTO.Create
-@using MHWApp.Library.DTO.Create.Category_Armor_InventoryEntry
-@using MHWApp.Library.Exceptions
 @using MHWApp.Library.Model
-@using static MHWApp.Library.StaticVariables
 @inject IJSRuntime jsRuntime
 @inject GameExtensionProvider gameExtensionProvider
 @inject CategoryProvider categoryProvider
@@ -24,7 +17,7 @@
 
 @if(!isLoading)
 {
-    <EditForm EditContext="editContext" FormName="create" OnValidSubmit="Submit" OnInvalidSubmit="InvalidSubmit">
+    <EditForm EditContext="editContext" FormName="create" OnValidSubmit="Submit">
 
         <CustomInputText id="create-category-name" Label="Name" @bind-Value="FormModel!.Name" />
 
@@ -39,120 +32,63 @@
         <ValidationMessage For="@(() => FormModel!.GeneralGameExtension)" />
 
         <CheckboxWithToggleContainer Label="Add Armor Set (New Version)"
-                                     Disabled="FormModel.DisableInputs">
+                                     Disabled="FormModel.DisableInputs"
+                                     OnToggleChanged="HandleAddArmorToggle">
 
-            <CheckboxWithToggleContainer Label="Use alternative Prefix"
+            <CheckboxWithToggleContainer Label="Use custom Prefix"
                                          Disabled="FormModel.DisableInputs"
-                                         OnToggleChanged="HandleUseAlternativePrefixToggle">
+                                         OnToggleChanged="HandleArmorPrefixToggle">
 
                 <CustomInputText id="change-armorset-prefix-textbox"
 								 NoMargin="true"
                                  Disabled="FormModel.DisableInputs"
-                                 @bind-Value="FormModel!.AlternativeArmorPrefix" />
+                                 @bind-Value="FormModel!.CustomArmorPrefix" />
 
             </CheckboxWithToggleContainer>
 
             <CustomInputText id="create-category-head"
                              Label="Head"
-                             Prefix="@(useAlternativePrefix? FormModel!.AlternativeArmorPrefix : FormModel!.Name)" 
+                             Prefix="@(FormModel.ArmorPrefixToggle ? FormModel!.CustomArmorPrefix : FormModel!.Name)" 
                              Disabled="FormModel.DisableInputs"
                              @bind-Value="FormModel!.HelmetSuffix" />
 
             <CustomInputText id="create-category-chest"
                              Label="Chest"
-                             Prefix="@(useAlternativePrefix? FormModel!.AlternativeArmorPrefix : FormModel!.Name)"
+                             Prefix="@(FormModel.ArmorPrefixToggle? FormModel!.CustomArmorPrefix : FormModel!.Name)"
                              Disabled="FormModel.DisableInputs"
                              @bind-Value="FormModel!.MailSuffix" />
 
             <CustomInputText id="create-category-legs"
                              Label="Legs"
-                             Prefix="@(useAlternativePrefix? FormModel!.AlternativeArmorPrefix : FormModel!.Name)"
+                             Prefix="@(FormModel.ArmorPrefixToggle? FormModel!.CustomArmorPrefix : FormModel!.Name)"
                              NoMargin="true"
                              Disabled="FormModel.DisableInputs"
                              @bind-Value="FormModel!.GreavesSuffix" />
 
         </CheckboxWithToggleContainer>
 
-        @if (showArmorSet)
-        {
-            <div id="animatedBox" class="box @(!FormModel.AddArmorSet ? "exit" : "")">
+        <CheckboxWithToggleContainer Label="Add Inventory Entries"
+                                     Disabled="FormModel.DisableInputs"
+                                     OnToggleChanged="HandleAddEntriesToggle">
 
-                @if (!FormModel.Name.Equals(string.Empty))
-                {
-                    <div class="form__field">
-                        <CustomInputCheckbox id="change-armorset-prefix-checkbox"
-                                        Hierarchy="2"
-                                        Value="FormModel.UseAlternativeArmorPrefix"
-                                        ValueChanged="ToggleArmorPrefix"
-                                        ValueExpression="() => FormModel.UseAlternativeArmorPrefix" />
-                        <label for="change-armorset-prefix-checkbox">Use alternative Prefix</label>
-                    </div>
+            <MultiSelect Label="Choose multiple Game Extension"
+                         Placeholder="Select"
+                         T="GameExtension"
+                         Options="gameExtensions"
+                         OptionNameMapper="(GameExtension ge) => ge.Name"
+                         OptionValueMapper="(GameExtension ge) => ge.Id"
+                         Disabled="FormModel.DisableInputs"
+                         @bind-Value="FormModel.GameExtensions" />
+            <ValidationMessage For="@(() => FormModel!.GameExtensions)" />
+                
 
-                    @if (showAlternativeArmorPrefix)
-                    {
-                        <div id="animatedBox3" class="box purple @(isExitingAlternativePrefix ? "exit" : "")">
-                            <div class="form__field">
-                                <label for="change-armorset-prefix-textbox">Name</label>
-                                <CustomInputText id="change-armorset-prefix-textbox"
-                                                    @bind-Value="FormModel!.AlternativeArmorPrefix" />
-                                <ValidationMessage For="@(() => FormModel!.AlternativeArmorPrefix)" />
-                            </div>
-                        </div>
-                    }
+                @* <InventoryEntryList @ref="inventoryEntryList"
+                                    GetName="() => FormModel.Name"
+                                    SetName="value => FormModel.Name = value"
+                                    GetGeneralGameExtension="() => FormModel.GeneralGameExtension"
+                                    SetGeneralGameExtension="value => FormModel.GeneralGameExtension = value" /> *@
 
-                    <div class="form__field">
-                        <label for="create-category-mail">Mail</label>
-
-                        <div class="input-grid">
-                            <span class="prefix-text">@FormModel!.ArmorPrefix</span>
-                            <CustomInputText id="create-category-mail" @bind-Value="FormModel!.MailSuffix" />
-                            <ValidationMessage For="@(() => FormModel!.MailSuffix)" class="validation-message" />
-                        </div>
-                    </div>
-
-                    <div class="form__field">
-                        <label for="create-category-greaves">Greaves</label>
-
-                        <div class="input-grid">
-                            <span class="prefix-text">@FormModel!.ArmorPrefix</span>
-                            <CustomInputText id="create-category-greaves" @bind-Value="FormModel!.GreavesSuffix" />
-                            <ValidationMessage For="@(() => FormModel!.GreavesSuffix)" class="validation-message" />
-                        </div>
-                    </div>
-                }
-                else
-                {
-                    <p>Category Name needed</p>
-                }
-
-            </div>
-        }
-
-        <div class="form__field">
-            <InputCheckbox id="create-inventoryentries-checkbox"
-                            Value="FormModel.AddInventoryEntries"
-                            ValueChanged="ToggleInventoryEntries"
-                            ValueExpression="() => FormModel.AddInventoryEntries" />
-            <label for="create-inventoryentries-checkbox">Add Inventory Entries</label>
-        </div>
-
-        @if(showInventoryEntries)
-        {
-            <div id="animatedBox2" class="box @(!FormModel.AddInventoryEntries ? "exit" : "")">
-                @if (!FormModel.Name.Equals(string.Empty))
-                {
-                    <InventoryEntryList @ref="inventoryEntryList"
-                                        GetName="() => FormModel.Name"
-                                        SetName="value => FormModel.Name = value"
-                                        GetGeneralGameExtension="() => FormModel.GeneralGameExtension"
-                                        SetGeneralGameExtension="value => FormModel.GeneralGameExtension = value" />
-                }
-                else
-                {
-                    <p>Category Name needed</p>
-                }
-            </div>
-        }
+        </CheckboxWithToggleContainer>
 
         <Button Content="Create" IsSubmit="true" />
 
@@ -162,13 +98,6 @@
 
 @code {
     private bool isLoading = true;
-
-    #region Create Category
-    private bool showArmorSet = false;
-    private bool showInventoryEntries = false;
-
-    private bool showAlternativeArmorPrefix = false;
-    private bool isExitingAlternativePrefix = false;
 
     private bool validateOnlyModified = true;
 
@@ -184,18 +113,6 @@
     private InventoryEntryList? inventoryEntryList;
 
     private ValidationMessageStore? _messageStore;
-    #endregion
-
-    #region Testing
-
-    private bool useAlternativePrefix = false;
-
-    private void HandleUseAlternativePrefixToggle(bool toggleState)
-    {
-        useAlternativePrefix = toggleState;
-    }
-
-    #endregion
 
     protected override async Task OnInitializedAsync()
     {
@@ -235,7 +152,7 @@
             Utils.ManualModelValidator.ValidateModel(editContext, FormModel, _messageStore!, onlyModified: validateOnlyModified);
         }
         // Trigger validation when alternative prefix textbox got a change
-        else if (e.FieldIdentifier.FieldName is nameof(FormModel.AlternativeArmorPrefix))
+        else if (e.FieldIdentifier.FieldName is nameof(FormModel.CustomArmorPrefix))
         {
             Utils.ManualModelValidator.ValidateModel(editContext, FormModel, _messageStore!, onlyModified: validateOnlyModified);
         }
@@ -256,180 +173,109 @@
         }
     }
 
-    private async Task StartExitAnimation(string elementId, string sectionName)
+    private void HandleAddArmorToggle(bool toggleState)
     {
-        await jsRuntime.InvokeVoidAsync("startExitAnimation", elementId, _dotNetRef, sectionName);
+        FormModel!.AddArmorToggle = toggleState;
     }
 
-    private async Task ToggleArmorSet(bool value)
+    private void HandleArmorPrefixToggle(bool toggleState)
     {
-        if (!value && showArmorSet)
-        {
-            await StartExitAnimation("animatedBox", "ArmorSet");
-        }
-        else if (value)
-        {
-            showArmorSet = true;
-        }
-        FormModel!.AddArmorSet = value;
-
-        // Run validation after updating model
-        Utils.ManualModelValidator.ValidateModel(editContext!, FormModel!, _messageStore!, onlyModified: validateOnlyModified);
+        FormModel!.ArmorPrefixToggle = toggleState;
     }
 
-    private async Task ToggleInventoryEntries(bool value)
+    private void HandleAddEntriesToggle(bool toggleState)
     {
-        if (!value && showInventoryEntries)
-        {
-            await StartExitAnimation("animatedBox2", "InventoryEntries");
-        }
-        else if (value)
-        {
-            showInventoryEntries = true;
-        }
-        FormModel!.AddInventoryEntries = value;
-
-        // Run validation after updating model
-        Utils.ManualModelValidator.ValidateModel(editContext!, FormModel!, _messageStore!, onlyModified: validateOnlyModified);
-    }
-
-    private async Task ToggleArmorPrefix(bool value)
-    {
-        if (!value && showAlternativeArmorPrefix)
-        {
-            isExitingAlternativePrefix = true;
-            await StartExitAnimation("animatedBox3", "AlternativeArmorPrefix");
-
-            FormModel!.AlternativeArmorPrefix = string.Empty;
-        }
-        else if (value)
-        {
-            isExitingAlternativePrefix = false;
-            showAlternativeArmorPrefix = true;
-
-            FormModel!.AlternativeArmorPrefix = FormModel.Name;
-        }
-
-        FormModel!.UseAlternativeArmorPrefix = value;
-    }
-
-    [JSInvokable]
-    public void OnAnimationComplete(string section)
-    {
-        if (section == "ArmorSet")
-        {
-            showArmorSet = false;
-        }
-        else if (section == "InventoryEntries")
-        {
-            showInventoryEntries = false;
-        }
-        else if (section == "AlternativeArmorPrefix")
-        {
-            isExitingAlternativePrefix = false;
-            showAlternativeArmorPrefix = false;
-        }
-
-        StateHasChanged();
+        FormModel!.AddEntriesToggle = toggleState;
     }
 
     private async Task Submit()
     {
-        // Run validation after updating model
-        Utils.ManualModelValidator.ValidateModel(editContext!, FormModel!, _messageStore!, onlyModified: false);
+        // // Run validation after updating model
+        // Utils.ManualModelValidator.ValidateModel(editContext!, FormModel!, _messageStore!, onlyModified: false);
 
-        bool hasValidationErrors = editContext!.GetValidationMessages().Any();
+        // bool hasValidationErrors = editContext!.GetValidationMessages().Any();
 
-        if (hasValidationErrors)
-        {
-            validateOnlyModified = false;
+        // if (hasValidationErrors)
+        // {
+        //     validateOnlyModified = false;
 
-            Console.WriteLine("Not a valid Submit bruh");
-            return;
-        }
-        else
-        {
-            validateOnlyModified = true;
-        }
+        //     Console.WriteLine("Not a valid Submit bruh");
+        //     return;
+        // }
+        // else
+        // {
+        //     validateOnlyModified = true;
+        // }
 
-        CreateCategoryArmorInventoryEntryDTO dto = new()
-            {
-                Name = FormModel!.Name,
-            };
+        // CreateCategoryArmorInventoryEntryDTO dto = new()
+        //     {
+        //         Name = FormModel!.Name,
+        //     };
 
-        if (showArmorSet)
-        {
-            dto.GeneralGameExtensionId = FormModel.GeneralGameExtension!.Id;
+        // if (showArmorSet)
+        // {
+        //     dto.GeneralGameExtensionId = FormModel.GeneralGameExtension!.Id;
 
-            string armorPrefix = (FormModel!.UseAlternativeArmorPrefix ? FormModel.AlternativeArmorPrefix : FormModel.ArmorPrefix) + " ";
+        //     string armorPrefix = (FormModel!.ArmorPrefixToggle ? FormModel.CustomArmorPrefix : FormModel.ArmorPrefix) + " ";
 
-            dto.ArmorSet = [];
+        //     dto.ArmorSet = [];
 
-            dto.ArmorSet.Add(new ArmorModel
-                {
-                    Name = armorPrefix + FormModel!.HelmetSuffix,
-                    ArmorType = ArmorType.Head
-                });
+        //     dto.ArmorSet.Add(new ArmorModel
+        //         {
+        //             Name = armorPrefix + FormModel!.HelmetSuffix,
+        //             ArmorType = ArmorType.Head
+        //         });
 
-            dto.ArmorSet.Add(new ArmorModel
-                {
-                    Name = armorPrefix + FormModel!.MailSuffix,
-                    ArmorType = ArmorType.Chest
-                });
+        //     dto.ArmorSet.Add(new ArmorModel
+        //         {
+        //             Name = armorPrefix + FormModel!.MailSuffix,
+        //             ArmorType = ArmorType.Chest
+        //         });
 
-            dto.ArmorSet.Add(new ArmorModel
-                {
-                    Name = armorPrefix + FormModel!.GreavesSuffix,
-                    ArmorType = ArmorType.Legs
-                });
-        }
+        //     dto.ArmorSet.Add(new ArmorModel
+        //         {
+        //             Name = armorPrefix + FormModel!.GreavesSuffix,
+        //             ArmorType = ArmorType.Legs
+        //         });
+        // }
 
-        if (showInventoryEntries)
-        {
-            dto.InventoryEntries = [];
+        // if (showInventoryEntries)
+        // {
+        //     dto.InventoryEntries = [];
 
-            foreach (InventoryEntryCardModel model in inventoryEntryList!.FormModel!.SelectedCommonInventoryEntries)
-            {
-                dto.InventoryEntries.Add(new InventoryEntryModel
-                    {
-                        Name = model.ExtendedName == string.Empty ? model.Name : model.ExtendedName,
-                        GameExtension = model.GameExtension!
-                    });
-            }
+        //     foreach (InventoryEntryCardModel model in inventoryEntryList!.FormModel!.SelectedCommonInventoryEntries)
+        //     {
+        //         dto.InventoryEntries.Add(new InventoryEntryModel
+        //             {
+        //                 Name = model.ExtendedName == string.Empty ? model.Name : model.ExtendedName,
+        //                 GameExtension = model.GameExtension!
+        //             });
+        //     }
 
-            foreach (InventoryEntryCardModel model in inventoryEntryList!.FormModel!.UncommonInventoryentries)
-            {
-                dto.InventoryEntries.Add(new InventoryEntryModel
-                    {
-                        Name = model.ExtendedName == string.Empty ? model.Name : model.ExtendedName,
-                        GameExtension = model.GameExtension!
-                    });
-            }
-        }
+        //     foreach (InventoryEntryCardModel model in inventoryEntryList!.FormModel!.UncommonInventoryentries)
+        //     {
+        //         dto.InventoryEntries.Add(new InventoryEntryModel
+        //             {
+        //                 Name = model.ExtendedName == string.Empty ? model.Name : model.ExtendedName,
+        //                 GameExtension = model.GameExtension!
+        //             });
+        //     }
+        // }
 
-        try
-        {
-            await multiProvider.CreateCategoryArmorInventoryEntryAsync(dto);
-        }
-        catch (EntityAlreadyExistsException)
-        {
-            FormModel.EntityAlreadyExistsFlag = true;
-            Utils.ManualModelValidator.ValidateModel(editContext!, FormModel!, _messageStore!, onlyModified: false);
-        }
-        catch (UnexpectedResponseException)
-        {
-            FormModel.UnexpectedResponseFlag = true;
-            Utils.ManualModelValidator.ValidateModel(editContext!, FormModel!, _messageStore!, onlyModified: false);
-        }
-    }
-
-    private void InvalidSubmit()
-    {
-        Console.WriteLine("%%%%%%%%%%%%%%%%%%%%");
-        Console.WriteLine();
-        Console.WriteLine("Invalid Submit");
-        Console.WriteLine();
-        Console.WriteLine("%%%%%%%%%%%%%%%%%%%%");
+        // try
+        // {
+        //     await multiProvider.CreateCategoryArmorInventoryEntryAsync(dto);
+        // }
+        // catch (EntityAlreadyExistsException)
+        // {
+        //     FormModel.EntityAlreadyExistsFlag = true;
+        //     Utils.ManualModelValidator.ValidateModel(editContext!, FormModel!, _messageStore!, onlyModified: false);
+        // }
+        // catch (UnexpectedResponseException)
+        // {
+        //     FormModel.UnexpectedResponseFlag = true;
+        //     Utils.ManualModelValidator.ValidateModel(editContext!, FormModel!, _messageStore!, onlyModified: false);
+        // }
     }
 
     public void Dispose()

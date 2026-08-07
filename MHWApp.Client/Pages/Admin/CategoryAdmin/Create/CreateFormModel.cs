@@ -12,20 +12,20 @@ namespace MHWApp.Client.Pages.Admin.CategoryAdmin.Create
 
         public bool DisableInputs => string.IsNullOrEmpty(Name);
 
-        public bool AddArmorSet { get; set; } = false;
-        public bool AddInventoryEntries { get; set; } = false;
-        public bool RequiresGameExtension => AddArmorSet || AddInventoryEntries;
+        public bool AddArmorToggle { get; set; } = false;
+        public bool ArmorPrefixToggle { get; set; } = false;
+        public bool AddEntriesToggle { get; set; } = false;
 
-        public bool UseAlternativeArmorPrefix { get; set; } = false;
-        public string AlternativeArmorPrefix { get; set; } = string.Empty;
-        public string ArmorPrefix => UseAlternativeArmorPrefix ? AlternativeArmorPrefix : Name;
-
+        public bool RequiresGameExtension => AddArmorToggle || AddEntriesToggle;
+        public string CustomArmorPrefix { get; set; } = string.Empty;
+        public string ArmorPrefix => ArmorPrefixToggle ? CustomArmorPrefix : Name;
 
         public string HelmetSuffix { get; set; } = "Helmet";
         public string MailSuffix { get; set; } = "Mail";
         public string GreavesSuffix { get; set; } = "Greaves";
 
         public GameExtension? GeneralGameExtension { get; set; }
+        public List<GameExtension> GameExtensions { get; set; } = new List<GameExtension>();    // just for testing
 
         public bool ShowValidationMessages { get; set; } = true;
         
@@ -40,15 +40,15 @@ namespace MHWApp.Client.Pages.Admin.CategoryAdmin.Create
             if (UnexpectedResponseFlag)
                 yield return new ValidationResult("Unexpected server response. Please reload page!", [nameof(Name)]);
 
-            if ((AddArmorSet || AddInventoryEntries) && 
+            if ((AddArmorToggle || AddEntriesToggle) && 
                 GeneralGameExtension is null)
                 yield return new ValidationResult("Game extension is needed for armor set and/or inventory entries", [nameof(GeneralGameExtension)]);
 
-            if (AddArmorSet)
+            if (AddArmorToggle)
             {
-                if (UseAlternativeArmorPrefix &&
-                    AlternativeArmorPrefix == string.Empty)
-                    yield return new ValidationResult("Alternative armor prefix can't be empty", [nameof(AlternativeArmorPrefix)]);
+                if (ArmorPrefixToggle &&
+                    CustomArmorPrefix == string.Empty)
+                    yield return new ValidationResult("Alternative armor prefix can't be empty", [nameof(CustomArmorPrefix)]);
 
                 if (HelmetSuffix == string.Empty)
                     yield return new ValidationResult("Helmet name can't be empty (prefix doesn't count)", [nameof(HelmetSuffix)]);

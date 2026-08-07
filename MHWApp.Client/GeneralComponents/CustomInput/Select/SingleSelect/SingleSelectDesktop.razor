@@ -4,7 +4,7 @@
 @inject IJSRuntime js
 @implements IAsyncDisposable
 
-<SingleSelectDesktopHolder Label="@Label" LabelId="@LabelId" For="ValueExpression">
+<SelectHolder Label="@Label" LabelId="@LabelId" For="ValueExpression">
 
     <div @ref="_singleSelectElementRef"
          aria-labelledby="@LabelId"
@@ -58,7 +58,7 @@
             }
         </div>
     </div>
-</SingleSelectDesktopHolder>
+</SelectHolder>
 
 @code {
     private bool IsOpen { get; set; } = false;
@@ -257,7 +257,7 @@
     {
         if (firstRender)
         {
-            _module = new(await js.InvokeAsync<IJSObjectReference>("import", "./GeneralComponents/CustomInput/SingleSelect/SingleSelectDesktop.razor.js"));
+            _module = new(await js.InvokeAsync<IJSObjectReference>("import", "./GeneralComponents/CustomInput/Select/SingleSelect/SingleSelectDesktop.razor.js"));
             _dotNetRef = DotNetObjectReference.Create(this);
         }
     }
