@@ -323,6 +323,8 @@ app.MapGet("/images/{fileName}", async (AppDbContext dbContext, IWebHostEnvironm
     return Results.Ok(base64String);
 }).RequireAuthorization();
 
+//TODO fix or confirm endpoint security
+
 #endregion
 
 #region Endpoint: Session

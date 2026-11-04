@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Options;
 using MHWApp.Client.Utils;
 using System.ComponentModel.DataAnnotations;
+using MHWApp.Library.Enums;
 
 namespace MHWApp.Client.Pages.Admin.CategoryAdmin.Create
 {
@@ -28,7 +29,16 @@ namespace MHWApp.Client.Pages.Admin.CategoryAdmin.Create
         public string GreavesSuffix { get; set; } = "Greaves";
 
         public GameExtension? GeneralGameExtension { get; set; }
-        public List<GameExtension> GameExtensions { get; set; } = new List<GameExtension>();    // just for testing
+        public List<InventoryEntry> CommonEntryNames = new List<InventoryEntry>
+        {
+            new InventoryEntry { Id = -1, Name = MaterialType.Tail.ToString(), GameExtensionId = -1, Order = -1 },
+            new InventoryEntry { Id = -1, Name = MaterialType.Fang.ToString(), GameExtensionId = -1, Order = -1 },
+            new InventoryEntry { Id = -1, Name = MaterialType.Claw.ToString(), GameExtensionId = -1, Order = -1 },
+            new InventoryEntry { Id = -1, Name = MaterialType.Pelt.ToString(), GameExtensionId = -1, Order = -1 },
+            new InventoryEntry { Id = -1, Name = MaterialType.Nosebone.ToString(), GameExtensionId = -1, Order = -1 },
+            new InventoryEntry { Id = -1, Name = MaterialType.Plate.ToString(), GameExtensionId = -1, Order = -1 }
+        };
+        public List<InventoryEntry> SelectedEntryNames = [];
 
         public bool ShowValidationMessages { get; set; } = true;
         

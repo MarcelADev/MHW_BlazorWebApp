@@ -1,0 +1,13 @@
+﻿@using MHWApp.Library.Model
+<div class="entry-card">
+
+    <img src="@($"Images/MaterialIcons/Fang/Black.svg")" alt="Bone White" />
+
+    @Entry.Name
+
+</div>
+
+@code {
+    [Parameter]
+    public required InventoryEntry Entry { get; set; }
+}

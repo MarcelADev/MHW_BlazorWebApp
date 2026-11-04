@@ -71,22 +71,23 @@
                                      Disabled="FormModel.DisableToggleCheckboxes"
                                      OnToggleChanged="HandleAddEntriesToggle">
 
-            <MultiSelect Label="Choose multiple Game Extension"
+            <MultiSelect Label="Common Inventory Entries"
                          Placeholder="Select"
-                         T="GameExtension"
-                         Options="gameExtensions"
-                         OptionNameMapper="(GameExtension ge) => ge.Name"
-                         OptionValueMapper="(GameExtension ge) => ge.Id"
+                         T="InventoryEntry"
+                         Options="FormModel.CommonEntryNames"
+                         OptionNameMapper="(InventoryEntry entry) => entry.Name"
+                         OptionValueMapper="(InventoryEntry entry) => entry.Name"
                          Disabled="FormModel.DisableEntryInputs"
-                         @bind-Value="FormModel.GameExtensions" />
-            <ValidationMessage For="@(() => FormModel!.GameExtensions)" />
-                
+                         @bind-Value="FormModel.SelectedEntryNames" />
+            <ValidationMessage For="@(() => FormModel!.SelectedEntryNames)" />
 
-                @* <InventoryEntryList @ref="inventoryEntryList"
-                                    GetName="() => FormModel.Name"
-                                    SetName="value => FormModel.Name = value"
-                                    GetGeneralGameExtension="() => FormModel.GeneralGameExtension"
-                                    SetGeneralGameExtension="value => FormModel.GeneralGameExtension = value" /> *@
+            <div class="entry-list">
+                @foreach (var entry in FormModel.SelectedEntryNames)
+                {
+                    <EntryCard Entry="@entry"
+                               @key="entry" />
+                }
+            </div>
 
         </CheckboxWithToggleContainer>
 
@@ -94,7 +95,6 @@
 
     </EditForm>
 }
-
 
 @code {
     private bool isLoading = true;
@@ -109,8 +109,6 @@
     private List<GameExtension> gameExtensions = [];
 
     private DotNetObjectReference<Create>? _dotNetRef;
-
-    private InventoryEntryList? inventoryEntryList;
 
     private ValidationMessageStore? _messageStore;
 
